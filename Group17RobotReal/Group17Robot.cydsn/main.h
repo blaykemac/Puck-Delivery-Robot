@@ -96,3 +96,5 @@ extern int westWall;
 int currentPuckRackScanningIndex;
 int puckRackColours[5];
 int puckRackOffsetsFromWest[5];
+int sweeping;
+float block_location[4]; // WEST, EAST, SOUTH, NORTH

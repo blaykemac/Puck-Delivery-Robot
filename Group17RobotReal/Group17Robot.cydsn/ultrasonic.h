@@ -33,4 +33,6 @@ extern int state;
 extern int currentPuckRackScanningIndex;
 extern int puckRackColours[5];
 extern int puckRackOffsetsFromWest[5];
+extern int sweeping;
+extern float block_location[4];
 
