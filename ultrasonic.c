@@ -30,6 +30,7 @@ int count = 0;
 int distance_measured = 0; 
 float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0};
 uint8 ultrasonic_mux_control = 0;
+int block_start = 0;
 
 
 //int distance;
@@ -147,7 +148,23 @@ void ultrasonicInterruptHandler(){
     }
     
     */
-    
+	
+    if (state == STATE_LOCATE_BLOCK){
+	if (sweeping){
+		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - BLOCK_TOLERANCE){ // Then we have discrepancy
+			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK ;}
+	}
+		else if (block_start){
+			block_start = 0; // We have found the east edge of the block
+			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
+			sweeping = 0;
+			state = 
+
+			
+			
+	}
+	}
+	}
     
 }
 

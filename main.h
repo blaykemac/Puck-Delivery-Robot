@@ -25,6 +25,7 @@
 // States for final comp
 
 #define STATE_SCAN_PLAN 10
+#define STATE_LOCATE_BLOCK 11
 
 // Constants / Hard-coded values for final comp
 #define PUCK_RACK_0_WEST_DISTANCE 72
@@ -75,10 +76,14 @@
 #define RIGHT_SIDE 3
 #define BACK 4
 
+#define SIDE_SENSORS_WIDTH 25
+
 // Miscellaneous Constants
 #define SAFETY_MARGIN 10
 #define WIDTH_SENSOR_TO_SENSOR 22
 #define DISPLACE_DISTANCE_NW_PUCK_CHECK_CM 3
+#define BLOCK_TOLERANCE 10
+#define SIDE_SENSOR_OFFSET_FROM_BACK 15
 
 // 
 

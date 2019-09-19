@@ -126,8 +126,8 @@ int main(void)
    
     Rack_Servo_PWM_Start();
     Gripper_Servo_PWM_Start();
-    Rack_Servo_Disable_Write(1);
-    Gripper_Servo_Disable_Write(1);
+    
+
         
     for(;;)
     {   
@@ -217,6 +217,16 @@ int main(void)
             */
             
         }
+
+	while (state == STATE_LOCATE_BLOCK){ // Finding where the boundaries of the block are
+		// Sweep across EAST to WEST until discrepancy
+		moveForwardIndefinitely();
+		turnRight(180); // Now facing EAST wall
+		moveForwardIndefinitely(); // Do this until we get to EAST wall
+		
+		
+		
+	}
         
         // * Navigation Loop * //
         

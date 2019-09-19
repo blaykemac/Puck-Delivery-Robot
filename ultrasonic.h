@@ -15,6 +15,8 @@
 #define OFFSET_COLOUR_SENSOR_FROM_FRONT 8 // cm
 #define FINISH_CENTER_FROM_E 47
 #define SENSOR_PULSE_DELAY_MS 50
+#define BLOCK_WEST_EDGE 0
+#define BLOCK_EAST_EDGE 1
 
 void distanceCheck();  
 void distanceSensor(int currentSensorIndex);
