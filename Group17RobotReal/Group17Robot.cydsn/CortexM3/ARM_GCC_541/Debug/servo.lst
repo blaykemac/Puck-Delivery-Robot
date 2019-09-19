@@ -1,0 +1,1605 @@
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"servo.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.armOpen,"ax",%progbits
+  20              		.align	2
+  21              		.global	armOpen
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	armOpen, %function
+  25              	armOpen:
+  26              	.LFB64:
+  27              		.file 1 "servo.c"
+   1:servo.c       **** /* ========================================
+   2:servo.c       ****  *
+   3:servo.c       ****  * Copyright YOUR COMPANY, THE YEAR
+   4:servo.c       ****  * All Rights Reserved
+   5:servo.c       ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:servo.c       ****  *
+   7:servo.c       ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:servo.c       ****  * WHICH IS THE PROPERTY OF your company.
+   9:servo.c       ****  *
+  10:servo.c       ****  * ========================================
+  11:servo.c       **** */
+  12:servo.c       **** 
+  13:servo.c       **** #include "servo.h"
+  14:servo.c       **** #include "project.h"
+  15:servo.c       **** 
+  16:servo.c       **** // * C LIBRARIES * // 
+  17:servo.c       **** #include <stdio.h>
+  18:servo.c       **** #include <math.h>
+  19:servo.c       **** 
+  20:servo.c       **** 
+  21:servo.c       **** //These are the values that correspond to open, closed, up and down positions of the 
+  22:servo.c       **** //arm. These were found by experiment, so if need to recalibrate, you know where to go
+  23:servo.c       **** #define LOW_POS_ARM_CMP 2400 
+  24:servo.c       **** #define HIGH_POS_ARM_CMP 1000
+  25:servo.c       **** #define OPEN_POS_GRIPPER_CMP 1120 //1170
+  26:servo.c       **** #define CLOSED_POS_GRIPPER_CMP 1250
+  27:servo.c       **** 
+  28:servo.c       **** void armOpen(){
+  28              		.loc 1 28 0
+  29              		.cfi_startproc
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 2
+
+
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  29:servo.c       ****     Gripper_Servo_PWM_WriteCompare(OPEN_POS_GRIPPER_CMP); //1170 turns out to be vibrationless open
+  36              		.loc 1 29 0
+  37 0002 4FF48C60 		mov	r0, #1120
+  38 0006 FFF7FEFF 		bl	Gripper_Servo_PWM_WriteCompare
+  39              	.LVL0:
+  30:servo.c       ****     CyDelay(500);
+  40              		.loc 1 30 0
+  41 000a 4FF4FA70 		mov	r0, #500
+  42 000e FFF7FEFF 		bl	CyDelay
+  43              	.LVL1:
+  44 0012 08BD     		pop	{r3, pc}
+  45              		.cfi_endproc
+  46              	.LFE64:
+  47              		.size	armOpen, .-armOpen
+  48              		.section	.text.armClose,"ax",%progbits
+  49              		.align	2
+  50              		.global	armClose
+  51              		.thumb
+  52              		.thumb_func
+  53              		.type	armClose, %function
+  54              	armClose:
+  55              	.LFB65:
+  31:servo.c       **** }
+  32:servo.c       **** 
+  33:servo.c       **** void armClose(){
+  56              		.loc 1 33 0
+  57              		.cfi_startproc
+  58              		@ args = 0, pretend = 0, frame = 0
+  59              		@ frame_needed = 0, uses_anonymous_args = 0
+  60 0000 08B5     		push	{r3, lr}
+  61              		.cfi_def_cfa_offset 8
+  62              		.cfi_offset 3, -8
+  63              		.cfi_offset 14, -4
+  34:servo.c       ****     Gripper_Servo_PWM_WriteCompare(CLOSED_POS_GRIPPER_CMP); //1250 turns out to be a decent closed 
+  64              		.loc 1 34 0
+  65 0002 40F2E240 		movw	r0, #1250
+  66 0006 FFF7FEFF 		bl	Gripper_Servo_PWM_WriteCompare
+  67              	.LVL2:
+  35:servo.c       ****     CyDelay(500);
+  68              		.loc 1 35 0
+  69 000a 4FF4FA70 		mov	r0, #500
+  70 000e FFF7FEFF 		bl	CyDelay
+  71              	.LVL3:
+  72 0012 08BD     		pop	{r3, pc}
+  73              		.cfi_endproc
+  74              	.LFE65:
+  75              		.size	armClose, .-armClose
+  76              		.section	.text.armUp,"ax",%progbits
+  77              		.align	2
+  78              		.global	armUp
+  79              		.thumb
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 3
+
+
+  80              		.thumb_func
+  81              		.type	armUp, %function
+  82              	armUp:
+  83              	.LFB66:
+  36:servo.c       **** }
+  37:servo.c       **** 
+  38:servo.c       **** //This is just for the prelim comp - final comp will have a more comprehensive function 
+  39:servo.c       **** //that opens to 3 or 4 discrete heights for each of the pucks
+  40:servo.c       **** void armUp(){
+  84              		.loc 1 40 0
+  85              		.cfi_startproc
+  86              		@ args = 0, pretend = 0, frame = 0
+  87              		@ frame_needed = 0, uses_anonymous_args = 0
+  88 0000 10B5     		push	{r4, lr}
+  89              		.cfi_def_cfa_offset 8
+  90              		.cfi_offset 4, -8
+  91              		.cfi_offset 14, -4
+  41:servo.c       ****     int i = Rack_Servo_PWM_ReadCompare();
+  92              		.loc 1 41 0
+  93 0002 FFF7FEFF 		bl	Rack_Servo_PWM_ReadCompare
+  94              	.LVL4:
+  95 0006 0446     		mov	r4, r0
+  96              	.LVL5:
+  42:servo.c       ****     while (i > HIGH_POS_ARM_CMP){
+  97              		.loc 1 42 0
+  98 0008 06E0     		b	.L6
+  99              	.LVL6:
+ 100              	.L7:
+  43:servo.c       ****         Rack_Servo_PWM_WriteCompare(i);
+ 101              		.loc 1 43 0
+ 102 000a A0B2     		uxth	r0, r4
+ 103 000c FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
+ 104              	.LVL7:
+  44:servo.c       ****         i -= (LOW_POS_ARM_CMP-HIGH_POS_ARM_CMP)/10; //Step in 1/10th of the amount 
+ 105              		.loc 1 44 0
+ 106 0010 8C3C     		subs	r4, r4, #140
+ 107              	.LVL8:
+  45:servo.c       ****         CyDelay(10);
+ 108              		.loc 1 45 0
+ 109 0012 0A20     		movs	r0, #10
+ 110 0014 FFF7FEFF 		bl	CyDelay
+ 111              	.LVL9:
+ 112              	.L6:
+  42:servo.c       ****         Rack_Servo_PWM_WriteCompare(i);
+ 113              		.loc 1 42 0
+ 114 0018 B4F57A7F 		cmp	r4, #1000
+ 115 001c F5DC     		bgt	.L7
+  46:servo.c       ****     }
+  47:servo.c       ****     Rack_Servo_PWM_WriteCompare(HIGH_POS_ARM_CMP); //1000 was a nice max height value
+ 116              		.loc 1 47 0
+ 117 001e 4FF47A70 		mov	r0, #1000
+ 118 0022 FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
+ 119              	.LVL10:
+  48:servo.c       ****     CyDelay(500);
+ 120              		.loc 1 48 0
+ 121 0026 4FF4FA70 		mov	r0, #500
+ 122 002a FFF7FEFF 		bl	CyDelay
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 4
+
+
+ 123              	.LVL11:
+ 124 002e 10BD     		pop	{r4, pc}
+ 125              		.cfi_endproc
+ 126              	.LFE66:
+ 127              		.size	armUp, .-armUp
+ 128              		.section	.text.armDown,"ax",%progbits
+ 129              		.align	2
+ 130              		.global	armDown
+ 131              		.thumb
+ 132              		.thumb_func
+ 133              		.type	armDown, %function
+ 134              	armDown:
+ 135              	.LFB67:
+  49:servo.c       **** }
+  50:servo.c       **** 
+  51:servo.c       **** void armDown(){
+ 136              		.loc 1 51 0
+ 137              		.cfi_startproc
+ 138              		@ args = 0, pretend = 0, frame = 0
+ 139              		@ frame_needed = 0, uses_anonymous_args = 0
+ 140 0000 10B5     		push	{r4, lr}
+ 141              		.cfi_def_cfa_offset 8
+ 142              		.cfi_offset 4, -8
+ 143              		.cfi_offset 14, -4
+  52:servo.c       ****     int i = Rack_Servo_PWM_ReadCompare();
+ 144              		.loc 1 52 0
+ 145 0002 FFF7FEFF 		bl	Rack_Servo_PWM_ReadCompare
+ 146              	.LVL12:
+ 147 0006 0446     		mov	r4, r0
+ 148              	.LVL13:
+  53:servo.c       ****     while (i < LOW_POS_ARM_CMP){
+ 149              		.loc 1 53 0
+ 150 0008 06E0     		b	.L10
+ 151              	.LVL14:
+ 152              	.L11:
+  54:servo.c       ****         Rack_Servo_PWM_WriteCompare(i);
+ 153              		.loc 1 54 0
+ 154 000a A0B2     		uxth	r0, r4
+ 155 000c FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
+ 156              	.LVL15:
+  55:servo.c       ****         i += (LOW_POS_ARM_CMP-HIGH_POS_ARM_CMP)/10; //Step in 1/10th the amount
+ 157              		.loc 1 55 0
+ 158 0010 8C34     		adds	r4, r4, #140
+ 159              	.LVL16:
+  56:servo.c       ****         CyDelay(10);
+ 160              		.loc 1 56 0
+ 161 0012 0A20     		movs	r0, #10
+ 162 0014 FFF7FEFF 		bl	CyDelay
+ 163              	.LVL17:
+ 164              	.L10:
+  53:servo.c       ****         Rack_Servo_PWM_WriteCompare(i);
+ 165              		.loc 1 53 0
+ 166 0018 B4F5166F 		cmp	r4, #2400
+ 167 001c F5DB     		blt	.L11
+  57:servo.c       ****     }
+  58:servo.c       ****     Rack_Servo_PWM_WriteCompare(LOW_POS_ARM_CMP); //2300 was a nice low height value
+ 168              		.loc 1 58 0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 5
+
+
+ 169 001e 4FF41660 		mov	r0, #2400
+ 170 0022 FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
+ 171              	.LVL18:
+  59:servo.c       ****     CyDelay(500);
+ 172              		.loc 1 59 0
+ 173 0026 4FF4FA70 		mov	r0, #500
+ 174 002a FFF7FEFF 		bl	CyDelay
+ 175              	.LVL19:
+ 176 002e 10BD     		pop	{r4, pc}
+ 177              		.cfi_endproc
+ 178              	.LFE67:
+ 179              		.size	armDown, .-armDown
+ 180              		.global	__aeabi_i2d
+ 181              		.global	__aeabi_dmul
+ 182              		.global	__aeabi_d2iz
+ 183              		.section	.text.armMoveUpDown,"ax",%progbits
+ 184              		.align	2
+ 185              		.global	armMoveUpDown
+ 186              		.thumb
+ 187              		.thumb_func
+ 188              		.type	armMoveUpDown, %function
+ 189              	armMoveUpDown:
+ 190              	.LFB68:
+  60:servo.c       **** }
+  61:servo.c       **** 
+  62:servo.c       **** //This takes input in cm
+  63:servo.c       **** void armMoveUpDown(int desiredPosition){
+ 191              		.loc 1 63 0
+ 192              		.cfi_startproc
+ 193              		@ args = 0, pretend = 0, frame = 0
+ 194              		@ frame_needed = 0, uses_anonymous_args = 0
+ 195              	.LVL20:
+ 196 0000 08B5     		push	{r3, lr}
+ 197              		.cfi_def_cfa_offset 8
+ 198              		.cfi_offset 3, -8
+ 199              		.cfi_offset 14, -4
+ 200              	.LVL21:
+  64:servo.c       ****     //40 teeth on the gear
+  65:servo.c       ****     //as the wheel rotates a certain angle, the arm moves up by r*theta. 
+  66:servo.c       ****     //At angle = 0, we have arm at lowest position
+  67:servo.c       ****     //At angle = 180, we have it at the highest
+  68:servo.c       ****     //So theta= desiredheight/r . r = 20 mm approx. We'll work on it
+  69:servo.c       ****     const int GEAR_RADIUS = 20;
+  70:servo.c       ****     int theta = (desiredPosition*10)/GEAR_RADIUS;
+ 201              		.loc 1 70 0
+ 202 0002 00EB8000 		add	r0, r0, r0, lsl #2
+ 203              	.LVL22:
+ 204 0006 4300     		lsls	r3, r0, #1
+ 205 0008 0F48     		ldr	r0, .L15+8
+ 206 000a 80FB0320 		smull	r2, r0, r0, r3
+ 207 000e DB17     		asrs	r3, r3, #31
+ 208              	.LVL23:
+  71:servo.c       ****     int compare_val = round(theta*5.5555);
+ 209              		.loc 1 71 0
+ 210 0010 C3EBE000 		rsb	r0, r3, r0, asr #3
+ 211              	.LVL24:
+ 212 0014 FFF7FEFF 		bl	__aeabi_i2d
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 6
+
+
+ 213              	.LVL25:
+ 214 0018 09A3     		adr	r3, .L15
+ 215 001a D3E90023 		ldrd	r2, [r3]
+ 216 001e FFF7FEFF 		bl	__aeabi_dmul
+ 217              	.LVL26:
+ 218 0022 FFF7FEFF 		bl	round
+ 219              	.LVL27:
+ 220 0026 FFF7FEFF 		bl	__aeabi_d2iz
+ 221              	.LVL28:
+  72:servo.c       ****     Rack_Servo_PWM_WriteCompare(1000+compare_val); //This needs to be modified a lot
+ 222              		.loc 1 72 0
+ 223 002a 00F57A70 		add	r0, r0, #1000
+ 224              	.LVL29:
+ 225 002e 80B2     		uxth	r0, r0
+ 226              	.LVL30:
+ 227 0030 FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
+ 228              	.LVL31:
+  73:servo.c       ****     CyDelay(500);
+ 229              		.loc 1 73 0
+ 230 0034 4FF4FA70 		mov	r0, #500
+ 231 0038 FFF7FEFF 		bl	CyDelay
+ 232              	.LVL32:
+ 233 003c 08BD     		pop	{r3, pc}
+ 234              	.L16:
+ 235 003e 00BF     		.align	3
+ 236              	.L15:
+ 237 0040 46B6F3FD 		.word	-34359738
+ 238 0044 D4381640 		.word	1075198164
+ 239 0048 67666666 		.word	1717986919
+ 240              		.cfi_endproc
+ 241              	.LFE68:
+ 242              		.size	armMoveUpDown, .-armMoveUpDown
+ 243              		.global	__aeabi_dadd
+ 244              		.global	__aeabi_d2uiz
+ 245              		.section	.text.gripperAngle,"ax",%progbits
+ 246              		.align	2
+ 247              		.global	gripperAngle
+ 248              		.thumb
+ 249              		.thumb_func
+ 250              		.type	gripperAngle, %function
+ 251              	gripperAngle:
+ 252              	.LFB69:
+  74:servo.c       **** }
+  75:servo.c       **** 
+  76:servo.c       **** void gripperAngle(int amount){
+ 253              		.loc 1 76 0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257              	.LVL33:
+ 258 0000 08B5     		push	{r3, lr}
+ 259              		.cfi_def_cfa_offset 8
+ 260              		.cfi_offset 3, -8
+ 261              		.cfi_offset 14, -4
+  77:servo.c       ****     if (0 < amount && amount < 180)
+ 262              		.loc 1 77 0
+ 263 0002 431E     		subs	r3, r0, #1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 7
+
+
+ 264 0004 B22B     		cmp	r3, #178
+ 265 0006 0ED8     		bhi	.L18
+  78:servo.c       ****     {
+  79:servo.c       ****         Gripper_Servo_PWM_WriteCompare(1000+amount*5.5);
+ 266              		.loc 1 79 0
+ 267 0008 FFF7FEFF 		bl	__aeabi_i2d
+ 268              	.LVL34:
+ 269 000c 0022     		movs	r2, #0
+ 270 000e 094B     		ldr	r3, .L20
+ 271 0010 FFF7FEFF 		bl	__aeabi_dmul
+ 272              	.LVL35:
+ 273 0014 0022     		movs	r2, #0
+ 274 0016 084B     		ldr	r3, .L20+4
+ 275 0018 FFF7FEFF 		bl	__aeabi_dadd
+ 276              	.LVL36:
+ 277 001c FFF7FEFF 		bl	__aeabi_d2uiz
+ 278              	.LVL37:
+ 279 0020 80B2     		uxth	r0, r0
+ 280 0022 FFF7FEFF 		bl	Gripper_Servo_PWM_WriteCompare
+ 281              	.LVL38:
+ 282              	.L18:
+  80:servo.c       ****     }
+  81:servo.c       ****     Gripper_Servo_PWM_Start();
+ 283              		.loc 1 81 0
+ 284 0026 FFF7FEFF 		bl	Gripper_Servo_PWM_Start
+ 285              	.LVL39:
+  82:servo.c       ****     CyDelay(500);
+ 286              		.loc 1 82 0
+ 287 002a 4FF4FA70 		mov	r0, #500
+ 288 002e FFF7FEFF 		bl	CyDelay
+ 289              	.LVL40:
+ 290 0032 08BD     		pop	{r3, pc}
+ 291              	.L21:
+ 292              		.align	2
+ 293              	.L20:
+ 294 0034 00001640 		.word	1075183616
+ 295 0038 00408F40 		.word	1083129856
+ 296              		.cfi_endproc
+ 297              	.LFE69:
+ 298              		.size	gripperAngle, .-gripperAngle
+ 299              		.section	.text.rackAngle,"ax",%progbits
+ 300              		.align	2
+ 301              		.global	rackAngle
+ 302              		.thumb
+ 303              		.thumb_func
+ 304              		.type	rackAngle, %function
+ 305              	rackAngle:
+ 306              	.LFB70:
+  83:servo.c       **** }
+  84:servo.c       ****         
+  85:servo.c       **** void rackAngle(int amount)
+  86:servo.c       **** {
+ 307              		.loc 1 86 0
+ 308              		.cfi_startproc
+ 309              		@ args = 0, pretend = 0, frame = 0
+ 310              		@ frame_needed = 0, uses_anonymous_args = 0
+ 311              	.LVL41:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 8
+
+
+ 312 0000 08B5     		push	{r3, lr}
+ 313              		.cfi_def_cfa_offset 8
+ 314              		.cfi_offset 3, -8
+ 315              		.cfi_offset 14, -4
+  87:servo.c       ****     Rack_Servo_PWM_WriteCompare(1000+amount*5.5);
+ 316              		.loc 1 87 0
+ 317 0002 FFF7FEFF 		bl	__aeabi_i2d
+ 318              	.LVL42:
+ 319 0006 0022     		movs	r2, #0
+ 320 0008 094B     		ldr	r3, .L24
+ 321 000a FFF7FEFF 		bl	__aeabi_dmul
+ 322              	.LVL43:
+ 323 000e 0022     		movs	r2, #0
+ 324 0010 084B     		ldr	r3, .L24+4
+ 325 0012 FFF7FEFF 		bl	__aeabi_dadd
+ 326              	.LVL44:
+ 327 0016 FFF7FEFF 		bl	__aeabi_d2uiz
+ 328              	.LVL45:
+ 329 001a 80B2     		uxth	r0, r0
+ 330 001c FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
+ 331              	.LVL46:
+  88:servo.c       ****     Rack_Servo_PWM_Start();
+ 332              		.loc 1 88 0
+ 333 0020 FFF7FEFF 		bl	Rack_Servo_PWM_Start
+ 334              	.LVL47:
+  89:servo.c       ****     CyDelay(500);
+ 335              		.loc 1 89 0
+ 336 0024 4FF4FA70 		mov	r0, #500
+ 337 0028 FFF7FEFF 		bl	CyDelay
+ 338              	.LVL48:
+ 339 002c 08BD     		pop	{r3, pc}
+ 340              	.L25:
+ 341 002e 00BF     		.align	2
+ 342              	.L24:
+ 343 0030 00001640 		.word	1075183616
+ 344 0034 00408F40 		.word	1083129856
+ 345              		.cfi_endproc
+ 346              	.LFE70:
+ 347              		.size	rackAngle, .-rackAngle
+ 348              		.text
+ 349              	.Letext0:
+ 350              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 351              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 352              		.file 4 "Generated_Source\\PSoC5/Gripper_Servo_PWM.h"
+ 353              		.file 5 "Generated_Source\\PSoC5/CyLib.h"
+ 354              		.file 6 "Generated_Source\\PSoC5/Rack_Servo_PWM.h"
+ 355              		.file 7 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 356              		.file 8 "Generated_Source\\PSoC5/core_cm3.h"
+ 357              		.section	.debug_info,"",%progbits
+ 358              	.Ldebug_info0:
+ 359 0000 71030000 		.4byte	0x371
+ 360 0004 0400     		.2byte	0x4
+ 361 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 362 000a 04       		.byte	0x4
+ 363 000b 01       		.uleb128 0x1
+ 364 000c 6A000000 		.4byte	.LASF35
+ 365 0010 0C       		.byte	0xc
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 9
+
+
+ 366 0011 79010000 		.4byte	.LASF36
+ 367 0015 17020000 		.4byte	.LASF37
+ 368 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 369 001d 00000000 		.4byte	0
+ 370 0021 00000000 		.4byte	.Ldebug_line0
+ 371 0025 02       		.uleb128 0x2
+ 372 0026 08       		.byte	0x8
+ 373 0027 07       		.byte	0x7
+ 374 0028 45000000 		.4byte	.LASF0
+ 375 002c 02       		.uleb128 0x2
+ 376 002d 04       		.byte	0x4
+ 377 002e 07       		.byte	0x7
+ 378 002f 66010000 		.4byte	.LASF1
+ 379 0033 03       		.uleb128 0x3
+ 380 0034 04       		.byte	0x4
+ 381 0035 05       		.byte	0x5
+ 382 0036 696E7400 		.ascii	"int\000"
+ 383 003a 02       		.uleb128 0x2
+ 384 003b 01       		.byte	0x1
+ 385 003c 06       		.byte	0x6
+ 386 003d 81020000 		.4byte	.LASF2
+ 387 0041 02       		.uleb128 0x2
+ 388 0042 01       		.byte	0x1
+ 389 0043 08       		.byte	0x8
+ 390 0044 5C000000 		.4byte	.LASF3
+ 391 0048 02       		.uleb128 0x2
+ 392 0049 02       		.byte	0x2
+ 393 004a 05       		.byte	0x5
+ 394 004b 0D020000 		.4byte	.LASF4
+ 395 004f 02       		.uleb128 0x2
+ 396 0050 02       		.byte	0x2
+ 397 0051 07       		.byte	0x7
+ 398 0052 BC010000 		.4byte	.LASF5
+ 399 0056 04       		.uleb128 0x4
+ 400 0057 00000000 		.4byte	.LASF9
+ 401 005b 02       		.byte	0x2
+ 402 005c 3F       		.byte	0x3f
+ 403 005d 61000000 		.4byte	0x61
+ 404 0061 02       		.uleb128 0x2
+ 405 0062 04       		.byte	0x4
+ 406 0063 05       		.byte	0x5
+ 407 0064 6C020000 		.4byte	.LASF6
+ 408 0068 02       		.uleb128 0x2
+ 409 0069 04       		.byte	0x4
+ 410 006a 07       		.byte	0x7
+ 411 006b F8000000 		.4byte	.LASF7
+ 412 006f 02       		.uleb128 0x2
+ 413 0070 08       		.byte	0x8
+ 414 0071 05       		.byte	0x5
+ 415 0072 CF010000 		.4byte	.LASF8
+ 416 0076 04       		.uleb128 0x4
+ 417 0077 8F010000 		.4byte	.LASF10
+ 418 007b 03       		.byte	0x3
+ 419 007c 2C       		.byte	0x2c
+ 420 007d 56000000 		.4byte	0x56
+ 421 0081 02       		.uleb128 0x2
+ 422 0082 04       		.byte	0x4
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 10
+
+
+ 423 0083 04       		.byte	0x4
+ 424 0084 3F000000 		.4byte	.LASF11
+ 425 0088 02       		.uleb128 0x2
+ 426 0089 08       		.byte	0x8
+ 427 008a 04       		.byte	0x4
+ 428 008b 32010000 		.4byte	.LASF12
+ 429 008f 02       		.uleb128 0x2
+ 430 0090 01       		.byte	0x1
+ 431 0091 08       		.byte	0x8
+ 432 0092 DD010000 		.4byte	.LASF13
+ 433 0096 02       		.uleb128 0x2
+ 434 0097 08       		.byte	0x8
+ 435 0098 04       		.byte	0x4
+ 436 0099 75020000 		.4byte	.LASF14
+ 437 009d 02       		.uleb128 0x2
+ 438 009e 04       		.byte	0x4
+ 439 009f 07       		.byte	0x7
+ 440 00a0 97010000 		.4byte	.LASF15
+ 441 00a4 05       		.uleb128 0x5
+ 442 00a5 5E010000 		.4byte	.LASF16
+ 443 00a9 01       		.byte	0x1
+ 444 00aa 1C       		.byte	0x1c
+ 445 00ab 00000000 		.4byte	.LFB64
+ 446 00af 14000000 		.4byte	.LFE64-.LFB64
+ 447 00b3 01       		.uleb128 0x1
+ 448 00b4 9C       		.byte	0x9c
+ 449 00b5 E0000000 		.4byte	0xe0
+ 450 00b9 06       		.uleb128 0x6
+ 451 00ba 0A000000 		.4byte	.LVL0
+ 452 00be 26030000 		.4byte	0x326
+ 453 00c2 CE000000 		.4byte	0xce
+ 454 00c6 07       		.uleb128 0x7
+ 455 00c7 01       		.uleb128 0x1
+ 456 00c8 50       		.byte	0x50
+ 457 00c9 03       		.uleb128 0x3
+ 458 00ca 0A       		.byte	0xa
+ 459 00cb 6004     		.2byte	0x460
+ 460 00cd 00       		.byte	0
+ 461 00ce 08       		.uleb128 0x8
+ 462 00cf 12000000 		.4byte	.LVL1
+ 463 00d3 31030000 		.4byte	0x331
+ 464 00d7 07       		.uleb128 0x7
+ 465 00d8 01       		.uleb128 0x1
+ 466 00d9 50       		.byte	0x50
+ 467 00da 03       		.uleb128 0x3
+ 468 00db 0A       		.byte	0xa
+ 469 00dc F401     		.2byte	0x1f4
+ 470 00de 00       		.byte	0
+ 471 00df 00       		.byte	0
+ 472 00e0 05       		.uleb128 0x5
+ 473 00e1 8D020000 		.4byte	.LASF17
+ 474 00e5 01       		.byte	0x1
+ 475 00e6 21       		.byte	0x21
+ 476 00e7 00000000 		.4byte	.LFB65
+ 477 00eb 14000000 		.4byte	.LFE65-.LFB65
+ 478 00ef 01       		.uleb128 0x1
+ 479 00f0 9C       		.byte	0x9c
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 11
+
+
+ 480 00f1 1C010000 		.4byte	0x11c
+ 481 00f5 06       		.uleb128 0x6
+ 482 00f6 0A000000 		.4byte	.LVL2
+ 483 00fa 26030000 		.4byte	0x326
+ 484 00fe 0A010000 		.4byte	0x10a
+ 485 0102 07       		.uleb128 0x7
+ 486 0103 01       		.uleb128 0x1
+ 487 0104 50       		.byte	0x50
+ 488 0105 03       		.uleb128 0x3
+ 489 0106 0A       		.byte	0xa
+ 490 0107 E204     		.2byte	0x4e2
+ 491 0109 00       		.byte	0
+ 492 010a 08       		.uleb128 0x8
+ 493 010b 12000000 		.4byte	.LVL3
+ 494 010f 31030000 		.4byte	0x331
+ 495 0113 07       		.uleb128 0x7
+ 496 0114 01       		.uleb128 0x1
+ 497 0115 50       		.byte	0x50
+ 498 0116 03       		.uleb128 0x3
+ 499 0117 0A       		.byte	0xa
+ 500 0118 F401     		.2byte	0x1f4
+ 501 011a 00       		.byte	0
+ 502 011b 00       		.byte	0
+ 503 011c 05       		.uleb128 0x5
+ 504 011d 73010000 		.4byte	.LASF18
+ 505 0121 01       		.byte	0x1
+ 506 0122 28       		.byte	0x28
+ 507 0123 00000000 		.4byte	.LFB66
+ 508 0127 30000000 		.4byte	.LFE66-.LFB66
+ 509 012b 01       		.uleb128 0x1
+ 510 012c 9C       		.byte	0x9c
+ 511 012d 95010000 		.4byte	0x195
+ 512 0131 09       		.uleb128 0x9
+ 513 0132 6900     		.ascii	"i\000"
+ 514 0134 01       		.byte	0x1
+ 515 0135 29       		.byte	0x29
+ 516 0136 33000000 		.4byte	0x33
+ 517 013a 00000000 		.4byte	.LLST0
+ 518 013e 0A       		.uleb128 0xa
+ 519 013f 06000000 		.4byte	.LVL4
+ 520 0143 3C030000 		.4byte	0x33c
+ 521 0147 06       		.uleb128 0x6
+ 522 0148 10000000 		.4byte	.LVL7
+ 523 014c 47030000 		.4byte	0x347
+ 524 0150 5B010000 		.4byte	0x15b
+ 525 0154 07       		.uleb128 0x7
+ 526 0155 01       		.uleb128 0x1
+ 527 0156 50       		.byte	0x50
+ 528 0157 02       		.uleb128 0x2
+ 529 0158 74       		.byte	0x74
+ 530 0159 00       		.sleb128 0
+ 531 015a 00       		.byte	0
+ 532 015b 06       		.uleb128 0x6
+ 533 015c 18000000 		.4byte	.LVL9
+ 534 0160 31030000 		.4byte	0x331
+ 535 0164 6E010000 		.4byte	0x16e
+ 536 0168 07       		.uleb128 0x7
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 12
+
+
+ 537 0169 01       		.uleb128 0x1
+ 538 016a 50       		.byte	0x50
+ 539 016b 01       		.uleb128 0x1
+ 540 016c 3A       		.byte	0x3a
+ 541 016d 00       		.byte	0
+ 542 016e 06       		.uleb128 0x6
+ 543 016f 26000000 		.4byte	.LVL10
+ 544 0173 47030000 		.4byte	0x347
+ 545 0177 83010000 		.4byte	0x183
+ 546 017b 07       		.uleb128 0x7
+ 547 017c 01       		.uleb128 0x1
+ 548 017d 50       		.byte	0x50
+ 549 017e 03       		.uleb128 0x3
+ 550 017f 0A       		.byte	0xa
+ 551 0180 E803     		.2byte	0x3e8
+ 552 0182 00       		.byte	0
+ 553 0183 08       		.uleb128 0x8
+ 554 0184 2E000000 		.4byte	.LVL11
+ 555 0188 31030000 		.4byte	0x331
+ 556 018c 07       		.uleb128 0x7
+ 557 018d 01       		.uleb128 0x1
+ 558 018e 50       		.byte	0x50
+ 559 018f 03       		.uleb128 0x3
+ 560 0190 0A       		.byte	0xa
+ 561 0191 F401     		.2byte	0x1f4
+ 562 0193 00       		.byte	0
+ 563 0194 00       		.byte	0
+ 564 0195 05       		.uleb128 0x5
+ 565 0196 96020000 		.4byte	.LASF19
+ 566 019a 01       		.byte	0x1
+ 567 019b 33       		.byte	0x33
+ 568 019c 00000000 		.4byte	.LFB67
+ 569 01a0 30000000 		.4byte	.LFE67-.LFB67
+ 570 01a4 01       		.uleb128 0x1
+ 571 01a5 9C       		.byte	0x9c
+ 572 01a6 0E020000 		.4byte	0x20e
+ 573 01aa 09       		.uleb128 0x9
+ 574 01ab 6900     		.ascii	"i\000"
+ 575 01ad 01       		.byte	0x1
+ 576 01ae 34       		.byte	0x34
+ 577 01af 33000000 		.4byte	0x33
+ 578 01b3 1E000000 		.4byte	.LLST1
+ 579 01b7 0A       		.uleb128 0xa
+ 580 01b8 06000000 		.4byte	.LVL12
+ 581 01bc 3C030000 		.4byte	0x33c
+ 582 01c0 06       		.uleb128 0x6
+ 583 01c1 10000000 		.4byte	.LVL15
+ 584 01c5 47030000 		.4byte	0x347
+ 585 01c9 D4010000 		.4byte	0x1d4
+ 586 01cd 07       		.uleb128 0x7
+ 587 01ce 01       		.uleb128 0x1
+ 588 01cf 50       		.byte	0x50
+ 589 01d0 02       		.uleb128 0x2
+ 590 01d1 74       		.byte	0x74
+ 591 01d2 00       		.sleb128 0
+ 592 01d3 00       		.byte	0
+ 593 01d4 06       		.uleb128 0x6
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 13
+
+
+ 594 01d5 18000000 		.4byte	.LVL17
+ 595 01d9 31030000 		.4byte	0x331
+ 596 01dd E7010000 		.4byte	0x1e7
+ 597 01e1 07       		.uleb128 0x7
+ 598 01e2 01       		.uleb128 0x1
+ 599 01e3 50       		.byte	0x50
+ 600 01e4 01       		.uleb128 0x1
+ 601 01e5 3A       		.byte	0x3a
+ 602 01e6 00       		.byte	0
+ 603 01e7 06       		.uleb128 0x6
+ 604 01e8 26000000 		.4byte	.LVL18
+ 605 01ec 47030000 		.4byte	0x347
+ 606 01f0 FC010000 		.4byte	0x1fc
+ 607 01f4 07       		.uleb128 0x7
+ 608 01f5 01       		.uleb128 0x1
+ 609 01f6 50       		.byte	0x50
+ 610 01f7 03       		.uleb128 0x3
+ 611 01f8 0A       		.byte	0xa
+ 612 01f9 6009     		.2byte	0x960
+ 613 01fb 00       		.byte	0
+ 614 01fc 08       		.uleb128 0x8
+ 615 01fd 2E000000 		.4byte	.LVL19
+ 616 0201 31030000 		.4byte	0x331
+ 617 0205 07       		.uleb128 0x7
+ 618 0206 01       		.uleb128 0x1
+ 619 0207 50       		.byte	0x50
+ 620 0208 03       		.uleb128 0x3
+ 621 0209 0A       		.byte	0xa
+ 622 020a F401     		.2byte	0x1f4
+ 623 020c 00       		.byte	0
+ 624 020d 00       		.byte	0
+ 625 020e 0B       		.uleb128 0xb
+ 626 020f 81010000 		.4byte	.LASF20
+ 627 0213 01       		.byte	0x1
+ 628 0214 3F       		.byte	0x3f
+ 629 0215 00000000 		.4byte	.LFB68
+ 630 0219 4C000000 		.4byte	.LFE68-.LFB68
+ 631 021d 01       		.uleb128 0x1
+ 632 021e 9C       		.byte	0x9c
+ 633 021f 80020000 		.4byte	0x280
+ 634 0223 0C       		.uleb128 0xc
+ 635 0224 2F000000 		.4byte	.LASF25
+ 636 0228 01       		.byte	0x1
+ 637 0229 3F       		.byte	0x3f
+ 638 022a 33000000 		.4byte	0x33
+ 639 022e 3C000000 		.4byte	.LLST2
+ 640 0232 0D       		.uleb128 0xd
+ 641 0233 B3020000 		.4byte	.LASF21
+ 642 0237 01       		.byte	0x1
+ 643 0238 45       		.byte	0x45
+ 644 0239 80020000 		.4byte	0x280
+ 645 023d 14       		.byte	0x14
+ 646 023e 0E       		.uleb128 0xe
+ 647 023f 0A000000 		.4byte	.LASF22
+ 648 0243 01       		.byte	0x1
+ 649 0244 46       		.byte	0x46
+ 650 0245 33000000 		.4byte	0x33
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 14
+
+
+ 651 0249 5D000000 		.4byte	.LLST3
+ 652 024d 0E       		.uleb128 0xe
+ 653 024e F7010000 		.4byte	.LASF23
+ 654 0252 01       		.byte	0x1
+ 655 0253 47       		.byte	0x47
+ 656 0254 33000000 		.4byte	0x33
+ 657 0258 BB000000 		.4byte	.LLST4
+ 658 025c 0A       		.uleb128 0xa
+ 659 025d 26000000 		.4byte	.LVL27
+ 660 0261 52030000 		.4byte	0x352
+ 661 0265 0A       		.uleb128 0xa
+ 662 0266 34000000 		.4byte	.LVL31
+ 663 026a 47030000 		.4byte	0x347
+ 664 026e 08       		.uleb128 0x8
+ 665 026f 3C000000 		.4byte	.LVL32
+ 666 0273 31030000 		.4byte	0x331
+ 667 0277 07       		.uleb128 0x7
+ 668 0278 01       		.uleb128 0x1
+ 669 0279 50       		.byte	0x50
+ 670 027a 03       		.uleb128 0x3
+ 671 027b 0A       		.byte	0xa
+ 672 027c F401     		.2byte	0x1f4
+ 673 027e 00       		.byte	0
+ 674 027f 00       		.byte	0
+ 675 0280 0F       		.uleb128 0xf
+ 676 0281 33000000 		.4byte	0x33
+ 677 0285 0B       		.uleb128 0xb
+ 678 0286 9E020000 		.4byte	.LASF24
+ 679 028a 01       		.byte	0x1
+ 680 028b 4C       		.byte	0x4c
+ 681 028c 00000000 		.4byte	.LFB69
+ 682 0290 3C000000 		.4byte	.LFE69-.LFB69
+ 683 0294 01       		.uleb128 0x1
+ 684 0295 9C       		.byte	0x9c
+ 685 0296 CD020000 		.4byte	0x2cd
+ 686 029a 0C       		.uleb128 0xc
+ 687 029b 51010000 		.4byte	.LASF26
+ 688 029f 01       		.byte	0x1
+ 689 02a0 4C       		.byte	0x4c
+ 690 02a1 33000000 		.4byte	0x33
+ 691 02a5 DC000000 		.4byte	.LLST5
+ 692 02a9 0A       		.uleb128 0xa
+ 693 02aa 26000000 		.4byte	.LVL38
+ 694 02ae 26030000 		.4byte	0x326
+ 695 02b2 0A       		.uleb128 0xa
+ 696 02b3 2A000000 		.4byte	.LVL39
+ 697 02b7 5E030000 		.4byte	0x35e
+ 698 02bb 08       		.uleb128 0x8
+ 699 02bc 32000000 		.4byte	.LVL40
+ 700 02c0 31030000 		.4byte	0x331
+ 701 02c4 07       		.uleb128 0x7
+ 702 02c5 01       		.uleb128 0x1
+ 703 02c6 50       		.byte	0x50
+ 704 02c7 03       		.uleb128 0x3
+ 705 02c8 0A       		.byte	0xa
+ 706 02c9 F401     		.2byte	0x1f4
+ 707 02cb 00       		.byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 15
+
+
+ 708 02cc 00       		.byte	0
+ 709 02cd 0B       		.uleb128 0xb
+ 710 02ce 03020000 		.4byte	.LASF27
+ 711 02d2 01       		.byte	0x1
+ 712 02d3 55       		.byte	0x55
+ 713 02d4 00000000 		.4byte	.LFB70
+ 714 02d8 38000000 		.4byte	.LFE70-.LFB70
+ 715 02dc 01       		.uleb128 0x1
+ 716 02dd 9C       		.byte	0x9c
+ 717 02de 15030000 		.4byte	0x315
+ 718 02e2 0C       		.uleb128 0xc
+ 719 02e3 51010000 		.4byte	.LASF26
+ 720 02e7 01       		.byte	0x1
+ 721 02e8 55       		.byte	0x55
+ 722 02e9 33000000 		.4byte	0x33
+ 723 02ed FD000000 		.4byte	.LLST6
+ 724 02f1 0A       		.uleb128 0xa
+ 725 02f2 20000000 		.4byte	.LVL46
+ 726 02f6 47030000 		.4byte	0x347
+ 727 02fa 0A       		.uleb128 0xa
+ 728 02fb 24000000 		.4byte	.LVL47
+ 729 02ff 69030000 		.4byte	0x369
+ 730 0303 08       		.uleb128 0x8
+ 731 0304 2C000000 		.4byte	.LVL48
+ 732 0308 31030000 		.4byte	0x331
+ 733 030c 07       		.uleb128 0x7
+ 734 030d 01       		.uleb128 0x1
+ 735 030e 50       		.byte	0x50
+ 736 030f 03       		.uleb128 0x3
+ 737 0310 0A       		.byte	0xa
+ 738 0311 F401     		.2byte	0x1f4
+ 739 0313 00       		.byte	0
+ 740 0314 00       		.byte	0
+ 741 0315 10       		.uleb128 0x10
+ 742 0316 25010000 		.4byte	.LASF38
+ 743 031a 08       		.byte	0x8
+ 744 031b 1207     		.2byte	0x712
+ 745 031d 21030000 		.4byte	0x321
+ 746 0321 11       		.uleb128 0x11
+ 747 0322 76000000 		.4byte	0x76
+ 748 0326 12       		.uleb128 0x12
+ 749 0327 10000000 		.4byte	.LASF28
+ 750 032b 10000000 		.4byte	.LASF28
+ 751 032f 04       		.byte	0x4
+ 752 0330 C3       		.byte	0xc3
+ 753 0331 12       		.uleb128 0x12
+ 754 0332 AB020000 		.4byte	.LASF29
+ 755 0336 AB020000 		.4byte	.LASF29
+ 756 033a 05       		.byte	0x5
+ 757 033b 76       		.byte	0x76
+ 758 033c 12       		.uleb128 0x12
+ 759 033d 0A010000 		.4byte	.LASF30
+ 760 0341 0A010000 		.4byte	.LASF30
+ 761 0345 06       		.byte	0x6
+ 762 0346 C5       		.byte	0xc5
+ 763 0347 12       		.uleb128 0x12
+ 764 0348 A0010000 		.4byte	.LASF31
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 16
+
+
+ 765 034c A0010000 		.4byte	.LASF31
+ 766 0350 06       		.byte	0x6
+ 767 0351 C3       		.byte	0xc3
+ 768 0352 13       		.uleb128 0x13
+ 769 0353 58010000 		.4byte	.LASF32
+ 770 0357 58010000 		.4byte	.LASF32
+ 771 035b 07       		.byte	0x7
+ 772 035c 4B01     		.2byte	0x14b
+ 773 035e 12       		.uleb128 0x12
+ 774 035f 39010000 		.4byte	.LASF33
+ 775 0363 39010000 		.4byte	.LASF33
+ 776 0367 04       		.byte	0x4
+ 777 0368 92       		.byte	0x92
+ 778 0369 12       		.uleb128 0x12
+ 779 036a E2010000 		.4byte	.LASF34
+ 780 036e E2010000 		.4byte	.LASF34
+ 781 0372 06       		.byte	0x6
+ 782 0373 92       		.byte	0x92
+ 783 0374 00       		.byte	0
+ 784              		.section	.debug_abbrev,"",%progbits
+ 785              	.Ldebug_abbrev0:
+ 786 0000 01       		.uleb128 0x1
+ 787 0001 11       		.uleb128 0x11
+ 788 0002 01       		.byte	0x1
+ 789 0003 25       		.uleb128 0x25
+ 790 0004 0E       		.uleb128 0xe
+ 791 0005 13       		.uleb128 0x13
+ 792 0006 0B       		.uleb128 0xb
+ 793 0007 03       		.uleb128 0x3
+ 794 0008 0E       		.uleb128 0xe
+ 795 0009 1B       		.uleb128 0x1b
+ 796 000a 0E       		.uleb128 0xe
+ 797 000b 55       		.uleb128 0x55
+ 798 000c 17       		.uleb128 0x17
+ 799 000d 11       		.uleb128 0x11
+ 800 000e 01       		.uleb128 0x1
+ 801 000f 10       		.uleb128 0x10
+ 802 0010 17       		.uleb128 0x17
+ 803 0011 00       		.byte	0
+ 804 0012 00       		.byte	0
+ 805 0013 02       		.uleb128 0x2
+ 806 0014 24       		.uleb128 0x24
+ 807 0015 00       		.byte	0
+ 808 0016 0B       		.uleb128 0xb
+ 809 0017 0B       		.uleb128 0xb
+ 810 0018 3E       		.uleb128 0x3e
+ 811 0019 0B       		.uleb128 0xb
+ 812 001a 03       		.uleb128 0x3
+ 813 001b 0E       		.uleb128 0xe
+ 814 001c 00       		.byte	0
+ 815 001d 00       		.byte	0
+ 816 001e 03       		.uleb128 0x3
+ 817 001f 24       		.uleb128 0x24
+ 818 0020 00       		.byte	0
+ 819 0021 0B       		.uleb128 0xb
+ 820 0022 0B       		.uleb128 0xb
+ 821 0023 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 17
+
+
+ 822 0024 0B       		.uleb128 0xb
+ 823 0025 03       		.uleb128 0x3
+ 824 0026 08       		.uleb128 0x8
+ 825 0027 00       		.byte	0
+ 826 0028 00       		.byte	0
+ 827 0029 04       		.uleb128 0x4
+ 828 002a 16       		.uleb128 0x16
+ 829 002b 00       		.byte	0
+ 830 002c 03       		.uleb128 0x3
+ 831 002d 0E       		.uleb128 0xe
+ 832 002e 3A       		.uleb128 0x3a
+ 833 002f 0B       		.uleb128 0xb
+ 834 0030 3B       		.uleb128 0x3b
+ 835 0031 0B       		.uleb128 0xb
+ 836 0032 49       		.uleb128 0x49
+ 837 0033 13       		.uleb128 0x13
+ 838 0034 00       		.byte	0
+ 839 0035 00       		.byte	0
+ 840 0036 05       		.uleb128 0x5
+ 841 0037 2E       		.uleb128 0x2e
+ 842 0038 01       		.byte	0x1
+ 843 0039 3F       		.uleb128 0x3f
+ 844 003a 19       		.uleb128 0x19
+ 845 003b 03       		.uleb128 0x3
+ 846 003c 0E       		.uleb128 0xe
+ 847 003d 3A       		.uleb128 0x3a
+ 848 003e 0B       		.uleb128 0xb
+ 849 003f 3B       		.uleb128 0x3b
+ 850 0040 0B       		.uleb128 0xb
+ 851 0041 27       		.uleb128 0x27
+ 852 0042 19       		.uleb128 0x19
+ 853 0043 11       		.uleb128 0x11
+ 854 0044 01       		.uleb128 0x1
+ 855 0045 12       		.uleb128 0x12
+ 856 0046 06       		.uleb128 0x6
+ 857 0047 40       		.uleb128 0x40
+ 858 0048 18       		.uleb128 0x18
+ 859 0049 9742     		.uleb128 0x2117
+ 860 004b 19       		.uleb128 0x19
+ 861 004c 01       		.uleb128 0x1
+ 862 004d 13       		.uleb128 0x13
+ 863 004e 00       		.byte	0
+ 864 004f 00       		.byte	0
+ 865 0050 06       		.uleb128 0x6
+ 866 0051 898201   		.uleb128 0x4109
+ 867 0054 01       		.byte	0x1
+ 868 0055 11       		.uleb128 0x11
+ 869 0056 01       		.uleb128 0x1
+ 870 0057 31       		.uleb128 0x31
+ 871 0058 13       		.uleb128 0x13
+ 872 0059 01       		.uleb128 0x1
+ 873 005a 13       		.uleb128 0x13
+ 874 005b 00       		.byte	0
+ 875 005c 00       		.byte	0
+ 876 005d 07       		.uleb128 0x7
+ 877 005e 8A8201   		.uleb128 0x410a
+ 878 0061 00       		.byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 18
+
+
+ 879 0062 02       		.uleb128 0x2
+ 880 0063 18       		.uleb128 0x18
+ 881 0064 9142     		.uleb128 0x2111
+ 882 0066 18       		.uleb128 0x18
+ 883 0067 00       		.byte	0
+ 884 0068 00       		.byte	0
+ 885 0069 08       		.uleb128 0x8
+ 886 006a 898201   		.uleb128 0x4109
+ 887 006d 01       		.byte	0x1
+ 888 006e 11       		.uleb128 0x11
+ 889 006f 01       		.uleb128 0x1
+ 890 0070 31       		.uleb128 0x31
+ 891 0071 13       		.uleb128 0x13
+ 892 0072 00       		.byte	0
+ 893 0073 00       		.byte	0
+ 894 0074 09       		.uleb128 0x9
+ 895 0075 34       		.uleb128 0x34
+ 896 0076 00       		.byte	0
+ 897 0077 03       		.uleb128 0x3
+ 898 0078 08       		.uleb128 0x8
+ 899 0079 3A       		.uleb128 0x3a
+ 900 007a 0B       		.uleb128 0xb
+ 901 007b 3B       		.uleb128 0x3b
+ 902 007c 0B       		.uleb128 0xb
+ 903 007d 49       		.uleb128 0x49
+ 904 007e 13       		.uleb128 0x13
+ 905 007f 02       		.uleb128 0x2
+ 906 0080 17       		.uleb128 0x17
+ 907 0081 00       		.byte	0
+ 908 0082 00       		.byte	0
+ 909 0083 0A       		.uleb128 0xa
+ 910 0084 898201   		.uleb128 0x4109
+ 911 0087 00       		.byte	0
+ 912 0088 11       		.uleb128 0x11
+ 913 0089 01       		.uleb128 0x1
+ 914 008a 31       		.uleb128 0x31
+ 915 008b 13       		.uleb128 0x13
+ 916 008c 00       		.byte	0
+ 917 008d 00       		.byte	0
+ 918 008e 0B       		.uleb128 0xb
+ 919 008f 2E       		.uleb128 0x2e
+ 920 0090 01       		.byte	0x1
+ 921 0091 3F       		.uleb128 0x3f
+ 922 0092 19       		.uleb128 0x19
+ 923 0093 03       		.uleb128 0x3
+ 924 0094 0E       		.uleb128 0xe
+ 925 0095 3A       		.uleb128 0x3a
+ 926 0096 0B       		.uleb128 0xb
+ 927 0097 3B       		.uleb128 0x3b
+ 928 0098 0B       		.uleb128 0xb
+ 929 0099 27       		.uleb128 0x27
+ 930 009a 19       		.uleb128 0x19
+ 931 009b 11       		.uleb128 0x11
+ 932 009c 01       		.uleb128 0x1
+ 933 009d 12       		.uleb128 0x12
+ 934 009e 06       		.uleb128 0x6
+ 935 009f 40       		.uleb128 0x40
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 19
+
+
+ 936 00a0 18       		.uleb128 0x18
+ 937 00a1 9642     		.uleb128 0x2116
+ 938 00a3 19       		.uleb128 0x19
+ 939 00a4 01       		.uleb128 0x1
+ 940 00a5 13       		.uleb128 0x13
+ 941 00a6 00       		.byte	0
+ 942 00a7 00       		.byte	0
+ 943 00a8 0C       		.uleb128 0xc
+ 944 00a9 05       		.uleb128 0x5
+ 945 00aa 00       		.byte	0
+ 946 00ab 03       		.uleb128 0x3
+ 947 00ac 0E       		.uleb128 0xe
+ 948 00ad 3A       		.uleb128 0x3a
+ 949 00ae 0B       		.uleb128 0xb
+ 950 00af 3B       		.uleb128 0x3b
+ 951 00b0 0B       		.uleb128 0xb
+ 952 00b1 49       		.uleb128 0x49
+ 953 00b2 13       		.uleb128 0x13
+ 954 00b3 02       		.uleb128 0x2
+ 955 00b4 17       		.uleb128 0x17
+ 956 00b5 00       		.byte	0
+ 957 00b6 00       		.byte	0
+ 958 00b7 0D       		.uleb128 0xd
+ 959 00b8 34       		.uleb128 0x34
+ 960 00b9 00       		.byte	0
+ 961 00ba 03       		.uleb128 0x3
+ 962 00bb 0E       		.uleb128 0xe
+ 963 00bc 3A       		.uleb128 0x3a
+ 964 00bd 0B       		.uleb128 0xb
+ 965 00be 3B       		.uleb128 0x3b
+ 966 00bf 0B       		.uleb128 0xb
+ 967 00c0 49       		.uleb128 0x49
+ 968 00c1 13       		.uleb128 0x13
+ 969 00c2 1C       		.uleb128 0x1c
+ 970 00c3 0B       		.uleb128 0xb
+ 971 00c4 00       		.byte	0
+ 972 00c5 00       		.byte	0
+ 973 00c6 0E       		.uleb128 0xe
+ 974 00c7 34       		.uleb128 0x34
+ 975 00c8 00       		.byte	0
+ 976 00c9 03       		.uleb128 0x3
+ 977 00ca 0E       		.uleb128 0xe
+ 978 00cb 3A       		.uleb128 0x3a
+ 979 00cc 0B       		.uleb128 0xb
+ 980 00cd 3B       		.uleb128 0x3b
+ 981 00ce 0B       		.uleb128 0xb
+ 982 00cf 49       		.uleb128 0x49
+ 983 00d0 13       		.uleb128 0x13
+ 984 00d1 02       		.uleb128 0x2
+ 985 00d2 17       		.uleb128 0x17
+ 986 00d3 00       		.byte	0
+ 987 00d4 00       		.byte	0
+ 988 00d5 0F       		.uleb128 0xf
+ 989 00d6 26       		.uleb128 0x26
+ 990 00d7 00       		.byte	0
+ 991 00d8 49       		.uleb128 0x49
+ 992 00d9 13       		.uleb128 0x13
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 20
+
+
+ 993 00da 00       		.byte	0
+ 994 00db 00       		.byte	0
+ 995 00dc 10       		.uleb128 0x10
+ 996 00dd 34       		.uleb128 0x34
+ 997 00de 00       		.byte	0
+ 998 00df 03       		.uleb128 0x3
+ 999 00e0 0E       		.uleb128 0xe
+ 1000 00e1 3A       		.uleb128 0x3a
+ 1001 00e2 0B       		.uleb128 0xb
+ 1002 00e3 3B       		.uleb128 0x3b
+ 1003 00e4 05       		.uleb128 0x5
+ 1004 00e5 49       		.uleb128 0x49
+ 1005 00e6 13       		.uleb128 0x13
+ 1006 00e7 3F       		.uleb128 0x3f
+ 1007 00e8 19       		.uleb128 0x19
+ 1008 00e9 3C       		.uleb128 0x3c
+ 1009 00ea 19       		.uleb128 0x19
+ 1010 00eb 00       		.byte	0
+ 1011 00ec 00       		.byte	0
+ 1012 00ed 11       		.uleb128 0x11
+ 1013 00ee 35       		.uleb128 0x35
+ 1014 00ef 00       		.byte	0
+ 1015 00f0 49       		.uleb128 0x49
+ 1016 00f1 13       		.uleb128 0x13
+ 1017 00f2 00       		.byte	0
+ 1018 00f3 00       		.byte	0
+ 1019 00f4 12       		.uleb128 0x12
+ 1020 00f5 2E       		.uleb128 0x2e
+ 1021 00f6 00       		.byte	0
+ 1022 00f7 3F       		.uleb128 0x3f
+ 1023 00f8 19       		.uleb128 0x19
+ 1024 00f9 3C       		.uleb128 0x3c
+ 1025 00fa 19       		.uleb128 0x19
+ 1026 00fb 6E       		.uleb128 0x6e
+ 1027 00fc 0E       		.uleb128 0xe
+ 1028 00fd 03       		.uleb128 0x3
+ 1029 00fe 0E       		.uleb128 0xe
+ 1030 00ff 3A       		.uleb128 0x3a
+ 1031 0100 0B       		.uleb128 0xb
+ 1032 0101 3B       		.uleb128 0x3b
+ 1033 0102 0B       		.uleb128 0xb
+ 1034 0103 00       		.byte	0
+ 1035 0104 00       		.byte	0
+ 1036 0105 13       		.uleb128 0x13
+ 1037 0106 2E       		.uleb128 0x2e
+ 1038 0107 00       		.byte	0
+ 1039 0108 3F       		.uleb128 0x3f
+ 1040 0109 19       		.uleb128 0x19
+ 1041 010a 3C       		.uleb128 0x3c
+ 1042 010b 19       		.uleb128 0x19
+ 1043 010c 6E       		.uleb128 0x6e
+ 1044 010d 0E       		.uleb128 0xe
+ 1045 010e 03       		.uleb128 0x3
+ 1046 010f 0E       		.uleb128 0xe
+ 1047 0110 3A       		.uleb128 0x3a
+ 1048 0111 0B       		.uleb128 0xb
+ 1049 0112 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 21
+
+
+ 1050 0113 05       		.uleb128 0x5
+ 1051 0114 00       		.byte	0
+ 1052 0115 00       		.byte	0
+ 1053 0116 00       		.byte	0
+ 1054              		.section	.debug_loc,"",%progbits
+ 1055              	.Ldebug_loc0:
+ 1056              	.LLST0:
+ 1057 0000 08000000 		.4byte	.LVL5
+ 1058 0004 0A000000 		.4byte	.LVL6
+ 1059 0008 0100     		.2byte	0x1
+ 1060 000a 50       		.byte	0x50
+ 1061 000b 0A000000 		.4byte	.LVL6
+ 1062 000f 30000000 		.4byte	.LFE66
+ 1063 0013 0100     		.2byte	0x1
+ 1064 0015 54       		.byte	0x54
+ 1065 0016 00000000 		.4byte	0
+ 1066 001a 00000000 		.4byte	0
+ 1067              	.LLST1:
+ 1068 001e 08000000 		.4byte	.LVL13
+ 1069 0022 0A000000 		.4byte	.LVL14
+ 1070 0026 0100     		.2byte	0x1
+ 1071 0028 50       		.byte	0x50
+ 1072 0029 0A000000 		.4byte	.LVL14
+ 1073 002d 30000000 		.4byte	.LFE67
+ 1074 0031 0100     		.2byte	0x1
+ 1075 0033 54       		.byte	0x54
+ 1076 0034 00000000 		.4byte	0
+ 1077 0038 00000000 		.4byte	0
+ 1078              	.LLST2:
+ 1079 003c 00000000 		.4byte	.LVL20
+ 1080 0040 06000000 		.4byte	.LVL22
+ 1081 0044 0100     		.2byte	0x1
+ 1082 0046 50       		.byte	0x50
+ 1083 0047 06000000 		.4byte	.LVL22
+ 1084 004b 4C000000 		.4byte	.LFE68
+ 1085 004f 0400     		.2byte	0x4
+ 1086 0051 F3       		.byte	0xf3
+ 1087 0052 01       		.uleb128 0x1
+ 1088 0053 50       		.byte	0x50
+ 1089 0054 9F       		.byte	0x9f
+ 1090 0055 00000000 		.4byte	0
+ 1091 0059 00000000 		.4byte	0
+ 1092              	.LLST3:
+ 1093 005d 10000000 		.4byte	.LVL23
+ 1094 0061 14000000 		.4byte	.LVL24
+ 1095 0065 0800     		.2byte	0x8
+ 1096 0067 70       		.byte	0x70
+ 1097 0068 00       		.sleb128 0
+ 1098 0069 33       		.byte	0x33
+ 1099 006a 26       		.byte	0x26
+ 1100 006b 73       		.byte	0x73
+ 1101 006c 00       		.sleb128 0
+ 1102 006d 1C       		.byte	0x1c
+ 1103 006e 9F       		.byte	0x9f
+ 1104 006f 14000000 		.4byte	.LVL24
+ 1105 0073 17000000 		.4byte	.LVL25-1
+ 1106 0077 0100     		.2byte	0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 22
+
+
+ 1107 0079 50       		.byte	0x50
+ 1108 007a 17000000 		.4byte	.LVL25-1
+ 1109 007e 4C000000 		.4byte	.LFE68
+ 1110 0082 2F00     		.2byte	0x2f
+ 1111 0084 F3       		.byte	0xf3
+ 1112 0085 01       		.uleb128 0x1
+ 1113 0086 50       		.byte	0x50
+ 1114 0087 32       		.byte	0x32
+ 1115 0088 24       		.byte	0x24
+ 1116 0089 F3       		.byte	0xf3
+ 1117 008a 01       		.uleb128 0x1
+ 1118 008b 50       		.byte	0x50
+ 1119 008c 22       		.byte	0x22
+ 1120 008d 31       		.byte	0x31
+ 1121 008e 24       		.byte	0x24
+ 1122 008f F7       		.byte	0xf7
+ 1123 0090 33       		.uleb128 0x33
+ 1124 0091 F7       		.byte	0xf7
+ 1125 0092 25       		.uleb128 0x25
+ 1126 0093 0C       		.byte	0xc
+ 1127 0094 67666666 		.4byte	0x66666667
+ 1128 0098 F7       		.byte	0xf7
+ 1129 0099 25       		.uleb128 0x25
+ 1130 009a 1E       		.byte	0x1e
+ 1131 009b 08       		.byte	0x8
+ 1132 009c 20       		.byte	0x20
+ 1133 009d F7       		.byte	0xf7
+ 1134 009e 25       		.uleb128 0x25
+ 1135 009f 25       		.byte	0x25
+ 1136 00a0 F7       		.byte	0xf7
+ 1137 00a1 2C       		.uleb128 0x2c
+ 1138 00a2 33       		.byte	0x33
+ 1139 00a3 26       		.byte	0x26
+ 1140 00a4 F3       		.byte	0xf3
+ 1141 00a5 01       		.uleb128 0x1
+ 1142 00a6 50       		.byte	0x50
+ 1143 00a7 32       		.byte	0x32
+ 1144 00a8 24       		.byte	0x24
+ 1145 00a9 F3       		.byte	0xf3
+ 1146 00aa 01       		.uleb128 0x1
+ 1147 00ab 50       		.byte	0x50
+ 1148 00ac 22       		.byte	0x22
+ 1149 00ad 31       		.byte	0x31
+ 1150 00ae 24       		.byte	0x24
+ 1151 00af 4F       		.byte	0x4f
+ 1152 00b0 26       		.byte	0x26
+ 1153 00b1 1C       		.byte	0x1c
+ 1154 00b2 9F       		.byte	0x9f
+ 1155 00b3 00000000 		.4byte	0
+ 1156 00b7 00000000 		.4byte	0
+ 1157              	.LLST4:
+ 1158 00bb 2A000000 		.4byte	.LVL28
+ 1159 00bf 2E000000 		.4byte	.LVL29
+ 1160 00c3 0100     		.2byte	0x1
+ 1161 00c5 50       		.byte	0x50
+ 1162 00c6 2E000000 		.4byte	.LVL29
+ 1163 00ca 30000000 		.4byte	.LVL30
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 23
+
+
+ 1164 00ce 0400     		.2byte	0x4
+ 1165 00d0 70       		.byte	0x70
+ 1166 00d1 9878     		.sleb128 -1000
+ 1167 00d3 9F       		.byte	0x9f
+ 1168 00d4 00000000 		.4byte	0
+ 1169 00d8 00000000 		.4byte	0
+ 1170              	.LLST5:
+ 1171 00dc 00000000 		.4byte	.LVL33
+ 1172 00e0 0B000000 		.4byte	.LVL34-1
+ 1173 00e4 0100     		.2byte	0x1
+ 1174 00e6 50       		.byte	0x50
+ 1175 00e7 0B000000 		.4byte	.LVL34-1
+ 1176 00eb 3C000000 		.4byte	.LFE69
+ 1177 00ef 0400     		.2byte	0x4
+ 1178 00f1 F3       		.byte	0xf3
+ 1179 00f2 01       		.uleb128 0x1
+ 1180 00f3 50       		.byte	0x50
+ 1181 00f4 9F       		.byte	0x9f
+ 1182 00f5 00000000 		.4byte	0
+ 1183 00f9 00000000 		.4byte	0
+ 1184              	.LLST6:
+ 1185 00fd 00000000 		.4byte	.LVL41
+ 1186 0101 05000000 		.4byte	.LVL42-1
+ 1187 0105 0100     		.2byte	0x1
+ 1188 0107 50       		.byte	0x50
+ 1189 0108 05000000 		.4byte	.LVL42-1
+ 1190 010c 38000000 		.4byte	.LFE70
+ 1191 0110 0400     		.2byte	0x4
+ 1192 0112 F3       		.byte	0xf3
+ 1193 0113 01       		.uleb128 0x1
+ 1194 0114 50       		.byte	0x50
+ 1195 0115 9F       		.byte	0x9f
+ 1196 0116 00000000 		.4byte	0
+ 1197 011a 00000000 		.4byte	0
+ 1198              		.section	.debug_aranges,"",%progbits
+ 1199 0000 4C000000 		.4byte	0x4c
+ 1200 0004 0200     		.2byte	0x2
+ 1201 0006 00000000 		.4byte	.Ldebug_info0
+ 1202 000a 04       		.byte	0x4
+ 1203 000b 00       		.byte	0
+ 1204 000c 0000     		.2byte	0
+ 1205 000e 0000     		.2byte	0
+ 1206 0010 00000000 		.4byte	.LFB64
+ 1207 0014 14000000 		.4byte	.LFE64-.LFB64
+ 1208 0018 00000000 		.4byte	.LFB65
+ 1209 001c 14000000 		.4byte	.LFE65-.LFB65
+ 1210 0020 00000000 		.4byte	.LFB66
+ 1211 0024 30000000 		.4byte	.LFE66-.LFB66
+ 1212 0028 00000000 		.4byte	.LFB67
+ 1213 002c 30000000 		.4byte	.LFE67-.LFB67
+ 1214 0030 00000000 		.4byte	.LFB68
+ 1215 0034 4C000000 		.4byte	.LFE68-.LFB68
+ 1216 0038 00000000 		.4byte	.LFB69
+ 1217 003c 3C000000 		.4byte	.LFE69-.LFB69
+ 1218 0040 00000000 		.4byte	.LFB70
+ 1219 0044 38000000 		.4byte	.LFE70-.LFB70
+ 1220 0048 00000000 		.4byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 24
+
+
+ 1221 004c 00000000 		.4byte	0
+ 1222              		.section	.debug_ranges,"",%progbits
+ 1223              	.Ldebug_ranges0:
+ 1224 0000 00000000 		.4byte	.LFB64
+ 1225 0004 14000000 		.4byte	.LFE64
+ 1226 0008 00000000 		.4byte	.LFB65
+ 1227 000c 14000000 		.4byte	.LFE65
+ 1228 0010 00000000 		.4byte	.LFB66
+ 1229 0014 30000000 		.4byte	.LFE66
+ 1230 0018 00000000 		.4byte	.LFB67
+ 1231 001c 30000000 		.4byte	.LFE67
+ 1232 0020 00000000 		.4byte	.LFB68
+ 1233 0024 4C000000 		.4byte	.LFE68
+ 1234 0028 00000000 		.4byte	.LFB69
+ 1235 002c 3C000000 		.4byte	.LFE69
+ 1236 0030 00000000 		.4byte	.LFB70
+ 1237 0034 38000000 		.4byte	.LFE70
+ 1238 0038 00000000 		.4byte	0
+ 1239 003c 00000000 		.4byte	0
+ 1240              		.section	.debug_line,"",%progbits
+ 1241              	.Ldebug_line0:
+ 1242 0000 78020000 		.section	.debug_str,"MS",%progbits,1
+ 1242      0200E801 
+ 1242      00000201 
+ 1242      FB0E0D00 
+ 1242      01010101 
+ 1243              	.LASF9:
+ 1244 0000 5F5F696E 		.ascii	"__int32_t\000"
+ 1244      7433325F 
+ 1244      7400
+ 1245              	.LASF22:
+ 1246 000a 74686574 		.ascii	"theta\000"
+ 1246      6100
+ 1247              	.LASF28:
+ 1248 0010 47726970 		.ascii	"Gripper_Servo_PWM_WriteCompare\000"
+ 1248      7065725F 
+ 1248      53657276 
+ 1248      6F5F5057 
+ 1248      4D5F5772 
+ 1249              	.LASF25:
+ 1250 002f 64657369 		.ascii	"desiredPosition\000"
+ 1250      72656450 
+ 1250      6F736974 
+ 1250      696F6E00 
+ 1251              	.LASF11:
+ 1252 003f 666C6F61 		.ascii	"float\000"
+ 1252      7400
+ 1253              	.LASF0:
+ 1254 0045 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1254      206C6F6E 
+ 1254      6720756E 
+ 1254      7369676E 
+ 1254      65642069 
+ 1255              	.LASF3:
+ 1256 005c 756E7369 		.ascii	"unsigned char\000"
+ 1256      676E6564 
+ 1256      20636861 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 25
+
+
+ 1256      7200
+ 1257              	.LASF35:
+ 1258 006a 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1258      43313120 
+ 1258      352E342E 
+ 1258      31203230 
+ 1258      31363036 
+ 1259 009d 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1259      20726576 
+ 1259      6973696F 
+ 1259      6E203233 
+ 1259      37373135 
+ 1260 00d0 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1260      66756E63 
+ 1260      74696F6E 
+ 1260      2D736563 
+ 1260      74696F6E 
+ 1261              	.LASF7:
+ 1262 00f8 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1262      20756E73 
+ 1262      69676E65 
+ 1262      6420696E 
+ 1262      7400
+ 1263              	.LASF30:
+ 1264 010a 5261636B 		.ascii	"Rack_Servo_PWM_ReadCompare\000"
+ 1264      5F536572 
+ 1264      766F5F50 
+ 1264      574D5F52 
+ 1264      65616443 
+ 1265              	.LASF38:
+ 1266 0125 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1266      52784275 
+ 1266      66666572 
+ 1266      00
+ 1267              	.LASF12:
+ 1268 0132 646F7562 		.ascii	"double\000"
+ 1268      6C6500
+ 1269              	.LASF33:
+ 1270 0139 47726970 		.ascii	"Gripper_Servo_PWM_Start\000"
+ 1270      7065725F 
+ 1270      53657276 
+ 1270      6F5F5057 
+ 1270      4D5F5374 
+ 1271              	.LASF26:
+ 1272 0151 616D6F75 		.ascii	"amount\000"
+ 1272      6E7400
+ 1273              	.LASF32:
+ 1274 0158 726F756E 		.ascii	"round\000"
+ 1274      6400
+ 1275              	.LASF16:
+ 1276 015e 61726D4F 		.ascii	"armOpen\000"
+ 1276      70656E00 
+ 1277              	.LASF1:
+ 1278 0166 756E7369 		.ascii	"unsigned int\000"
+ 1278      676E6564 
+ 1278      20696E74 
+ 1278      00
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 26
+
+
+ 1279              	.LASF18:
+ 1280 0173 61726D55 		.ascii	"armUp\000"
+ 1280      7000
+ 1281              	.LASF36:
+ 1282 0179 73657276 		.ascii	"servo.c\000"
+ 1282      6F2E6300 
+ 1283              	.LASF20:
+ 1284 0181 61726D4D 		.ascii	"armMoveUpDown\000"
+ 1284      6F766555 
+ 1284      70446F77 
+ 1284      6E00
+ 1285              	.LASF10:
+ 1286 018f 696E7433 		.ascii	"int32_t\000"
+ 1286      325F7400 
+ 1287              	.LASF15:
+ 1288 0197 73697A65 		.ascii	"sizetype\000"
+ 1288      74797065 
+ 1288      00
+ 1289              	.LASF31:
+ 1290 01a0 5261636B 		.ascii	"Rack_Servo_PWM_WriteCompare\000"
+ 1290      5F536572 
+ 1290      766F5F50 
+ 1290      574D5F57 
+ 1290      72697465 
+ 1291              	.LASF5:
+ 1292 01bc 73686F72 		.ascii	"short unsigned int\000"
+ 1292      7420756E 
+ 1292      7369676E 
+ 1292      65642069 
+ 1292      6E7400
+ 1293              	.LASF8:
+ 1294 01cf 6C6F6E67 		.ascii	"long long int\000"
+ 1294      206C6F6E 
+ 1294      6720696E 
+ 1294      7400
+ 1295              	.LASF13:
+ 1296 01dd 63686172 		.ascii	"char\000"
+ 1296      00
+ 1297              	.LASF34:
+ 1298 01e2 5261636B 		.ascii	"Rack_Servo_PWM_Start\000"
+ 1298      5F536572 
+ 1298      766F5F50 
+ 1298      574D5F53 
+ 1298      74617274 
+ 1299              	.LASF23:
+ 1300 01f7 636F6D70 		.ascii	"compare_val\000"
+ 1300      6172655F 
+ 1300      76616C00 
+ 1301              	.LASF27:
+ 1302 0203 7261636B 		.ascii	"rackAngle\000"
+ 1302      416E676C 
+ 1302      6500
+ 1303              	.LASF4:
+ 1304 020d 73686F72 		.ascii	"short int\000"
+ 1304      7420696E 
+ 1304      7400
+ 1305              	.LASF37:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cc7MJM1e.s 			page 27
+
+
+ 1306 0217 5C5C6164 		.ascii	"\\\\ad.monash.edu\\home\\User026\\bamcg3\\Documents"
+ 1306      2E6D6F6E 
+ 1306      6173682E 
+ 1306      6564755C 
+ 1306      686F6D65 
+ 1307 0244 5C454345 		.ascii	"\\ECE3091\\Robot\\Robot\\ColourSensor.cydsn\000"
+ 1307      33303931 
+ 1307      5C526F62 
+ 1307      6F745C52 
+ 1307      6F626F74 
+ 1308              	.LASF6:
+ 1309 026c 6C6F6E67 		.ascii	"long int\000"
+ 1309      20696E74 
+ 1309      00
+ 1310              	.LASF14:
+ 1311 0275 6C6F6E67 		.ascii	"long double\000"
+ 1311      20646F75 
+ 1311      626C6500 
+ 1312              	.LASF2:
+ 1313 0281 7369676E 		.ascii	"signed char\000"
+ 1313      65642063 
+ 1313      68617200 
+ 1314              	.LASF17:
+ 1315 028d 61726D43 		.ascii	"armClose\000"
+ 1315      6C6F7365 
+ 1315      00
+ 1316              	.LASF19:
+ 1317 0296 61726D44 		.ascii	"armDown\000"
+ 1317      6F776E00 
+ 1318              	.LASF24:
+ 1319 029e 67726970 		.ascii	"gripperAngle\000"
+ 1319      70657241 
+ 1319      6E676C65 
+ 1319      00
+ 1320              	.LASF29:
+ 1321 02ab 43794465 		.ascii	"CyDelay\000"
+ 1321      6C617900 
+ 1322              	.LASF21:
+ 1323 02b3 47454152 		.ascii	"GEAR_RADIUS\000"
+ 1323      5F524144 
+ 1323      49555300 
+ 1324              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
