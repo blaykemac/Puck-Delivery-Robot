@@ -33,6 +33,7 @@ uint8 ultrasonic_mux_control = 0;
 int block_start = 0;
 
 
+
 //int distance;
 char output[40];
 
@@ -158,7 +159,7 @@ void ultrasonicInterruptHandler(){
 			block_start = 0; // We have found the east edge of the block
 			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
 			sweeping = 0;
-			state = 
+			// state = 
 
 			
 			
@@ -168,7 +169,12 @@ void ultrasonicInterruptHandler(){
     
 }
 
-    
+int takeColourMeasurement(void){ // Return an integer from 0-3 indicating the guess of colour - Null, Red, Green, Blue
+    // Complete
+    int prediction = 0; // Edit this with correct integer
+    return prediction;
+}
+
 void printSensorToUART(int sensorNumber, float distanceMeasured){
      
     // Print distance to UART

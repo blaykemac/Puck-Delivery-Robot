@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
 
 
    1              		.syntax unified
@@ -19,16 +19,15 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 1
   16              		.text
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
-  19              		.global	__aeabi_f2d
-  20              		.section	.text.printSensorToUART,"ax",%progbits
-  21              		.align	2
-  22              		.global	printSensorToUART
-  23              		.thumb
-  24              		.thumb_func
-  25              		.type	printSensorToUART, %function
-  26              	printSensorToUART:
-  27              	.LFB65:
-  28              		.file 1 "ultrasonic.c"
+  19              		.section	.text.takeColourMeasurement,"ax",%progbits
+  20              		.align	2
+  21              		.global	takeColourMeasurement
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	takeColourMeasurement, %function
+  25              	takeColourMeasurement:
+  26              	.LFB65:
+  27              		.file 1 "ultrasonic.c"
    1:ultrasonic.c  **** /* ========================================
    2:ultrasonic.c  ****  *
    3:ultrasonic.c  ****  * Copyright YOUR COMPANY, THE YEAR
@@ -41,2444 +40,2226 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 1
   10:ultrasonic.c  ****  * ========================================
   11:ultrasonic.c  **** */
   12:ultrasonic.c  **** 
-  13:ultrasonic.c  **** #include "main.h"
-  14:ultrasonic.c  **** #include "ultrasonic.h"
-  15:ultrasonic.c  **** #include "project.h"
-  16:ultrasonic.c  **** #include "dcmotor.h"
-  17:ultrasonic.c  **** 
-  18:ultrasonic.c  **** // * C LIBRARIES * // 
-  19:ultrasonic.c  **** #include "stdlib.h"
-  20:ultrasonic.c  **** #include <stdio.h>
-  21:ultrasonic.c  **** #include <math.h>
-  22:ultrasonic.c  **** 
-  23:ultrasonic.c  **** 
-  24:ultrasonic.c  **** /* Define constants */
+  13:ultrasonic.c  **** // * Custom Libraries * //
+  14:ultrasonic.c  **** #include "main.h"
+  15:ultrasonic.c  **** #include "ultrasonic.h"
+  16:ultrasonic.c  **** #include "project.h"
+  17:ultrasonic.c  **** #include "dcmotor.h"
+  18:ultrasonic.c  **** #include "customMath.h"
+  19:ultrasonic.c  **** 
+  20:ultrasonic.c  **** // * C LIBRARIES * // 
+  21:ultrasonic.c  **** #include "stdlib.h"
+  22:ultrasonic.c  **** #include <stdio.h>
+  23:ultrasonic.c  **** #include <math.h>
+  24:ultrasonic.c  **** 
   25:ultrasonic.c  **** 
-  26:ultrasonic.c  **** #define TOTAL_SONIC_SENSORS 5
+  26:ultrasonic.c  **** /* Declare global variables */
   27:ultrasonic.c  **** 
-  28:ultrasonic.c  **** #define LEFT_SIDE 0
-  29:ultrasonic.c  **** #define LEFT_FRONT 1
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 2
+  28:ultrasonic.c  **** int i = 0;
+  29:ultrasonic.c  **** int count = 0;
+  30:ultrasonic.c  **** int distance_measured = 0; 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 2
 
 
-  30:ultrasonic.c  **** #define RIGHT_FRONT 2
-  31:ultrasonic.c  **** #define RIGHT_SIDE 3
-  32:ultrasonic.c  **** #define BACK 4
-  33:ultrasonic.c  **** 
-  34:ultrasonic.c  **** #define FINISH_CENTER_FROM_E 47
+  31:ultrasonic.c  **** float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0};
+  32:ultrasonic.c  **** uint8 ultrasonic_mux_control = 0;
+  33:ultrasonic.c  **** int block_start = 0;
+  34:ultrasonic.c  **** 
   35:ultrasonic.c  **** 
-  36:ultrasonic.c  **** #define SENSOR_PULSE_DELAY_MS 50
-  37:ultrasonic.c  **** 
-  38:ultrasonic.c  **** /* Declare global variables */
+  36:ultrasonic.c  **** 
+  37:ultrasonic.c  **** //int distance;
+  38:ultrasonic.c  **** char output[40];
   39:ultrasonic.c  **** 
-  40:ultrasonic.c  **** int i = 0;
-  41:ultrasonic.c  **** int count = 0;
-  42:ultrasonic.c  **** int distance_measured = 0; 
-  43:ultrasonic.c  **** float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0};
-  44:ultrasonic.c  **** uint8 ultrasonic_mux_control = 0;
-  45:ultrasonic.c  **** 
-  46:ultrasonic.c  **** 
-  47:ultrasonic.c  **** //int distance;
-  48:ultrasonic.c  **** char output[40];
-  49:ultrasonic.c  **** 
-  50:ultrasonic.c  **** void ultrasonicInterruptHandler(){
-  51:ultrasonic.c  ****     //UART_1_PutString("Interrupt \n");
-  52:ultrasonic.c  ****     Timer_1_ReadStatusRegister();   // CLEARS INTERRUPTS 
-  53:ultrasonic.c  ****     count = Timer_1_ReadCounter();
-  54:ultrasonic.c  ****     Timer_1_Stop();
-  55:ultrasonic.c  ****     
-  56:ultrasonic.c  ****     // Calculate distances based off timer counts
-  57:ultrasonic.c  ****     //ultrasonic_distances[ultrasonic_mux_control] = distanceFromCount(count);
-  58:ultrasonic.c  ****     ultrasonic_distances[ultrasonic_mux_control] = 0.172413*(65536-count) / 10;
-  59:ultrasonic.c  ****     
-  60:ultrasonic.c  ****     printSensorToUART(ultrasonic_mux_control, ultrasonic_distances[ultrasonic_mux_control]);    // 
-  61:ultrasonic.c  ****     
-  62:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < 24 || ultrasonic_distances[RIGH
-  63:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-  64:ultrasonic.c  ****         if(state == STATE_GO_WEST){
-  65:ultrasonic.c  ****             driveStraightEnable = 0;
-  66:ultrasonic.c  ****             westWall = 1;
-  67:ultrasonic.c  ****            // state = STATE_GO_NORTH_CAREFUL;
-  68:ultrasonic.c  ****             Motor_1_driver_Sleep();
-  69:ultrasonic.c  ****             Motor_2_driver_Sleep();
-  70:ultrasonic.c  ****             
-  71:ultrasonic.c  ****         }
-  72:ultrasonic.c  ****     }
-  73:ultrasonic.c  ****     
-  74:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < 30 || ultrasonic_distances[RIGH
-  75:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-  76:ultrasonic.c  ****         if(state == STATE_GO_NORTH_CAREFUL && ultrasonic_mux_control == 4){
-  77:ultrasonic.c  ****             driveStraightEnable = 0;
-  78:ultrasonic.c  ****             northWall = 1;
-  79:ultrasonic.c  ****             //state = STATE_GO_NORTH_CARELESS;
-  80:ultrasonic.c  ****             Motor_1_driver_Sleep();
-  81:ultrasonic.c  ****             Motor_2_driver_Sleep();
-  82:ultrasonic.c  ****             
-  83:ultrasonic.c  ****         }
-  84:ultrasonic.c  ****     }
-  85:ultrasonic.c  ****     
-  86:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < NW_PUCK_POSITION_FROM_NORTH - 1
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 3
-
-
-  87:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-  88:ultrasonic.c  ****         if(state == STATE_GO_NORTH_CARELESS && ultrasonic_mux_control == 4){
-  89:ultrasonic.c  ****             driveStraightEnable = 0;
-  90:ultrasonic.c  ****             Motor_1_driver_Sleep();
-  91:ultrasonic.c  ****             Motor_2_driver_Sleep();
-  92:ultrasonic.c  ****             
-  93:ultrasonic.c  ****         }
-  94:ultrasonic.c  ****     }
-  95:ultrasonic.c  ****     
-  96:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[BACK] > NW_PUCK_POSITION_FROM_WEST - 31 - 10 
-  97:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-  98:ultrasonic.c  ****         if(state == STATE_FORWARD_TO_PUCK && ultrasonic_mux_control == 4){
-  99:ultrasonic.c  ****             driveStraightEnable = 0;
- 100:ultrasonic.c  ****            // northWall = 1;
- 101:ultrasonic.c  ****             //state = STATE_GO_NORTH_CARELESS;
- 102:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 103:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 104:ultrasonic.c  ****             
- 105:ultrasonic.c  ****         }
- 106:ultrasonic.c  ****     }
- 107:ultrasonic.c  ****     
- 108:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[BACK] < 13   ) && ( ultrasonic_distances[BACK
- 109:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 110:ultrasonic.c  ****         if(state == STATE_RETURN_TO_NW_FROM_PUCK && ultrasonic_mux_control == 4){
- 111:ultrasonic.c  ****             driveStraightEnable = 0;
- 112:ultrasonic.c  ****            // northWall = 1;
- 113:ultrasonic.c  ****             //state = STATE_GO_NORTH_CARELESS;
- 114:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 115:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 116:ultrasonic.c  ****             
- 117:ultrasonic.c  ****         }
- 118:ultrasonic.c  ****     }
- 119:ultrasonic.c  ****     
- 120:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[BACK] < 10 ) && ( ultrasonic_distances[BACK] 
- 121:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 122:ultrasonic.c  ****         if(state == STATE_RETURN_HOME_SIDE && ultrasonic_mux_control == 4){
- 123:ultrasonic.c  ****             driveStraightEnable = 0;
- 124:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 125:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 126:ultrasonic.c  ****             
- 127:ultrasonic.c  ****         }
- 128:ultrasonic.c  ****     }
- 129:ultrasonic.c  ****     
- 130:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[RIGHT_FRONT] < FINISH_CENTER_FROM_E - 5 ) && 
- 131:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 132:ultrasonic.c  ****         if(state == STATE_LAND_ON_HOME_BASE && ultrasonic_mux_control == 4){
- 133:ultrasonic.c  ****             driveStraightEnable = 0;
- 134:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 135:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 136:ultrasonic.c  ****             
- 137:ultrasonic.c  ****         }
- 138:ultrasonic.c  ****     }
- 139:ultrasonic.c  ****     
- 140:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[RIGHT_FRONT] > FINISH_CENTER_FROM_E - 5 ) && 
- 141:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 142:ultrasonic.c  ****         if(state == STATE_FINISH_LANDING && ultrasonic_mux_control == 4){
- 143:ultrasonic.c  ****             driveStraightEnable = 0;
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 4
-
-
- 144:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 145:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 146:ultrasonic.c  ****             
- 147:ultrasonic.c  ****         }
- 148:ultrasonic.c  ****     }
- 149:ultrasonic.c  ****     
- 150:ultrasonic.c  ****     
- 151:ultrasonic.c  **** }
- 152:ultrasonic.c  **** 
- 153:ultrasonic.c  ****     
- 154:ultrasonic.c  **** void printSensorToUART(int sensorNumber, float distanceMeasured){
-  29              		.loc 1 154 0
-  30              		.cfi_startproc
-  31              		@ args = 0, pretend = 0, frame = 0
-  32              		@ frame_needed = 0, uses_anonymous_args = 0
-  33              	.LVL0:
-  34 0000 30B5     		push	{r4, r5, lr}
-  35              		.cfi_def_cfa_offset 12
-  36              		.cfi_offset 4, -12
-  37              		.cfi_offset 5, -8
-  38              		.cfi_offset 14, -4
-  39 0002 83B0     		sub	sp, sp, #12
-  40              		.cfi_def_cfa_offset 24
-  41 0004 0546     		mov	r5, r0
- 155:ultrasonic.c  ****      
- 156:ultrasonic.c  ****     // Print distance to UART
- 157:ultrasonic.c  ****     //sprintf(output, "Ultrasonic Sensor %d - distance: %dmm\n", sensorNumber, distanceMeasured);
- 158:ultrasonic.c  ****     sprintf(output, "%d: %fmm\n", sensorNumber, distanceMeasured);
-  42              		.loc 1 158 0
-  43 0006 084C     		ldr	r4, .L3
-  44 0008 0846     		mov	r0, r1
-  45              	.LVL1:
-  46 000a FFF7FEFF 		bl	__aeabi_f2d
-  47              	.LVL2:
-  48 000e CDE90001 		strd	r0, [sp]
-  49 0012 2A46     		mov	r2, r5
-  50 0014 0549     		ldr	r1, .L3+4
-  51 0016 2046     		mov	r0, r4
-  52 0018 FFF7FEFF 		bl	sprintf
-  53              	.LVL3:
- 159:ultrasonic.c  ****     UART_1_PutString(output);
-  54              		.loc 1 159 0
-  55 001c 2046     		mov	r0, r4
-  56 001e FFF7FEFF 		bl	UART_1_PutString
-  57              	.LVL4:
- 160:ultrasonic.c  **** 
- 161:ultrasonic.c  **** }
-  58              		.loc 1 161 0
-  59 0022 03B0     		add	sp, sp, #12
-  60              		.cfi_def_cfa_offset 12
-  61              		@ sp needed
-  62 0024 30BD     		pop	{r4, r5, pc}
-  63              	.LVL5:
-  64              	.L4:
-  65 0026 00BF     		.align	2
-  66              	.L3:
-  67 0028 00000000 		.word	output
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 5
-
-
-  68 002c 00000000 		.word	.LC0
-  69              		.cfi_endproc
-  70              	.LFE65:
-  71              		.size	printSensorToUART, .-printSensorToUART
-  72              		.global	__aeabi_i2d
-  73              		.global	__aeabi_dmul
-  74              		.global	__aeabi_ddiv
-  75              		.global	__aeabi_d2f
-  76              		.global	__aeabi_fcmplt
-  77              		.global	__aeabi_fcmpgt
-  78              		.section	.text.ultrasonicInterruptHandler,"ax",%progbits
-  79              		.align	2
-  80              		.global	ultrasonicInterruptHandler
-  81              		.thumb
-  82              		.thumb_func
-  83              		.type	ultrasonicInterruptHandler, %function
-  84              	ultrasonicInterruptHandler:
-  85              	.LFB64:
-  50:ultrasonic.c  ****     //UART_1_PutString("Interrupt \n");
-  86              		.loc 1 50 0
-  87              		.cfi_startproc
-  88              		@ args = 0, pretend = 0, frame = 0
-  89              		@ frame_needed = 0, uses_anonymous_args = 0
-  90 0000 38B5     		push	{r3, r4, r5, lr}
-  91              		.cfi_def_cfa_offset 16
-  92              		.cfi_offset 3, -16
-  93              		.cfi_offset 4, -12
-  94              		.cfi_offset 5, -8
-  95              		.cfi_offset 14, -4
-  52:ultrasonic.c  ****     count = Timer_1_ReadCounter();
-  96              		.loc 1 52 0
-  97 0002 FFF7FEFF 		bl	Timer_1_ReadStatusRegister
-  98              	.LVL6:
-  53:ultrasonic.c  ****     Timer_1_Stop();
-  99              		.loc 1 53 0
- 100 0006 FFF7FEFF 		bl	Timer_1_ReadCounter
- 101              	.LVL7:
- 102 000a 934C     		ldr	r4, .L53+8
- 103 000c 2060     		str	r0, [r4]
-  54:ultrasonic.c  ****     
- 104              		.loc 1 54 0
- 105 000e FFF7FEFF 		bl	Timer_1_Stop
- 106              	.LVL8:
-  58:ultrasonic.c  ****     
- 107              		.loc 1 58 0
- 108 0012 2579     		ldrb	r5, [r4, #4]	@ zero_extendqisi2
- 109 0014 2068     		ldr	r0, [r4]
- 110 0016 C0F58030 		rsb	r0, r0, #65536
- 111 001a FFF7FEFF 		bl	__aeabi_i2d
- 112              	.LVL9:
- 113 001e 8CA3     		adr	r3, .L53
- 114 0020 D3E90023 		ldrd	r2, [r3]
- 115 0024 FFF7FEFF 		bl	__aeabi_dmul
- 116              	.LVL10:
- 117 0028 0022     		movs	r2, #0
- 118 002a 8C4B     		ldr	r3, .L53+12
- 119 002c FFF7FEFF 		bl	__aeabi_ddiv
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 6
-
-
- 120              	.LVL11:
- 121 0030 FFF7FEFF 		bl	__aeabi_d2f
- 122              	.LVL12:
- 123 0034 0146     		mov	r1, r0
- 124 0036 04EB8504 		add	r4, r4, r5, lsl #2
- 125 003a A060     		str	r0, [r4, #8]	@ float
+  40:ultrasonic.c  **** void ultrasonicInterruptHandler(){
+  41:ultrasonic.c  ****     //UART_1_PutString("Interrupt \n");
+  42:ultrasonic.c  ****     Timer_1_ReadStatusRegister();   // CLEARS INTERRUPTS 
+  43:ultrasonic.c  ****     count = Timer_1_ReadCounter();
+  44:ultrasonic.c  ****     Timer_1_Stop();
+  45:ultrasonic.c  ****     
+  46:ultrasonic.c  ****     // Calculate distances based off timer counts
+  47:ultrasonic.c  ****     //ultrasonic_distances[ultrasonic_mux_control] = distanceFromCount(count);
+  48:ultrasonic.c  ****     ultrasonic_distances[ultrasonic_mux_control] = 0.172413*(65536-count) / 10;
+  49:ultrasonic.c  ****     
+  50:ultrasonic.c  ****     printSensorToUART(ultrasonic_mux_control, ultrasonic_distances[ultrasonic_mux_control]);    // 
+  51:ultrasonic.c  ****     
+  52:ultrasonic.c  ****     // In this state 
+  53:ultrasonic.c  ****     if (state == STATE_SCAN_PLAN){
+  54:ultrasonic.c  ****         
+  55:ultrasonic.c  ****         if (averageSensor(ultrasonic_distances[LEFT_FRONT], ultrasonic_distances[LEFT_FRONT] ) > pu
+  56:ultrasonic.c  ****                 puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
+  57:ultrasonic.c  ****         }
+  58:ultrasonic.c  ****         
+  59:ultrasonic.c  ****     }
   60:ultrasonic.c  ****     
- 126              		.loc 1 60 0
- 127 003c 2846     		mov	r0, r5
- 128 003e FFF7FEFF 		bl	printSensorToUART
- 129              	.LVL13:
-  62:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 130              		.loc 1 62 0
- 131 0042 874B     		ldr	r3, .L53+16
- 132 0044 1B68     		ldr	r3, [r3]
- 133 0046 33B3     		cbz	r3, .L6
-  62:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 134              		.loc 1 62 0 is_stmt 0 discriminator 1
- 135 0048 834B     		ldr	r3, .L53+8
- 136 004a DC68     		ldr	r4, [r3, #12]	@ float
- 137 004c 8549     		ldr	r1, .L53+20
- 138 004e 2046     		mov	r0, r4
- 139 0050 FFF7FEFF 		bl	__aeabi_fcmplt
- 140              	.LVL14:
- 141 0054 28B9     		cbnz	r0, .L7
-  62:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 142              		.loc 1 62 0 discriminator 3
- 143 0056 8349     		ldr	r1, .L53+20
- 144 0058 7F4B     		ldr	r3, .L53+8
- 145 005a 1869     		ldr	r0, [r3, #16]	@ float
- 146 005c FFF7FEFF 		bl	__aeabi_fcmplt
- 147              	.LVL15:
- 148 0060 C8B1     		cbz	r0, .L6
- 149              	.L7:
-  62:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 150              		.loc 1 62 0 discriminator 4
- 151 0062 4FF07E51 		mov	r1, #1065353216
- 152 0066 2046     		mov	r0, r4
- 153 0068 FFF7FEFF 		bl	__aeabi_fcmpgt
- 154              	.LVL16:
- 155 006c 98B1     		cbz	r0, .L6
-  62:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 156              		.loc 1 62 0 discriminator 5
- 157 006e 4FF07E51 		mov	r1, #1065353216
- 158 0072 794B     		ldr	r3, .L53+8
- 159 0074 1869     		ldr	r0, [r3, #16]	@ float
- 160 0076 FFF7FEFF 		bl	__aeabi_fcmpgt
- 161              	.LVL17:
- 162 007a 60B1     		cbz	r0, .L6
-  64:ultrasonic.c  ****             driveStraightEnable = 0;
- 163              		.loc 1 64 0 is_stmt 1
- 164 007c 7A4B     		ldr	r3, .L53+24
- 165 007e 1B68     		ldr	r3, [r3]
- 166 0080 4BB9     		cbnz	r3, .L6
-  65:ultrasonic.c  ****             westWall = 1;
- 167              		.loc 1 65 0
- 168 0082 0022     		movs	r2, #0
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 7
+  61:ultrasonic.c  ****     /*
+  62:ultrasonic.c  ****     
+  63:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < 24 || ultrasonic_distances[RIGH
+  64:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+  65:ultrasonic.c  ****         if(state == STATE_GO_WEST){
+  66:ultrasonic.c  ****             driveStraightEnable = 0;
+  67:ultrasonic.c  ****             westWall = 1;
+  68:ultrasonic.c  ****            // state = STATE_GO_NORTH_CAREFUL;
+  69:ultrasonic.c  ****             Motor_1_driver_Sleep();
+  70:ultrasonic.c  ****             Motor_2_driver_Sleep();
+  71:ultrasonic.c  ****             
+  72:ultrasonic.c  ****         }
+  73:ultrasonic.c  ****     }
+  74:ultrasonic.c  ****     
+  75:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < 30 || ultrasonic_distances[RIGH
+  76:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+  77:ultrasonic.c  ****         if(state == STATE_GO_NORTH_CAREFUL && ultrasonic_mux_control == 4){
+  78:ultrasonic.c  ****             driveStraightEnable = 0;
+  79:ultrasonic.c  ****             northWall = 1;
+  80:ultrasonic.c  ****             //state = STATE_GO_NORTH_CARELESS;
+  81:ultrasonic.c  ****             Motor_1_driver_Sleep();
+  82:ultrasonic.c  ****             Motor_2_driver_Sleep();
+  83:ultrasonic.c  ****             
+  84:ultrasonic.c  ****         }
+  85:ultrasonic.c  ****     }
+  86:ultrasonic.c  ****     
+  87:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < NW_PUCK_POSITION_FROM_NORTH - 1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 3
 
 
- 169 0084 764B     		ldr	r3, .L53+16
- 170 0086 1A60     		str	r2, [r3]
-  66:ultrasonic.c  ****            // state = STATE_GO_NORTH_CAREFUL;
- 171              		.loc 1 66 0
- 172 0088 0122     		movs	r2, #1
- 173 008a 784B     		ldr	r3, .L53+28
- 174 008c 1A60     		str	r2, [r3]
-  68:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 175              		.loc 1 68 0
- 176 008e FFF7FEFF 		bl	Motor_1_driver_Sleep
- 177              	.LVL18:
-  69:ultrasonic.c  ****             
- 178              		.loc 1 69 0
- 179 0092 FFF7FEFF 		bl	Motor_2_driver_Sleep
- 180              	.LVL19:
- 181              	.L6:
-  74:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 182              		.loc 1 74 0
- 183 0096 724B     		ldr	r3, .L53+16
- 184 0098 1B68     		ldr	r3, [r3]
- 185 009a 5BB3     		cbz	r3, .L11
-  74:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 186              		.loc 1 74 0 is_stmt 0 discriminator 1
- 187 009c 6E4B     		ldr	r3, .L53+8
- 188 009e DC68     		ldr	r4, [r3, #12]	@ float
- 189 00a0 7349     		ldr	r1, .L53+32
- 190 00a2 2046     		mov	r0, r4
- 191 00a4 FFF7FEFF 		bl	__aeabi_fcmplt
- 192              	.LVL20:
- 193 00a8 28B9     		cbnz	r0, .L12
-  74:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 194              		.loc 1 74 0 discriminator 3
- 195 00aa 7149     		ldr	r1, .L53+32
- 196 00ac 6A4B     		ldr	r3, .L53+8
- 197 00ae 1869     		ldr	r0, [r3, #16]	@ float
- 198 00b0 FFF7FEFF 		bl	__aeabi_fcmplt
- 199              	.LVL21:
- 200 00b4 F0B1     		cbz	r0, .L11
- 201              	.L12:
-  74:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 202              		.loc 1 74 0 discriminator 4
- 203 00b6 4FF07E51 		mov	r1, #1065353216
- 204 00ba 2046     		mov	r0, r4
- 205 00bc FFF7FEFF 		bl	__aeabi_fcmpgt
- 206              	.LVL22:
- 207 00c0 C0B1     		cbz	r0, .L11
-  74:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 208              		.loc 1 74 0 discriminator 5
- 209 00c2 4FF07E51 		mov	r1, #1065353216
- 210 00c6 644B     		ldr	r3, .L53+8
- 211 00c8 1869     		ldr	r0, [r3, #16]	@ float
- 212 00ca FFF7FEFF 		bl	__aeabi_fcmpgt
- 213              	.LVL23:
- 214 00ce 88B1     		cbz	r0, .L11
-  76:ultrasonic.c  ****             driveStraightEnable = 0;
- 215              		.loc 1 76 0 is_stmt 1
- 216 00d0 654B     		ldr	r3, .L53+24
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 8
+  88:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+  89:ultrasonic.c  ****         if(state == STATE_GO_NORTH_CARELESS && ultrasonic_mux_control == 4){
+  90:ultrasonic.c  ****             driveStraightEnable = 0;
+  91:ultrasonic.c  ****             Motor_1_driver_Sleep();
+  92:ultrasonic.c  ****             Motor_2_driver_Sleep();
+  93:ultrasonic.c  ****             
+  94:ultrasonic.c  ****         }
+  95:ultrasonic.c  ****     }
+  96:ultrasonic.c  ****     
+  97:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[BACK] > NW_PUCK_POSITION_FROM_WEST - 31 - 10 
+  98:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+  99:ultrasonic.c  ****         if(state == STATE_FORWARD_TO_PUCK && ultrasonic_mux_control == 4){
+ 100:ultrasonic.c  ****             driveStraightEnable = 0;
+ 101:ultrasonic.c  ****            // northWall = 1;
+ 102:ultrasonic.c  ****             //state = STATE_GO_NORTH_CARELESS;
+ 103:ultrasonic.c  ****             Motor_1_driver_Sleep();
+ 104:ultrasonic.c  ****             Motor_2_driver_Sleep();
+ 105:ultrasonic.c  ****             
+ 106:ultrasonic.c  ****         }
+ 107:ultrasonic.c  ****     }
+ 108:ultrasonic.c  ****     
+ 109:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[BACK] < 13   ) && ( ultrasonic_distances[BACK
+ 110:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+ 111:ultrasonic.c  ****         if(state == STATE_RETURN_TO_NW_FROM_PUCK && ultrasonic_mux_control == 4){
+ 112:ultrasonic.c  ****             driveStraightEnable = 0;
+ 113:ultrasonic.c  ****            // northWall = 1;
+ 114:ultrasonic.c  ****             //state = STATE_GO_NORTH_CARELESS;
+ 115:ultrasonic.c  ****             Motor_1_driver_Sleep();
+ 116:ultrasonic.c  ****             Motor_2_driver_Sleep();
+ 117:ultrasonic.c  ****             
+ 118:ultrasonic.c  ****         }
+ 119:ultrasonic.c  ****     }
+ 120:ultrasonic.c  ****     
+ 121:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[BACK] < 10 ) && ( ultrasonic_distances[BACK] 
+ 122:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+ 123:ultrasonic.c  ****         if(state == STATE_RETURN_HOME_SIDE && ultrasonic_mux_control == 4){
+ 124:ultrasonic.c  ****             driveStraightEnable = 0;
+ 125:ultrasonic.c  ****             Motor_1_driver_Sleep();
+ 126:ultrasonic.c  ****             Motor_2_driver_Sleep();
+ 127:ultrasonic.c  ****             
+ 128:ultrasonic.c  ****         }
+ 129:ultrasonic.c  ****     }
+ 130:ultrasonic.c  ****     
+ 131:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[RIGHT_FRONT] < FINISH_CENTER_FROM_E - 5 ) && 
+ 132:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+ 133:ultrasonic.c  ****         if(state == STATE_LAND_ON_HOME_BASE && ultrasonic_mux_control == 4){
+ 134:ultrasonic.c  ****             driveStraightEnable = 0;
+ 135:ultrasonic.c  ****             Motor_1_driver_Sleep();
+ 136:ultrasonic.c  ****             Motor_2_driver_Sleep();
+ 137:ultrasonic.c  ****             
+ 138:ultrasonic.c  ****         }
+ 139:ultrasonic.c  ****     }
+ 140:ultrasonic.c  ****     
+ 141:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[RIGHT_FRONT] > FINISH_CENTER_FROM_E - 5 ) && 
+ 142:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
+ 143:ultrasonic.c  ****         if(state == STATE_FINISH_LANDING && ultrasonic_mux_control == 4){
+ 144:ultrasonic.c  ****             driveStraightEnable = 0;
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 4
 
 
- 217 00d2 1B68     		ldr	r3, [r3]
- 218 00d4 012B     		cmp	r3, #1
- 219 00d6 0DD1     		bne	.L11
-  76:ultrasonic.c  ****             driveStraightEnable = 0;
- 220              		.loc 1 76 0 is_stmt 0 discriminator 1
- 221 00d8 5F4B     		ldr	r3, .L53+8
- 222 00da 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
- 223 00dc 042B     		cmp	r3, #4
- 224 00de 09D1     		bne	.L11
-  77:ultrasonic.c  ****             northWall = 1;
- 225              		.loc 1 77 0 is_stmt 1
- 226 00e0 0022     		movs	r2, #0
- 227 00e2 5F4B     		ldr	r3, .L53+16
- 228 00e4 1A60     		str	r2, [r3]
-  78:ultrasonic.c  ****             //state = STATE_GO_NORTH_CARELESS;
- 229              		.loc 1 78 0
- 230 00e6 0122     		movs	r2, #1
- 231 00e8 624B     		ldr	r3, .L53+36
- 232 00ea 1A60     		str	r2, [r3]
-  80:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 233              		.loc 1 80 0
- 234 00ec FFF7FEFF 		bl	Motor_1_driver_Sleep
- 235              	.LVL24:
-  81:ultrasonic.c  ****             
- 236              		.loc 1 81 0
- 237 00f0 FFF7FEFF 		bl	Motor_2_driver_Sleep
- 238              	.LVL25:
- 239              	.L11:
-  86:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 240              		.loc 1 86 0
- 241 00f4 5A4B     		ldr	r3, .L53+16
- 242 00f6 1B68     		ldr	r3, [r3]
- 243 00f8 43B3     		cbz	r3, .L16
-  86:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 244              		.loc 1 86 0 is_stmt 0 discriminator 1
- 245 00fa 574B     		ldr	r3, .L53+8
- 246 00fc DC68     		ldr	r4, [r3, #12]	@ float
- 247 00fe 5E49     		ldr	r1, .L53+40
- 248 0100 2046     		mov	r0, r4
- 249 0102 FFF7FEFF 		bl	__aeabi_fcmplt
- 250              	.LVL26:
- 251 0106 28B9     		cbnz	r0, .L17
-  86:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 252              		.loc 1 86 0 discriminator 3
- 253 0108 5B49     		ldr	r1, .L53+40
- 254 010a 534B     		ldr	r3, .L53+8
- 255 010c 1869     		ldr	r0, [r3, #16]	@ float
- 256 010e FFF7FEFF 		bl	__aeabi_fcmplt
- 257              	.LVL27:
- 258 0112 D8B1     		cbz	r0, .L16
- 259              	.L17:
-  86:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 260              		.loc 1 86 0 discriminator 4
- 261 0114 4FF07E51 		mov	r1, #1065353216
- 262 0118 2046     		mov	r0, r4
- 263 011a FFF7FEFF 		bl	__aeabi_fcmpgt
- 264              	.LVL28:
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 9
-
-
- 265 011e A8B1     		cbz	r0, .L16
-  86:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 266              		.loc 1 86 0 discriminator 5
- 267 0120 4FF07E51 		mov	r1, #1065353216
- 268 0124 4C4B     		ldr	r3, .L53+8
- 269 0126 1869     		ldr	r0, [r3, #16]	@ float
- 270 0128 FFF7FEFF 		bl	__aeabi_fcmpgt
- 271              	.LVL29:
- 272 012c 70B1     		cbz	r0, .L16
-  88:ultrasonic.c  ****             driveStraightEnable = 0;
- 273              		.loc 1 88 0 is_stmt 1
- 274 012e 4E4B     		ldr	r3, .L53+24
- 275 0130 1B68     		ldr	r3, [r3]
- 276 0132 022B     		cmp	r3, #2
- 277 0134 0AD1     		bne	.L16
-  88:ultrasonic.c  ****             driveStraightEnable = 0;
- 278              		.loc 1 88 0 is_stmt 0 discriminator 1
- 279 0136 484B     		ldr	r3, .L53+8
- 280 0138 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
- 281 013a 042B     		cmp	r3, #4
- 282 013c 06D1     		bne	.L16
-  89:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 283              		.loc 1 89 0 is_stmt 1
- 284 013e 0022     		movs	r2, #0
- 285 0140 474B     		ldr	r3, .L53+16
- 286 0142 1A60     		str	r2, [r3]
-  90:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 287              		.loc 1 90 0
- 288 0144 FFF7FEFF 		bl	Motor_1_driver_Sleep
- 289              	.LVL30:
-  91:ultrasonic.c  ****             
- 290              		.loc 1 91 0
- 291 0148 FFF7FEFF 		bl	Motor_2_driver_Sleep
- 292              	.LVL31:
- 293              	.L16:
-  96:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 294              		.loc 1 96 0
- 295 014c 444B     		ldr	r3, .L53+16
- 296 014e 1B68     		ldr	r3, [r3]
- 297 0150 E3B1     		cbz	r3, .L21
-  96:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 298              		.loc 1 96 0 is_stmt 0 discriminator 1
- 299 0152 414B     		ldr	r3, .L53+8
- 300 0154 9C69     		ldr	r4, [r3, #24]	@ float
- 301 0156 4FF08241 		mov	r1, #1090519040
- 302 015a 2046     		mov	r0, r4
- 303 015c FFF7FEFF 		bl	__aeabi_fcmpgt
- 304              	.LVL32:
- 305 0160 A0B1     		cbz	r0, .L21
-  96:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 306              		.loc 1 96 0 discriminator 2
- 307 0162 4FF07E51 		mov	r1, #1065353216
- 308 0166 2046     		mov	r0, r4
- 309 0168 FFF7FEFF 		bl	__aeabi_fcmpgt
- 310              	.LVL33:
- 311 016c 70B1     		cbz	r0, .L21
-  98:ultrasonic.c  ****             driveStraightEnable = 0;
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 10
-
-
- 312              		.loc 1 98 0 is_stmt 1
- 313 016e 3E4B     		ldr	r3, .L53+24
- 314 0170 1B68     		ldr	r3, [r3]
- 315 0172 072B     		cmp	r3, #7
- 316 0174 0AD1     		bne	.L21
-  98:ultrasonic.c  ****             driveStraightEnable = 0;
- 317              		.loc 1 98 0 is_stmt 0 discriminator 1
- 318 0176 384B     		ldr	r3, .L53+8
- 319 0178 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
- 320 017a 042B     		cmp	r3, #4
- 321 017c 06D1     		bne	.L21
-  99:ultrasonic.c  ****            // northWall = 1;
- 322              		.loc 1 99 0 is_stmt 1
- 323 017e 0022     		movs	r2, #0
- 324 0180 374B     		ldr	r3, .L53+16
- 325 0182 1A60     		str	r2, [r3]
- 102:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 326              		.loc 1 102 0
- 327 0184 FFF7FEFF 		bl	Motor_1_driver_Sleep
- 328              	.LVL34:
- 103:ultrasonic.c  ****             
- 329              		.loc 1 103 0
- 330 0188 FFF7FEFF 		bl	Motor_2_driver_Sleep
- 331              	.LVL35:
- 332              	.L21:
- 108:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 333              		.loc 1 108 0
- 334 018c 344B     		ldr	r3, .L53+16
- 335 018e 1B68     		ldr	r3, [r3]
- 336 0190 DBB1     		cbz	r3, .L24
- 108:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 337              		.loc 1 108 0 is_stmt 0 discriminator 1
- 338 0192 314B     		ldr	r3, .L53+8
- 339 0194 9C69     		ldr	r4, [r3, #24]	@ float
- 340 0196 3949     		ldr	r1, .L53+44
- 341 0198 2046     		mov	r0, r4
- 342 019a FFF7FEFF 		bl	__aeabi_fcmplt
- 343              	.LVL36:
- 344 019e A0B1     		cbz	r0, .L24
- 108:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 345              		.loc 1 108 0 discriminator 2
- 346 01a0 4FF07E51 		mov	r1, #1065353216
- 347 01a4 2046     		mov	r0, r4
- 348 01a6 FFF7FEFF 		bl	__aeabi_fcmpgt
- 349              	.LVL37:
- 350 01aa 70B1     		cbz	r0, .L24
- 110:ultrasonic.c  ****             driveStraightEnable = 0;
- 351              		.loc 1 110 0 is_stmt 1
- 352 01ac 2E4B     		ldr	r3, .L53+24
- 353 01ae 1B68     		ldr	r3, [r3]
- 354 01b0 082B     		cmp	r3, #8
- 355 01b2 0AD1     		bne	.L24
- 110:ultrasonic.c  ****             driveStraightEnable = 0;
- 356              		.loc 1 110 0 is_stmt 0 discriminator 1
- 357 01b4 284B     		ldr	r3, .L53+8
- 358 01b6 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
- 359 01b8 042B     		cmp	r3, #4
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 11
-
-
- 360 01ba 06D1     		bne	.L24
- 111:ultrasonic.c  ****            // northWall = 1;
- 361              		.loc 1 111 0 is_stmt 1
- 362 01bc 0022     		movs	r2, #0
- 363 01be 284B     		ldr	r3, .L53+16
- 364 01c0 1A60     		str	r2, [r3]
- 114:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 365              		.loc 1 114 0
- 366 01c2 FFF7FEFF 		bl	Motor_1_driver_Sleep
- 367              	.LVL38:
- 115:ultrasonic.c  ****             
- 368              		.loc 1 115 0
- 369 01c6 FFF7FEFF 		bl	Motor_2_driver_Sleep
- 370              	.LVL39:
- 371              	.L24:
- 120:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 372              		.loc 1 120 0
- 373 01ca 254B     		ldr	r3, .L53+16
- 374 01cc 1B68     		ldr	r3, [r3]
- 375 01ce DBB1     		cbz	r3, .L27
- 120:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 376              		.loc 1 120 0 is_stmt 0 discriminator 1
- 377 01d0 214B     		ldr	r3, .L53+8
- 378 01d2 9C69     		ldr	r4, [r3, #24]	@ float
- 379 01d4 2A49     		ldr	r1, .L53+48
- 380 01d6 2046     		mov	r0, r4
- 381 01d8 FFF7FEFF 		bl	__aeabi_fcmplt
- 382              	.LVL40:
- 383 01dc A0B1     		cbz	r0, .L27
- 120:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 384              		.loc 1 120 0 discriminator 2
- 385 01de 4FF07E51 		mov	r1, #1065353216
- 386 01e2 2046     		mov	r0, r4
- 387 01e4 FFF7FEFF 		bl	__aeabi_fcmpgt
- 388              	.LVL41:
- 389 01e8 70B1     		cbz	r0, .L27
- 122:ultrasonic.c  ****             driveStraightEnable = 0;
- 390              		.loc 1 122 0 is_stmt 1
- 391 01ea 1F4B     		ldr	r3, .L53+24
- 392 01ec 1B68     		ldr	r3, [r3]
- 393 01ee 052B     		cmp	r3, #5
- 394 01f0 0AD1     		bne	.L27
- 122:ultrasonic.c  ****             driveStraightEnable = 0;
- 395              		.loc 1 122 0 is_stmt 0 discriminator 1
- 396 01f2 194B     		ldr	r3, .L53+8
- 397 01f4 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
- 398 01f6 042B     		cmp	r3, #4
- 399 01f8 06D1     		bne	.L27
- 123:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 400              		.loc 1 123 0 is_stmt 1
- 401 01fa 0022     		movs	r2, #0
- 402 01fc 184B     		ldr	r3, .L53+16
- 403 01fe 1A60     		str	r2, [r3]
- 124:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 404              		.loc 1 124 0
- 405 0200 FFF7FEFF 		bl	Motor_1_driver_Sleep
- 406              	.LVL42:
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 12
-
-
- 125:ultrasonic.c  ****             
- 407              		.loc 1 125 0
- 408 0204 FFF7FEFF 		bl	Motor_2_driver_Sleep
- 409              	.LVL43:
- 410              	.L27:
- 130:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 411              		.loc 1 130 0
- 412 0208 154B     		ldr	r3, .L53+16
- 413 020a 1B68     		ldr	r3, [r3]
- 414 020c DBB1     		cbz	r3, .L30
- 130:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 415              		.loc 1 130 0 is_stmt 0 discriminator 1
- 416 020e 124B     		ldr	r3, .L53+8
- 417 0210 1C69     		ldr	r4, [r3, #16]	@ float
- 418 0212 1C49     		ldr	r1, .L53+52
- 419 0214 2046     		mov	r0, r4
- 420 0216 FFF7FEFF 		bl	__aeabi_fcmplt
- 421              	.LVL44:
- 422 021a A0B1     		cbz	r0, .L30
- 130:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 423              		.loc 1 130 0 discriminator 2
- 424 021c 4FF07E51 		mov	r1, #1065353216
- 425 0220 2046     		mov	r0, r4
- 426 0222 FFF7FEFF 		bl	__aeabi_fcmpgt
- 427              	.LVL45:
- 428 0226 70B1     		cbz	r0, .L30
- 132:ultrasonic.c  ****             driveStraightEnable = 0;
- 429              		.loc 1 132 0 is_stmt 1
- 430 0228 0F4B     		ldr	r3, .L53+24
- 431 022a 1B68     		ldr	r3, [r3]
- 432 022c 062B     		cmp	r3, #6
- 433 022e 0AD1     		bne	.L30
- 132:ultrasonic.c  ****             driveStraightEnable = 0;
- 434              		.loc 1 132 0 is_stmt 0 discriminator 1
- 435 0230 094B     		ldr	r3, .L53+8
- 436 0232 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
- 437 0234 042B     		cmp	r3, #4
- 438 0236 06D1     		bne	.L30
- 133:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 439              		.loc 1 133 0 is_stmt 1
- 440 0238 0022     		movs	r2, #0
- 441 023a 094B     		ldr	r3, .L53+16
- 442 023c 1A60     		str	r2, [r3]
- 134:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 443              		.loc 1 134 0
- 444 023e FFF7FEFF 		bl	Motor_1_driver_Sleep
- 445              	.LVL46:
- 135:ultrasonic.c  ****             
- 446              		.loc 1 135 0
- 447 0242 FFF7FEFF 		bl	Motor_2_driver_Sleep
- 448              	.LVL47:
- 449              	.L30:
- 140:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 450              		.loc 1 140 0
- 451 0246 064B     		ldr	r3, .L53+16
- 452 0248 1B68     		ldr	r3, [r3]
- 453 024a 1DE0     		b	.L54
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 13
-
-
- 454              	.L55:
- 455 024c AFF30080 		.align	3
- 456              	.L53:
- 457 0250 2BDF3312 		.word	305389355
- 458 0254 A111C63F 		.word	1069945249
- 459 0258 00000000 		.word	.LANCHOR0
- 460 025c 00002440 		.word	1076101120
- 461 0260 00000000 		.word	driveStraightEnable
- 462 0264 0000C041 		.word	1103101952
- 463 0268 00000000 		.word	state
- 464 026c 00000000 		.word	westWall
- 465 0270 0000F041 		.word	1106247680
- 466 0274 00000000 		.word	northWall
- 467 0278 0000C841 		.word	1103626240
- 468 027c 00005041 		.word	1095761920
- 469 0280 00002041 		.word	1092616192
- 470 0284 00002842 		.word	1109917696
- 471              	.L54:
- 472 0288 DBB1     		cbz	r3, .L5
- 140:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 473              		.loc 1 140 0 is_stmt 0 discriminator 1
- 474 028a 0E4B     		ldr	r3, .L56
- 475 028c 1C69     		ldr	r4, [r3, #16]	@ float
- 476 028e 0E49     		ldr	r1, .L56+4
- 477 0290 2046     		mov	r0, r4
- 478 0292 FFF7FEFF 		bl	__aeabi_fcmpgt
- 479              	.LVL48:
- 480 0296 A0B1     		cbz	r0, .L5
- 140:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
- 481              		.loc 1 140 0 discriminator 2
- 482 0298 4FF07E51 		mov	r1, #1065353216
- 483 029c 2046     		mov	r0, r4
- 484 029e FFF7FEFF 		bl	__aeabi_fcmpgt
- 485              	.LVL49:
- 486 02a2 70B1     		cbz	r0, .L5
- 142:ultrasonic.c  ****             driveStraightEnable = 0;
- 487              		.loc 1 142 0 is_stmt 1
- 488 02a4 094B     		ldr	r3, .L56+8
- 489 02a6 1B68     		ldr	r3, [r3]
- 490 02a8 092B     		cmp	r3, #9
- 491 02aa 0AD1     		bne	.L5
- 142:ultrasonic.c  ****             driveStraightEnable = 0;
- 492              		.loc 1 142 0 is_stmt 0 discriminator 1
- 493 02ac 054B     		ldr	r3, .L56
- 494 02ae 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
- 495 02b0 042B     		cmp	r3, #4
- 496 02b2 06D1     		bne	.L5
- 143:ultrasonic.c  ****             Motor_1_driver_Sleep();
- 497              		.loc 1 143 0 is_stmt 1
- 498 02b4 0022     		movs	r2, #0
- 499 02b6 064B     		ldr	r3, .L56+12
- 500 02b8 1A60     		str	r2, [r3]
- 144:ultrasonic.c  ****             Motor_2_driver_Sleep();
- 501              		.loc 1 144 0
- 502 02ba FFF7FEFF 		bl	Motor_1_driver_Sleep
- 503              	.LVL50:
- 145:ultrasonic.c  ****             
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 14
-
-
- 504              		.loc 1 145 0
- 505 02be FFF7FEFF 		bl	Motor_2_driver_Sleep
- 506              	.LVL51:
- 507              	.L5:
- 508 02c2 38BD     		pop	{r3, r4, r5, pc}
- 509              	.L57:
- 510              		.align	2
- 511              	.L56:
- 512 02c4 00000000 		.word	.LANCHOR0
- 513 02c8 00002842 		.word	1109917696
- 514 02cc 00000000 		.word	state
- 515 02d0 00000000 		.word	driveStraightEnable
- 516              		.cfi_endproc
- 517              	.LFE64:
- 518              		.size	ultrasonicInterruptHandler, .-ultrasonicInterruptHandler
- 519              		.section	.text.distanceSensor,"ax",%progbits
- 520              		.align	2
- 521              		.global	distanceSensor
- 522              		.thumb
- 523              		.thumb_func
- 524              		.type	distanceSensor, %function
- 525              	distanceSensor:
- 526              	.LFB66:
- 162:ultrasonic.c  **** 
- 163:ultrasonic.c  **** /*
- 164:ultrasonic.c  **** float distanceFromCount(int timerCount){
- 165:ultrasonic.c  **** 
- 166:ultrasonic.c  ****     //int result = (int) (0.1777*(65536-timerCount)+13.013); // distance measured to nearest mm
- 167:ultrasonic.c  ****     float result = (float) (0.1777*(65536-timerCount)+13.013) / 10 -10;                   // distan
- 168:ultrasonic.c  ****     //float result = (
- 169:ultrasonic.c  ****     //float result = (65536-timerCount)/58;                    // distance in cm
- 170:ultrasonic.c  ****     return result;
+ 145:ultrasonic.c  ****             Motor_1_driver_Sleep();
+ 146:ultrasonic.c  ****             Motor_2_driver_Sleep();
+ 147:ultrasonic.c  ****             
+ 148:ultrasonic.c  ****         }
+ 149:ultrasonic.c  ****     }
+ 150:ultrasonic.c  ****     
+ 151:ultrasonic.c  ****     */
+ 152:ultrasonic.c  **** 	
+ 153:ultrasonic.c  ****     if (state == STATE_LOCATE_BLOCK){
+ 154:ultrasonic.c  **** 	if (sweeping){
+ 155:ultrasonic.c  **** 		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENS
+ 156:ultrasonic.c  **** 			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[BACK]
+ 157:ultrasonic.c  **** 	}
+ 158:ultrasonic.c  **** 		else if (block_start){
+ 159:ultrasonic.c  **** 			block_start = 0; // We have found the east edge of the block
+ 160:ultrasonic.c  **** 			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
+ 161:ultrasonic.c  **** 			sweeping = 0;
+ 162:ultrasonic.c  **** 			// state = 
+ 163:ultrasonic.c  **** 
+ 164:ultrasonic.c  **** 			
+ 165:ultrasonic.c  **** 			
+ 166:ultrasonic.c  **** 	}
+ 167:ultrasonic.c  **** 	}
+ 168:ultrasonic.c  **** 	}
+ 169:ultrasonic.c  ****     
+ 170:ultrasonic.c  **** }
  171:ultrasonic.c  **** 
- 172:ultrasonic.c  **** }
- 173:ultrasonic.c  **** */
- 174:ultrasonic.c  **** 
- 175:ultrasonic.c  **** void distanceSensor(int currentSensorIndex) {
- 527              		.loc 1 175 0
- 528              		.cfi_startproc
- 529              		@ args = 0, pretend = 0, frame = 0
- 530              		@ frame_needed = 0, uses_anonymous_args = 0
- 531              	.LVL52:
- 532 0000 10B5     		push	{r4, lr}
- 533              		.cfi_def_cfa_offset 8
- 534              		.cfi_offset 4, -8
- 535              		.cfi_offset 14, -4
- 536 0002 0446     		mov	r4, r0
- 176:ultrasonic.c  ****     
- 177:ultrasonic.c  ****     Ultrasonic_Mux_Control_Write(currentSensorIndex);
- 537              		.loc 1 177 0
- 538 0004 C0B2     		uxtb	r0, r0
- 539              	.LVL53:
- 540 0006 FFF7FEFF 		bl	Ultrasonic_Mux_Control_Write
- 541              	.LVL54:
- 178:ultrasonic.c  ****     Timer_1_Start();
- 542              		.loc 1 178 0
- 543 000a FFF7FEFF 		bl	Timer_1_Start
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 15
+ 172:ultrasonic.c  **** int takeColourMeasurement(void){ // Return an integer from 0-3 indicating the guess of colour - Nul
+  28              		.loc 1 172 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+ 173:ultrasonic.c  ****     // Complete
+ 174:ultrasonic.c  ****     int prediction = 0; // Edit this with correct integer
+ 175:ultrasonic.c  ****     return prediction;
+ 176:ultrasonic.c  **** }
+  34              		.loc 1 176 0
+  35 0000 0020     		movs	r0, #0
+  36 0002 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE65:
+  39              		.size	takeColourMeasurement, .-takeColourMeasurement
+  40              		.global	__aeabi_f2d
+  41              		.section	.text.printSensorToUART,"ax",%progbits
+  42              		.align	2
+  43              		.global	printSensorToUART
+  44              		.thumb
+  45              		.thumb_func
+  46              		.type	printSensorToUART, %function
+  47              	printSensorToUART:
+  48              	.LFB66:
+ 177:ultrasonic.c  **** 
+ 178:ultrasonic.c  **** void printSensorToUART(int sensorNumber, float distanceMeasured){
+  49              		.loc 1 178 0
+  50              		.cfi_startproc
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 5
 
 
- 544              	.LVL55:
- 179:ultrasonic.c  ****         
- 180:ultrasonic.c  ****     switch(currentSensorIndex){
- 545              		.loc 1 180 0
- 546 000e 042C     		cmp	r4, #4
- 547 0010 35D8     		bhi	.L58
- 548 0012 DFE804F0 		tbb	[pc, r4]
- 549              	.L61:
- 550 0016 03       		.byte	(.L60-.L61)/2
- 551 0017 0D       		.byte	(.L62-.L61)/2
- 552 0018 17       		.byte	(.L63-.L61)/2
- 553 0019 21       		.byte	(.L64-.L61)/2
- 554 001a 2B       		.byte	(.L65-.L61)/2
- 555 001b 00       		.p2align 1
- 556              	.L60:
- 181:ultrasonic.c  ****         
- 182:ultrasonic.c  ****         case 0:
- 183:ultrasonic.c  ****         
- 184:ultrasonic.c  ****             //while (Echo_1_Read() == 0)
- 185:ultrasonic.c  ****             {
- 186:ultrasonic.c  ****                 Trigger_1_Write(1);
- 557              		.loc 1 186 0
- 558 001c 0120     		movs	r0, #1
- 559 001e FFF7FEFF 		bl	Trigger_1_Write
- 560              	.LVL56:
- 187:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 561              		.loc 1 187 0
- 562 0022 0A20     		movs	r0, #10
- 563 0024 FFF7FEFF 		bl	CyDelayUs
- 564              	.LVL57:
- 188:ultrasonic.c  ****                 Trigger_1_Write(0);
- 565              		.loc 1 188 0
- 566 0028 0020     		movs	r0, #0
- 567 002a FFF7FEFF 		bl	Trigger_1_Write
- 568              	.LVL58:
- 189:ultrasonic.c  ****             }
- 190:ultrasonic.c  ****         
- 191:ultrasonic.c  ****         break;
- 569              		.loc 1 191 0
- 570 002e 10BD     		pop	{r4, pc}
- 571              	.LVL59:
- 572              	.L62:
- 192:ultrasonic.c  ****         
- 193:ultrasonic.c  ****         case 1:
- 194:ultrasonic.c  ****         
- 195:ultrasonic.c  ****            //while (Echo_2_Read() == 0)
- 196:ultrasonic.c  ****             {
- 197:ultrasonic.c  ****                 Trigger_2_Write(1);
- 573              		.loc 1 197 0
- 574 0030 0120     		movs	r0, #1
- 575 0032 FFF7FEFF 		bl	Trigger_2_Write
- 576              	.LVL60:
- 198:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 577              		.loc 1 198 0
- 578 0036 0A20     		movs	r0, #10
- 579 0038 FFF7FEFF 		bl	CyDelayUs
- 580              	.LVL61:
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 16
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53              	.LVL1:
+  54 0000 30B5     		push	{r4, r5, lr}
+  55              		.cfi_def_cfa_offset 12
+  56              		.cfi_offset 4, -12
+  57              		.cfi_offset 5, -8
+  58              		.cfi_offset 14, -4
+  59 0002 83B0     		sub	sp, sp, #12
+  60              		.cfi_def_cfa_offset 24
+  61 0004 0546     		mov	r5, r0
+ 179:ultrasonic.c  ****      
+ 180:ultrasonic.c  ****     // Print distance to UART
+ 181:ultrasonic.c  ****     //sprintf(output, "Ultrasonic Sensor %d - distance: %dmm\n", sensorNumber, distanceMeasured);
+ 182:ultrasonic.c  ****     sprintf(output, "%d: %fmm\n", sensorNumber, distanceMeasured);
+  62              		.loc 1 182 0
+  63 0006 084C     		ldr	r4, .L4
+  64 0008 0846     		mov	r0, r1
+  65              	.LVL2:
+  66 000a FFF7FEFF 		bl	__aeabi_f2d
+  67              	.LVL3:
+  68 000e CDE90001 		strd	r0, [sp]
+  69 0012 2A46     		mov	r2, r5
+  70 0014 0549     		ldr	r1, .L4+4
+  71 0016 2046     		mov	r0, r4
+  72 0018 FFF7FEFF 		bl	sprintf
+  73              	.LVL4:
+ 183:ultrasonic.c  ****     UART_1_PutString(output);
+  74              		.loc 1 183 0
+  75 001c 2046     		mov	r0, r4
+  76 001e FFF7FEFF 		bl	UART_1_PutString
+  77              	.LVL5:
+ 184:ultrasonic.c  **** 
+ 185:ultrasonic.c  **** }
+  78              		.loc 1 185 0
+  79 0022 03B0     		add	sp, sp, #12
+  80              		.cfi_def_cfa_offset 12
+  81              		@ sp needed
+  82 0024 30BD     		pop	{r4, r5, pc}
+  83              	.LVL6:
+  84              	.L5:
+  85 0026 00BF     		.align	2
+  86              	.L4:
+  87 0028 00000000 		.word	output
+  88 002c 00000000 		.word	.LC0
+  89              		.cfi_endproc
+  90              	.LFE66:
+  91              		.size	printSensorToUART, .-printSensorToUART
+  92              		.global	__aeabi_i2d
+  93              		.global	__aeabi_dmul
+  94              		.global	__aeabi_ddiv
+  95              		.global	__aeabi_d2f
+  96              		.global	__aeabi_i2f
+  97              		.global	__aeabi_fcmpgt
+  98              		.global	__aeabi_fsub
+  99              		.global	__aeabi_fcmplt
+ 100              		.global	__aeabi_fadd
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 6
 
 
- 199:ultrasonic.c  ****                 Trigger_2_Write(0);
- 581              		.loc 1 199 0
- 582 003c 0020     		movs	r0, #0
- 583 003e FFF7FEFF 		bl	Trigger_2_Write
- 584              	.LVL62:
- 200:ultrasonic.c  ****             }
- 201:ultrasonic.c  ****         
- 202:ultrasonic.c  ****         break;
- 585              		.loc 1 202 0
- 586 0042 10BD     		pop	{r4, pc}
- 587              	.LVL63:
- 588              	.L63:
+ 101              		.section	.text.ultrasonicInterruptHandler,"ax",%progbits
+ 102              		.align	2
+ 103              		.global	ultrasonicInterruptHandler
+ 104              		.thumb
+ 105              		.thumb_func
+ 106              		.type	ultrasonicInterruptHandler, %function
+ 107              	ultrasonicInterruptHandler:
+ 108              	.LFB64:
+  40:ultrasonic.c  ****     //UART_1_PutString("Interrupt \n");
+ 109              		.loc 1 40 0
+ 110              		.cfi_startproc
+ 111              		@ args = 0, pretend = 0, frame = 0
+ 112              		@ frame_needed = 0, uses_anonymous_args = 0
+ 113 0000 38B5     		push	{r3, r4, r5, lr}
+ 114              		.cfi_def_cfa_offset 16
+ 115              		.cfi_offset 3, -16
+ 116              		.cfi_offset 4, -12
+ 117              		.cfi_offset 5, -8
+ 118              		.cfi_offset 14, -4
+  42:ultrasonic.c  ****     count = Timer_1_ReadCounter();
+ 119              		.loc 1 42 0
+ 120 0002 FFF7FEFF 		bl	Timer_1_ReadStatusRegister
+ 121              	.LVL7:
+  43:ultrasonic.c  ****     Timer_1_Stop();
+ 122              		.loc 1 43 0
+ 123 0006 FFF7FEFF 		bl	Timer_1_ReadCounter
+ 124              	.LVL8:
+ 125 000a 394C     		ldr	r4, .L16+8
+ 126 000c 2060     		str	r0, [r4]
+  44:ultrasonic.c  ****     
+ 127              		.loc 1 44 0
+ 128 000e FFF7FEFF 		bl	Timer_1_Stop
+ 129              	.LVL9:
+  48:ultrasonic.c  ****     
+ 130              		.loc 1 48 0
+ 131 0012 2579     		ldrb	r5, [r4, #4]	@ zero_extendqisi2
+ 132 0014 2068     		ldr	r0, [r4]
+ 133 0016 C0F58030 		rsb	r0, r0, #65536
+ 134 001a FFF7FEFF 		bl	__aeabi_i2d
+ 135              	.LVL10:
+ 136 001e 32A3     		adr	r3, .L16
+ 137 0020 D3E90023 		ldrd	r2, [r3]
+ 138 0024 FFF7FEFF 		bl	__aeabi_dmul
+ 139              	.LVL11:
+ 140 0028 0022     		movs	r2, #0
+ 141 002a 324B     		ldr	r3, .L16+12
+ 142 002c FFF7FEFF 		bl	__aeabi_ddiv
+ 143              	.LVL12:
+ 144 0030 FFF7FEFF 		bl	__aeabi_d2f
+ 145              	.LVL13:
+ 146 0034 0146     		mov	r1, r0
+ 147 0036 04EB8504 		add	r4, r4, r5, lsl #2
+ 148 003a A060     		str	r0, [r4, #8]	@ float
+  50:ultrasonic.c  ****     
+ 149              		.loc 1 50 0
+ 150 003c 2846     		mov	r0, r5
+ 151 003e FFF7FEFF 		bl	printSensorToUART
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 7
+
+
+ 152              	.LVL14:
+  53:ultrasonic.c  ****         
+ 153              		.loc 1 53 0
+ 154 0042 2D4B     		ldr	r3, .L16+16
+ 155 0044 1B68     		ldr	r3, [r3]
+ 156 0046 0A2B     		cmp	r3, #10
+ 157 0048 17D1     		bne	.L7
+  55:ultrasonic.c  ****                 puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
+ 158              		.loc 1 55 0
+ 159 004a 294B     		ldr	r3, .L16+8
+ 160 004c D868     		ldr	r0, [r3, #12]	@ float
+ 161 004e 0146     		mov	r1, r0
+ 162 0050 FFF7FEFF 		bl	averageSensor
+ 163              	.LVL15:
+ 164 0054 0546     		mov	r5, r0
+ 165 0056 294B     		ldr	r3, .L16+20
+ 166 0058 1C68     		ldr	r4, [r3]
+ 167 005a 294B     		ldr	r3, .L16+24
+ 168 005c 53F82400 		ldr	r0, [r3, r4, lsl #2]
+ 169 0060 0838     		subs	r0, r0, #8
+ 170 0062 FFF7FEFF 		bl	__aeabi_i2f
+ 171              	.LVL16:
+ 172 0066 0146     		mov	r1, r0
+ 173 0068 2846     		mov	r0, r5
+ 174 006a FFF7FEFF 		bl	__aeabi_fcmpgt
+ 175              	.LVL17:
+ 176 006e 20B1     		cbz	r0, .L7
+  56:ultrasonic.c  ****         }
+ 177              		.loc 1 56 0
+ 178 0070 FFF7FEFF 		bl	takeColourMeasurement
+ 179              	.LVL18:
+ 180 0074 234B     		ldr	r3, .L16+28
+ 181 0076 43F82400 		str	r0, [r3, r4, lsl #2]
+ 182              	.L7:
+ 153:ultrasonic.c  **** 	if (sweeping){
+ 183              		.loc 1 153 0
+ 184 007a 1F4B     		ldr	r3, .L16+16
+ 185 007c 1B68     		ldr	r3, [r3]
+ 186 007e 0B2B     		cmp	r3, #11
+ 187 0080 2FD1     		bne	.L6
+ 154:ultrasonic.c  **** 		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENS
+ 188              		.loc 1 154 0
+ 189 0082 214B     		ldr	r3, .L16+32
+ 190 0084 1B68     		ldr	r3, [r3]
+ 191 0086 002B     		cmp	r3, #0
+ 192 0088 2BD0     		beq	.L6
+ 155:ultrasonic.c  **** 			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[BACK]
+ 193              		.loc 1 155 0
+ 194 008a 194B     		ldr	r3, .L16+8
+ 195 008c 9C68     		ldr	r4, [r3, #8]	@ float
+ 196 008e 5969     		ldr	r1, [r3, #20]	@ float
+ 197 0090 1E48     		ldr	r0, .L16+36
+ 198 0092 FFF7FEFF 		bl	__aeabi_fsub
+ 199              	.LVL19:
+ 200 0096 1E49     		ldr	r1, .L16+40
+ 201 0098 FFF7FEFF 		bl	__aeabi_fsub
+ 202              	.LVL20:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 8
+
+
+ 203 009c 1D49     		ldr	r1, .L16+44
+ 204 009e FFF7FEFF 		bl	__aeabi_fsub
+ 205              	.LVL21:
+ 206 00a2 0146     		mov	r1, r0
+ 207 00a4 2046     		mov	r0, r4
+ 208 00a6 FFF7FEFF 		bl	__aeabi_fcmplt
+ 209              	.LVL22:
+ 210 00aa 60B1     		cbz	r0, .L14
+ 156:ultrasonic.c  **** 	}
+ 211              		.loc 1 156 0
+ 212 00ac 104B     		ldr	r3, .L16+8
+ 213 00ae DB69     		ldr	r3, [r3, #28]
+ 214 00b0 BBB9     		cbnz	r3, .L6
+ 156:ultrasonic.c  **** 	}
+ 215              		.loc 1 156 0 is_stmt 0 discriminator 1
+ 216 00b2 0F4B     		ldr	r3, .L16+8
+ 217 00b4 0122     		movs	r2, #1
+ 218 00b6 DA61     		str	r2, [r3, #28]
+ 219 00b8 1749     		ldr	r1, .L16+48
+ 220 00ba 9869     		ldr	r0, [r3, #24]	@ float
+ 221 00bc FFF7FEFF 		bl	__aeabi_fadd
+ 222              	.LVL23:
+ 223 00c0 164B     		ldr	r3, .L16+52
+ 224 00c2 1860     		str	r0, [r3]	@ float
+ 225 00c4 38BD     		pop	{r3, r4, r5, pc}
+ 226              	.L14:
+ 158:ultrasonic.c  **** 			block_start = 0; // We have found the east edge of the block
+ 227              		.loc 1 158 0 is_stmt 1
+ 228 00c6 0A4B     		ldr	r3, .L16+8
+ 229 00c8 DB69     		ldr	r3, [r3, #28]
+ 230 00ca 53B1     		cbz	r3, .L6
+ 159:ultrasonic.c  **** 			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
+ 231              		.loc 1 159 0
+ 232 00cc 084B     		ldr	r3, .L16+8
+ 233 00ce 0024     		movs	r4, #0
+ 234 00d0 DC61     		str	r4, [r3, #28]
+ 160:ultrasonic.c  **** 			sweeping = 0;
+ 235              		.loc 1 160 0
+ 236 00d2 1149     		ldr	r1, .L16+48
+ 237 00d4 9869     		ldr	r0, [r3, #24]	@ float
+ 238 00d6 FFF7FEFF 		bl	__aeabi_fadd
+ 239              	.LVL24:
+ 240 00da 104B     		ldr	r3, .L16+52
+ 241 00dc 5860     		str	r0, [r3, #4]	@ float
+ 161:ultrasonic.c  **** 			// state = 
+ 242              		.loc 1 161 0
+ 243 00de 0A4B     		ldr	r3, .L16+32
+ 244 00e0 1C60     		str	r4, [r3]
+ 245              	.L6:
+ 246 00e2 38BD     		pop	{r3, r4, r5, pc}
+ 247              	.L17:
+ 248 00e4 AFF30080 		.align	3
+ 249              	.L16:
+ 250 00e8 2BDF3312 		.word	305389355
+ 251 00ec A111C63F 		.word	1069945249
+ 252 00f0 00000000 		.word	.LANCHOR0
+ 253 00f4 00002440 		.word	1076101120
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 9
+
+
+ 254 00f8 00000000 		.word	state
+ 255 00fc 00000000 		.word	currentPuckRackScanningIndex
+ 256 0100 00000000 		.word	puckRackOffsetsFromWest
+ 257 0104 00000000 		.word	puckRackColours
+ 258 0108 00000000 		.word	sweeping
+ 259 010c 0000F042 		.word	1123024896
+ 260 0110 0000C841 		.word	1103626240
+ 261 0114 00002041 		.word	1092616192
+ 262 0118 00007041 		.word	1097859072
+ 263 011c 00000000 		.word	block_location
+ 264              		.cfi_endproc
+ 265              	.LFE64:
+ 266              		.size	ultrasonicInterruptHandler, .-ultrasonicInterruptHandler
+ 267              		.section	.text.distanceSensor,"ax",%progbits
+ 268              		.align	2
+ 269              		.global	distanceSensor
+ 270              		.thumb
+ 271              		.thumb_func
+ 272              		.type	distanceSensor, %function
+ 273              	distanceSensor:
+ 274              	.LFB67:
+ 186:ultrasonic.c  **** 
+ 187:ultrasonic.c  **** /*
+ 188:ultrasonic.c  **** float distanceFromCount(int timerCount){
+ 189:ultrasonic.c  **** 
+ 190:ultrasonic.c  ****     //int result = (int) (0.1777*(65536-timerCount)+13.013); // distance measured to nearest mm
+ 191:ultrasonic.c  ****     float result = (float) (0.1777*(65536-timerCount)+13.013) / 10 -10;                   // distan
+ 192:ultrasonic.c  ****     //float result = (
+ 193:ultrasonic.c  ****     //float result = (65536-timerCount)/58;                    // distance in cm
+ 194:ultrasonic.c  ****     return result;
+ 195:ultrasonic.c  **** 
+ 196:ultrasonic.c  **** }
+ 197:ultrasonic.c  **** */
+ 198:ultrasonic.c  **** 
+ 199:ultrasonic.c  **** void distanceSensor(int currentSensorIndex) {
+ 275              		.loc 1 199 0
+ 276              		.cfi_startproc
+ 277              		@ args = 0, pretend = 0, frame = 0
+ 278              		@ frame_needed = 0, uses_anonymous_args = 0
+ 279              	.LVL25:
+ 280 0000 10B5     		push	{r4, lr}
+ 281              		.cfi_def_cfa_offset 8
+ 282              		.cfi_offset 4, -8
+ 283              		.cfi_offset 14, -4
+ 284 0002 0446     		mov	r4, r0
+ 200:ultrasonic.c  ****     
+ 201:ultrasonic.c  ****     Ultrasonic_Mux_Control_Write(currentSensorIndex);
+ 285              		.loc 1 201 0
+ 286 0004 C0B2     		uxtb	r0, r0
+ 287              	.LVL26:
+ 288 0006 FFF7FEFF 		bl	Ultrasonic_Mux_Control_Write
+ 289              	.LVL27:
+ 202:ultrasonic.c  ****     Timer_1_Start();
+ 290              		.loc 1 202 0
+ 291 000a FFF7FEFF 		bl	Timer_1_Start
+ 292              	.LVL28:
  203:ultrasonic.c  ****         
- 204:ultrasonic.c  ****         case 2:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 10
+
+
+ 204:ultrasonic.c  ****     switch(currentSensorIndex){
+ 293              		.loc 1 204 0
+ 294 000e 042C     		cmp	r4, #4
+ 295 0010 35D8     		bhi	.L18
+ 296 0012 DFE804F0 		tbb	[pc, r4]
+ 297              	.L21:
+ 298 0016 03       		.byte	(.L20-.L21)/2
+ 299 0017 0D       		.byte	(.L22-.L21)/2
+ 300 0018 17       		.byte	(.L23-.L21)/2
+ 301 0019 21       		.byte	(.L24-.L21)/2
+ 302 001a 2B       		.byte	(.L25-.L21)/2
+ 303 001b 00       		.p2align 1
+ 304              	.L20:
  205:ultrasonic.c  ****         
- 206:ultrasonic.c  ****             //while (Echo_3_Read() == 0)
- 207:ultrasonic.c  ****             {
- 208:ultrasonic.c  ****                 Trigger_3_Write(1);
- 589              		.loc 1 208 0
- 590 0044 0120     		movs	r0, #1
- 591 0046 FFF7FEFF 		bl	Trigger_3_Write
- 592              	.LVL64:
- 209:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 593              		.loc 1 209 0
- 594 004a 0A20     		movs	r0, #10
- 595 004c FFF7FEFF 		bl	CyDelayUs
- 596              	.LVL65:
- 210:ultrasonic.c  ****                 Trigger_3_Write(0);
- 597              		.loc 1 210 0
- 598 0050 0020     		movs	r0, #0
- 599 0052 FFF7FEFF 		bl	Trigger_3_Write
- 600              	.LVL66:
- 211:ultrasonic.c  ****             }
- 212:ultrasonic.c  ****         
- 213:ultrasonic.c  ****         break;
- 601              		.loc 1 213 0
- 602 0056 10BD     		pop	{r4, pc}
- 603              	.LVL67:
- 604              	.L64:
+ 206:ultrasonic.c  ****         case 0:
+ 207:ultrasonic.c  ****         
+ 208:ultrasonic.c  ****             //while (Echo_1_Read() == 0)
+ 209:ultrasonic.c  ****             {
+ 210:ultrasonic.c  ****                 Trigger_1_Write(1);
+ 305              		.loc 1 210 0
+ 306 001c 0120     		movs	r0, #1
+ 307 001e FFF7FEFF 		bl	Trigger_1_Write
+ 308              	.LVL29:
+ 211:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 309              		.loc 1 211 0
+ 310 0022 0A20     		movs	r0, #10
+ 311 0024 FFF7FEFF 		bl	CyDelayUs
+ 312              	.LVL30:
+ 212:ultrasonic.c  ****                 Trigger_1_Write(0);
+ 313              		.loc 1 212 0
+ 314 0028 0020     		movs	r0, #0
+ 315 002a FFF7FEFF 		bl	Trigger_1_Write
+ 316              	.LVL31:
+ 213:ultrasonic.c  ****             }
  214:ultrasonic.c  ****         
- 215:ultrasonic.c  ****         case 3:
+ 215:ultrasonic.c  ****         break;
+ 317              		.loc 1 215 0
+ 318 002e 10BD     		pop	{r4, pc}
+ 319              	.LVL32:
+ 320              	.L22:
  216:ultrasonic.c  ****         
- 217:ultrasonic.c  ****            //while (Echo_4_Read() == 0)
- 218:ultrasonic.c  ****             {
- 219:ultrasonic.c  ****                 Trigger_4_Write(1);
- 605              		.loc 1 219 0
- 606 0058 0120     		movs	r0, #1
- 607 005a FFF7FEFF 		bl	Trigger_4_Write
- 608              	.LVL68:
- 220:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 609              		.loc 1 220 0
- 610 005e 0A20     		movs	r0, #10
- 611 0060 FFF7FEFF 		bl	CyDelayUs
- 612              	.LVL69:
- 221:ultrasonic.c  ****                 Trigger_4_Write(0);
- 613              		.loc 1 221 0
- 614 0064 0020     		movs	r0, #0
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 17
+ 217:ultrasonic.c  ****         case 1:
+ 218:ultrasonic.c  ****         
+ 219:ultrasonic.c  ****            //while (Echo_2_Read() == 0)
+ 220:ultrasonic.c  ****             {
+ 221:ultrasonic.c  ****                 Trigger_2_Write(1);
+ 321              		.loc 1 221 0
+ 322 0030 0120     		movs	r0, #1
+ 323 0032 FFF7FEFF 		bl	Trigger_2_Write
+ 324              	.LVL33:
+ 222:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 325              		.loc 1 222 0
+ 326 0036 0A20     		movs	r0, #10
+ 327 0038 FFF7FEFF 		bl	CyDelayUs
+ 328              	.LVL34:
+ 223:ultrasonic.c  ****                 Trigger_2_Write(0);
+ 329              		.loc 1 223 0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 11
 
 
- 615 0066 FFF7FEFF 		bl	Trigger_4_Write
- 616              	.LVL70:
- 222:ultrasonic.c  ****             }
- 223:ultrasonic.c  ****         
- 224:ultrasonic.c  ****         break;
- 617              		.loc 1 224 0
- 618 006a 10BD     		pop	{r4, pc}
- 619              	.LVL71:
- 620              	.L65:
+ 330 003c 0020     		movs	r0, #0
+ 331 003e FFF7FEFF 		bl	Trigger_2_Write
+ 332              	.LVL35:
+ 224:ultrasonic.c  ****             }
  225:ultrasonic.c  ****         
- 226:ultrasonic.c  ****         case 4:
+ 226:ultrasonic.c  ****         break;
+ 333              		.loc 1 226 0
+ 334 0042 10BD     		pop	{r4, pc}
+ 335              	.LVL36:
+ 336              	.L23:
  227:ultrasonic.c  ****         
- 228:ultrasonic.c  ****             //while (Echo_5_Read() == 0)
- 229:ultrasonic.c  ****             {
- 230:ultrasonic.c  ****                 Trigger_5_Write(1);
- 621              		.loc 1 230 0
- 622 006c 0120     		movs	r0, #1
- 623 006e FFF7FEFF 		bl	Trigger_5_Write
- 624              	.LVL72:
- 231:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 625              		.loc 1 231 0
- 626 0072 0A20     		movs	r0, #10
- 627 0074 FFF7FEFF 		bl	CyDelayUs
- 628              	.LVL73:
- 232:ultrasonic.c  ****                 Trigger_5_Write(0);
- 629              		.loc 1 232 0
- 630 0078 0020     		movs	r0, #0
- 631 007a FFF7FEFF 		bl	Trigger_5_Write
- 632              	.LVL74:
- 633              	.L58:
- 634 007e 10BD     		pop	{r4, pc}
- 635              		.cfi_endproc
- 636              	.LFE66:
- 637              		.size	distanceSensor, .-distanceSensor
- 638              		.section	.text.distanceCheck,"ax",%progbits
- 639              		.align	2
- 640              		.global	distanceCheck
- 641              		.thumb
- 642              		.thumb_func
- 643              		.type	distanceCheck, %function
- 644              	distanceCheck:
- 645              	.LFB67:
- 233:ultrasonic.c  ****             }
- 234:ultrasonic.c  ****         
- 235:ultrasonic.c  ****         break;
- 236:ultrasonic.c  ****             
- 237:ultrasonic.c  ****     }
- 238:ultrasonic.c  **** 
- 239:ultrasonic.c  **** }
- 240:ultrasonic.c  **** 
- 241:ultrasonic.c  **** void distanceCheck()
- 242:ultrasonic.c  **** {
- 646              		.loc 1 242 0
- 647              		.cfi_startproc
- 648              		@ args = 0, pretend = 0, frame = 0
- 649              		@ frame_needed = 0, uses_anonymous_args = 0
- 650 0000 08B5     		push	{r3, lr}
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 18
+ 228:ultrasonic.c  ****         case 2:
+ 229:ultrasonic.c  ****         
+ 230:ultrasonic.c  ****             //while (Echo_3_Read() == 0)
+ 231:ultrasonic.c  ****             {
+ 232:ultrasonic.c  ****                 Trigger_3_Write(1);
+ 337              		.loc 1 232 0
+ 338 0044 0120     		movs	r0, #1
+ 339 0046 FFF7FEFF 		bl	Trigger_3_Write
+ 340              	.LVL37:
+ 233:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 341              		.loc 1 233 0
+ 342 004a 0A20     		movs	r0, #10
+ 343 004c FFF7FEFF 		bl	CyDelayUs
+ 344              	.LVL38:
+ 234:ultrasonic.c  ****                 Trigger_3_Write(0);
+ 345              		.loc 1 234 0
+ 346 0050 0020     		movs	r0, #0
+ 347 0052 FFF7FEFF 		bl	Trigger_3_Write
+ 348              	.LVL39:
+ 235:ultrasonic.c  ****             }
+ 236:ultrasonic.c  ****         
+ 237:ultrasonic.c  ****         break;
+ 349              		.loc 1 237 0
+ 350 0056 10BD     		pop	{r4, pc}
+ 351              	.LVL40:
+ 352              	.L24:
+ 238:ultrasonic.c  ****         
+ 239:ultrasonic.c  ****         case 3:
+ 240:ultrasonic.c  ****         
+ 241:ultrasonic.c  ****            //while (Echo_4_Read() == 0)
+ 242:ultrasonic.c  ****             {
+ 243:ultrasonic.c  ****                 Trigger_4_Write(1);
+ 353              		.loc 1 243 0
+ 354 0058 0120     		movs	r0, #1
+ 355 005a FFF7FEFF 		bl	Trigger_4_Write
+ 356              	.LVL41:
+ 244:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 357              		.loc 1 244 0
+ 358 005e 0A20     		movs	r0, #10
+ 359 0060 FFF7FEFF 		bl	CyDelayUs
+ 360              	.LVL42:
+ 245:ultrasonic.c  ****                 Trigger_4_Write(0);
+ 361              		.loc 1 245 0
+ 362 0064 0020     		movs	r0, #0
+ 363 0066 FFF7FEFF 		bl	Trigger_4_Write
+ 364              	.LVL43:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 12
 
 
- 651              		.cfi_def_cfa_offset 8
- 652              		.cfi_offset 3, -8
- 653              		.cfi_offset 14, -4
- 243:ultrasonic.c  ****    
- 244:ultrasonic.c  ****   for (ultrasonic_mux_control = 0; ultrasonic_mux_control < TOTAL_SONIC_SENSORS; ultrasonic_mux_con
- 654              		.loc 1 244 0
- 655 0002 0022     		movs	r2, #0
- 656 0004 084B     		ldr	r3, .L71
- 657 0006 1A71     		strb	r2, [r3, #4]
- 658 0008 08E0     		b	.L68
- 659              	.L69:
- 245:ultrasonic.c  **** 
- 246:ultrasonic.c  ****         distanceSensor(ultrasonic_mux_control);
- 660              		.loc 1 246 0 discriminator 3
- 661 000a FFF7FEFF 		bl	distanceSensor
- 662              	.LVL75:
- 247:ultrasonic.c  ****         CyDelay(SENSOR_PULSE_DELAY_MS);                // delay of 100 milliseconds or adequate bet
- 663              		.loc 1 247 0 discriminator 3
- 664 000e 3220     		movs	r0, #50
- 665 0010 FFF7FEFF 		bl	CyDelay
- 666              	.LVL76:
- 244:ultrasonic.c  **** 
- 667              		.loc 1 244 0 discriminator 3
- 668 0014 044A     		ldr	r2, .L71
- 669 0016 1379     		ldrb	r3, [r2, #4]	@ zero_extendqisi2
- 670 0018 0133     		adds	r3, r3, #1
- 671 001a 1371     		strb	r3, [r2, #4]
- 672              	.L68:
- 244:ultrasonic.c  **** 
- 673              		.loc 1 244 0 is_stmt 0 discriminator 1
- 674 001c 024B     		ldr	r3, .L71
- 675 001e 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
- 676 0020 0428     		cmp	r0, #4
- 677 0022 F2D9     		bls	.L69
- 248:ultrasonic.c  ****   
- 249:ultrasonic.c  ****     }
- 250:ultrasonic.c  **** }
- 678              		.loc 1 250 0 is_stmt 1
- 679 0024 08BD     		pop	{r3, pc}
- 680              	.L72:
- 681 0026 00BF     		.align	2
- 682              	.L71:
- 683 0028 00000000 		.word	.LANCHOR0
- 684              		.cfi_endproc
- 685              	.LFE67:
- 686              		.size	distanceCheck, .-distanceCheck
- 687              		.comm	output,40,4
- 688              		.global	ultrasonic_mux_control
- 689              		.global	ultrasonic_distances
- 690              		.global	distance_measured
- 691              		.global	count
- 692              		.global	i
- 693              		.comm	driveStraightEnable,4,4
- 694              		.section	.rodata.str1.4,"aMS",%progbits,1
- 695              		.align	2
- 696              	.LC0:
- 697 0000 25643A20 		.ascii	"%d: %fmm\012\000"
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 19
+ 246:ultrasonic.c  ****             }
+ 247:ultrasonic.c  ****         
+ 248:ultrasonic.c  ****         break;
+ 365              		.loc 1 248 0
+ 366 006a 10BD     		pop	{r4, pc}
+ 367              	.LVL44:
+ 368              	.L25:
+ 249:ultrasonic.c  ****         
+ 250:ultrasonic.c  ****         case 4:
+ 251:ultrasonic.c  ****         
+ 252:ultrasonic.c  ****             //while (Echo_5_Read() == 0)
+ 253:ultrasonic.c  ****             {
+ 254:ultrasonic.c  ****                 Trigger_5_Write(1);
+ 369              		.loc 1 254 0
+ 370 006c 0120     		movs	r0, #1
+ 371 006e FFF7FEFF 		bl	Trigger_5_Write
+ 372              	.LVL45:
+ 255:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 373              		.loc 1 255 0
+ 374 0072 0A20     		movs	r0, #10
+ 375 0074 FFF7FEFF 		bl	CyDelayUs
+ 376              	.LVL46:
+ 256:ultrasonic.c  ****                 Trigger_5_Write(0);
+ 377              		.loc 1 256 0
+ 378 0078 0020     		movs	r0, #0
+ 379 007a FFF7FEFF 		bl	Trigger_5_Write
+ 380              	.LVL47:
+ 381              	.L18:
+ 382 007e 10BD     		pop	{r4, pc}
+ 383              		.cfi_endproc
+ 384              	.LFE67:
+ 385              		.size	distanceSensor, .-distanceSensor
+ 386              		.section	.text.distanceCheck,"ax",%progbits
+ 387              		.align	2
+ 388              		.global	distanceCheck
+ 389              		.thumb
+ 390              		.thumb_func
+ 391              		.type	distanceCheck, %function
+ 392              	distanceCheck:
+ 393              	.LFB68:
+ 257:ultrasonic.c  ****             }
+ 258:ultrasonic.c  ****         
+ 259:ultrasonic.c  ****         break;
+ 260:ultrasonic.c  ****             
+ 261:ultrasonic.c  ****     }
+ 262:ultrasonic.c  **** 
+ 263:ultrasonic.c  **** }
+ 264:ultrasonic.c  **** 
+ 265:ultrasonic.c  **** void distanceCheck()
+ 266:ultrasonic.c  **** {
+ 394              		.loc 1 266 0
+ 395              		.cfi_startproc
+ 396              		@ args = 0, pretend = 0, frame = 0
+ 397              		@ frame_needed = 0, uses_anonymous_args = 0
+ 398 0000 08B5     		push	{r3, lr}
+ 399              		.cfi_def_cfa_offset 8
+ 400              		.cfi_offset 3, -8
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 13
 
 
- 697      25666D6D 
- 697      0A00
- 698              		.bss
- 699              		.align	2
- 700              		.set	.LANCHOR0,. + 0
- 701              		.type	count, %object
- 702              		.size	count, 4
- 703              	count:
- 704 0000 00000000 		.space	4
- 705              		.type	ultrasonic_mux_control, %object
- 706              		.size	ultrasonic_mux_control, 1
- 707              	ultrasonic_mux_control:
- 708 0004 00       		.space	1
- 709 0005 000000   		.space	3
- 710              		.type	ultrasonic_distances, %object
- 711              		.size	ultrasonic_distances, 20
- 712              	ultrasonic_distances:
- 713 0008 00000000 		.space	20
- 713      00000000 
- 713      00000000 
- 713      00000000 
- 713      00000000 
- 714              		.type	distance_measured, %object
- 715              		.size	distance_measured, 4
- 716              	distance_measured:
- 717 001c 00000000 		.space	4
- 718              		.type	i, %object
- 719              		.size	i, 4
- 720              	i:
- 721 0020 00000000 		.space	4
- 722              		.text
- 723              	.Letext0:
- 724              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 725              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 726              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
- 727              		.file 5 "dcmotor.h"
- 728              		.file 6 "main.h"
- 729              		.file 7 "ultrasonic.h"
- 730              		.file 8 "Generated_Source\\PSoC5/core_cm3.h"
- 731              		.file 9 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 732              		.file 10 "Generated_Source\\PSoC5/UART_1.h"
- 733              		.file 11 "Generated_Source\\PSoC5/Timer_1.h"
- 734              		.file 12 "Generated_Source\\PSoC5/Motor_1_driver.h"
- 735              		.file 13 "Generated_Source\\PSoC5/Motor_2_driver.h"
- 736              		.file 14 "Generated_Source\\PSoC5/Ultrasonic_Mux_Control.h"
- 737              		.file 15 "Generated_Source\\PSoC5/Trigger_1.h"
- 738              		.file 16 "Generated_Source\\PSoC5/CyLib.h"
- 739              		.file 17 "Generated_Source\\PSoC5/Trigger_2.h"
- 740              		.file 18 "Generated_Source\\PSoC5/Trigger_3.h"
- 741              		.file 19 "Generated_Source\\PSoC5/Trigger_4.h"
- 742              		.file 20 "Generated_Source\\PSoC5/Trigger_5.h"
- 743              		.section	.debug_info,"",%progbits
- 744              	.Ldebug_info0:
- 745 0000 EA040000 		.4byte	0x4ea
- 746 0004 0400     		.2byte	0x4
- 747 0006 00000000 		.4byte	.Ldebug_abbrev0
- 748 000a 04       		.byte	0x4
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 20
+ 401              		.cfi_offset 14, -4
+ 267:ultrasonic.c  ****    
+ 268:ultrasonic.c  ****   for (ultrasonic_mux_control = 0; ultrasonic_mux_control < TOTAL_SONIC_SENSORS; ultrasonic_mux_con
+ 402              		.loc 1 268 0
+ 403 0002 0022     		movs	r2, #0
+ 404 0004 084B     		ldr	r3, .L31
+ 405 0006 1A71     		strb	r2, [r3, #4]
+ 406 0008 08E0     		b	.L28
+ 407              	.L29:
+ 269:ultrasonic.c  **** 
+ 270:ultrasonic.c  ****         distanceSensor(ultrasonic_mux_control);
+ 408              		.loc 1 270 0 discriminator 3
+ 409 000a FFF7FEFF 		bl	distanceSensor
+ 410              	.LVL48:
+ 271:ultrasonic.c  ****         CyDelay(SENSOR_PULSE_DELAY_MS);                // delay of 100 milliseconds or adequate bet
+ 411              		.loc 1 271 0 discriminator 3
+ 412 000e 3220     		movs	r0, #50
+ 413 0010 FFF7FEFF 		bl	CyDelay
+ 414              	.LVL49:
+ 268:ultrasonic.c  **** 
+ 415              		.loc 1 268 0 discriminator 3
+ 416 0014 044A     		ldr	r2, .L31
+ 417 0016 1379     		ldrb	r3, [r2, #4]	@ zero_extendqisi2
+ 418 0018 0133     		adds	r3, r3, #1
+ 419 001a 1371     		strb	r3, [r2, #4]
+ 420              	.L28:
+ 268:ultrasonic.c  **** 
+ 421              		.loc 1 268 0 is_stmt 0 discriminator 1
+ 422 001c 024B     		ldr	r3, .L31
+ 423 001e 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
+ 424 0020 0428     		cmp	r0, #4
+ 425 0022 F2D9     		bls	.L29
+ 272:ultrasonic.c  ****   
+ 273:ultrasonic.c  ****     }
+ 274:ultrasonic.c  **** }
+ 426              		.loc 1 274 0 is_stmt 1
+ 427 0024 08BD     		pop	{r3, pc}
+ 428              	.L32:
+ 429 0026 00BF     		.align	2
+ 430              	.L31:
+ 431 0028 00000000 		.word	.LANCHOR0
+ 432              		.cfi_endproc
+ 433              	.LFE68:
+ 434              		.size	distanceCheck, .-distanceCheck
+ 435              		.comm	output,40,4
+ 436              		.global	block_start
+ 437              		.global	ultrasonic_mux_control
+ 438              		.global	ultrasonic_distances
+ 439              		.global	distance_measured
+ 440              		.global	count
+ 441              		.global	i
+ 442              		.comm	block_location,16,4
+ 443              		.comm	sweeping,4,4
+ 444              		.comm	puckRackOffsetsFromWest,20,4
+ 445              		.comm	puckRackColours,20,4
+ 446              		.comm	currentPuckRackScanningIndex,4,4
+ 447              		.comm	driveStraightEnable,4,4
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 14
 
 
- 749 000b 01       		.uleb128 0x1
- 750 000c B5000000 		.4byte	.LASF50
- 751 0010 0C       		.byte	0xc
- 752 0011 55010000 		.4byte	.LASF51
- 753 0015 D4020000 		.4byte	.LASF52
- 754 0019 00000000 		.4byte	.Ldebug_ranges0+0
- 755 001d 00000000 		.4byte	0
- 756 0021 00000000 		.4byte	.Ldebug_line0
- 757 0025 02       		.uleb128 0x2
- 758 0026 04       		.byte	0x4
- 759 0027 04       		.byte	0x4
- 760 0028 88000000 		.4byte	.LASF0
- 761 002c 02       		.uleb128 0x2
- 762 002d 01       		.byte	0x1
- 763 002e 06       		.byte	0x6
- 764 002f 3E030000 		.4byte	.LASF1
- 765 0033 02       		.uleb128 0x2
- 766 0034 01       		.byte	0x1
- 767 0035 08       		.byte	0x8
- 768 0036 7F010000 		.4byte	.LASF2
- 769 003a 02       		.uleb128 0x2
- 770 003b 02       		.byte	0x2
- 771 003c 05       		.byte	0x5
- 772 003d 96020000 		.4byte	.LASF3
- 773 0041 02       		.uleb128 0x2
- 774 0042 02       		.byte	0x2
- 775 0043 07       		.byte	0x7
- 776 0044 3F000000 		.4byte	.LASF4
- 777 0048 03       		.uleb128 0x3
- 778 0049 35000000 		.4byte	.LASF10
- 779 004d 02       		.byte	0x2
- 780 004e 3F       		.byte	0x3f
- 781 004f 53000000 		.4byte	0x53
- 782 0053 02       		.uleb128 0x2
- 783 0054 04       		.byte	0x4
- 784 0055 05       		.byte	0x5
- 785 0056 29030000 		.4byte	.LASF5
- 786 005a 02       		.uleb128 0x2
- 787 005b 04       		.byte	0x4
- 788 005c 07       		.byte	0x7
- 789 005d 43010000 		.4byte	.LASF6
- 790 0061 02       		.uleb128 0x2
- 791 0062 08       		.byte	0x8
- 792 0063 05       		.byte	0x5
- 793 0064 00000000 		.4byte	.LASF7
- 794 0068 02       		.uleb128 0x2
- 795 0069 08       		.byte	0x8
- 796 006a 07       		.byte	0x7
- 797 006b 0E020000 		.4byte	.LASF8
- 798 006f 04       		.uleb128 0x4
- 799 0070 04       		.byte	0x4
- 800 0071 05       		.byte	0x5
- 801 0072 696E7400 		.ascii	"int\000"
- 802 0076 02       		.uleb128 0x2
- 803 0077 04       		.byte	0x4
- 804 0078 07       		.byte	0x7
- 805 0079 DC010000 		.4byte	.LASF9
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 21
+ 448              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 449              		.align	2
+ 450              	.LC0:
+ 451 0000 25643A20 		.ascii	"%d: %fmm\012\000"
+ 451      25666D6D 
+ 451      0A00
+ 452              		.bss
+ 453              		.align	2
+ 454              		.set	.LANCHOR0,. + 0
+ 455              		.type	count, %object
+ 456              		.size	count, 4
+ 457              	count:
+ 458 0000 00000000 		.space	4
+ 459              		.type	ultrasonic_mux_control, %object
+ 460              		.size	ultrasonic_mux_control, 1
+ 461              	ultrasonic_mux_control:
+ 462 0004 00       		.space	1
+ 463 0005 000000   		.space	3
+ 464              		.type	ultrasonic_distances, %object
+ 465              		.size	ultrasonic_distances, 20
+ 466              	ultrasonic_distances:
+ 467 0008 00000000 		.space	20
+ 467      00000000 
+ 467      00000000 
+ 467      00000000 
+ 467      00000000 
+ 468              		.type	block_start, %object
+ 469              		.size	block_start, 4
+ 470              	block_start:
+ 471 001c 00000000 		.space	4
+ 472              		.type	distance_measured, %object
+ 473              		.size	distance_measured, 4
+ 474              	distance_measured:
+ 475 0020 00000000 		.space	4
+ 476              		.type	i, %object
+ 477              		.size	i, 4
+ 478              	i:
+ 479 0024 00000000 		.space	4
+ 480              		.text
+ 481              	.Letext0:
+ 482              		.file 2 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 483              		.file 3 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 484              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 485              		.file 5 "dcmotor.h"
+ 486              		.file 6 "ultrasonic.h"
+ 487              		.file 7 "Generated_Source\\PSoC5/core_cm3.h"
+ 488              		.file 8 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 489              		.file 9 "Generated_Source\\PSoC5/UART_1.h"
+ 490              		.file 10 "Generated_Source\\PSoC5/Timer_1.h"
+ 491              		.file 11 "customMath.h"
+ 492              		.file 12 "Generated_Source\\PSoC5/Ultrasonic_Mux_Control.h"
+ 493              		.file 13 "Generated_Source\\PSoC5/Trigger_1.h"
+ 494              		.file 14 "Generated_Source\\PSoC5/CyLib.h"
+ 495              		.file 15 "Generated_Source\\PSoC5/Trigger_2.h"
+ 496              		.file 16 "Generated_Source\\PSoC5/Trigger_3.h"
+ 497              		.file 17 "Generated_Source\\PSoC5/Trigger_4.h"
+ 498              		.file 18 "Generated_Source\\PSoC5/Trigger_5.h"
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 15
 
 
- 806 007d 03       		.uleb128 0x3
- 807 007e 35020000 		.4byte	.LASF11
- 808 0082 03       		.byte	0x3
- 809 0083 2C       		.byte	0x2c
- 810 0084 48000000 		.4byte	0x48
- 811 0088 05       		.uleb128 0x5
- 812 0089 62010000 		.4byte	.LASF12
- 813 008d 04       		.byte	0x4
- 814 008e E401     		.2byte	0x1e4
- 815 0090 33000000 		.4byte	0x33
- 816 0094 02       		.uleb128 0x2
- 817 0095 08       		.byte	0x8
- 818 0096 04       		.byte	0x4
- 819 0097 A4010000 		.4byte	.LASF13
- 820 009b 02       		.uleb128 0x2
- 821 009c 01       		.byte	0x1
- 822 009d 08       		.byte	0x8
- 823 009e 5A020000 		.4byte	.LASF14
- 824 00a2 02       		.uleb128 0x2
- 825 00a3 08       		.byte	0x8
- 826 00a4 04       		.byte	0x4
- 827 00a5 32030000 		.4byte	.LASF15
- 828 00a9 02       		.uleb128 0x2
- 829 00aa 04       		.byte	0x4
- 830 00ab 07       		.byte	0x7
- 831 00ac 3D020000 		.4byte	.LASF16
- 832 00b0 06       		.uleb128 0x6
- 833 00b1 A3000000 		.4byte	.LASF19
- 834 00b5 01       		.byte	0x1
- 835 00b6 9A       		.byte	0x9a
- 836 00b7 00000000 		.4byte	.LFB65
- 837 00bb 30000000 		.4byte	.LFE65-.LFB65
- 838 00bf 01       		.uleb128 0x1
- 839 00c0 9C       		.byte	0x9c
- 840 00c1 17010000 		.4byte	0x117
- 841 00c5 07       		.uleb128 0x7
- 842 00c6 89020000 		.4byte	.LASF17
- 843 00ca 01       		.byte	0x1
- 844 00cb 9A       		.byte	0x9a
- 845 00cc 6F000000 		.4byte	0x6f
- 846 00d0 00000000 		.4byte	.LLST0
- 847 00d4 07       		.uleb128 0x7
- 848 00d5 77000000 		.4byte	.LASF18
- 849 00d9 01       		.byte	0x1
- 850 00da 9A       		.byte	0x9a
- 851 00db 25000000 		.4byte	0x25
- 852 00df 2C000000 		.4byte	.LLST1
- 853 00e3 08       		.uleb128 0x8
- 854 00e4 1C000000 		.4byte	.LVL3
- 855 00e8 3D040000 		.4byte	0x43d
- 856 00ec 06010000 		.4byte	0x106
- 857 00f0 09       		.uleb128 0x9
- 858 00f1 01       		.uleb128 0x1
- 859 00f2 50       		.byte	0x50
- 860 00f3 02       		.uleb128 0x2
- 861 00f4 74       		.byte	0x74
- 862 00f5 00       		.sleb128 0
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 22
+ 499              		.section	.debug_info,"",%progbits
+ 500              	.Ldebug_info0:
+ 501 0000 F8040000 		.4byte	0x4f8
+ 502 0004 0400     		.2byte	0x4
+ 503 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 504 000a 04       		.byte	0x4
+ 505 000b 01       		.uleb128 0x1
+ 506 000c D6000000 		.4byte	.LASF52
+ 507 0010 0C       		.byte	0xc
+ 508 0011 7B000000 		.4byte	.LASF53
+ 509 0015 3B030000 		.4byte	.LASF54
+ 510 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 511 001d 00000000 		.4byte	0
+ 512 0021 00000000 		.4byte	.Ldebug_line0
+ 513 0025 02       		.uleb128 0x2
+ 514 0026 04       		.byte	0x4
+ 515 0027 04       		.byte	0x4
+ 516 0028 A1000000 		.4byte	.LASF0
+ 517 002c 02       		.uleb128 0x2
+ 518 002d 01       		.byte	0x1
+ 519 002e 06       		.byte	0x6
+ 520 002f A9030000 		.4byte	.LASF1
+ 521 0033 02       		.uleb128 0x2
+ 522 0034 01       		.byte	0x1
+ 523 0035 08       		.byte	0x8
+ 524 0036 89010000 		.4byte	.LASF2
+ 525 003a 02       		.uleb128 0x2
+ 526 003b 02       		.byte	0x2
+ 527 003c 05       		.byte	0x5
+ 528 003d E4020000 		.4byte	.LASF3
+ 529 0041 02       		.uleb128 0x2
+ 530 0042 02       		.byte	0x2
+ 531 0043 07       		.byte	0x7
+ 532 0044 4B000000 		.4byte	.LASF4
+ 533 0048 03       		.uleb128 0x3
+ 534 0049 35000000 		.4byte	.LASF10
+ 535 004d 02       		.byte	0x2
+ 536 004e 3F       		.byte	0x3f
+ 537 004f 53000000 		.4byte	0x53
+ 538 0053 02       		.uleb128 0x2
+ 539 0054 04       		.byte	0x4
+ 540 0055 05       		.byte	0x5
+ 541 0056 32030000 		.4byte	.LASF5
+ 542 005a 02       		.uleb128 0x2
+ 543 005b 04       		.byte	0x4
+ 544 005c 07       		.byte	0x7
+ 545 005d 64010000 		.4byte	.LASF6
+ 546 0061 02       		.uleb128 0x2
+ 547 0062 08       		.byte	0x8
+ 548 0063 05       		.byte	0x5
+ 549 0064 00000000 		.4byte	.LASF7
+ 550 0068 02       		.uleb128 0x2
+ 551 0069 08       		.byte	0x8
+ 552 006a 07       		.byte	0x7
+ 553 006b 37020000 		.4byte	.LASF8
+ 554 006f 04       		.uleb128 0x4
+ 555 0070 04       		.byte	0x4
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 16
 
 
- 863 00f6 09       		.uleb128 0x9
- 864 00f7 01       		.uleb128 0x1
- 865 00f8 51       		.byte	0x51
- 866 00f9 05       		.uleb128 0x5
- 867 00fa 03       		.byte	0x3
- 868 00fb 00000000 		.4byte	.LC0
- 869 00ff 09       		.uleb128 0x9
- 870 0100 01       		.uleb128 0x1
- 871 0101 52       		.byte	0x52
- 872 0102 02       		.uleb128 0x2
- 873 0103 75       		.byte	0x75
- 874 0104 00       		.sleb128 0
- 875 0105 00       		.byte	0
- 876 0106 0A       		.uleb128 0xa
- 877 0107 22000000 		.4byte	.LVL4
- 878 010b 48040000 		.4byte	0x448
- 879 010f 09       		.uleb128 0x9
- 880 0110 01       		.uleb128 0x1
- 881 0111 50       		.byte	0x50
- 882 0112 02       		.uleb128 0x2
- 883 0113 74       		.byte	0x74
- 884 0114 00       		.sleb128 0
- 885 0115 00       		.byte	0
- 886 0116 00       		.byte	0
- 887 0117 0B       		.uleb128 0xb
- 888 0118 A4030000 		.4byte	.LASF22
- 889 011c 01       		.byte	0x1
- 890 011d 32       		.byte	0x32
- 891 011e 00000000 		.4byte	.LFB64
- 892 0122 D4020000 		.4byte	.LFE64-.LFB64
- 893 0126 01       		.uleb128 0x1
- 894 0127 9C       		.byte	0x9c
- 895 0128 EC010000 		.4byte	0x1ec
- 896 012c 0C       		.uleb128 0xc
- 897 012d 06000000 		.4byte	.LVL6
- 898 0131 53040000 		.4byte	0x453
- 899 0135 0C       		.uleb128 0xc
- 900 0136 0A000000 		.4byte	.LVL7
- 901 013a 5E040000 		.4byte	0x45e
- 902 013e 0C       		.uleb128 0xc
- 903 013f 12000000 		.4byte	.LVL8
- 904 0143 69040000 		.4byte	0x469
- 905 0147 08       		.uleb128 0x8
- 906 0148 42000000 		.4byte	.LVL13
- 907 014c B0000000 		.4byte	0xb0
- 908 0150 5B010000 		.4byte	0x15b
- 909 0154 09       		.uleb128 0x9
- 910 0155 01       		.uleb128 0x1
- 911 0156 50       		.byte	0x50
- 912 0157 02       		.uleb128 0x2
- 913 0158 75       		.byte	0x75
- 914 0159 00       		.sleb128 0
- 915 015a 00       		.byte	0
- 916 015b 0C       		.uleb128 0xc
- 917 015c 92000000 		.4byte	.LVL18
- 918 0160 74040000 		.4byte	0x474
- 919 0164 0C       		.uleb128 0xc
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 23
+ 556 0071 05       		.byte	0x5
+ 557 0072 696E7400 		.ascii	"int\000"
+ 558 0076 02       		.uleb128 0x2
+ 559 0077 04       		.byte	0x4
+ 560 0078 07       		.byte	0x7
+ 561 0079 05020000 		.4byte	.LASF9
+ 562 007d 03       		.uleb128 0x3
+ 563 007e 88000000 		.4byte	.LASF11
+ 564 0082 03       		.byte	0x3
+ 565 0083 2C       		.byte	0x2c
+ 566 0084 48000000 		.4byte	0x48
+ 567 0088 05       		.uleb128 0x5
+ 568 0089 76010000 		.4byte	.LASF12
+ 569 008d 04       		.byte	0x4
+ 570 008e E401     		.2byte	0x1e4
+ 571 0090 33000000 		.4byte	0x33
+ 572 0094 02       		.uleb128 0x2
+ 573 0095 08       		.byte	0x8
+ 574 0096 04       		.byte	0x4
+ 575 0097 AE010000 		.4byte	.LASF13
+ 576 009b 02       		.uleb128 0x2
+ 577 009c 01       		.byte	0x1
+ 578 009d 08       		.byte	0x8
+ 579 009e A8020000 		.4byte	.LASF14
+ 580 00a2 02       		.uleb128 0x2
+ 581 00a3 08       		.byte	0x8
+ 582 00a4 04       		.byte	0x4
+ 583 00a5 5E020000 		.4byte	.LASF15
+ 584 00a9 02       		.uleb128 0x2
+ 585 00aa 04       		.byte	0x4
+ 586 00ab 07       		.byte	0x7
+ 587 00ac 6A020000 		.4byte	.LASF16
+ 588 00b0 06       		.uleb128 0x6
+ 589 00b1 92020000 		.4byte	.LASF55
+ 590 00b5 01       		.byte	0x1
+ 591 00b6 AC       		.byte	0xac
+ 592 00b7 6F000000 		.4byte	0x6f
+ 593 00bb 00000000 		.4byte	.LFB65
+ 594 00bf 04000000 		.4byte	.LFE65-.LFB65
+ 595 00c3 01       		.uleb128 0x1
+ 596 00c4 9C       		.byte	0x9c
+ 597 00c5 D6000000 		.4byte	0xd6
+ 598 00c9 07       		.uleb128 0x7
+ 599 00ca 87020000 		.4byte	.LASF56
+ 600 00ce 01       		.byte	0x1
+ 601 00cf AE       		.byte	0xae
+ 602 00d0 6F000000 		.4byte	0x6f
+ 603 00d4 00       		.byte	0
+ 604 00d5 00       		.byte	0
+ 605 00d6 08       		.uleb128 0x8
+ 606 00d7 C4000000 		.4byte	.LASF19
+ 607 00db 01       		.byte	0x1
+ 608 00dc B2       		.byte	0xb2
+ 609 00dd 00000000 		.4byte	.LFB66
+ 610 00e1 30000000 		.4byte	.LFE66-.LFB66
+ 611 00e5 01       		.uleb128 0x1
+ 612 00e6 9C       		.byte	0x9c
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 17
 
 
- 920 0165 96000000 		.4byte	.LVL19
- 921 0169 7F040000 		.4byte	0x47f
- 922 016d 0C       		.uleb128 0xc
- 923 016e F0000000 		.4byte	.LVL24
- 924 0172 74040000 		.4byte	0x474
- 925 0176 0C       		.uleb128 0xc
- 926 0177 F4000000 		.4byte	.LVL25
- 927 017b 7F040000 		.4byte	0x47f
- 928 017f 0C       		.uleb128 0xc
- 929 0180 48010000 		.4byte	.LVL30
- 930 0184 74040000 		.4byte	0x474
- 931 0188 0C       		.uleb128 0xc
- 932 0189 4C010000 		.4byte	.LVL31
- 933 018d 7F040000 		.4byte	0x47f
- 934 0191 0C       		.uleb128 0xc
- 935 0192 88010000 		.4byte	.LVL34
- 936 0196 74040000 		.4byte	0x474
- 937 019a 0C       		.uleb128 0xc
- 938 019b 8C010000 		.4byte	.LVL35
- 939 019f 7F040000 		.4byte	0x47f
- 940 01a3 0C       		.uleb128 0xc
- 941 01a4 C6010000 		.4byte	.LVL38
- 942 01a8 74040000 		.4byte	0x474
- 943 01ac 0C       		.uleb128 0xc
- 944 01ad CA010000 		.4byte	.LVL39
- 945 01b1 7F040000 		.4byte	0x47f
- 946 01b5 0C       		.uleb128 0xc
- 947 01b6 04020000 		.4byte	.LVL42
- 948 01ba 74040000 		.4byte	0x474
- 949 01be 0C       		.uleb128 0xc
- 950 01bf 08020000 		.4byte	.LVL43
- 951 01c3 7F040000 		.4byte	0x47f
- 952 01c7 0C       		.uleb128 0xc
- 953 01c8 42020000 		.4byte	.LVL46
- 954 01cc 74040000 		.4byte	0x474
- 955 01d0 0C       		.uleb128 0xc
- 956 01d1 46020000 		.4byte	.LVL47
- 957 01d5 7F040000 		.4byte	0x47f
- 958 01d9 0C       		.uleb128 0xc
- 959 01da BE020000 		.4byte	.LVL50
- 960 01de 74040000 		.4byte	0x474
- 961 01e2 0C       		.uleb128 0xc
- 962 01e3 C2020000 		.4byte	.LVL51
- 963 01e7 7F040000 		.4byte	0x47f
- 964 01eb 00       		.byte	0
- 965 01ec 0D       		.uleb128 0xd
- 966 01ed 68030000 		.4byte	.LASF20
- 967 01f1 01       		.byte	0x1
- 968 01f2 AF       		.byte	0xaf
- 969 01f3 00000000 		.4byte	.LFB66
- 970 01f7 80000000 		.4byte	.LFE66-.LFB66
- 971 01fb 01       		.uleb128 0x1
- 972 01fc 9C       		.byte	0x9c
- 973 01fd 47030000 		.4byte	0x347
- 974 0201 07       		.uleb128 0x7
- 975 0202 0E000000 		.4byte	.LASF21
- 976 0206 01       		.byte	0x1
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 24
+ 613 00e7 3D010000 		.4byte	0x13d
+ 614 00eb 09       		.uleb128 0x9
+ 615 00ec D7020000 		.4byte	.LASF17
+ 616 00f0 01       		.byte	0x1
+ 617 00f1 B2       		.byte	0xb2
+ 618 00f2 6F000000 		.4byte	0x6f
+ 619 00f6 00000000 		.4byte	.LLST0
+ 620 00fa 09       		.uleb128 0x9
+ 621 00fb 90000000 		.4byte	.LASF18
+ 622 00ff 01       		.byte	0x1
+ 623 0100 B2       		.byte	0xb2
+ 624 0101 25000000 		.4byte	0x25
+ 625 0105 2C000000 		.4byte	.LLST1
+ 626 0109 0A       		.uleb128 0xa
+ 627 010a 1C000000 		.4byte	.LVL4
+ 628 010e 56040000 		.4byte	0x456
+ 629 0112 2C010000 		.4byte	0x12c
+ 630 0116 0B       		.uleb128 0xb
+ 631 0117 01       		.uleb128 0x1
+ 632 0118 50       		.byte	0x50
+ 633 0119 02       		.uleb128 0x2
+ 634 011a 74       		.byte	0x74
+ 635 011b 00       		.sleb128 0
+ 636 011c 0B       		.uleb128 0xb
+ 637 011d 01       		.uleb128 0x1
+ 638 011e 51       		.byte	0x51
+ 639 011f 05       		.uleb128 0x5
+ 640 0120 03       		.byte	0x3
+ 641 0121 00000000 		.4byte	.LC0
+ 642 0125 0B       		.uleb128 0xb
+ 643 0126 01       		.uleb128 0x1
+ 644 0127 52       		.byte	0x52
+ 645 0128 02       		.uleb128 0x2
+ 646 0129 75       		.byte	0x75
+ 647 012a 00       		.sleb128 0
+ 648 012b 00       		.byte	0
+ 649 012c 0C       		.uleb128 0xc
+ 650 012d 22000000 		.4byte	.LVL5
+ 651 0131 61040000 		.4byte	0x461
+ 652 0135 0B       		.uleb128 0xb
+ 653 0136 01       		.uleb128 0x1
+ 654 0137 50       		.byte	0x50
+ 655 0138 02       		.uleb128 0x2
+ 656 0139 74       		.byte	0x74
+ 657 013a 00       		.sleb128 0
+ 658 013b 00       		.byte	0
+ 659 013c 00       		.byte	0
+ 660 013d 08       		.uleb128 0x8
+ 661 013e 0F040000 		.4byte	.LASF20
+ 662 0142 01       		.byte	0x1
+ 663 0143 28       		.byte	0x28
+ 664 0144 00000000 		.4byte	.LFB64
+ 665 0148 20010000 		.4byte	.LFE64-.LFB64
+ 666 014c 01       		.uleb128 0x1
+ 667 014d 9C       		.byte	0x9c
+ 668 014e 94010000 		.4byte	0x194
+ 669 0152 0D       		.uleb128 0xd
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 18
 
 
- 977 0207 AF       		.byte	0xaf
- 978 0208 6F000000 		.4byte	0x6f
- 979 020c 4F000000 		.4byte	.LLST2
- 980 0210 08       		.uleb128 0x8
- 981 0211 0A000000 		.4byte	.LVL54
- 982 0215 8A040000 		.4byte	0x48a
- 983 0219 24020000 		.4byte	0x224
- 984 021d 09       		.uleb128 0x9
- 985 021e 01       		.uleb128 0x1
- 986 021f 50       		.byte	0x50
- 987 0220 02       		.uleb128 0x2
- 988 0221 74       		.byte	0x74
- 989 0222 00       		.sleb128 0
- 990 0223 00       		.byte	0
- 991 0224 0C       		.uleb128 0xc
- 992 0225 0E000000 		.4byte	.LVL55
- 993 0229 95040000 		.4byte	0x495
- 994 022d 08       		.uleb128 0x8
- 995 022e 22000000 		.4byte	.LVL56
- 996 0232 A0040000 		.4byte	0x4a0
- 997 0236 40020000 		.4byte	0x240
- 998 023a 09       		.uleb128 0x9
- 999 023b 01       		.uleb128 0x1
- 1000 023c 50       		.byte	0x50
- 1001 023d 01       		.uleb128 0x1
- 1002 023e 31       		.byte	0x31
- 1003 023f 00       		.byte	0
- 1004 0240 08       		.uleb128 0x8
- 1005 0241 28000000 		.4byte	.LVL57
- 1006 0245 AB040000 		.4byte	0x4ab
- 1007 0249 53020000 		.4byte	0x253
- 1008 024d 09       		.uleb128 0x9
- 1009 024e 01       		.uleb128 0x1
- 1010 024f 50       		.byte	0x50
- 1011 0250 01       		.uleb128 0x1
- 1012 0251 3A       		.byte	0x3a
- 1013 0252 00       		.byte	0
- 1014 0253 08       		.uleb128 0x8
- 1015 0254 2E000000 		.4byte	.LVL58
- 1016 0258 A0040000 		.4byte	0x4a0
- 1017 025c 66020000 		.4byte	0x266
- 1018 0260 09       		.uleb128 0x9
- 1019 0261 01       		.uleb128 0x1
- 1020 0262 50       		.byte	0x50
- 1021 0263 01       		.uleb128 0x1
- 1022 0264 30       		.byte	0x30
- 1023 0265 00       		.byte	0
- 1024 0266 08       		.uleb128 0x8
- 1025 0267 36000000 		.4byte	.LVL60
- 1026 026b B6040000 		.4byte	0x4b6
- 1027 026f 79020000 		.4byte	0x279
- 1028 0273 09       		.uleb128 0x9
- 1029 0274 01       		.uleb128 0x1
- 1030 0275 50       		.byte	0x50
- 1031 0276 01       		.uleb128 0x1
- 1032 0277 31       		.byte	0x31
- 1033 0278 00       		.byte	0
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 25
+ 670 0153 06000000 		.4byte	.LVL7
+ 671 0157 6C040000 		.4byte	0x46c
+ 672 015b 0D       		.uleb128 0xd
+ 673 015c 0A000000 		.4byte	.LVL8
+ 674 0160 77040000 		.4byte	0x477
+ 675 0164 0D       		.uleb128 0xd
+ 676 0165 12000000 		.4byte	.LVL9
+ 677 0169 82040000 		.4byte	0x482
+ 678 016d 0A       		.uleb128 0xa
+ 679 016e 42000000 		.4byte	.LVL14
+ 680 0172 D6000000 		.4byte	0xd6
+ 681 0176 81010000 		.4byte	0x181
+ 682 017a 0B       		.uleb128 0xb
+ 683 017b 01       		.uleb128 0x1
+ 684 017c 50       		.byte	0x50
+ 685 017d 02       		.uleb128 0x2
+ 686 017e 75       		.byte	0x75
+ 687 017f 00       		.sleb128 0
+ 688 0180 00       		.byte	0
+ 689 0181 0D       		.uleb128 0xd
+ 690 0182 54000000 		.4byte	.LVL15
+ 691 0186 8D040000 		.4byte	0x48d
+ 692 018a 0D       		.uleb128 0xd
+ 693 018b 74000000 		.4byte	.LVL18
+ 694 018f B0000000 		.4byte	0xb0
+ 695 0193 00       		.byte	0
+ 696 0194 0E       		.uleb128 0xe
+ 697 0195 D3030000 		.4byte	.LASF21
+ 698 0199 01       		.byte	0x1
+ 699 019a C7       		.byte	0xc7
+ 700 019b 00000000 		.4byte	.LFB67
+ 701 019f 80000000 		.4byte	.LFE67-.LFB67
+ 702 01a3 01       		.uleb128 0x1
+ 703 01a4 9C       		.byte	0x9c
+ 704 01a5 EF020000 		.4byte	0x2ef
+ 705 01a9 09       		.uleb128 0x9
+ 706 01aa 0E000000 		.4byte	.LASF22
+ 707 01ae 01       		.byte	0x1
+ 708 01af C7       		.byte	0xc7
+ 709 01b0 6F000000 		.4byte	0x6f
+ 710 01b4 4F000000 		.4byte	.LLST2
+ 711 01b8 0A       		.uleb128 0xa
+ 712 01b9 0A000000 		.4byte	.LVL27
+ 713 01bd 98040000 		.4byte	0x498
+ 714 01c1 CC010000 		.4byte	0x1cc
+ 715 01c5 0B       		.uleb128 0xb
+ 716 01c6 01       		.uleb128 0x1
+ 717 01c7 50       		.byte	0x50
+ 718 01c8 02       		.uleb128 0x2
+ 719 01c9 74       		.byte	0x74
+ 720 01ca 00       		.sleb128 0
+ 721 01cb 00       		.byte	0
+ 722 01cc 0D       		.uleb128 0xd
+ 723 01cd 0E000000 		.4byte	.LVL28
+ 724 01d1 A3040000 		.4byte	0x4a3
+ 725 01d5 0A       		.uleb128 0xa
+ 726 01d6 22000000 		.4byte	.LVL29
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 19
 
 
- 1034 0279 08       		.uleb128 0x8
- 1035 027a 3C000000 		.4byte	.LVL61
- 1036 027e AB040000 		.4byte	0x4ab
- 1037 0282 8C020000 		.4byte	0x28c
- 1038 0286 09       		.uleb128 0x9
- 1039 0287 01       		.uleb128 0x1
- 1040 0288 50       		.byte	0x50
- 1041 0289 01       		.uleb128 0x1
- 1042 028a 3A       		.byte	0x3a
- 1043 028b 00       		.byte	0
- 1044 028c 08       		.uleb128 0x8
- 1045 028d 42000000 		.4byte	.LVL62
- 1046 0291 B6040000 		.4byte	0x4b6
- 1047 0295 9F020000 		.4byte	0x29f
- 1048 0299 09       		.uleb128 0x9
- 1049 029a 01       		.uleb128 0x1
- 1050 029b 50       		.byte	0x50
- 1051 029c 01       		.uleb128 0x1
- 1052 029d 30       		.byte	0x30
- 1053 029e 00       		.byte	0
- 1054 029f 08       		.uleb128 0x8
- 1055 02a0 4A000000 		.4byte	.LVL64
- 1056 02a4 C1040000 		.4byte	0x4c1
- 1057 02a8 B2020000 		.4byte	0x2b2
- 1058 02ac 09       		.uleb128 0x9
- 1059 02ad 01       		.uleb128 0x1
- 1060 02ae 50       		.byte	0x50
- 1061 02af 01       		.uleb128 0x1
- 1062 02b0 31       		.byte	0x31
- 1063 02b1 00       		.byte	0
- 1064 02b2 08       		.uleb128 0x8
- 1065 02b3 50000000 		.4byte	.LVL65
- 1066 02b7 AB040000 		.4byte	0x4ab
- 1067 02bb C5020000 		.4byte	0x2c5
- 1068 02bf 09       		.uleb128 0x9
- 1069 02c0 01       		.uleb128 0x1
- 1070 02c1 50       		.byte	0x50
- 1071 02c2 01       		.uleb128 0x1
- 1072 02c3 3A       		.byte	0x3a
- 1073 02c4 00       		.byte	0
- 1074 02c5 08       		.uleb128 0x8
- 1075 02c6 56000000 		.4byte	.LVL66
- 1076 02ca C1040000 		.4byte	0x4c1
- 1077 02ce D8020000 		.4byte	0x2d8
- 1078 02d2 09       		.uleb128 0x9
- 1079 02d3 01       		.uleb128 0x1
- 1080 02d4 50       		.byte	0x50
- 1081 02d5 01       		.uleb128 0x1
- 1082 02d6 30       		.byte	0x30
- 1083 02d7 00       		.byte	0
- 1084 02d8 08       		.uleb128 0x8
- 1085 02d9 5E000000 		.4byte	.LVL68
- 1086 02dd CC040000 		.4byte	0x4cc
- 1087 02e1 EB020000 		.4byte	0x2eb
- 1088 02e5 09       		.uleb128 0x9
- 1089 02e6 01       		.uleb128 0x1
- 1090 02e7 50       		.byte	0x50
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 26
+ 727 01da AE040000 		.4byte	0x4ae
+ 728 01de E8010000 		.4byte	0x1e8
+ 729 01e2 0B       		.uleb128 0xb
+ 730 01e3 01       		.uleb128 0x1
+ 731 01e4 50       		.byte	0x50
+ 732 01e5 01       		.uleb128 0x1
+ 733 01e6 31       		.byte	0x31
+ 734 01e7 00       		.byte	0
+ 735 01e8 0A       		.uleb128 0xa
+ 736 01e9 28000000 		.4byte	.LVL30
+ 737 01ed B9040000 		.4byte	0x4b9
+ 738 01f1 FB010000 		.4byte	0x1fb
+ 739 01f5 0B       		.uleb128 0xb
+ 740 01f6 01       		.uleb128 0x1
+ 741 01f7 50       		.byte	0x50
+ 742 01f8 01       		.uleb128 0x1
+ 743 01f9 3A       		.byte	0x3a
+ 744 01fa 00       		.byte	0
+ 745 01fb 0A       		.uleb128 0xa
+ 746 01fc 2E000000 		.4byte	.LVL31
+ 747 0200 AE040000 		.4byte	0x4ae
+ 748 0204 0E020000 		.4byte	0x20e
+ 749 0208 0B       		.uleb128 0xb
+ 750 0209 01       		.uleb128 0x1
+ 751 020a 50       		.byte	0x50
+ 752 020b 01       		.uleb128 0x1
+ 753 020c 30       		.byte	0x30
+ 754 020d 00       		.byte	0
+ 755 020e 0A       		.uleb128 0xa
+ 756 020f 36000000 		.4byte	.LVL33
+ 757 0213 C4040000 		.4byte	0x4c4
+ 758 0217 21020000 		.4byte	0x221
+ 759 021b 0B       		.uleb128 0xb
+ 760 021c 01       		.uleb128 0x1
+ 761 021d 50       		.byte	0x50
+ 762 021e 01       		.uleb128 0x1
+ 763 021f 31       		.byte	0x31
+ 764 0220 00       		.byte	0
+ 765 0221 0A       		.uleb128 0xa
+ 766 0222 3C000000 		.4byte	.LVL34
+ 767 0226 B9040000 		.4byte	0x4b9
+ 768 022a 34020000 		.4byte	0x234
+ 769 022e 0B       		.uleb128 0xb
+ 770 022f 01       		.uleb128 0x1
+ 771 0230 50       		.byte	0x50
+ 772 0231 01       		.uleb128 0x1
+ 773 0232 3A       		.byte	0x3a
+ 774 0233 00       		.byte	0
+ 775 0234 0A       		.uleb128 0xa
+ 776 0235 42000000 		.4byte	.LVL35
+ 777 0239 C4040000 		.4byte	0x4c4
+ 778 023d 47020000 		.4byte	0x247
+ 779 0241 0B       		.uleb128 0xb
+ 780 0242 01       		.uleb128 0x1
+ 781 0243 50       		.byte	0x50
+ 782 0244 01       		.uleb128 0x1
+ 783 0245 30       		.byte	0x30
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 20
 
 
- 1091 02e8 01       		.uleb128 0x1
- 1092 02e9 31       		.byte	0x31
- 1093 02ea 00       		.byte	0
- 1094 02eb 08       		.uleb128 0x8
- 1095 02ec 64000000 		.4byte	.LVL69
- 1096 02f0 AB040000 		.4byte	0x4ab
- 1097 02f4 FE020000 		.4byte	0x2fe
- 1098 02f8 09       		.uleb128 0x9
- 1099 02f9 01       		.uleb128 0x1
- 1100 02fa 50       		.byte	0x50
- 1101 02fb 01       		.uleb128 0x1
- 1102 02fc 3A       		.byte	0x3a
- 1103 02fd 00       		.byte	0
- 1104 02fe 08       		.uleb128 0x8
- 1105 02ff 6A000000 		.4byte	.LVL70
- 1106 0303 CC040000 		.4byte	0x4cc
- 1107 0307 11030000 		.4byte	0x311
- 1108 030b 09       		.uleb128 0x9
- 1109 030c 01       		.uleb128 0x1
- 1110 030d 50       		.byte	0x50
- 1111 030e 01       		.uleb128 0x1
- 1112 030f 30       		.byte	0x30
- 1113 0310 00       		.byte	0
- 1114 0311 08       		.uleb128 0x8
- 1115 0312 72000000 		.4byte	.LVL72
- 1116 0316 D7040000 		.4byte	0x4d7
- 1117 031a 24030000 		.4byte	0x324
- 1118 031e 09       		.uleb128 0x9
- 1119 031f 01       		.uleb128 0x1
- 1120 0320 50       		.byte	0x50
- 1121 0321 01       		.uleb128 0x1
- 1122 0322 31       		.byte	0x31
- 1123 0323 00       		.byte	0
- 1124 0324 08       		.uleb128 0x8
- 1125 0325 78000000 		.4byte	.LVL73
- 1126 0329 AB040000 		.4byte	0x4ab
- 1127 032d 37030000 		.4byte	0x337
- 1128 0331 09       		.uleb128 0x9
- 1129 0332 01       		.uleb128 0x1
- 1130 0333 50       		.byte	0x50
- 1131 0334 01       		.uleb128 0x1
- 1132 0335 3A       		.byte	0x3a
- 1133 0336 00       		.byte	0
- 1134 0337 0A       		.uleb128 0xa
- 1135 0338 7E000000 		.4byte	.LVL74
- 1136 033c D7040000 		.4byte	0x4d7
- 1137 0340 09       		.uleb128 0x9
- 1138 0341 01       		.uleb128 0x1
- 1139 0342 50       		.byte	0x50
- 1140 0343 01       		.uleb128 0x1
- 1141 0344 30       		.byte	0x30
- 1142 0345 00       		.byte	0
- 1143 0346 00       		.byte	0
- 1144 0347 0E       		.uleb128 0xe
- 1145 0348 CE010000 		.4byte	.LASF23
- 1146 034c 01       		.byte	0x1
- 1147 034d F1       		.byte	0xf1
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 27
+ 784 0246 00       		.byte	0
+ 785 0247 0A       		.uleb128 0xa
+ 786 0248 4A000000 		.4byte	.LVL37
+ 787 024c CF040000 		.4byte	0x4cf
+ 788 0250 5A020000 		.4byte	0x25a
+ 789 0254 0B       		.uleb128 0xb
+ 790 0255 01       		.uleb128 0x1
+ 791 0256 50       		.byte	0x50
+ 792 0257 01       		.uleb128 0x1
+ 793 0258 31       		.byte	0x31
+ 794 0259 00       		.byte	0
+ 795 025a 0A       		.uleb128 0xa
+ 796 025b 50000000 		.4byte	.LVL38
+ 797 025f B9040000 		.4byte	0x4b9
+ 798 0263 6D020000 		.4byte	0x26d
+ 799 0267 0B       		.uleb128 0xb
+ 800 0268 01       		.uleb128 0x1
+ 801 0269 50       		.byte	0x50
+ 802 026a 01       		.uleb128 0x1
+ 803 026b 3A       		.byte	0x3a
+ 804 026c 00       		.byte	0
+ 805 026d 0A       		.uleb128 0xa
+ 806 026e 56000000 		.4byte	.LVL39
+ 807 0272 CF040000 		.4byte	0x4cf
+ 808 0276 80020000 		.4byte	0x280
+ 809 027a 0B       		.uleb128 0xb
+ 810 027b 01       		.uleb128 0x1
+ 811 027c 50       		.byte	0x50
+ 812 027d 01       		.uleb128 0x1
+ 813 027e 30       		.byte	0x30
+ 814 027f 00       		.byte	0
+ 815 0280 0A       		.uleb128 0xa
+ 816 0281 5E000000 		.4byte	.LVL41
+ 817 0285 DA040000 		.4byte	0x4da
+ 818 0289 93020000 		.4byte	0x293
+ 819 028d 0B       		.uleb128 0xb
+ 820 028e 01       		.uleb128 0x1
+ 821 028f 50       		.byte	0x50
+ 822 0290 01       		.uleb128 0x1
+ 823 0291 31       		.byte	0x31
+ 824 0292 00       		.byte	0
+ 825 0293 0A       		.uleb128 0xa
+ 826 0294 64000000 		.4byte	.LVL42
+ 827 0298 B9040000 		.4byte	0x4b9
+ 828 029c A6020000 		.4byte	0x2a6
+ 829 02a0 0B       		.uleb128 0xb
+ 830 02a1 01       		.uleb128 0x1
+ 831 02a2 50       		.byte	0x50
+ 832 02a3 01       		.uleb128 0x1
+ 833 02a4 3A       		.byte	0x3a
+ 834 02a5 00       		.byte	0
+ 835 02a6 0A       		.uleb128 0xa
+ 836 02a7 6A000000 		.4byte	.LVL43
+ 837 02ab DA040000 		.4byte	0x4da
+ 838 02af B9020000 		.4byte	0x2b9
+ 839 02b3 0B       		.uleb128 0xb
+ 840 02b4 01       		.uleb128 0x1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 21
 
 
- 1148 034e 00000000 		.4byte	.LFB67
- 1149 0352 2C000000 		.4byte	.LFE67-.LFB67
- 1150 0356 01       		.uleb128 0x1
- 1151 0357 9C       		.byte	0x9c
- 1152 0358 76030000 		.4byte	0x376
- 1153 035c 0C       		.uleb128 0xc
- 1154 035d 0E000000 		.4byte	.LVL75
- 1155 0361 EC010000 		.4byte	0x1ec
- 1156 0365 0A       		.uleb128 0xa
- 1157 0366 14000000 		.4byte	.LVL76
- 1158 036a E2040000 		.4byte	0x4e2
- 1159 036e 09       		.uleb128 0x9
- 1160 036f 01       		.uleb128 0x1
- 1161 0370 50       		.byte	0x50
- 1162 0371 02       		.uleb128 0x2
- 1163 0372 08       		.byte	0x8
- 1164 0373 32       		.byte	0x32
- 1165 0374 00       		.byte	0
- 1166 0375 00       		.byte	0
- 1167 0376 0F       		.uleb128 0xf
- 1168 0377 25000000 		.4byte	0x25
- 1169 037b 86030000 		.4byte	0x386
- 1170 037f 10       		.uleb128 0x10
- 1171 0380 A9000000 		.4byte	0xa9
- 1172 0384 04       		.byte	0x4
- 1173 0385 00       		.byte	0
- 1174 0386 11       		.uleb128 0x11
- 1175 0387 F9010000 		.4byte	.LASF24
- 1176 038b 01       		.byte	0x1
- 1177 038c 2B       		.byte	0x2b
- 1178 038d 76030000 		.4byte	0x376
- 1179 0391 05       		.uleb128 0x5
- 1180 0392 03       		.byte	0x3
- 1181 0393 00000000 		.4byte	ultrasonic_distances
- 1182 0397 11       		.uleb128 0x11
- 1183 0398 46020000 		.4byte	.LASF25
- 1184 039c 05       		.byte	0x5
- 1185 039d 22       		.byte	0x22
- 1186 039e 6F000000 		.4byte	0x6f
- 1187 03a2 05       		.uleb128 0x5
- 1188 03a3 03       		.byte	0x3
- 1189 03a4 00000000 		.4byte	driveStraightEnable
- 1190 03a8 12       		.uleb128 0x12
- 1191 03a9 C5010000 		.4byte	.LASF26
- 1192 03ad 06       		.byte	0x6
- 1193 03ae 1E       		.byte	0x1e
- 1194 03af 6F000000 		.4byte	0x6f
- 1195 03b3 12       		.uleb128 0x12
- 1196 03b4 68010000 		.4byte	.LASF27
- 1197 03b8 07       		.byte	0x7
- 1198 03b9 18       		.byte	0x18
- 1199 03ba 6F000000 		.4byte	0x6f
- 1200 03be 12       		.uleb128 0x12
- 1201 03bf 2F000000 		.4byte	.LASF28
- 1202 03c3 05       		.byte	0x5
- 1203 03c4 23       		.byte	0x23
- 1204 03c5 6F000000 		.4byte	0x6f
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 28
+ 841 02b5 50       		.byte	0x50
+ 842 02b6 01       		.uleb128 0x1
+ 843 02b7 30       		.byte	0x30
+ 844 02b8 00       		.byte	0
+ 845 02b9 0A       		.uleb128 0xa
+ 846 02ba 72000000 		.4byte	.LVL45
+ 847 02be E5040000 		.4byte	0x4e5
+ 848 02c2 CC020000 		.4byte	0x2cc
+ 849 02c6 0B       		.uleb128 0xb
+ 850 02c7 01       		.uleb128 0x1
+ 851 02c8 50       		.byte	0x50
+ 852 02c9 01       		.uleb128 0x1
+ 853 02ca 31       		.byte	0x31
+ 854 02cb 00       		.byte	0
+ 855 02cc 0A       		.uleb128 0xa
+ 856 02cd 78000000 		.4byte	.LVL46
+ 857 02d1 B9040000 		.4byte	0x4b9
+ 858 02d5 DF020000 		.4byte	0x2df
+ 859 02d9 0B       		.uleb128 0xb
+ 860 02da 01       		.uleb128 0x1
+ 861 02db 50       		.byte	0x50
+ 862 02dc 01       		.uleb128 0x1
+ 863 02dd 3A       		.byte	0x3a
+ 864 02de 00       		.byte	0
+ 865 02df 0C       		.uleb128 0xc
+ 866 02e0 7E000000 		.4byte	.LVL47
+ 867 02e4 E5040000 		.4byte	0x4e5
+ 868 02e8 0B       		.uleb128 0xb
+ 869 02e9 01       		.uleb128 0x1
+ 870 02ea 50       		.byte	0x50
+ 871 02eb 01       		.uleb128 0x1
+ 872 02ec 30       		.byte	0x30
+ 873 02ed 00       		.byte	0
+ 874 02ee 00       		.byte	0
+ 875 02ef 0F       		.uleb128 0xf
+ 876 02f0 F7010000 		.4byte	.LASF57
+ 877 02f4 01       		.byte	0x1
+ 878 02f5 0901     		.2byte	0x109
+ 879 02f7 00000000 		.4byte	.LFB68
+ 880 02fb 2C000000 		.4byte	.LFE68-.LFB68
+ 881 02ff 01       		.uleb128 0x1
+ 882 0300 9C       		.byte	0x9c
+ 883 0301 1F030000 		.4byte	0x31f
+ 884 0305 0D       		.uleb128 0xd
+ 885 0306 0E000000 		.4byte	.LVL48
+ 886 030a 94010000 		.4byte	0x194
+ 887 030e 0C       		.uleb128 0xc
+ 888 030f 14000000 		.4byte	.LVL49
+ 889 0313 F0040000 		.4byte	0x4f0
+ 890 0317 0B       		.uleb128 0xb
+ 891 0318 01       		.uleb128 0x1
+ 892 0319 50       		.byte	0x50
+ 893 031a 02       		.uleb128 0x2
+ 894 031b 08       		.byte	0x8
+ 895 031c 32       		.byte	0x32
+ 896 031d 00       		.byte	0
+ 897 031e 00       		.byte	0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 22
 
 
- 1205 03c9 13       		.uleb128 0x13
- 1206 03ca 72010000 		.4byte	.LASF29
- 1207 03ce 08       		.byte	0x8
- 1208 03cf 1207     		.2byte	0x712
- 1209 03d1 D5030000 		.4byte	0x3d5
- 1210 03d5 14       		.uleb128 0x14
- 1211 03d6 7D000000 		.4byte	0x7d
- 1212 03da 15       		.uleb128 0x15
- 1213 03db 6900     		.ascii	"i\000"
- 1214 03dd 01       		.byte	0x1
- 1215 03de 28       		.byte	0x28
- 1216 03df 6F000000 		.4byte	0x6f
- 1217 03e3 05       		.uleb128 0x5
- 1218 03e4 03       		.byte	0x3
- 1219 03e5 00000000 		.4byte	i
- 1220 03e9 11       		.uleb128 0x11
- 1221 03ea 83020000 		.4byte	.LASF30
- 1222 03ee 01       		.byte	0x1
- 1223 03ef 29       		.byte	0x29
- 1224 03f0 6F000000 		.4byte	0x6f
- 1225 03f4 05       		.uleb128 0x5
- 1226 03f5 03       		.byte	0x3
- 1227 03f6 00000000 		.4byte	count
- 1228 03fa 11       		.uleb128 0x11
- 1229 03fb A7020000 		.4byte	.LASF31
- 1230 03ff 01       		.byte	0x1
- 1231 0400 2A       		.byte	0x2a
- 1232 0401 6F000000 		.4byte	0x6f
- 1233 0405 05       		.uleb128 0x5
- 1234 0406 03       		.byte	0x3
- 1235 0407 00000000 		.4byte	distance_measured
- 1236 040b 11       		.uleb128 0x11
- 1237 040c 8D010000 		.4byte	.LASF32
- 1238 0410 01       		.byte	0x1
- 1239 0411 2C       		.byte	0x2c
- 1240 0412 88000000 		.4byte	0x88
- 1241 0416 05       		.uleb128 0x5
- 1242 0417 03       		.byte	0x3
- 1243 0418 00000000 		.4byte	ultrasonic_mux_control
- 1244 041c 0F       		.uleb128 0xf
- 1245 041d 9B000000 		.4byte	0x9b
- 1246 0421 2C040000 		.4byte	0x42c
- 1247 0425 10       		.uleb128 0x10
- 1248 0426 A9000000 		.4byte	0xa9
- 1249 042a 27       		.byte	0x27
- 1250 042b 00       		.byte	0
- 1251 042c 11       		.uleb128 0x11
- 1252 042d A0020000 		.4byte	.LASF33
- 1253 0431 01       		.byte	0x1
- 1254 0432 30       		.byte	0x30
- 1255 0433 1C040000 		.4byte	0x41c
- 1256 0437 05       		.uleb128 0x5
- 1257 0438 03       		.byte	0x3
- 1258 0439 00000000 		.4byte	output
- 1259 043d 16       		.uleb128 0x16
- 1260 043e 77030000 		.4byte	.LASF34
- 1261 0442 77030000 		.4byte	.LASF34
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 29
+ 898 031f 10       		.uleb128 0x10
+ 899 0320 25000000 		.4byte	0x25
+ 900 0324 2F030000 		.4byte	0x32f
+ 901 0328 11       		.uleb128 0x11
+ 902 0329 A9000000 		.4byte	0xa9
+ 903 032d 04       		.byte	0x4
+ 904 032e 00       		.byte	0
+ 905 032f 12       		.uleb128 0x12
+ 906 0330 22020000 		.4byte	.LASF23
+ 907 0334 01       		.byte	0x1
+ 908 0335 1F       		.byte	0x1f
+ 909 0336 1F030000 		.4byte	0x31f
+ 910 033a 05       		.uleb128 0x5
+ 911 033b 03       		.byte	0x3
+ 912 033c 00000000 		.4byte	ultrasonic_distances
+ 913 0340 12       		.uleb128 0x12
+ 914 0341 73020000 		.4byte	.LASF24
+ 915 0345 05       		.byte	0x5
+ 916 0346 22       		.byte	0x22
+ 917 0347 6F000000 		.4byte	0x6f
+ 918 034b 05       		.uleb128 0x5
+ 919 034c 03       		.byte	0x3
+ 920 034d 00000000 		.4byte	driveStraightEnable
+ 921 0351 12       		.uleb128 0x12
+ 922 0352 A7000000 		.4byte	.LASF25
+ 923 0356 06       		.byte	0x6
+ 924 0357 21       		.byte	0x21
+ 925 0358 6F000000 		.4byte	0x6f
+ 926 035c 05       		.uleb128 0x5
+ 927 035d 03       		.byte	0x3
+ 928 035e 00000000 		.4byte	currentPuckRackScanningIndex
+ 929 0362 10       		.uleb128 0x10
+ 930 0363 6F000000 		.4byte	0x6f
+ 931 0367 72030000 		.4byte	0x372
+ 932 036b 11       		.uleb128 0x11
+ 933 036c A9000000 		.4byte	0xa9
+ 934 0370 04       		.byte	0x4
+ 935 0371 00       		.byte	0
+ 936 0372 12       		.uleb128 0x12
+ 937 0373 E7010000 		.4byte	.LASF26
+ 938 0377 06       		.byte	0x6
+ 939 0378 22       		.byte	0x22
+ 940 0379 62030000 		.4byte	0x362
+ 941 037d 05       		.uleb128 0x5
+ 942 037e 03       		.byte	0x3
+ 943 037f 00000000 		.4byte	puckRackColours
+ 944 0383 12       		.uleb128 0x12
+ 945 0384 CF010000 		.4byte	.LASF27
+ 946 0388 06       		.byte	0x6
+ 947 0389 23       		.byte	0x23
+ 948 038a 62030000 		.4byte	0x362
+ 949 038e 05       		.uleb128 0x5
+ 950 038f 03       		.byte	0x3
+ 951 0390 00000000 		.4byte	puckRackOffsetsFromWest
+ 952 0394 12       		.uleb128 0x12
+ 953 0395 A0030000 		.4byte	.LASF28
+ 954 0399 06       		.byte	0x6
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 23
 
 
- 1262 0446 09       		.byte	0x9
- 1263 0447 E7       		.byte	0xe7
- 1264 0448 16       		.uleb128 0x16
- 1265 0449 57030000 		.4byte	.LASF35
- 1266 044d 57030000 		.4byte	.LASF35
- 1267 0451 0A       		.byte	0xa
- 1268 0452 8B       		.byte	0x8b
- 1269 0453 16       		.uleb128 0x16
- 1270 0454 B9020000 		.4byte	.LASF36
- 1271 0458 B9020000 		.4byte	.LASF36
- 1272 045c 0B       		.byte	0xb
- 1273 045d 5E       		.byte	0x5e
- 1274 045e 16       		.uleb128 0x16
- 1275 045f 5F020000 		.4byte	.LASF37
- 1276 0463 5F020000 		.4byte	.LASF37
- 1277 0467 0B       		.byte	0xb
- 1278 0468 69       		.byte	0x69
- 1279 0469 16       		.uleb128 0x16
- 1280 046a 4A030000 		.4byte	.LASF38
- 1281 046e 4A030000 		.4byte	.LASF38
- 1282 0472 0B       		.byte	0xb
- 1283 0473 5B       		.byte	0x5b
- 1284 0474 16       		.uleb128 0x16
- 1285 0475 8E000000 		.4byte	.LASF39
- 1286 0479 8E000000 		.4byte	.LASF39
- 1287 047d 0C       		.byte	0xc
- 1288 047e DC       		.byte	0xdc
- 1289 047f 16       		.uleb128 0x16
- 1290 0480 52000000 		.4byte	.LASF40
- 1291 0484 52000000 		.4byte	.LASF40
- 1292 0488 0D       		.byte	0xd
- 1293 0489 DC       		.byte	0xdc
- 1294 048a 16       		.uleb128 0x16
- 1295 048b 87030000 		.4byte	.LASF41
- 1296 048f 87030000 		.4byte	.LASF41
- 1297 0493 0E       		.byte	0xe
- 1298 0494 2F       		.byte	0x2f
- 1299 0495 16       		.uleb128 0x16
- 1300 0496 21000000 		.4byte	.LASF42
- 1301 049a 21000000 		.4byte	.LASF42
- 1302 049e 0B       		.byte	0xb
- 1303 049f 5A       		.byte	0x5a
- 1304 04a0 16       		.uleb128 0x16
- 1305 04a1 AB010000 		.4byte	.LASF43
- 1306 04a5 AB010000 		.4byte	.LASF43
- 1307 04a9 0F       		.byte	0xf
- 1308 04aa 26       		.byte	0x26
- 1309 04ab 16       		.uleb128 0x16
- 1310 04ac BB010000 		.4byte	.LASF44
- 1311 04b0 BB010000 		.4byte	.LASF44
- 1312 04b4 10       		.byte	0x10
- 1313 04b5 77       		.byte	0x77
- 1314 04b6 16       		.uleb128 0x16
- 1315 04b7 E9010000 		.4byte	.LASF45
- 1316 04bb E9010000 		.4byte	.LASF45
- 1317 04bf 11       		.byte	0x11
- 1318 04c0 26       		.byte	0x26
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 30
+ 955 039a 24       		.byte	0x24
+ 956 039b 6F000000 		.4byte	0x6f
+ 957 039f 05       		.uleb128 0x5
+ 958 03a0 03       		.byte	0x3
+ 959 03a1 00000000 		.4byte	sweeping
+ 960 03a5 10       		.uleb128 0x10
+ 961 03a6 25000000 		.4byte	0x25
+ 962 03aa B5030000 		.4byte	0x3b5
+ 963 03ae 11       		.uleb128 0x11
+ 964 03af A9000000 		.4byte	0xa9
+ 965 03b3 03       		.byte	0x3
+ 966 03b4 00       		.byte	0
+ 967 03b5 12       		.uleb128 0x12
+ 968 03b6 5E000000 		.4byte	.LASF29
+ 969 03ba 06       		.byte	0x6
+ 970 03bb 25       		.byte	0x25
+ 971 03bc A5030000 		.4byte	0x3a5
+ 972 03c0 05       		.uleb128 0x5
+ 973 03c1 03       		.byte	0x3
+ 974 03c2 00000000 		.4byte	block_location
+ 975 03c6 13       		.uleb128 0x13
+ 976 03c7 2F000000 		.4byte	.LASF30
+ 977 03cb 05       		.byte	0x5
+ 978 03cc 23       		.byte	0x23
+ 979 03cd 6F000000 		.4byte	0x6f
+ 980 03d1 14       		.uleb128 0x14
+ 981 03d2 7C010000 		.4byte	.LASF31
+ 982 03d6 07       		.byte	0x7
+ 983 03d7 1207     		.2byte	0x712
+ 984 03d9 DD030000 		.4byte	0x3dd
+ 985 03dd 15       		.uleb128 0x15
+ 986 03de 7D000000 		.4byte	0x7d
+ 987 03e2 16       		.uleb128 0x16
+ 988 03e3 6900     		.ascii	"i\000"
+ 989 03e5 01       		.byte	0x1
+ 990 03e6 1C       		.byte	0x1c
+ 991 03e7 6F000000 		.4byte	0x6f
+ 992 03eb 05       		.uleb128 0x5
+ 993 03ec 03       		.byte	0x3
+ 994 03ed 00000000 		.4byte	i
+ 995 03f1 12       		.uleb128 0x12
+ 996 03f2 D1020000 		.4byte	.LASF32
+ 997 03f6 01       		.byte	0x1
+ 998 03f7 1D       		.byte	0x1d
+ 999 03f8 6F000000 		.4byte	0x6f
+ 1000 03fc 05       		.uleb128 0x5
+ 1001 03fd 03       		.byte	0x3
+ 1002 03fe 00000000 		.4byte	count
+ 1003 0402 12       		.uleb128 0x12
+ 1004 0403 F5020000 		.4byte	.LASF33
+ 1005 0407 01       		.byte	0x1
+ 1006 0408 1E       		.byte	0x1e
+ 1007 0409 6F000000 		.4byte	0x6f
+ 1008 040d 05       		.uleb128 0x5
+ 1009 040e 03       		.byte	0x3
+ 1010 040f 00000000 		.4byte	distance_measured
+ 1011 0413 12       		.uleb128 0x12
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 24
 
 
- 1319 04c1 16       		.uleb128 0x16
- 1320 04c2 25020000 		.4byte	.LASF46
- 1321 04c6 25020000 		.4byte	.LASF46
- 1322 04ca 12       		.byte	0x12
- 1323 04cb 26       		.byte	0x26
- 1324 04cc 16       		.uleb128 0x16
- 1325 04cd 73020000 		.4byte	.LASF47
- 1326 04d1 73020000 		.4byte	.LASF47
- 1327 04d5 13       		.byte	0x13
- 1328 04d6 26       		.byte	0x26
- 1329 04d7 16       		.uleb128 0x16
- 1330 04d8 67000000 		.4byte	.LASF48
- 1331 04dc 67000000 		.4byte	.LASF48
- 1332 04e0 14       		.byte	0x14
- 1333 04e1 26       		.byte	0x26
- 1334 04e2 16       		.uleb128 0x16
- 1335 04e3 7F030000 		.4byte	.LASF49
- 1336 04e7 7F030000 		.4byte	.LASF49
- 1337 04eb 10       		.byte	0x10
- 1338 04ec 76       		.byte	0x76
- 1339 04ed 00       		.byte	0
- 1340              		.section	.debug_abbrev,"",%progbits
- 1341              	.Ldebug_abbrev0:
- 1342 0000 01       		.uleb128 0x1
- 1343 0001 11       		.uleb128 0x11
- 1344 0002 01       		.byte	0x1
- 1345 0003 25       		.uleb128 0x25
- 1346 0004 0E       		.uleb128 0xe
- 1347 0005 13       		.uleb128 0x13
- 1348 0006 0B       		.uleb128 0xb
- 1349 0007 03       		.uleb128 0x3
- 1350 0008 0E       		.uleb128 0xe
- 1351 0009 1B       		.uleb128 0x1b
- 1352 000a 0E       		.uleb128 0xe
- 1353 000b 55       		.uleb128 0x55
- 1354 000c 17       		.uleb128 0x17
- 1355 000d 11       		.uleb128 0x11
- 1356 000e 01       		.uleb128 0x1
- 1357 000f 10       		.uleb128 0x10
- 1358 0010 17       		.uleb128 0x17
- 1359 0011 00       		.byte	0
- 1360 0012 00       		.byte	0
- 1361 0013 02       		.uleb128 0x2
- 1362 0014 24       		.uleb128 0x24
- 1363 0015 00       		.byte	0
- 1364 0016 0B       		.uleb128 0xb
- 1365 0017 0B       		.uleb128 0xb
- 1366 0018 3E       		.uleb128 0x3e
- 1367 0019 0B       		.uleb128 0xb
- 1368 001a 03       		.uleb128 0x3
- 1369 001b 0E       		.uleb128 0xe
- 1370 001c 00       		.byte	0
- 1371 001d 00       		.byte	0
- 1372 001e 03       		.uleb128 0x3
- 1373 001f 16       		.uleb128 0x16
- 1374 0020 00       		.byte	0
- 1375 0021 03       		.uleb128 0x3
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 31
+ 1012 0414 97010000 		.4byte	.LASF34
+ 1013 0418 01       		.byte	0x1
+ 1014 0419 20       		.byte	0x20
+ 1015 041a 88000000 		.4byte	0x88
+ 1016 041e 05       		.uleb128 0x5
+ 1017 041f 03       		.byte	0x3
+ 1018 0420 00000000 		.4byte	ultrasonic_mux_control
+ 1019 0424 12       		.uleb128 0x12
+ 1020 0425 3F000000 		.4byte	.LASF35
+ 1021 0429 01       		.byte	0x1
+ 1022 042a 21       		.byte	0x21
+ 1023 042b 6F000000 		.4byte	0x6f
+ 1024 042f 05       		.uleb128 0x5
+ 1025 0430 03       		.byte	0x3
+ 1026 0431 00000000 		.4byte	block_start
+ 1027 0435 10       		.uleb128 0x10
+ 1028 0436 9B000000 		.4byte	0x9b
+ 1029 043a 45040000 		.4byte	0x445
+ 1030 043e 11       		.uleb128 0x11
+ 1031 043f A9000000 		.4byte	0xa9
+ 1032 0443 27       		.byte	0x27
+ 1033 0444 00       		.byte	0
+ 1034 0445 12       		.uleb128 0x12
+ 1035 0446 EE020000 		.4byte	.LASF36
+ 1036 044a 01       		.byte	0x1
+ 1037 044b 26       		.byte	0x26
+ 1038 044c 35040000 		.4byte	0x435
+ 1039 0450 05       		.uleb128 0x5
+ 1040 0451 03       		.byte	0x3
+ 1041 0452 00000000 		.4byte	output
+ 1042 0456 17       		.uleb128 0x17
+ 1043 0457 E2030000 		.4byte	.LASF37
+ 1044 045b E2030000 		.4byte	.LASF37
+ 1045 045f 08       		.byte	0x8
+ 1046 0460 E7       		.byte	0xe7
+ 1047 0461 17       		.uleb128 0x17
+ 1048 0462 C2030000 		.4byte	.LASF38
+ 1049 0466 C2030000 		.4byte	.LASF38
+ 1050 046a 09       		.byte	0x9
+ 1051 046b 8B       		.byte	0x8b
+ 1052 046c 17       		.uleb128 0x17
+ 1053 046d 07030000 		.4byte	.LASF39
+ 1054 0471 07030000 		.4byte	.LASF39
+ 1055 0475 0A       		.byte	0xa
+ 1056 0476 5E       		.byte	0x5e
+ 1057 0477 17       		.uleb128 0x17
+ 1058 0478 AD020000 		.4byte	.LASF40
+ 1059 047c AD020000 		.4byte	.LASF40
+ 1060 0480 0A       		.byte	0xa
+ 1061 0481 69       		.byte	0x69
+ 1062 0482 17       		.uleb128 0x17
+ 1063 0483 B5030000 		.4byte	.LASF41
+ 1064 0487 B5030000 		.4byte	.LASF41
+ 1065 048b 0A       		.byte	0xa
+ 1066 048c 5B       		.byte	0x5b
+ 1067 048d 17       		.uleb128 0x17
+ 1068 048e 6D000000 		.4byte	.LASF42
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 25
 
 
- 1376 0022 0E       		.uleb128 0xe
- 1377 0023 3A       		.uleb128 0x3a
- 1378 0024 0B       		.uleb128 0xb
- 1379 0025 3B       		.uleb128 0x3b
- 1380 0026 0B       		.uleb128 0xb
- 1381 0027 49       		.uleb128 0x49
- 1382 0028 13       		.uleb128 0x13
- 1383 0029 00       		.byte	0
- 1384 002a 00       		.byte	0
- 1385 002b 04       		.uleb128 0x4
- 1386 002c 24       		.uleb128 0x24
- 1387 002d 00       		.byte	0
- 1388 002e 0B       		.uleb128 0xb
- 1389 002f 0B       		.uleb128 0xb
- 1390 0030 3E       		.uleb128 0x3e
- 1391 0031 0B       		.uleb128 0xb
- 1392 0032 03       		.uleb128 0x3
- 1393 0033 08       		.uleb128 0x8
- 1394 0034 00       		.byte	0
- 1395 0035 00       		.byte	0
- 1396 0036 05       		.uleb128 0x5
- 1397 0037 16       		.uleb128 0x16
- 1398 0038 00       		.byte	0
- 1399 0039 03       		.uleb128 0x3
- 1400 003a 0E       		.uleb128 0xe
- 1401 003b 3A       		.uleb128 0x3a
- 1402 003c 0B       		.uleb128 0xb
- 1403 003d 3B       		.uleb128 0x3b
- 1404 003e 05       		.uleb128 0x5
- 1405 003f 49       		.uleb128 0x49
- 1406 0040 13       		.uleb128 0x13
- 1407 0041 00       		.byte	0
- 1408 0042 00       		.byte	0
- 1409 0043 06       		.uleb128 0x6
- 1410 0044 2E       		.uleb128 0x2e
- 1411 0045 01       		.byte	0x1
- 1412 0046 3F       		.uleb128 0x3f
- 1413 0047 19       		.uleb128 0x19
- 1414 0048 03       		.uleb128 0x3
- 1415 0049 0E       		.uleb128 0xe
- 1416 004a 3A       		.uleb128 0x3a
- 1417 004b 0B       		.uleb128 0xb
- 1418 004c 3B       		.uleb128 0x3b
- 1419 004d 0B       		.uleb128 0xb
- 1420 004e 27       		.uleb128 0x27
- 1421 004f 19       		.uleb128 0x19
- 1422 0050 11       		.uleb128 0x11
- 1423 0051 01       		.uleb128 0x1
- 1424 0052 12       		.uleb128 0x12
- 1425 0053 06       		.uleb128 0x6
- 1426 0054 40       		.uleb128 0x40
- 1427 0055 18       		.uleb128 0x18
- 1428 0056 9642     		.uleb128 0x2116
- 1429 0058 19       		.uleb128 0x19
- 1430 0059 01       		.uleb128 0x1
- 1431 005a 13       		.uleb128 0x13
- 1432 005b 00       		.byte	0
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 32
+ 1069 0492 6D000000 		.4byte	.LASF42
+ 1070 0496 0B       		.byte	0xb
+ 1071 0497 0D       		.byte	0xd
+ 1072 0498 17       		.uleb128 0x17
+ 1073 0499 F2030000 		.4byte	.LASF43
+ 1074 049d F2030000 		.4byte	.LASF43
+ 1075 04a1 0C       		.byte	0xc
+ 1076 04a2 2F       		.byte	0x2f
+ 1077 04a3 17       		.uleb128 0x17
+ 1078 04a4 21000000 		.4byte	.LASF44
+ 1079 04a8 21000000 		.4byte	.LASF44
+ 1080 04ac 0A       		.byte	0xa
+ 1081 04ad 5A       		.byte	0x5a
+ 1082 04ae 17       		.uleb128 0x17
+ 1083 04af B5010000 		.4byte	.LASF45
+ 1084 04b3 B5010000 		.4byte	.LASF45
+ 1085 04b7 0D       		.byte	0xd
+ 1086 04b8 26       		.byte	0x26
+ 1087 04b9 17       		.uleb128 0x17
+ 1088 04ba C5010000 		.4byte	.LASF46
+ 1089 04be C5010000 		.4byte	.LASF46
+ 1090 04c2 0E       		.byte	0xe
+ 1091 04c3 77       		.byte	0x77
+ 1092 04c4 17       		.uleb128 0x17
+ 1093 04c5 12020000 		.4byte	.LASF47
+ 1094 04c9 12020000 		.4byte	.LASF47
+ 1095 04cd 0F       		.byte	0xf
+ 1096 04ce 26       		.byte	0x26
+ 1097 04cf 17       		.uleb128 0x17
+ 1098 04d0 4E020000 		.4byte	.LASF48
+ 1099 04d4 4E020000 		.4byte	.LASF48
+ 1100 04d8 10       		.byte	0x10
+ 1101 04d9 26       		.byte	0x26
+ 1102 04da 17       		.uleb128 0x17
+ 1103 04db C1020000 		.4byte	.LASF49
+ 1104 04df C1020000 		.4byte	.LASF49
+ 1105 04e3 11       		.byte	0x11
+ 1106 04e4 26       		.byte	0x26
+ 1107 04e5 17       		.uleb128 0x17
+ 1108 04e6 22030000 		.4byte	.LASF50
+ 1109 04ea 22030000 		.4byte	.LASF50
+ 1110 04ee 12       		.byte	0x12
+ 1111 04ef 26       		.byte	0x26
+ 1112 04f0 17       		.uleb128 0x17
+ 1113 04f1 EA030000 		.4byte	.LASF51
+ 1114 04f5 EA030000 		.4byte	.LASF51
+ 1115 04f9 0E       		.byte	0xe
+ 1116 04fa 76       		.byte	0x76
+ 1117 04fb 00       		.byte	0
+ 1118              		.section	.debug_abbrev,"",%progbits
+ 1119              	.Ldebug_abbrev0:
+ 1120 0000 01       		.uleb128 0x1
+ 1121 0001 11       		.uleb128 0x11
+ 1122 0002 01       		.byte	0x1
+ 1123 0003 25       		.uleb128 0x25
+ 1124 0004 0E       		.uleb128 0xe
+ 1125 0005 13       		.uleb128 0x13
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 26
 
 
- 1433 005c 00       		.byte	0
- 1434 005d 07       		.uleb128 0x7
- 1435 005e 05       		.uleb128 0x5
- 1436 005f 00       		.byte	0
- 1437 0060 03       		.uleb128 0x3
- 1438 0061 0E       		.uleb128 0xe
- 1439 0062 3A       		.uleb128 0x3a
- 1440 0063 0B       		.uleb128 0xb
- 1441 0064 3B       		.uleb128 0x3b
- 1442 0065 0B       		.uleb128 0xb
- 1443 0066 49       		.uleb128 0x49
- 1444 0067 13       		.uleb128 0x13
- 1445 0068 02       		.uleb128 0x2
- 1446 0069 17       		.uleb128 0x17
- 1447 006a 00       		.byte	0
- 1448 006b 00       		.byte	0
- 1449 006c 08       		.uleb128 0x8
- 1450 006d 898201   		.uleb128 0x4109
- 1451 0070 01       		.byte	0x1
- 1452 0071 11       		.uleb128 0x11
- 1453 0072 01       		.uleb128 0x1
- 1454 0073 31       		.uleb128 0x31
- 1455 0074 13       		.uleb128 0x13
- 1456 0075 01       		.uleb128 0x1
- 1457 0076 13       		.uleb128 0x13
- 1458 0077 00       		.byte	0
- 1459 0078 00       		.byte	0
- 1460 0079 09       		.uleb128 0x9
- 1461 007a 8A8201   		.uleb128 0x410a
- 1462 007d 00       		.byte	0
- 1463 007e 02       		.uleb128 0x2
- 1464 007f 18       		.uleb128 0x18
- 1465 0080 9142     		.uleb128 0x2111
- 1466 0082 18       		.uleb128 0x18
- 1467 0083 00       		.byte	0
- 1468 0084 00       		.byte	0
- 1469 0085 0A       		.uleb128 0xa
- 1470 0086 898201   		.uleb128 0x4109
- 1471 0089 01       		.byte	0x1
- 1472 008a 11       		.uleb128 0x11
- 1473 008b 01       		.uleb128 0x1
- 1474 008c 31       		.uleb128 0x31
- 1475 008d 13       		.uleb128 0x13
- 1476 008e 00       		.byte	0
- 1477 008f 00       		.byte	0
- 1478 0090 0B       		.uleb128 0xb
- 1479 0091 2E       		.uleb128 0x2e
- 1480 0092 01       		.byte	0x1
- 1481 0093 3F       		.uleb128 0x3f
- 1482 0094 19       		.uleb128 0x19
- 1483 0095 03       		.uleb128 0x3
- 1484 0096 0E       		.uleb128 0xe
- 1485 0097 3A       		.uleb128 0x3a
- 1486 0098 0B       		.uleb128 0xb
- 1487 0099 3B       		.uleb128 0x3b
- 1488 009a 0B       		.uleb128 0xb
- 1489 009b 11       		.uleb128 0x11
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 33
+ 1126 0006 0B       		.uleb128 0xb
+ 1127 0007 03       		.uleb128 0x3
+ 1128 0008 0E       		.uleb128 0xe
+ 1129 0009 1B       		.uleb128 0x1b
+ 1130 000a 0E       		.uleb128 0xe
+ 1131 000b 55       		.uleb128 0x55
+ 1132 000c 17       		.uleb128 0x17
+ 1133 000d 11       		.uleb128 0x11
+ 1134 000e 01       		.uleb128 0x1
+ 1135 000f 10       		.uleb128 0x10
+ 1136 0010 17       		.uleb128 0x17
+ 1137 0011 00       		.byte	0
+ 1138 0012 00       		.byte	0
+ 1139 0013 02       		.uleb128 0x2
+ 1140 0014 24       		.uleb128 0x24
+ 1141 0015 00       		.byte	0
+ 1142 0016 0B       		.uleb128 0xb
+ 1143 0017 0B       		.uleb128 0xb
+ 1144 0018 3E       		.uleb128 0x3e
+ 1145 0019 0B       		.uleb128 0xb
+ 1146 001a 03       		.uleb128 0x3
+ 1147 001b 0E       		.uleb128 0xe
+ 1148 001c 00       		.byte	0
+ 1149 001d 00       		.byte	0
+ 1150 001e 03       		.uleb128 0x3
+ 1151 001f 16       		.uleb128 0x16
+ 1152 0020 00       		.byte	0
+ 1153 0021 03       		.uleb128 0x3
+ 1154 0022 0E       		.uleb128 0xe
+ 1155 0023 3A       		.uleb128 0x3a
+ 1156 0024 0B       		.uleb128 0xb
+ 1157 0025 3B       		.uleb128 0x3b
+ 1158 0026 0B       		.uleb128 0xb
+ 1159 0027 49       		.uleb128 0x49
+ 1160 0028 13       		.uleb128 0x13
+ 1161 0029 00       		.byte	0
+ 1162 002a 00       		.byte	0
+ 1163 002b 04       		.uleb128 0x4
+ 1164 002c 24       		.uleb128 0x24
+ 1165 002d 00       		.byte	0
+ 1166 002e 0B       		.uleb128 0xb
+ 1167 002f 0B       		.uleb128 0xb
+ 1168 0030 3E       		.uleb128 0x3e
+ 1169 0031 0B       		.uleb128 0xb
+ 1170 0032 03       		.uleb128 0x3
+ 1171 0033 08       		.uleb128 0x8
+ 1172 0034 00       		.byte	0
+ 1173 0035 00       		.byte	0
+ 1174 0036 05       		.uleb128 0x5
+ 1175 0037 16       		.uleb128 0x16
+ 1176 0038 00       		.byte	0
+ 1177 0039 03       		.uleb128 0x3
+ 1178 003a 0E       		.uleb128 0xe
+ 1179 003b 3A       		.uleb128 0x3a
+ 1180 003c 0B       		.uleb128 0xb
+ 1181 003d 3B       		.uleb128 0x3b
+ 1182 003e 05       		.uleb128 0x5
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 27
 
 
- 1490 009c 01       		.uleb128 0x1
- 1491 009d 12       		.uleb128 0x12
- 1492 009e 06       		.uleb128 0x6
- 1493 009f 40       		.uleb128 0x40
- 1494 00a0 18       		.uleb128 0x18
- 1495 00a1 9642     		.uleb128 0x2116
- 1496 00a3 19       		.uleb128 0x19
- 1497 00a4 01       		.uleb128 0x1
- 1498 00a5 13       		.uleb128 0x13
- 1499 00a6 00       		.byte	0
- 1500 00a7 00       		.byte	0
- 1501 00a8 0C       		.uleb128 0xc
- 1502 00a9 898201   		.uleb128 0x4109
- 1503 00ac 00       		.byte	0
- 1504 00ad 11       		.uleb128 0x11
- 1505 00ae 01       		.uleb128 0x1
- 1506 00af 31       		.uleb128 0x31
- 1507 00b0 13       		.uleb128 0x13
- 1508 00b1 00       		.byte	0
- 1509 00b2 00       		.byte	0
- 1510 00b3 0D       		.uleb128 0xd
- 1511 00b4 2E       		.uleb128 0x2e
- 1512 00b5 01       		.byte	0x1
- 1513 00b6 3F       		.uleb128 0x3f
- 1514 00b7 19       		.uleb128 0x19
- 1515 00b8 03       		.uleb128 0x3
- 1516 00b9 0E       		.uleb128 0xe
- 1517 00ba 3A       		.uleb128 0x3a
- 1518 00bb 0B       		.uleb128 0xb
- 1519 00bc 3B       		.uleb128 0x3b
- 1520 00bd 0B       		.uleb128 0xb
- 1521 00be 27       		.uleb128 0x27
- 1522 00bf 19       		.uleb128 0x19
- 1523 00c0 11       		.uleb128 0x11
- 1524 00c1 01       		.uleb128 0x1
- 1525 00c2 12       		.uleb128 0x12
- 1526 00c3 06       		.uleb128 0x6
- 1527 00c4 40       		.uleb128 0x40
- 1528 00c5 18       		.uleb128 0x18
- 1529 00c6 9742     		.uleb128 0x2117
- 1530 00c8 19       		.uleb128 0x19
- 1531 00c9 01       		.uleb128 0x1
- 1532 00ca 13       		.uleb128 0x13
- 1533 00cb 00       		.byte	0
- 1534 00cc 00       		.byte	0
- 1535 00cd 0E       		.uleb128 0xe
- 1536 00ce 2E       		.uleb128 0x2e
- 1537 00cf 01       		.byte	0x1
- 1538 00d0 3F       		.uleb128 0x3f
- 1539 00d1 19       		.uleb128 0x19
- 1540 00d2 03       		.uleb128 0x3
- 1541 00d3 0E       		.uleb128 0xe
- 1542 00d4 3A       		.uleb128 0x3a
- 1543 00d5 0B       		.uleb128 0xb
- 1544 00d6 3B       		.uleb128 0x3b
- 1545 00d7 0B       		.uleb128 0xb
- 1546 00d8 11       		.uleb128 0x11
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 34
+ 1183 003f 49       		.uleb128 0x49
+ 1184 0040 13       		.uleb128 0x13
+ 1185 0041 00       		.byte	0
+ 1186 0042 00       		.byte	0
+ 1187 0043 06       		.uleb128 0x6
+ 1188 0044 2E       		.uleb128 0x2e
+ 1189 0045 01       		.byte	0x1
+ 1190 0046 3F       		.uleb128 0x3f
+ 1191 0047 19       		.uleb128 0x19
+ 1192 0048 03       		.uleb128 0x3
+ 1193 0049 0E       		.uleb128 0xe
+ 1194 004a 3A       		.uleb128 0x3a
+ 1195 004b 0B       		.uleb128 0xb
+ 1196 004c 3B       		.uleb128 0x3b
+ 1197 004d 0B       		.uleb128 0xb
+ 1198 004e 27       		.uleb128 0x27
+ 1199 004f 19       		.uleb128 0x19
+ 1200 0050 49       		.uleb128 0x49
+ 1201 0051 13       		.uleb128 0x13
+ 1202 0052 11       		.uleb128 0x11
+ 1203 0053 01       		.uleb128 0x1
+ 1204 0054 12       		.uleb128 0x12
+ 1205 0055 06       		.uleb128 0x6
+ 1206 0056 40       		.uleb128 0x40
+ 1207 0057 18       		.uleb128 0x18
+ 1208 0058 9742     		.uleb128 0x2117
+ 1209 005a 19       		.uleb128 0x19
+ 1210 005b 01       		.uleb128 0x1
+ 1211 005c 13       		.uleb128 0x13
+ 1212 005d 00       		.byte	0
+ 1213 005e 00       		.byte	0
+ 1214 005f 07       		.uleb128 0x7
+ 1215 0060 34       		.uleb128 0x34
+ 1216 0061 00       		.byte	0
+ 1217 0062 03       		.uleb128 0x3
+ 1218 0063 0E       		.uleb128 0xe
+ 1219 0064 3A       		.uleb128 0x3a
+ 1220 0065 0B       		.uleb128 0xb
+ 1221 0066 3B       		.uleb128 0x3b
+ 1222 0067 0B       		.uleb128 0xb
+ 1223 0068 49       		.uleb128 0x49
+ 1224 0069 13       		.uleb128 0x13
+ 1225 006a 1C       		.uleb128 0x1c
+ 1226 006b 0B       		.uleb128 0xb
+ 1227 006c 00       		.byte	0
+ 1228 006d 00       		.byte	0
+ 1229 006e 08       		.uleb128 0x8
+ 1230 006f 2E       		.uleb128 0x2e
+ 1231 0070 01       		.byte	0x1
+ 1232 0071 3F       		.uleb128 0x3f
+ 1233 0072 19       		.uleb128 0x19
+ 1234 0073 03       		.uleb128 0x3
+ 1235 0074 0E       		.uleb128 0xe
+ 1236 0075 3A       		.uleb128 0x3a
+ 1237 0076 0B       		.uleb128 0xb
+ 1238 0077 3B       		.uleb128 0x3b
+ 1239 0078 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 28
 
 
- 1547 00d9 01       		.uleb128 0x1
- 1548 00da 12       		.uleb128 0x12
- 1549 00db 06       		.uleb128 0x6
- 1550 00dc 40       		.uleb128 0x40
- 1551 00dd 18       		.uleb128 0x18
- 1552 00de 9742     		.uleb128 0x2117
- 1553 00e0 19       		.uleb128 0x19
- 1554 00e1 01       		.uleb128 0x1
- 1555 00e2 13       		.uleb128 0x13
- 1556 00e3 00       		.byte	0
- 1557 00e4 00       		.byte	0
- 1558 00e5 0F       		.uleb128 0xf
- 1559 00e6 01       		.uleb128 0x1
- 1560 00e7 01       		.byte	0x1
- 1561 00e8 49       		.uleb128 0x49
- 1562 00e9 13       		.uleb128 0x13
- 1563 00ea 01       		.uleb128 0x1
- 1564 00eb 13       		.uleb128 0x13
- 1565 00ec 00       		.byte	0
- 1566 00ed 00       		.byte	0
- 1567 00ee 10       		.uleb128 0x10
- 1568 00ef 21       		.uleb128 0x21
- 1569 00f0 00       		.byte	0
- 1570 00f1 49       		.uleb128 0x49
- 1571 00f2 13       		.uleb128 0x13
- 1572 00f3 2F       		.uleb128 0x2f
- 1573 00f4 0B       		.uleb128 0xb
- 1574 00f5 00       		.byte	0
- 1575 00f6 00       		.byte	0
- 1576 00f7 11       		.uleb128 0x11
- 1577 00f8 34       		.uleb128 0x34
- 1578 00f9 00       		.byte	0
- 1579 00fa 03       		.uleb128 0x3
- 1580 00fb 0E       		.uleb128 0xe
- 1581 00fc 3A       		.uleb128 0x3a
- 1582 00fd 0B       		.uleb128 0xb
- 1583 00fe 3B       		.uleb128 0x3b
- 1584 00ff 0B       		.uleb128 0xb
- 1585 0100 49       		.uleb128 0x49
- 1586 0101 13       		.uleb128 0x13
- 1587 0102 3F       		.uleb128 0x3f
- 1588 0103 19       		.uleb128 0x19
- 1589 0104 02       		.uleb128 0x2
- 1590 0105 18       		.uleb128 0x18
- 1591 0106 00       		.byte	0
- 1592 0107 00       		.byte	0
- 1593 0108 12       		.uleb128 0x12
- 1594 0109 34       		.uleb128 0x34
- 1595 010a 00       		.byte	0
- 1596 010b 03       		.uleb128 0x3
- 1597 010c 0E       		.uleb128 0xe
- 1598 010d 3A       		.uleb128 0x3a
- 1599 010e 0B       		.uleb128 0xb
- 1600 010f 3B       		.uleb128 0x3b
- 1601 0110 0B       		.uleb128 0xb
- 1602 0111 49       		.uleb128 0x49
- 1603 0112 13       		.uleb128 0x13
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 35
+ 1240 0079 27       		.uleb128 0x27
+ 1241 007a 19       		.uleb128 0x19
+ 1242 007b 11       		.uleb128 0x11
+ 1243 007c 01       		.uleb128 0x1
+ 1244 007d 12       		.uleb128 0x12
+ 1245 007e 06       		.uleb128 0x6
+ 1246 007f 40       		.uleb128 0x40
+ 1247 0080 18       		.uleb128 0x18
+ 1248 0081 9642     		.uleb128 0x2116
+ 1249 0083 19       		.uleb128 0x19
+ 1250 0084 01       		.uleb128 0x1
+ 1251 0085 13       		.uleb128 0x13
+ 1252 0086 00       		.byte	0
+ 1253 0087 00       		.byte	0
+ 1254 0088 09       		.uleb128 0x9
+ 1255 0089 05       		.uleb128 0x5
+ 1256 008a 00       		.byte	0
+ 1257 008b 03       		.uleb128 0x3
+ 1258 008c 0E       		.uleb128 0xe
+ 1259 008d 3A       		.uleb128 0x3a
+ 1260 008e 0B       		.uleb128 0xb
+ 1261 008f 3B       		.uleb128 0x3b
+ 1262 0090 0B       		.uleb128 0xb
+ 1263 0091 49       		.uleb128 0x49
+ 1264 0092 13       		.uleb128 0x13
+ 1265 0093 02       		.uleb128 0x2
+ 1266 0094 17       		.uleb128 0x17
+ 1267 0095 00       		.byte	0
+ 1268 0096 00       		.byte	0
+ 1269 0097 0A       		.uleb128 0xa
+ 1270 0098 898201   		.uleb128 0x4109
+ 1271 009b 01       		.byte	0x1
+ 1272 009c 11       		.uleb128 0x11
+ 1273 009d 01       		.uleb128 0x1
+ 1274 009e 31       		.uleb128 0x31
+ 1275 009f 13       		.uleb128 0x13
+ 1276 00a0 01       		.uleb128 0x1
+ 1277 00a1 13       		.uleb128 0x13
+ 1278 00a2 00       		.byte	0
+ 1279 00a3 00       		.byte	0
+ 1280 00a4 0B       		.uleb128 0xb
+ 1281 00a5 8A8201   		.uleb128 0x410a
+ 1282 00a8 00       		.byte	0
+ 1283 00a9 02       		.uleb128 0x2
+ 1284 00aa 18       		.uleb128 0x18
+ 1285 00ab 9142     		.uleb128 0x2111
+ 1286 00ad 18       		.uleb128 0x18
+ 1287 00ae 00       		.byte	0
+ 1288 00af 00       		.byte	0
+ 1289 00b0 0C       		.uleb128 0xc
+ 1290 00b1 898201   		.uleb128 0x4109
+ 1291 00b4 01       		.byte	0x1
+ 1292 00b5 11       		.uleb128 0x11
+ 1293 00b6 01       		.uleb128 0x1
+ 1294 00b7 31       		.uleb128 0x31
+ 1295 00b8 13       		.uleb128 0x13
+ 1296 00b9 00       		.byte	0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 29
 
 
- 1604 0113 3F       		.uleb128 0x3f
- 1605 0114 19       		.uleb128 0x19
- 1606 0115 3C       		.uleb128 0x3c
- 1607 0116 19       		.uleb128 0x19
- 1608 0117 00       		.byte	0
- 1609 0118 00       		.byte	0
- 1610 0119 13       		.uleb128 0x13
- 1611 011a 34       		.uleb128 0x34
- 1612 011b 00       		.byte	0
- 1613 011c 03       		.uleb128 0x3
- 1614 011d 0E       		.uleb128 0xe
- 1615 011e 3A       		.uleb128 0x3a
- 1616 011f 0B       		.uleb128 0xb
- 1617 0120 3B       		.uleb128 0x3b
- 1618 0121 05       		.uleb128 0x5
- 1619 0122 49       		.uleb128 0x49
- 1620 0123 13       		.uleb128 0x13
- 1621 0124 3F       		.uleb128 0x3f
- 1622 0125 19       		.uleb128 0x19
- 1623 0126 3C       		.uleb128 0x3c
- 1624 0127 19       		.uleb128 0x19
- 1625 0128 00       		.byte	0
- 1626 0129 00       		.byte	0
- 1627 012a 14       		.uleb128 0x14
- 1628 012b 35       		.uleb128 0x35
- 1629 012c 00       		.byte	0
- 1630 012d 49       		.uleb128 0x49
- 1631 012e 13       		.uleb128 0x13
- 1632 012f 00       		.byte	0
- 1633 0130 00       		.byte	0
- 1634 0131 15       		.uleb128 0x15
- 1635 0132 34       		.uleb128 0x34
- 1636 0133 00       		.byte	0
- 1637 0134 03       		.uleb128 0x3
- 1638 0135 08       		.uleb128 0x8
- 1639 0136 3A       		.uleb128 0x3a
- 1640 0137 0B       		.uleb128 0xb
- 1641 0138 3B       		.uleb128 0x3b
- 1642 0139 0B       		.uleb128 0xb
- 1643 013a 49       		.uleb128 0x49
- 1644 013b 13       		.uleb128 0x13
- 1645 013c 3F       		.uleb128 0x3f
- 1646 013d 19       		.uleb128 0x19
- 1647 013e 02       		.uleb128 0x2
- 1648 013f 18       		.uleb128 0x18
- 1649 0140 00       		.byte	0
- 1650 0141 00       		.byte	0
- 1651 0142 16       		.uleb128 0x16
- 1652 0143 2E       		.uleb128 0x2e
- 1653 0144 00       		.byte	0
- 1654 0145 3F       		.uleb128 0x3f
- 1655 0146 19       		.uleb128 0x19
- 1656 0147 3C       		.uleb128 0x3c
- 1657 0148 19       		.uleb128 0x19
- 1658 0149 6E       		.uleb128 0x6e
- 1659 014a 0E       		.uleb128 0xe
- 1660 014b 03       		.uleb128 0x3
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 36
+ 1297 00ba 00       		.byte	0
+ 1298 00bb 0D       		.uleb128 0xd
+ 1299 00bc 898201   		.uleb128 0x4109
+ 1300 00bf 00       		.byte	0
+ 1301 00c0 11       		.uleb128 0x11
+ 1302 00c1 01       		.uleb128 0x1
+ 1303 00c2 31       		.uleb128 0x31
+ 1304 00c3 13       		.uleb128 0x13
+ 1305 00c4 00       		.byte	0
+ 1306 00c5 00       		.byte	0
+ 1307 00c6 0E       		.uleb128 0xe
+ 1308 00c7 2E       		.uleb128 0x2e
+ 1309 00c8 01       		.byte	0x1
+ 1310 00c9 3F       		.uleb128 0x3f
+ 1311 00ca 19       		.uleb128 0x19
+ 1312 00cb 03       		.uleb128 0x3
+ 1313 00cc 0E       		.uleb128 0xe
+ 1314 00cd 3A       		.uleb128 0x3a
+ 1315 00ce 0B       		.uleb128 0xb
+ 1316 00cf 3B       		.uleb128 0x3b
+ 1317 00d0 0B       		.uleb128 0xb
+ 1318 00d1 27       		.uleb128 0x27
+ 1319 00d2 19       		.uleb128 0x19
+ 1320 00d3 11       		.uleb128 0x11
+ 1321 00d4 01       		.uleb128 0x1
+ 1322 00d5 12       		.uleb128 0x12
+ 1323 00d6 06       		.uleb128 0x6
+ 1324 00d7 40       		.uleb128 0x40
+ 1325 00d8 18       		.uleb128 0x18
+ 1326 00d9 9742     		.uleb128 0x2117
+ 1327 00db 19       		.uleb128 0x19
+ 1328 00dc 01       		.uleb128 0x1
+ 1329 00dd 13       		.uleb128 0x13
+ 1330 00de 00       		.byte	0
+ 1331 00df 00       		.byte	0
+ 1332 00e0 0F       		.uleb128 0xf
+ 1333 00e1 2E       		.uleb128 0x2e
+ 1334 00e2 01       		.byte	0x1
+ 1335 00e3 3F       		.uleb128 0x3f
+ 1336 00e4 19       		.uleb128 0x19
+ 1337 00e5 03       		.uleb128 0x3
+ 1338 00e6 0E       		.uleb128 0xe
+ 1339 00e7 3A       		.uleb128 0x3a
+ 1340 00e8 0B       		.uleb128 0xb
+ 1341 00e9 3B       		.uleb128 0x3b
+ 1342 00ea 05       		.uleb128 0x5
+ 1343 00eb 11       		.uleb128 0x11
+ 1344 00ec 01       		.uleb128 0x1
+ 1345 00ed 12       		.uleb128 0x12
+ 1346 00ee 06       		.uleb128 0x6
+ 1347 00ef 40       		.uleb128 0x40
+ 1348 00f0 18       		.uleb128 0x18
+ 1349 00f1 9742     		.uleb128 0x2117
+ 1350 00f3 19       		.uleb128 0x19
+ 1351 00f4 01       		.uleb128 0x1
+ 1352 00f5 13       		.uleb128 0x13
+ 1353 00f6 00       		.byte	0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 30
 
 
- 1661 014c 0E       		.uleb128 0xe
- 1662 014d 3A       		.uleb128 0x3a
- 1663 014e 0B       		.uleb128 0xb
- 1664 014f 3B       		.uleb128 0x3b
- 1665 0150 0B       		.uleb128 0xb
- 1666 0151 00       		.byte	0
- 1667 0152 00       		.byte	0
- 1668 0153 00       		.byte	0
- 1669              		.section	.debug_loc,"",%progbits
- 1670              	.Ldebug_loc0:
- 1671              	.LLST0:
- 1672 0000 00000000 		.4byte	.LVL0
- 1673 0004 0A000000 		.4byte	.LVL1
- 1674 0008 0100     		.2byte	0x1
- 1675 000a 50       		.byte	0x50
- 1676 000b 0A000000 		.4byte	.LVL1
- 1677 000f 26000000 		.4byte	.LVL5
- 1678 0013 0100     		.2byte	0x1
- 1679 0015 55       		.byte	0x55
- 1680 0016 26000000 		.4byte	.LVL5
- 1681 001a 30000000 		.4byte	.LFE65
- 1682 001e 0400     		.2byte	0x4
- 1683 0020 F3       		.byte	0xf3
- 1684 0021 01       		.uleb128 0x1
- 1685 0022 50       		.byte	0x50
- 1686 0023 9F       		.byte	0x9f
- 1687 0024 00000000 		.4byte	0
- 1688 0028 00000000 		.4byte	0
- 1689              	.LLST1:
- 1690 002c 00000000 		.4byte	.LVL0
- 1691 0030 0D000000 		.4byte	.LVL2-1
- 1692 0034 0100     		.2byte	0x1
- 1693 0036 51       		.byte	0x51
- 1694 0037 0D000000 		.4byte	.LVL2-1
- 1695 003b 30000000 		.4byte	.LFE65
- 1696 003f 0600     		.2byte	0x6
- 1697 0041 F3       		.byte	0xf3
- 1698 0042 03       		.uleb128 0x3
- 1699 0043 F5       		.byte	0xf5
- 1700 0044 01       		.uleb128 0x1
- 1701 0045 25       		.uleb128 0x25
- 1702 0046 9F       		.byte	0x9f
- 1703 0047 00000000 		.4byte	0
- 1704 004b 00000000 		.4byte	0
- 1705              	.LLST2:
- 1706 004f 00000000 		.4byte	.LVL52
- 1707 0053 06000000 		.4byte	.LVL53
- 1708 0057 0100     		.2byte	0x1
- 1709 0059 50       		.byte	0x50
- 1710 005a 06000000 		.4byte	.LVL53
- 1711 005e 80000000 		.4byte	.LFE66
- 1712 0062 0100     		.2byte	0x1
- 1713 0064 54       		.byte	0x54
- 1714 0065 00000000 		.4byte	0
- 1715 0069 00000000 		.4byte	0
- 1716              		.section	.debug_aranges,"",%progbits
- 1717 0000 34000000 		.4byte	0x34
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 37
+ 1354 00f7 00       		.byte	0
+ 1355 00f8 10       		.uleb128 0x10
+ 1356 00f9 01       		.uleb128 0x1
+ 1357 00fa 01       		.byte	0x1
+ 1358 00fb 49       		.uleb128 0x49
+ 1359 00fc 13       		.uleb128 0x13
+ 1360 00fd 01       		.uleb128 0x1
+ 1361 00fe 13       		.uleb128 0x13
+ 1362 00ff 00       		.byte	0
+ 1363 0100 00       		.byte	0
+ 1364 0101 11       		.uleb128 0x11
+ 1365 0102 21       		.uleb128 0x21
+ 1366 0103 00       		.byte	0
+ 1367 0104 49       		.uleb128 0x49
+ 1368 0105 13       		.uleb128 0x13
+ 1369 0106 2F       		.uleb128 0x2f
+ 1370 0107 0B       		.uleb128 0xb
+ 1371 0108 00       		.byte	0
+ 1372 0109 00       		.byte	0
+ 1373 010a 12       		.uleb128 0x12
+ 1374 010b 34       		.uleb128 0x34
+ 1375 010c 00       		.byte	0
+ 1376 010d 03       		.uleb128 0x3
+ 1377 010e 0E       		.uleb128 0xe
+ 1378 010f 3A       		.uleb128 0x3a
+ 1379 0110 0B       		.uleb128 0xb
+ 1380 0111 3B       		.uleb128 0x3b
+ 1381 0112 0B       		.uleb128 0xb
+ 1382 0113 49       		.uleb128 0x49
+ 1383 0114 13       		.uleb128 0x13
+ 1384 0115 3F       		.uleb128 0x3f
+ 1385 0116 19       		.uleb128 0x19
+ 1386 0117 02       		.uleb128 0x2
+ 1387 0118 18       		.uleb128 0x18
+ 1388 0119 00       		.byte	0
+ 1389 011a 00       		.byte	0
+ 1390 011b 13       		.uleb128 0x13
+ 1391 011c 34       		.uleb128 0x34
+ 1392 011d 00       		.byte	0
+ 1393 011e 03       		.uleb128 0x3
+ 1394 011f 0E       		.uleb128 0xe
+ 1395 0120 3A       		.uleb128 0x3a
+ 1396 0121 0B       		.uleb128 0xb
+ 1397 0122 3B       		.uleb128 0x3b
+ 1398 0123 0B       		.uleb128 0xb
+ 1399 0124 49       		.uleb128 0x49
+ 1400 0125 13       		.uleb128 0x13
+ 1401 0126 3F       		.uleb128 0x3f
+ 1402 0127 19       		.uleb128 0x19
+ 1403 0128 3C       		.uleb128 0x3c
+ 1404 0129 19       		.uleb128 0x19
+ 1405 012a 00       		.byte	0
+ 1406 012b 00       		.byte	0
+ 1407 012c 14       		.uleb128 0x14
+ 1408 012d 34       		.uleb128 0x34
+ 1409 012e 00       		.byte	0
+ 1410 012f 03       		.uleb128 0x3
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 31
 
 
- 1718 0004 0200     		.2byte	0x2
- 1719 0006 00000000 		.4byte	.Ldebug_info0
- 1720 000a 04       		.byte	0x4
- 1721 000b 00       		.byte	0
- 1722 000c 0000     		.2byte	0
- 1723 000e 0000     		.2byte	0
- 1724 0010 00000000 		.4byte	.LFB65
- 1725 0014 30000000 		.4byte	.LFE65-.LFB65
- 1726 0018 00000000 		.4byte	.LFB64
- 1727 001c D4020000 		.4byte	.LFE64-.LFB64
- 1728 0020 00000000 		.4byte	.LFB66
- 1729 0024 80000000 		.4byte	.LFE66-.LFB66
- 1730 0028 00000000 		.4byte	.LFB67
- 1731 002c 2C000000 		.4byte	.LFE67-.LFB67
- 1732 0030 00000000 		.4byte	0
- 1733 0034 00000000 		.4byte	0
- 1734              		.section	.debug_ranges,"",%progbits
- 1735              	.Ldebug_ranges0:
- 1736 0000 00000000 		.4byte	.LFB65
- 1737 0004 30000000 		.4byte	.LFE65
- 1738 0008 00000000 		.4byte	.LFB64
- 1739 000c D4020000 		.4byte	.LFE64
- 1740 0010 00000000 		.4byte	.LFB66
- 1741 0014 80000000 		.4byte	.LFE66
- 1742 0018 00000000 		.4byte	.LFB67
- 1743 001c 2C000000 		.4byte	.LFE67
- 1744 0020 00000000 		.4byte	0
- 1745 0024 00000000 		.4byte	0
- 1746              		.section	.debug_line,"",%progbits
- 1747              	.Ldebug_line0:
- 1748 0000 F6030000 		.section	.debug_str,"MS",%progbits,1
- 1748      02009F02 
- 1748      00000201 
- 1748      FB0E0D00 
- 1748      01010101 
- 1749              	.LASF7:
- 1750 0000 6C6F6E67 		.ascii	"long long int\000"
- 1750      206C6F6E 
- 1750      6720696E 
- 1750      7400
- 1751              	.LASF21:
- 1752 000e 63757272 		.ascii	"currentSensorIndex\000"
- 1752      656E7453 
- 1752      656E736F 
- 1752      72496E64 
- 1752      657800
- 1753              	.LASF42:
- 1754 0021 54696D65 		.ascii	"Timer_1_Start\000"
- 1754      725F315F 
- 1754      53746172 
- 1754      7400
- 1755              	.LASF28:
- 1756 002f 73746174 		.ascii	"state\000"
- 1756      6500
- 1757              	.LASF10:
- 1758 0035 5F5F696E 		.ascii	"__int32_t\000"
- 1758      7433325F 
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 38
+ 1411 0130 0E       		.uleb128 0xe
+ 1412 0131 3A       		.uleb128 0x3a
+ 1413 0132 0B       		.uleb128 0xb
+ 1414 0133 3B       		.uleb128 0x3b
+ 1415 0134 05       		.uleb128 0x5
+ 1416 0135 49       		.uleb128 0x49
+ 1417 0136 13       		.uleb128 0x13
+ 1418 0137 3F       		.uleb128 0x3f
+ 1419 0138 19       		.uleb128 0x19
+ 1420 0139 3C       		.uleb128 0x3c
+ 1421 013a 19       		.uleb128 0x19
+ 1422 013b 00       		.byte	0
+ 1423 013c 00       		.byte	0
+ 1424 013d 15       		.uleb128 0x15
+ 1425 013e 35       		.uleb128 0x35
+ 1426 013f 00       		.byte	0
+ 1427 0140 49       		.uleb128 0x49
+ 1428 0141 13       		.uleb128 0x13
+ 1429 0142 00       		.byte	0
+ 1430 0143 00       		.byte	0
+ 1431 0144 16       		.uleb128 0x16
+ 1432 0145 34       		.uleb128 0x34
+ 1433 0146 00       		.byte	0
+ 1434 0147 03       		.uleb128 0x3
+ 1435 0148 08       		.uleb128 0x8
+ 1436 0149 3A       		.uleb128 0x3a
+ 1437 014a 0B       		.uleb128 0xb
+ 1438 014b 3B       		.uleb128 0x3b
+ 1439 014c 0B       		.uleb128 0xb
+ 1440 014d 49       		.uleb128 0x49
+ 1441 014e 13       		.uleb128 0x13
+ 1442 014f 3F       		.uleb128 0x3f
+ 1443 0150 19       		.uleb128 0x19
+ 1444 0151 02       		.uleb128 0x2
+ 1445 0152 18       		.uleb128 0x18
+ 1446 0153 00       		.byte	0
+ 1447 0154 00       		.byte	0
+ 1448 0155 17       		.uleb128 0x17
+ 1449 0156 2E       		.uleb128 0x2e
+ 1450 0157 00       		.byte	0
+ 1451 0158 3F       		.uleb128 0x3f
+ 1452 0159 19       		.uleb128 0x19
+ 1453 015a 3C       		.uleb128 0x3c
+ 1454 015b 19       		.uleb128 0x19
+ 1455 015c 6E       		.uleb128 0x6e
+ 1456 015d 0E       		.uleb128 0xe
+ 1457 015e 03       		.uleb128 0x3
+ 1458 015f 0E       		.uleb128 0xe
+ 1459 0160 3A       		.uleb128 0x3a
+ 1460 0161 0B       		.uleb128 0xb
+ 1461 0162 3B       		.uleb128 0x3b
+ 1462 0163 0B       		.uleb128 0xb
+ 1463 0164 00       		.byte	0
+ 1464 0165 00       		.byte	0
+ 1465 0166 00       		.byte	0
+ 1466              		.section	.debug_loc,"",%progbits
+ 1467              	.Ldebug_loc0:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 32
 
 
- 1758      7400
- 1759              	.LASF4:
- 1760 003f 73686F72 		.ascii	"short unsigned int\000"
- 1760      7420756E 
- 1760      7369676E 
- 1760      65642069 
- 1760      6E7400
- 1761              	.LASF40:
- 1762 0052 4D6F746F 		.ascii	"Motor_2_driver_Sleep\000"
- 1762      725F325F 
- 1762      64726976 
- 1762      65725F53 
- 1762      6C656570 
- 1763              	.LASF48:
- 1764 0067 54726967 		.ascii	"Trigger_5_Write\000"
- 1764      6765725F 
- 1764      355F5772 
- 1764      69746500 
- 1765              	.LASF18:
- 1766 0077 64697374 		.ascii	"distanceMeasured\000"
- 1766      616E6365 
- 1766      4D656173 
- 1766      75726564 
- 1766      00
- 1767              	.LASF0:
- 1768 0088 666C6F61 		.ascii	"float\000"
- 1768      7400
- 1769              	.LASF39:
- 1770 008e 4D6F746F 		.ascii	"Motor_1_driver_Sleep\000"
- 1770      725F315F 
- 1770      64726976 
- 1770      65725F53 
- 1770      6C656570 
- 1771              	.LASF19:
- 1772 00a3 7072696E 		.ascii	"printSensorToUART\000"
- 1772      7453656E 
- 1772      736F7254 
- 1772      6F554152 
- 1772      5400
- 1773              	.LASF50:
- 1774 00b5 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 1774      43313120 
- 1774      352E342E 
- 1774      31203230 
- 1774      31363036 
- 1775 00e8 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
- 1775      20726576 
- 1775      6973696F 
- 1775      6E203233 
- 1775      37373135 
- 1776 011b 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 1776      66756E63 
- 1776      74696F6E 
- 1776      2D736563 
- 1776      74696F6E 
- 1777              	.LASF6:
- 1778 0143 6C6F6E67 		.ascii	"long unsigned int\000"
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 39
+ 1468              	.LLST0:
+ 1469 0000 00000000 		.4byte	.LVL1
+ 1470 0004 0A000000 		.4byte	.LVL2
+ 1471 0008 0100     		.2byte	0x1
+ 1472 000a 50       		.byte	0x50
+ 1473 000b 0A000000 		.4byte	.LVL2
+ 1474 000f 26000000 		.4byte	.LVL6
+ 1475 0013 0100     		.2byte	0x1
+ 1476 0015 55       		.byte	0x55
+ 1477 0016 26000000 		.4byte	.LVL6
+ 1478 001a 30000000 		.4byte	.LFE66
+ 1479 001e 0400     		.2byte	0x4
+ 1480 0020 F3       		.byte	0xf3
+ 1481 0021 01       		.uleb128 0x1
+ 1482 0022 50       		.byte	0x50
+ 1483 0023 9F       		.byte	0x9f
+ 1484 0024 00000000 		.4byte	0
+ 1485 0028 00000000 		.4byte	0
+ 1486              	.LLST1:
+ 1487 002c 00000000 		.4byte	.LVL1
+ 1488 0030 0D000000 		.4byte	.LVL3-1
+ 1489 0034 0100     		.2byte	0x1
+ 1490 0036 51       		.byte	0x51
+ 1491 0037 0D000000 		.4byte	.LVL3-1
+ 1492 003b 30000000 		.4byte	.LFE66
+ 1493 003f 0600     		.2byte	0x6
+ 1494 0041 F3       		.byte	0xf3
+ 1495 0042 03       		.uleb128 0x3
+ 1496 0043 F5       		.byte	0xf5
+ 1497 0044 01       		.uleb128 0x1
+ 1498 0045 25       		.uleb128 0x25
+ 1499 0046 9F       		.byte	0x9f
+ 1500 0047 00000000 		.4byte	0
+ 1501 004b 00000000 		.4byte	0
+ 1502              	.LLST2:
+ 1503 004f 00000000 		.4byte	.LVL25
+ 1504 0053 06000000 		.4byte	.LVL26
+ 1505 0057 0100     		.2byte	0x1
+ 1506 0059 50       		.byte	0x50
+ 1507 005a 06000000 		.4byte	.LVL26
+ 1508 005e 80000000 		.4byte	.LFE67
+ 1509 0062 0100     		.2byte	0x1
+ 1510 0064 54       		.byte	0x54
+ 1511 0065 00000000 		.4byte	0
+ 1512 0069 00000000 		.4byte	0
+ 1513              		.section	.debug_aranges,"",%progbits
+ 1514 0000 3C000000 		.4byte	0x3c
+ 1515 0004 0200     		.2byte	0x2
+ 1516 0006 00000000 		.4byte	.Ldebug_info0
+ 1517 000a 04       		.byte	0x4
+ 1518 000b 00       		.byte	0
+ 1519 000c 0000     		.2byte	0
+ 1520 000e 0000     		.2byte	0
+ 1521 0010 00000000 		.4byte	.LFB65
+ 1522 0014 04000000 		.4byte	.LFE65-.LFB65
+ 1523 0018 00000000 		.4byte	.LFB66
+ 1524 001c 30000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 33
 
 
- 1778      20756E73 
- 1778      69676E65 
- 1778      6420696E 
- 1778      7400
- 1779              	.LASF51:
- 1780 0155 756C7472 		.ascii	"ultrasonic.c\000"
- 1780      61736F6E 
- 1780      69632E63 
- 1780      00
- 1781              	.LASF12:
- 1782 0162 75696E74 		.ascii	"uint8\000"
- 1782      3800
- 1783              	.LASF27:
- 1784 0168 6E6F7274 		.ascii	"northWall\000"
- 1784      6857616C 
- 1784      6C00
- 1785              	.LASF29:
- 1786 0172 49544D5F 		.ascii	"ITM_RxBuffer\000"
- 1786      52784275 
- 1786      66666572 
- 1786      00
- 1787              	.LASF2:
- 1788 017f 756E7369 		.ascii	"unsigned char\000"
- 1788      676E6564 
- 1788      20636861 
- 1788      7200
- 1789              	.LASF32:
- 1790 018d 756C7472 		.ascii	"ultrasonic_mux_control\000"
- 1790      61736F6E 
- 1790      69635F6D 
- 1790      75785F63 
- 1790      6F6E7472 
- 1791              	.LASF13:
- 1792 01a4 646F7562 		.ascii	"double\000"
- 1792      6C6500
- 1793              	.LASF43:
- 1794 01ab 54726967 		.ascii	"Trigger_1_Write\000"
- 1794      6765725F 
- 1794      315F5772 
- 1794      69746500 
- 1795              	.LASF44:
- 1796 01bb 43794465 		.ascii	"CyDelayUs\000"
- 1796      6C617955 
- 1796      7300
- 1797              	.LASF26:
- 1798 01c5 77657374 		.ascii	"westWall\000"
- 1798      57616C6C 
- 1798      00
- 1799              	.LASF23:
- 1800 01ce 64697374 		.ascii	"distanceCheck\000"
- 1800      616E6365 
- 1800      43686563 
- 1800      6B00
- 1801              	.LASF9:
- 1802 01dc 756E7369 		.ascii	"unsigned int\000"
- 1802      676E6564 
- 1802      20696E74 
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 40
+ 1525 0020 00000000 		.4byte	.LFB64
+ 1526 0024 20010000 		.4byte	.LFE64-.LFB64
+ 1527 0028 00000000 		.4byte	.LFB67
+ 1528 002c 80000000 		.4byte	.LFE67-.LFB67
+ 1529 0030 00000000 		.4byte	.LFB68
+ 1530 0034 2C000000 		.4byte	.LFE68-.LFB68
+ 1531 0038 00000000 		.4byte	0
+ 1532 003c 00000000 		.4byte	0
+ 1533              		.section	.debug_ranges,"",%progbits
+ 1534              	.Ldebug_ranges0:
+ 1535 0000 00000000 		.4byte	.LFB65
+ 1536 0004 04000000 		.4byte	.LFE65
+ 1537 0008 00000000 		.4byte	.LFB66
+ 1538 000c 30000000 		.4byte	.LFE66
+ 1539 0010 00000000 		.4byte	.LFB64
+ 1540 0014 20010000 		.4byte	.LFE64
+ 1541 0018 00000000 		.4byte	.LFB67
+ 1542 001c 80000000 		.4byte	.LFE67
+ 1543 0020 00000000 		.4byte	.LFB68
+ 1544 0024 2C000000 		.4byte	.LFE68
+ 1545 0028 00000000 		.4byte	0
+ 1546 002c 00000000 		.4byte	0
+ 1547              		.section	.debug_line,"",%progbits
+ 1548              	.Ldebug_line0:
+ 1549 0000 1E030000 		.section	.debug_str,"MS",%progbits,1
+ 1549      02007A02 
+ 1549      00000201 
+ 1549      FB0E0D00 
+ 1549      01010101 
+ 1550              	.LASF7:
+ 1551 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1551      206C6F6E 
+ 1551      6720696E 
+ 1551      7400
+ 1552              	.LASF22:
+ 1553 000e 63757272 		.ascii	"currentSensorIndex\000"
+ 1553      656E7453 
+ 1553      656E736F 
+ 1553      72496E64 
+ 1553      657800
+ 1554              	.LASF44:
+ 1555 0021 54696D65 		.ascii	"Timer_1_Start\000"
+ 1555      725F315F 
+ 1555      53746172 
+ 1555      7400
+ 1556              	.LASF30:
+ 1557 002f 73746174 		.ascii	"state\000"
+ 1557      6500
+ 1558              	.LASF10:
+ 1559 0035 5F5F696E 		.ascii	"__int32_t\000"
+ 1559      7433325F 
+ 1559      7400
+ 1560              	.LASF35:
+ 1561 003f 626C6F63 		.ascii	"block_start\000"
+ 1561      6B5F7374 
+ 1561      61727400 
+ 1562              	.LASF4:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 34
 
 
- 1802      00
- 1803              	.LASF45:
- 1804 01e9 54726967 		.ascii	"Trigger_2_Write\000"
- 1804      6765725F 
- 1804      325F5772 
- 1804      69746500 
- 1805              	.LASF24:
- 1806 01f9 756C7472 		.ascii	"ultrasonic_distances\000"
- 1806      61736F6E 
- 1806      69635F64 
- 1806      69737461 
- 1806      6E636573 
- 1807              	.LASF8:
- 1808 020e 6C6F6E67 		.ascii	"long long unsigned int\000"
- 1808      206C6F6E 
- 1808      6720756E 
- 1808      7369676E 
- 1808      65642069 
- 1809              	.LASF46:
- 1810 0225 54726967 		.ascii	"Trigger_3_Write\000"
- 1810      6765725F 
- 1810      335F5772 
- 1810      69746500 
- 1811              	.LASF11:
- 1812 0235 696E7433 		.ascii	"int32_t\000"
- 1812      325F7400 
- 1813              	.LASF16:
- 1814 023d 73697A65 		.ascii	"sizetype\000"
- 1814      74797065 
- 1814      00
- 1815              	.LASF25:
- 1816 0246 64726976 		.ascii	"driveStraightEnable\000"
- 1816      65537472 
- 1816      61696768 
- 1816      74456E61 
- 1816      626C6500 
- 1817              	.LASF14:
- 1818 025a 63686172 		.ascii	"char\000"
- 1818      00
- 1819              	.LASF37:
- 1820 025f 54696D65 		.ascii	"Timer_1_ReadCounter\000"
- 1820      725F315F 
- 1820      52656164 
- 1820      436F756E 
- 1820      74657200 
- 1821              	.LASF47:
- 1822 0273 54726967 		.ascii	"Trigger_4_Write\000"
- 1822      6765725F 
- 1822      345F5772 
- 1822      69746500 
- 1823              	.LASF30:
- 1824 0283 636F756E 		.ascii	"count\000"
- 1824      7400
- 1825              	.LASF17:
- 1826 0289 73656E73 		.ascii	"sensorNumber\000"
- 1826      6F724E75 
- 1826      6D626572 
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 41
+ 1563 004b 73686F72 		.ascii	"short unsigned int\000"
+ 1563      7420756E 
+ 1563      7369676E 
+ 1563      65642069 
+ 1563      6E7400
+ 1564              	.LASF29:
+ 1565 005e 626C6F63 		.ascii	"block_location\000"
+ 1565      6B5F6C6F 
+ 1565      63617469 
+ 1565      6F6E00
+ 1566              	.LASF42:
+ 1567 006d 61766572 		.ascii	"averageSensor\000"
+ 1567      61676553 
+ 1567      656E736F 
+ 1567      7200
+ 1568              	.LASF53:
+ 1569 007b 756C7472 		.ascii	"ultrasonic.c\000"
+ 1569      61736F6E 
+ 1569      69632E63 
+ 1569      00
+ 1570              	.LASF11:
+ 1571 0088 696E7433 		.ascii	"int32_t\000"
+ 1571      325F7400 
+ 1572              	.LASF18:
+ 1573 0090 64697374 		.ascii	"distanceMeasured\000"
+ 1573      616E6365 
+ 1573      4D656173 
+ 1573      75726564 
+ 1573      00
+ 1574              	.LASF0:
+ 1575 00a1 666C6F61 		.ascii	"float\000"
+ 1575      7400
+ 1576              	.LASF25:
+ 1577 00a7 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 1577      656E7450 
+ 1577      75636B52 
+ 1577      61636B53 
+ 1577      63616E6E 
+ 1578              	.LASF19:
+ 1579 00c4 7072696E 		.ascii	"printSensorToUART\000"
+ 1579      7453656E 
+ 1579      736F7254 
+ 1579      6F554152 
+ 1579      5400
+ 1580              	.LASF52:
+ 1581 00d6 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1581      43313120 
+ 1581      352E342E 
+ 1581      31203230 
+ 1581      31363036 
+ 1582 0109 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1582      20726576 
+ 1582      6973696F 
+ 1582      6E203233 
+ 1582      37373135 
+ 1583 013c 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1583      66756E63 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 35
 
 
- 1826      00
- 1827              	.LASF3:
- 1828 0296 73686F72 		.ascii	"short int\000"
- 1828      7420696E 
- 1828      7400
- 1829              	.LASF33:
- 1830 02a0 6F757470 		.ascii	"output\000"
- 1830      757400
- 1831              	.LASF31:
- 1832 02a7 64697374 		.ascii	"distance_measured\000"
- 1832      616E6365 
- 1832      5F6D6561 
- 1832      73757265 
- 1832      6400
- 1833              	.LASF36:
- 1834 02b9 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
- 1834      725F315F 
- 1834      52656164 
- 1834      53746174 
- 1834      75735265 
- 1835              	.LASF52:
- 1836 02d4 5C5C6164 		.ascii	"\\\\ad.monash.edu\\home\\User026\\bamcg3\\Documents"
- 1836      2E6D6F6E 
- 1836      6173682E 
- 1836      6564755C 
- 1836      686F6D65 
- 1837 0301 5C454345 		.ascii	"\\ECE3091\\Robot\\Robot\\ColourSensor.cydsn\000"
- 1837      33303931 
- 1837      5C526F62 
- 1837      6F745C52 
- 1837      6F626F74 
- 1838              	.LASF5:
- 1839 0329 6C6F6E67 		.ascii	"long int\000"
- 1839      20696E74 
- 1839      00
- 1840              	.LASF15:
- 1841 0332 6C6F6E67 		.ascii	"long double\000"
- 1841      20646F75 
- 1841      626C6500 
- 1842              	.LASF1:
- 1843 033e 7369676E 		.ascii	"signed char\000"
- 1843      65642063 
- 1843      68617200 
- 1844              	.LASF38:
- 1845 034a 54696D65 		.ascii	"Timer_1_Stop\000"
- 1845      725F315F 
- 1845      53746F70 
- 1845      00
- 1846              	.LASF35:
- 1847 0357 55415254 		.ascii	"UART_1_PutString\000"
- 1847      5F315F50 
- 1847      75745374 
- 1847      72696E67 
- 1847      00
- 1848              	.LASF20:
- 1849 0368 64697374 		.ascii	"distanceSensor\000"
- 1849      616E6365 
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cciwlY8a.s 			page 42
+ 1583      74696F6E 
+ 1583      2D736563 
+ 1583      74696F6E 
+ 1584              	.LASF6:
+ 1585 0164 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1585      20756E73 
+ 1585      69676E65 
+ 1585      6420696E 
+ 1585      7400
+ 1586              	.LASF12:
+ 1587 0176 75696E74 		.ascii	"uint8\000"
+ 1587      3800
+ 1588              	.LASF31:
+ 1589 017c 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1589      52784275 
+ 1589      66666572 
+ 1589      00
+ 1590              	.LASF2:
+ 1591 0189 756E7369 		.ascii	"unsigned char\000"
+ 1591      676E6564 
+ 1591      20636861 
+ 1591      7200
+ 1592              	.LASF34:
+ 1593 0197 756C7472 		.ascii	"ultrasonic_mux_control\000"
+ 1593      61736F6E 
+ 1593      69635F6D 
+ 1593      75785F63 
+ 1593      6F6E7472 
+ 1594              	.LASF13:
+ 1595 01ae 646F7562 		.ascii	"double\000"
+ 1595      6C6500
+ 1596              	.LASF45:
+ 1597 01b5 54726967 		.ascii	"Trigger_1_Write\000"
+ 1597      6765725F 
+ 1597      315F5772 
+ 1597      69746500 
+ 1598              	.LASF46:
+ 1599 01c5 43794465 		.ascii	"CyDelayUs\000"
+ 1599      6C617955 
+ 1599      7300
+ 1600              	.LASF27:
+ 1601 01cf 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 1601      5261636B 
+ 1601      4F666673 
+ 1601      65747346 
+ 1601      726F6D57 
+ 1602              	.LASF26:
+ 1603 01e7 7075636B 		.ascii	"puckRackColours\000"
+ 1603      5261636B 
+ 1603      436F6C6F 
+ 1603      75727300 
+ 1604              	.LASF57:
+ 1605 01f7 64697374 		.ascii	"distanceCheck\000"
+ 1605      616E6365 
+ 1605      43686563 
+ 1605      6B00
+ 1606              	.LASF9:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 36
 
 
- 1849      53656E73 
- 1849      6F7200
- 1850              	.LASF34:
- 1851 0377 73707269 		.ascii	"sprintf\000"
- 1851      6E746600 
- 1852              	.LASF49:
- 1853 037f 43794465 		.ascii	"CyDelay\000"
- 1853      6C617900 
- 1854              	.LASF41:
- 1855 0387 556C7472 		.ascii	"Ultrasonic_Mux_Control_Write\000"
- 1855      61736F6E 
- 1855      69635F4D 
- 1855      75785F43 
- 1855      6F6E7472 
- 1856              	.LASF22:
- 1857 03a4 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
- 1857      61736F6E 
- 1857      6963496E 
- 1857      74657272 
- 1857      75707448 
- 1858              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ 1607 0205 756E7369 		.ascii	"unsigned int\000"
+ 1607      676E6564 
+ 1607      20696E74 
+ 1607      00
+ 1608              	.LASF47:
+ 1609 0212 54726967 		.ascii	"Trigger_2_Write\000"
+ 1609      6765725F 
+ 1609      325F5772 
+ 1609      69746500 
+ 1610              	.LASF23:
+ 1611 0222 756C7472 		.ascii	"ultrasonic_distances\000"
+ 1611      61736F6E 
+ 1611      69635F64 
+ 1611      69737461 
+ 1611      6E636573 
+ 1612              	.LASF8:
+ 1613 0237 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1613      206C6F6E 
+ 1613      6720756E 
+ 1613      7369676E 
+ 1613      65642069 
+ 1614              	.LASF48:
+ 1615 024e 54726967 		.ascii	"Trigger_3_Write\000"
+ 1615      6765725F 
+ 1615      335F5772 
+ 1615      69746500 
+ 1616              	.LASF15:
+ 1617 025e 6C6F6E67 		.ascii	"long double\000"
+ 1617      20646F75 
+ 1617      626C6500 
+ 1618              	.LASF16:
+ 1619 026a 73697A65 		.ascii	"sizetype\000"
+ 1619      74797065 
+ 1619      00
+ 1620              	.LASF24:
+ 1621 0273 64726976 		.ascii	"driveStraightEnable\000"
+ 1621      65537472 
+ 1621      61696768 
+ 1621      74456E61 
+ 1621      626C6500 
+ 1622              	.LASF56:
+ 1623 0287 70726564 		.ascii	"prediction\000"
+ 1623      69637469 
+ 1623      6F6E00
+ 1624              	.LASF55:
+ 1625 0292 74616B65 		.ascii	"takeColourMeasurement\000"
+ 1625      436F6C6F 
+ 1625      75724D65 
+ 1625      61737572 
+ 1625      656D656E 
+ 1626              	.LASF14:
+ 1627 02a8 63686172 		.ascii	"char\000"
+ 1627      00
+ 1628              	.LASF40:
+ 1629 02ad 54696D65 		.ascii	"Timer_1_ReadCounter\000"
+ 1629      725F315F 
+ 1629      52656164 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 37
+
+
+ 1629      436F756E 
+ 1629      74657200 
+ 1630              	.LASF49:
+ 1631 02c1 54726967 		.ascii	"Trigger_4_Write\000"
+ 1631      6765725F 
+ 1631      345F5772 
+ 1631      69746500 
+ 1632              	.LASF32:
+ 1633 02d1 636F756E 		.ascii	"count\000"
+ 1633      7400
+ 1634              	.LASF17:
+ 1635 02d7 73656E73 		.ascii	"sensorNumber\000"
+ 1635      6F724E75 
+ 1635      6D626572 
+ 1635      00
+ 1636              	.LASF3:
+ 1637 02e4 73686F72 		.ascii	"short int\000"
+ 1637      7420696E 
+ 1637      7400
+ 1638              	.LASF36:
+ 1639 02ee 6F757470 		.ascii	"output\000"
+ 1639      757400
+ 1640              	.LASF33:
+ 1641 02f5 64697374 		.ascii	"distance_measured\000"
+ 1641      616E6365 
+ 1641      5F6D6561 
+ 1641      73757265 
+ 1641      6400
+ 1642              	.LASF39:
+ 1643 0307 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
+ 1643      725F315F 
+ 1643      52656164 
+ 1643      53746174 
+ 1643      75735265 
+ 1644              	.LASF50:
+ 1645 0322 54726967 		.ascii	"Trigger_5_Write\000"
+ 1645      6765725F 
+ 1645      355F5772 
+ 1645      69746500 
+ 1646              	.LASF5:
+ 1647 0332 6C6F6E67 		.ascii	"long int\000"
+ 1647      20696E74 
+ 1647      00
+ 1648              	.LASF54:
+ 1649 033b 453A5C44 		.ascii	"E:\\Documents\\Uni S12019 Notes\\ECE3091\\Temp Clon"
+ 1649      6F63756D 
+ 1649      656E7473 
+ 1649      5C556E69 
+ 1649      20533132 
+ 1650 036a 655C4543 		.ascii	"e\\ECE3091_Group17\\Group17RobotReal\\Group17Robot."
+ 1650      45333039 
+ 1650      315F4772 
+ 1650      6F757031 
+ 1650      375C4772 
+ 1651 039a 63796473 		.ascii	"cydsn\000"
+ 1651      6E00
+ 1652              	.LASF28:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 38
+
+
+ 1653 03a0 73776565 		.ascii	"sweeping\000"
+ 1653      70696E67 
+ 1653      00
+ 1654              	.LASF1:
+ 1655 03a9 7369676E 		.ascii	"signed char\000"
+ 1655      65642063 
+ 1655      68617200 
+ 1656              	.LASF41:
+ 1657 03b5 54696D65 		.ascii	"Timer_1_Stop\000"
+ 1657      725F315F 
+ 1657      53746F70 
+ 1657      00
+ 1658              	.LASF38:
+ 1659 03c2 55415254 		.ascii	"UART_1_PutString\000"
+ 1659      5F315F50 
+ 1659      75745374 
+ 1659      72696E67 
+ 1659      00
+ 1660              	.LASF21:
+ 1661 03d3 64697374 		.ascii	"distanceSensor\000"
+ 1661      616E6365 
+ 1661      53656E73 
+ 1661      6F7200
+ 1662              	.LASF37:
+ 1663 03e2 73707269 		.ascii	"sprintf\000"
+ 1663      6E746600 
+ 1664              	.LASF51:
+ 1665 03ea 43794465 		.ascii	"CyDelay\000"
+ 1665      6C617900 
+ 1666              	.LASF43:
+ 1667 03f2 556C7472 		.ascii	"Ultrasonic_Mux_Control_Write\000"
+ 1667      61736F6E 
+ 1667      69635F4D 
+ 1667      75785F43 
+ 1667      6F6E7472 
+ 1668              	.LASF20:
+ 1669 040f 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
+ 1669      61736F6E 
+ 1669      6963496E 
+ 1669      74657272 
+ 1669      75707448 
+ 1670              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

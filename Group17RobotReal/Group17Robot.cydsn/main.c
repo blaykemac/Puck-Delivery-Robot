@@ -57,6 +57,9 @@ int running = 1;
 // Driving Flags
 int driveStraightEnable = 0; // Set to 1 as we can drive to begin with
 
+int sweeping = 0;
+float block_location[4] = {0,0,0,0}; // WEST, EAST, SOUTH, NORTH
+
 // Puck Construction Scanning
 int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
 int currentPuckRackScanningIndex = 0;
@@ -109,7 +112,7 @@ int main(void)
     // Timer and ISR instantiation
     Timer_1_Start();
     Timer_1_ReadStatusRegister();
-    isr_1_StartEx(TIH);
+    Sonic_StartEx(TIH);
     Start_StartEx(StartIH);
     beginNavigation = 0;
     int tmp = 0;
