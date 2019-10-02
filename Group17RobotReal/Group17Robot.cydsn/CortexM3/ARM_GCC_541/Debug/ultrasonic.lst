@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
   28:ultrasonic.c  **** int i = 0;
   29:ultrasonic.c  **** int count = 0;
   30:ultrasonic.c  **** int distance_measured = 0; 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 2
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 2
 
 
   31:ultrasonic.c  **** float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0};
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
   85:ultrasonic.c  ****     }
   86:ultrasonic.c  ****     
   87:ultrasonic.c  ****     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < NW_PUCK_POSITION_FROM_NORTH - 1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 3
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 3
 
 
   88:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  142:ultrasonic.c  ****     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
  143:ultrasonic.c  ****         if(state == STATE_FINISH_LANDING && ultrasonic_mux_control == 4){
  144:ultrasonic.c  ****             driveStraightEnable = 0;
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 4
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 4
 
 
  145:ultrasonic.c  ****             Motor_1_driver_Sleep();
@@ -190,36 +190,43 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  151:ultrasonic.c  ****     */
  152:ultrasonic.c  **** 	
  153:ultrasonic.c  ****     if (state == STATE_LOCATE_BLOCK){
- 154:ultrasonic.c  **** 	if (sweeping){
- 155:ultrasonic.c  **** 		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENS
- 156:ultrasonic.c  **** 			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[BACK]
- 157:ultrasonic.c  **** 	}
- 158:ultrasonic.c  **** 		else if (block_start){
- 159:ultrasonic.c  **** 			block_start = 0; // We have found the east edge of the block
- 160:ultrasonic.c  **** 			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
- 161:ultrasonic.c  **** 			sweeping = 0;
- 162:ultrasonic.c  **** 			// state = 
- 163:ultrasonic.c  **** 
- 164:ultrasonic.c  **** 			
- 165:ultrasonic.c  **** 			
- 166:ultrasonic.c  **** 	}
- 167:ultrasonic.c  **** 	}
- 168:ultrasonic.c  **** 	}
- 169:ultrasonic.c  ****     
- 170:ultrasonic.c  **** }
- 171:ultrasonic.c  **** 
- 172:ultrasonic.c  **** int takeColourMeasurement(void){ // Return an integer from 0-3 indicating the guess of colour - Nul
-  28              		.loc 1 172 0
+ 154:ultrasonic.c  ****     	if (sweeping){
+ 155:ultrasonic.c  ****     		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_
+ 156:ultrasonic.c  ****     			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[B
+ 157:ultrasonic.c  ****     	    }
+ 158:ultrasonic.c  ****             
+ 159:ultrasonic.c  ****     		else if (block_start){
+ 160:ultrasonic.c  ****     			block_start = 0; // We have found the east edge of the block
+ 161:ultrasonic.c  ****     			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
+ 162:ultrasonic.c  ****     			sweeping = 0;
+ 163:ultrasonic.c  ****     			// state = 
+ 164:ultrasonic.c  **** 
+ 165:ultrasonic.c  ****     			
+ 166:ultrasonic.c  ****     			
+ 167:ultrasonic.c  ****     	    }
+ 168:ultrasonic.c  ****     	}
+ 169:ultrasonic.c  **** 	}
+ 170:ultrasonic.c  ****     
+ 171:ultrasonic.c  ****     if (state == STATE_FIND_PUCKS){
+ 172:ultrasonic.c  ****         if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SID
+ 173:ultrasonic.c  ****     			
+ 174:ultrasonic.c  ****     	    }   
+ 175:ultrasonic.c  ****     }
+ 176:ultrasonic.c  ****     
+ 177:ultrasonic.c  **** }
+ 178:ultrasonic.c  **** 
+ 179:ultrasonic.c  **** int takeColourMeasurement(void){ // Return an integer from 0-3 indicating the guess of colour - Nul
+  28              		.loc 1 179 0
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 0
   31              		@ frame_needed = 0, uses_anonymous_args = 0
   32              		@ link register save eliminated.
   33              	.LVL0:
- 173:ultrasonic.c  ****     // Complete
- 174:ultrasonic.c  ****     int prediction = 0; // Edit this with correct integer
- 175:ultrasonic.c  ****     return prediction;
- 176:ultrasonic.c  **** }
-  34              		.loc 1 176 0
+ 180:ultrasonic.c  ****     // Complete
+ 181:ultrasonic.c  ****     int prediction = 0; // Edit this with correct integer
+ 182:ultrasonic.c  ****     return prediction;
+ 183:ultrasonic.c  **** }
+  34              		.loc 1 183 0
   35 0000 0020     		movs	r0, #0
   36 0002 7047     		bx	lr
   37              		.cfi_endproc
@@ -231,16 +238,16 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
   43              		.global	printSensorToUART
   44              		.thumb
   45              		.thumb_func
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 5
+
+
   46              		.type	printSensorToUART, %function
   47              	printSensorToUART:
   48              	.LFB66:
- 177:ultrasonic.c  **** 
- 178:ultrasonic.c  **** void printSensorToUART(int sensorNumber, float distanceMeasured){
-  49              		.loc 1 178 0
+ 184:ultrasonic.c  **** 
+ 185:ultrasonic.c  **** void printSensorToUART(int sensorNumber, float distanceMeasured){
+  49              		.loc 1 185 0
   50              		.cfi_startproc
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 5
-
-
   51              		@ args = 0, pretend = 0, frame = 0
   52              		@ frame_needed = 0, uses_anonymous_args = 0
   53              	.LVL1:
@@ -252,11 +259,11 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
   59 0002 83B0     		sub	sp, sp, #12
   60              		.cfi_def_cfa_offset 24
   61 0004 0546     		mov	r5, r0
- 179:ultrasonic.c  ****      
- 180:ultrasonic.c  ****     // Print distance to UART
- 181:ultrasonic.c  ****     //sprintf(output, "Ultrasonic Sensor %d - distance: %dmm\n", sensorNumber, distanceMeasured);
- 182:ultrasonic.c  ****     sprintf(output, "%d: %fmm\n", sensorNumber, distanceMeasured);
-  62              		.loc 1 182 0
+ 186:ultrasonic.c  ****      
+ 187:ultrasonic.c  ****     // Print distance to UART
+ 188:ultrasonic.c  ****     //sprintf(output, "Ultrasonic Sensor %d - distance: %dmm\n", sensorNumber, distanceMeasured);
+ 189:ultrasonic.c  ****     sprintf(output, "%d: %fmm\n", sensorNumber, distanceMeasured);
+  62              		.loc 1 189 0
   63 0006 084C     		ldr	r4, .L4
   64 0008 0846     		mov	r0, r1
   65              	.LVL2:
@@ -268,14 +275,14 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
   71 0016 2046     		mov	r0, r4
   72 0018 FFF7FEFF 		bl	sprintf
   73              	.LVL4:
- 183:ultrasonic.c  ****     UART_1_PutString(output);
-  74              		.loc 1 183 0
+ 190:ultrasonic.c  ****     UART_1_PutString(output);
+  74              		.loc 1 190 0
   75 001c 2046     		mov	r0, r4
   76 001e FFF7FEFF 		bl	UART_1_PutString
   77              	.LVL5:
- 184:ultrasonic.c  **** 
- 185:ultrasonic.c  **** }
-  78              		.loc 1 185 0
+ 191:ultrasonic.c  **** 
+ 192:ultrasonic.c  **** }
+  78              		.loc 1 192 0
   79 0022 03B0     		add	sp, sp, #12
   80              		.cfi_def_cfa_offset 12
   81              		@ sp needed
@@ -291,6 +298,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
   91              		.size	printSensorToUART, .-printSensorToUART
   92              		.global	__aeabi_i2d
   93              		.global	__aeabi_dmul
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 6
+
+
   94              		.global	__aeabi_ddiv
   95              		.global	__aeabi_d2f
   96              		.global	__aeabi_i2f
@@ -298,9 +308,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
   98              		.global	__aeabi_fsub
   99              		.global	__aeabi_fcmplt
  100              		.global	__aeabi_fadd
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 6
-
-
  101              		.section	.text.ultrasonicInterruptHandler,"ax",%progbits
  102              		.align	2
  103              		.global	ultrasonicInterruptHandler
@@ -351,6 +358,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  143              	.LVL12:
  144 0030 FFF7FEFF 		bl	__aeabi_d2f
  145              	.LVL13:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 7
+
+
  146 0034 0146     		mov	r1, r0
  147 0036 04EB8504 		add	r4, r4, r5, lsl #2
  148 003a A060     		str	r0, [r4, #8]	@ float
@@ -358,9 +368,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  149              		.loc 1 50 0
  150 003c 2846     		mov	r0, r5
  151 003e FFF7FEFF 		bl	printSensorToUART
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 7
-
-
  152              	.LVL14:
   53:ultrasonic.c  ****         
  153              		.loc 1 53 0
@@ -395,22 +402,25 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  180 0074 234B     		ldr	r3, .L16+28
  181 0076 43F82400 		str	r0, [r3, r4, lsl #2]
  182              	.L7:
- 153:ultrasonic.c  **** 	if (sweeping){
+ 153:ultrasonic.c  ****     	if (sweeping){
  183              		.loc 1 153 0
  184 007a 1F4B     		ldr	r3, .L16+16
  185 007c 1B68     		ldr	r3, [r3]
  186 007e 0B2B     		cmp	r3, #11
  187 0080 2FD1     		bne	.L6
- 154:ultrasonic.c  **** 		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENS
+ 154:ultrasonic.c  ****     		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_
  188              		.loc 1 154 0
  189 0082 214B     		ldr	r3, .L16+32
  190 0084 1B68     		ldr	r3, [r3]
  191 0086 002B     		cmp	r3, #0
  192 0088 2BD0     		beq	.L6
- 155:ultrasonic.c  **** 			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[BACK]
+ 155:ultrasonic.c  ****     			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[B
  193              		.loc 1 155 0
  194 008a 194B     		ldr	r3, .L16+8
  195 008c 9C68     		ldr	r4, [r3, #8]	@ float
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 8
+
+
  196 008e 5969     		ldr	r1, [r3, #20]	@ float
  197 0090 1E48     		ldr	r0, .L16+36
  198 0092 FFF7FEFF 		bl	__aeabi_fsub
@@ -418,9 +428,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  200 0096 1E49     		ldr	r1, .L16+40
  201 0098 FFF7FEFF 		bl	__aeabi_fsub
  202              	.LVL20:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 8
-
-
  203 009c 1D49     		ldr	r1, .L16+44
  204 009e FFF7FEFF 		bl	__aeabi_fsub
  205              	.LVL21:
@@ -429,12 +436,12 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  208 00a6 FFF7FEFF 		bl	__aeabi_fcmplt
  209              	.LVL22:
  210 00aa 60B1     		cbz	r0, .L14
- 156:ultrasonic.c  **** 	}
+ 156:ultrasonic.c  ****     	    }
  211              		.loc 1 156 0
  212 00ac 104B     		ldr	r3, .L16+8
  213 00ae DB69     		ldr	r3, [r3, #28]
  214 00b0 BBB9     		cbnz	r3, .L6
- 156:ultrasonic.c  **** 	}
+ 156:ultrasonic.c  ****     	    }
  215              		.loc 1 156 0 is_stmt 0 discriminator 1
  216 00b2 0F4B     		ldr	r3, .L16+8
  217 00b4 0122     		movs	r2, #1
@@ -447,30 +454,33 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  224 00c2 1860     		str	r0, [r3]	@ float
  225 00c4 38BD     		pop	{r3, r4, r5, pc}
  226              	.L14:
- 158:ultrasonic.c  **** 			block_start = 0; // We have found the east edge of the block
- 227              		.loc 1 158 0 is_stmt 1
+ 159:ultrasonic.c  ****     			block_start = 0; // We have found the east edge of the block
+ 227              		.loc 1 159 0 is_stmt 1
  228 00c6 0A4B     		ldr	r3, .L16+8
  229 00c8 DB69     		ldr	r3, [r3, #28]
  230 00ca 53B1     		cbz	r3, .L6
- 159:ultrasonic.c  **** 			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
- 231              		.loc 1 159 0
+ 160:ultrasonic.c  ****     			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
+ 231              		.loc 1 160 0
  232 00cc 084B     		ldr	r3, .L16+8
  233 00ce 0024     		movs	r4, #0
  234 00d0 DC61     		str	r4, [r3, #28]
- 160:ultrasonic.c  **** 			sweeping = 0;
- 235              		.loc 1 160 0
+ 161:ultrasonic.c  ****     			sweeping = 0;
+ 235              		.loc 1 161 0
  236 00d2 1149     		ldr	r1, .L16+48
  237 00d4 9869     		ldr	r0, [r3, #24]	@ float
  238 00d6 FFF7FEFF 		bl	__aeabi_fadd
  239              	.LVL24:
  240 00da 104B     		ldr	r3, .L16+52
  241 00dc 5860     		str	r0, [r3, #4]	@ float
- 161:ultrasonic.c  **** 			// state = 
- 242              		.loc 1 161 0
+ 162:ultrasonic.c  ****     			// state = 
+ 242              		.loc 1 162 0
  243 00de 0A4B     		ldr	r3, .L16+32
  244 00e0 1C60     		str	r4, [r3]
  245              	.L6:
  246 00e2 38BD     		pop	{r3, r4, r5, pc}
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 9
+
+
  247              	.L17:
  248 00e4 AFF30080 		.align	3
  249              	.L16:
@@ -478,9 +488,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  251 00ec A111C63F 		.word	1069945249
  252 00f0 00000000 		.word	.LANCHOR0
  253 00f4 00002440 		.word	1076101120
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 9
-
-
  254 00f8 00000000 		.word	state
  255 00fc 00000000 		.word	currentPuckRackScanningIndex
  256 0100 00000000 		.word	puckRackOffsetsFromWest
@@ -502,21 +509,21 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  272              		.type	distanceSensor, %function
  273              	distanceSensor:
  274              	.LFB67:
- 186:ultrasonic.c  **** 
- 187:ultrasonic.c  **** /*
- 188:ultrasonic.c  **** float distanceFromCount(int timerCount){
- 189:ultrasonic.c  **** 
- 190:ultrasonic.c  ****     //int result = (int) (0.1777*(65536-timerCount)+13.013); // distance measured to nearest mm
- 191:ultrasonic.c  ****     float result = (float) (0.1777*(65536-timerCount)+13.013) / 10 -10;                   // distan
- 192:ultrasonic.c  ****     //float result = (
- 193:ultrasonic.c  ****     //float result = (65536-timerCount)/58;                    // distance in cm
- 194:ultrasonic.c  ****     return result;
- 195:ultrasonic.c  **** 
- 196:ultrasonic.c  **** }
- 197:ultrasonic.c  **** */
- 198:ultrasonic.c  **** 
- 199:ultrasonic.c  **** void distanceSensor(int currentSensorIndex) {
- 275              		.loc 1 199 0
+ 193:ultrasonic.c  **** 
+ 194:ultrasonic.c  **** /*
+ 195:ultrasonic.c  **** float distanceFromCount(int timerCount){
+ 196:ultrasonic.c  **** 
+ 197:ultrasonic.c  ****     //int result = (int) (0.1777*(65536-timerCount)+13.013); // distance measured to nearest mm
+ 198:ultrasonic.c  ****     float result = (float) (0.1777*(65536-timerCount)+13.013) / 10 -10;                   // distan
+ 199:ultrasonic.c  ****     //float result = (
+ 200:ultrasonic.c  ****     //float result = (65536-timerCount)/58;                    // distance in cm
+ 201:ultrasonic.c  ****     return result;
+ 202:ultrasonic.c  **** 
+ 203:ultrasonic.c  **** }
+ 204:ultrasonic.c  **** */
+ 205:ultrasonic.c  **** 
+ 206:ultrasonic.c  **** void distanceSensor(int currentSensorIndex) {
+ 275              		.loc 1 206 0
  276              		.cfi_startproc
  277              		@ args = 0, pretend = 0, frame = 0
  278              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -526,23 +533,23 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  282              		.cfi_offset 4, -8
  283              		.cfi_offset 14, -4
  284 0002 0446     		mov	r4, r0
- 200:ultrasonic.c  ****     
- 201:ultrasonic.c  ****     Ultrasonic_Mux_Control_Write(currentSensorIndex);
- 285              		.loc 1 201 0
+ 207:ultrasonic.c  ****     
+ 208:ultrasonic.c  ****     Ultrasonic_Mux_Control_Write(currentSensorIndex);
+ 285              		.loc 1 208 0
  286 0004 C0B2     		uxtb	r0, r0
  287              	.LVL26:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 10
+
+
  288 0006 FFF7FEFF 		bl	Ultrasonic_Mux_Control_Write
  289              	.LVL27:
- 202:ultrasonic.c  ****     Timer_1_Start();
- 290              		.loc 1 202 0
+ 209:ultrasonic.c  ****     Timer_1_Start();
+ 290              		.loc 1 209 0
  291 000a FFF7FEFF 		bl	Timer_1_Start
  292              	.LVL28:
- 203:ultrasonic.c  ****         
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 10
-
-
- 204:ultrasonic.c  ****     switch(currentSensorIndex){
- 293              		.loc 1 204 0
+ 210:ultrasonic.c  ****         
+ 211:ultrasonic.c  ****     switch(currentSensorIndex){
+ 293              		.loc 1 211 0
  294 000e 042C     		cmp	r4, #4
  295 0010 35D8     		bhi	.L18
  296 0012 DFE804F0 		tbb	[pc, r4]
@@ -554,137 +561,137 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  302 001a 2B       		.byte	(.L25-.L21)/2
  303 001b 00       		.p2align 1
  304              	.L20:
- 205:ultrasonic.c  ****         
- 206:ultrasonic.c  ****         case 0:
- 207:ultrasonic.c  ****         
- 208:ultrasonic.c  ****             //while (Echo_1_Read() == 0)
- 209:ultrasonic.c  ****             {
- 210:ultrasonic.c  ****                 Trigger_1_Write(1);
- 305              		.loc 1 210 0
+ 212:ultrasonic.c  ****         
+ 213:ultrasonic.c  ****         case 0:
+ 214:ultrasonic.c  ****         
+ 215:ultrasonic.c  ****             //while (Echo_1_Read() == 0)
+ 216:ultrasonic.c  ****             {
+ 217:ultrasonic.c  ****                 Trigger_1_Write(1);
+ 305              		.loc 1 217 0
  306 001c 0120     		movs	r0, #1
  307 001e FFF7FEFF 		bl	Trigger_1_Write
  308              	.LVL29:
- 211:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 309              		.loc 1 211 0
+ 218:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 309              		.loc 1 218 0
  310 0022 0A20     		movs	r0, #10
  311 0024 FFF7FEFF 		bl	CyDelayUs
  312              	.LVL30:
- 212:ultrasonic.c  ****                 Trigger_1_Write(0);
- 313              		.loc 1 212 0
+ 219:ultrasonic.c  ****                 Trigger_1_Write(0);
+ 313              		.loc 1 219 0
  314 0028 0020     		movs	r0, #0
  315 002a FFF7FEFF 		bl	Trigger_1_Write
  316              	.LVL31:
- 213:ultrasonic.c  ****             }
- 214:ultrasonic.c  ****         
- 215:ultrasonic.c  ****         break;
- 317              		.loc 1 215 0
+ 220:ultrasonic.c  ****             }
+ 221:ultrasonic.c  ****         
+ 222:ultrasonic.c  ****         break;
+ 317              		.loc 1 222 0
  318 002e 10BD     		pop	{r4, pc}
  319              	.LVL32:
  320              	.L22:
- 216:ultrasonic.c  ****         
- 217:ultrasonic.c  ****         case 1:
- 218:ultrasonic.c  ****         
- 219:ultrasonic.c  ****            //while (Echo_2_Read() == 0)
- 220:ultrasonic.c  ****             {
- 221:ultrasonic.c  ****                 Trigger_2_Write(1);
- 321              		.loc 1 221 0
+ 223:ultrasonic.c  ****         
+ 224:ultrasonic.c  ****         case 1:
+ 225:ultrasonic.c  ****         
+ 226:ultrasonic.c  ****            //while (Echo_2_Read() == 0)
+ 227:ultrasonic.c  ****             {
+ 228:ultrasonic.c  ****                 Trigger_2_Write(1);
+ 321              		.loc 1 228 0
  322 0030 0120     		movs	r0, #1
  323 0032 FFF7FEFF 		bl	Trigger_2_Write
  324              	.LVL33:
- 222:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 325              		.loc 1 222 0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 11
+
+
+ 229:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 325              		.loc 1 229 0
  326 0036 0A20     		movs	r0, #10
  327 0038 FFF7FEFF 		bl	CyDelayUs
  328              	.LVL34:
- 223:ultrasonic.c  ****                 Trigger_2_Write(0);
- 329              		.loc 1 223 0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 11
-
-
+ 230:ultrasonic.c  ****                 Trigger_2_Write(0);
+ 329              		.loc 1 230 0
  330 003c 0020     		movs	r0, #0
  331 003e FFF7FEFF 		bl	Trigger_2_Write
  332              	.LVL35:
- 224:ultrasonic.c  ****             }
- 225:ultrasonic.c  ****         
- 226:ultrasonic.c  ****         break;
- 333              		.loc 1 226 0
+ 231:ultrasonic.c  ****             }
+ 232:ultrasonic.c  ****         
+ 233:ultrasonic.c  ****         break;
+ 333              		.loc 1 233 0
  334 0042 10BD     		pop	{r4, pc}
  335              	.LVL36:
  336              	.L23:
- 227:ultrasonic.c  ****         
- 228:ultrasonic.c  ****         case 2:
- 229:ultrasonic.c  ****         
- 230:ultrasonic.c  ****             //while (Echo_3_Read() == 0)
- 231:ultrasonic.c  ****             {
- 232:ultrasonic.c  ****                 Trigger_3_Write(1);
- 337              		.loc 1 232 0
+ 234:ultrasonic.c  ****         
+ 235:ultrasonic.c  ****         case 2:
+ 236:ultrasonic.c  ****         
+ 237:ultrasonic.c  ****             //while (Echo_3_Read() == 0)
+ 238:ultrasonic.c  ****             {
+ 239:ultrasonic.c  ****                 Trigger_3_Write(1);
+ 337              		.loc 1 239 0
  338 0044 0120     		movs	r0, #1
  339 0046 FFF7FEFF 		bl	Trigger_3_Write
  340              	.LVL37:
- 233:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 341              		.loc 1 233 0
+ 240:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 341              		.loc 1 240 0
  342 004a 0A20     		movs	r0, #10
  343 004c FFF7FEFF 		bl	CyDelayUs
  344              	.LVL38:
- 234:ultrasonic.c  ****                 Trigger_3_Write(0);
- 345              		.loc 1 234 0
+ 241:ultrasonic.c  ****                 Trigger_3_Write(0);
+ 345              		.loc 1 241 0
  346 0050 0020     		movs	r0, #0
  347 0052 FFF7FEFF 		bl	Trigger_3_Write
  348              	.LVL39:
- 235:ultrasonic.c  ****             }
- 236:ultrasonic.c  ****         
- 237:ultrasonic.c  ****         break;
- 349              		.loc 1 237 0
+ 242:ultrasonic.c  ****             }
+ 243:ultrasonic.c  ****         
+ 244:ultrasonic.c  ****         break;
+ 349              		.loc 1 244 0
  350 0056 10BD     		pop	{r4, pc}
  351              	.LVL40:
  352              	.L24:
- 238:ultrasonic.c  ****         
- 239:ultrasonic.c  ****         case 3:
- 240:ultrasonic.c  ****         
- 241:ultrasonic.c  ****            //while (Echo_4_Read() == 0)
- 242:ultrasonic.c  ****             {
- 243:ultrasonic.c  ****                 Trigger_4_Write(1);
- 353              		.loc 1 243 0
+ 245:ultrasonic.c  ****         
+ 246:ultrasonic.c  ****         case 3:
+ 247:ultrasonic.c  ****         
+ 248:ultrasonic.c  ****            //while (Echo_4_Read() == 0)
+ 249:ultrasonic.c  ****             {
+ 250:ultrasonic.c  ****                 Trigger_4_Write(1);
+ 353              		.loc 1 250 0
  354 0058 0120     		movs	r0, #1
  355 005a FFF7FEFF 		bl	Trigger_4_Write
  356              	.LVL41:
- 244:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 357              		.loc 1 244 0
+ 251:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 357              		.loc 1 251 0
  358 005e 0A20     		movs	r0, #10
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 12
+
+
  359 0060 FFF7FEFF 		bl	CyDelayUs
  360              	.LVL42:
- 245:ultrasonic.c  ****                 Trigger_4_Write(0);
- 361              		.loc 1 245 0
+ 252:ultrasonic.c  ****                 Trigger_4_Write(0);
+ 361              		.loc 1 252 0
  362 0064 0020     		movs	r0, #0
  363 0066 FFF7FEFF 		bl	Trigger_4_Write
  364              	.LVL43:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 12
-
-
- 246:ultrasonic.c  ****             }
- 247:ultrasonic.c  ****         
- 248:ultrasonic.c  ****         break;
- 365              		.loc 1 248 0
+ 253:ultrasonic.c  ****             }
+ 254:ultrasonic.c  ****         
+ 255:ultrasonic.c  ****         break;
+ 365              		.loc 1 255 0
  366 006a 10BD     		pop	{r4, pc}
  367              	.LVL44:
  368              	.L25:
- 249:ultrasonic.c  ****         
- 250:ultrasonic.c  ****         case 4:
- 251:ultrasonic.c  ****         
- 252:ultrasonic.c  ****             //while (Echo_5_Read() == 0)
- 253:ultrasonic.c  ****             {
- 254:ultrasonic.c  ****                 Trigger_5_Write(1);
- 369              		.loc 1 254 0
+ 256:ultrasonic.c  ****         
+ 257:ultrasonic.c  ****         case 4:
+ 258:ultrasonic.c  ****         
+ 259:ultrasonic.c  ****             //while (Echo_5_Read() == 0)
+ 260:ultrasonic.c  ****             {
+ 261:ultrasonic.c  ****                 Trigger_5_Write(1);
+ 369              		.loc 1 261 0
  370 006c 0120     		movs	r0, #1
  371 006e FFF7FEFF 		bl	Trigger_5_Write
  372              	.LVL45:
- 255:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
- 373              		.loc 1 255 0
+ 262:ultrasonic.c  ****                 CyDelayUs(10);          // 10microsecond pulse
+ 373              		.loc 1 262 0
  374 0072 0A20     		movs	r0, #10
  375 0074 FFF7FEFF 		bl	CyDelayUs
  376              	.LVL46:
- 256:ultrasonic.c  ****                 Trigger_5_Write(0);
- 377              		.loc 1 256 0
+ 263:ultrasonic.c  ****                 Trigger_5_Write(0);
+ 377              		.loc 1 263 0
  378 0078 0020     		movs	r0, #0
  379 007a FFF7FEFF 		bl	Trigger_5_Write
  380              	.LVL47:
@@ -701,62 +708,62 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  391              		.type	distanceCheck, %function
  392              	distanceCheck:
  393              	.LFB68:
- 257:ultrasonic.c  ****             }
- 258:ultrasonic.c  ****         
- 259:ultrasonic.c  ****         break;
- 260:ultrasonic.c  ****             
- 261:ultrasonic.c  ****     }
- 262:ultrasonic.c  **** 
- 263:ultrasonic.c  **** }
- 264:ultrasonic.c  **** 
- 265:ultrasonic.c  **** void distanceCheck()
- 266:ultrasonic.c  **** {
- 394              		.loc 1 266 0
+ 264:ultrasonic.c  ****             }
+ 265:ultrasonic.c  ****         
+ 266:ultrasonic.c  ****         break;
+ 267:ultrasonic.c  ****             
+ 268:ultrasonic.c  ****     }
+ 269:ultrasonic.c  **** 
+ 270:ultrasonic.c  **** }
+ 271:ultrasonic.c  **** 
+ 272:ultrasonic.c  **** void distanceCheck()
+ 273:ultrasonic.c  **** {
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 13
+
+
+ 394              		.loc 1 273 0
  395              		.cfi_startproc
  396              		@ args = 0, pretend = 0, frame = 0
  397              		@ frame_needed = 0, uses_anonymous_args = 0
  398 0000 08B5     		push	{r3, lr}
  399              		.cfi_def_cfa_offset 8
  400              		.cfi_offset 3, -8
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 13
-
-
  401              		.cfi_offset 14, -4
- 267:ultrasonic.c  ****    
- 268:ultrasonic.c  ****   for (ultrasonic_mux_control = 0; ultrasonic_mux_control < TOTAL_SONIC_SENSORS; ultrasonic_mux_con
- 402              		.loc 1 268 0
+ 274:ultrasonic.c  ****    
+ 275:ultrasonic.c  ****   for (ultrasonic_mux_control = 0; ultrasonic_mux_control < TOTAL_SONIC_SENSORS; ultrasonic_mux_con
+ 402              		.loc 1 275 0
  403 0002 0022     		movs	r2, #0
  404 0004 084B     		ldr	r3, .L31
  405 0006 1A71     		strb	r2, [r3, #4]
  406 0008 08E0     		b	.L28
  407              	.L29:
- 269:ultrasonic.c  **** 
- 270:ultrasonic.c  ****         distanceSensor(ultrasonic_mux_control);
- 408              		.loc 1 270 0 discriminator 3
+ 276:ultrasonic.c  **** 
+ 277:ultrasonic.c  ****         distanceSensor(ultrasonic_mux_control);
+ 408              		.loc 1 277 0 discriminator 3
  409 000a FFF7FEFF 		bl	distanceSensor
  410              	.LVL48:
- 271:ultrasonic.c  ****         CyDelay(SENSOR_PULSE_DELAY_MS);                // delay of 100 milliseconds or adequate bet
- 411              		.loc 1 271 0 discriminator 3
+ 278:ultrasonic.c  ****         CyDelay(SENSOR_PULSE_DELAY_MS);                // delay of 100 milliseconds or adequate bet
+ 411              		.loc 1 278 0 discriminator 3
  412 000e 3220     		movs	r0, #50
  413 0010 FFF7FEFF 		bl	CyDelay
  414              	.LVL49:
- 268:ultrasonic.c  **** 
- 415              		.loc 1 268 0 discriminator 3
+ 275:ultrasonic.c  **** 
+ 415              		.loc 1 275 0 discriminator 3
  416 0014 044A     		ldr	r2, .L31
  417 0016 1379     		ldrb	r3, [r2, #4]	@ zero_extendqisi2
  418 0018 0133     		adds	r3, r3, #1
  419 001a 1371     		strb	r3, [r2, #4]
  420              	.L28:
- 268:ultrasonic.c  **** 
- 421              		.loc 1 268 0 is_stmt 0 discriminator 1
+ 275:ultrasonic.c  **** 
+ 421              		.loc 1 275 0 is_stmt 0 discriminator 1
  422 001c 024B     		ldr	r3, .L31
  423 001e 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
  424 0020 0428     		cmp	r0, #4
  425 0022 F2D9     		bls	.L29
- 272:ultrasonic.c  ****   
- 273:ultrasonic.c  ****     }
- 274:ultrasonic.c  **** }
- 426              		.loc 1 274 0 is_stmt 1
+ 279:ultrasonic.c  ****   
+ 280:ultrasonic.c  ****     }
+ 281:ultrasonic.c  **** }
+ 426              		.loc 1 281 0 is_stmt 1
  427 0024 08BD     		pop	{r3, pc}
  428              	.L32:
  429 0026 00BF     		.align	2
@@ -771,6 +778,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  438              		.global	ultrasonic_distances
  439              		.global	distance_measured
  440              		.global	count
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 14
+
+
  441              		.global	i
  442              		.comm	block_location,16,4
  443              		.comm	sweeping,4,4
@@ -778,9 +788,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  445              		.comm	puckRackColours,20,4
  446              		.comm	currentPuckRackScanningIndex,4,4
  447              		.comm	driveStraightEnable,4,4
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 14
-
-
  448              		.section	.rodata.str1.4,"aMS",%progbits,1
  449              		.align	2
  450              	.LC0:
@@ -821,16 +828,19 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  479 0024 00000000 		.space	4
  480              		.text
  481              	.Letext0:
- 482              		.file 2 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
- 483              		.file 3 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 482              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 483              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
  484              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
  485              		.file 5 "dcmotor.h"
  486              		.file 6 "ultrasonic.h"
  487              		.file 7 "Generated_Source\\PSoC5/core_cm3.h"
- 488              		.file 8 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 488              		.file 8 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
  489              		.file 9 "Generated_Source\\PSoC5/UART_1.h"
  490              		.file 10 "Generated_Source\\PSoC5/Timer_1.h"
  491              		.file 11 "customMath.h"
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 15
+
+
  492              		.file 12 "Generated_Source\\PSoC5/Ultrasonic_Mux_Control.h"
  493              		.file 13 "Generated_Source\\PSoC5/Trigger_1.h"
  494              		.file 14 "Generated_Source\\PSoC5/CyLib.h"
@@ -838,9 +848,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  496              		.file 16 "Generated_Source\\PSoC5/Trigger_3.h"
  497              		.file 17 "Generated_Source\\PSoC5/Trigger_4.h"
  498              		.file 18 "Generated_Source\\PSoC5/Trigger_5.h"
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 15
-
-
  499              		.section	.debug_info,"",%progbits
  500              	.Ldebug_info0:
  501 0000 F8040000 		.4byte	0x4f8
@@ -851,7 +858,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  506 000c D6000000 		.4byte	.LASF52
  507 0010 0C       		.byte	0xc
  508 0011 7B000000 		.4byte	.LASF53
- 509 0015 3B030000 		.4byte	.LASF54
+ 509 0015 6A020000 		.4byte	.LASF54
  510 0019 00000000 		.4byte	.Ldebug_ranges0+0
  511 001d 00000000 		.4byte	0
  512 0021 00000000 		.4byte	.Ldebug_line0
@@ -862,7 +869,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  517 002c 02       		.uleb128 0x2
  518 002d 01       		.byte	0x1
  519 002e 06       		.byte	0x6
- 520 002f A9030000 		.4byte	.LASF1
+ 520 002f AD030000 		.4byte	.LASF1
  521 0033 02       		.uleb128 0x2
  522 0034 01       		.byte	0x1
  523 0035 08       		.byte	0x8
@@ -870,7 +877,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  525 003a 02       		.uleb128 0x2
  526 003b 02       		.byte	0x2
  527 003c 05       		.byte	0x5
- 528 003d E4020000 		.4byte	.LASF3
+ 528 003d 4D030000 		.4byte	.LASF3
  529 0041 02       		.uleb128 0x2
  530 0042 02       		.byte	0x2
  531 0043 07       		.byte	0x7
@@ -883,7 +890,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  538 0053 02       		.uleb128 0x2
  539 0054 04       		.byte	0x4
  540 0055 05       		.byte	0x5
- 541 0056 32030000 		.4byte	.LASF5
+ 541 0056 9B030000 		.4byte	.LASF5
  542 005a 02       		.uleb128 0x2
  543 005b 04       		.byte	0x4
  544 005c 07       		.byte	0x7
@@ -891,22 +898,22 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  546 0061 02       		.uleb128 0x2
  547 0062 08       		.byte	0x8
  548 0063 05       		.byte	0x5
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 16
+
+
  549 0064 00000000 		.4byte	.LASF7
  550 0068 02       		.uleb128 0x2
  551 0069 08       		.byte	0x8
  552 006a 07       		.byte	0x7
- 553 006b 37020000 		.4byte	.LASF8
+ 553 006b 43020000 		.4byte	.LASF8
  554 006f 04       		.uleb128 0x4
  555 0070 04       		.byte	0x4
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 16
-
-
  556 0071 05       		.byte	0x5
  557 0072 696E7400 		.ascii	"int\000"
  558 0076 02       		.uleb128 0x2
  559 0077 04       		.byte	0x4
  560 0078 07       		.byte	0x7
- 561 0079 05020000 		.4byte	.LASF9
+ 561 0079 11020000 		.4byte	.LASF9
  562 007d 03       		.uleb128 0x3
  563 007e 88000000 		.4byte	.LASF11
  564 0082 03       		.byte	0x3
@@ -924,19 +931,19 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  576 009b 02       		.uleb128 0x2
  577 009c 01       		.byte	0x1
  578 009d 08       		.byte	0x8
- 579 009e A8020000 		.4byte	.LASF14
+ 579 009e 11030000 		.4byte	.LASF14
  580 00a2 02       		.uleb128 0x2
  581 00a3 08       		.byte	0x8
  582 00a4 04       		.byte	0x4
- 583 00a5 5E020000 		.4byte	.LASF15
+ 583 00a5 B5010000 		.4byte	.LASF15
  584 00a9 02       		.uleb128 0x2
  585 00aa 04       		.byte	0x4
  586 00ab 07       		.byte	0x7
- 587 00ac 6A020000 		.4byte	.LASF16
+ 587 00ac D3020000 		.4byte	.LASF16
  588 00b0 06       		.uleb128 0x6
- 589 00b1 92020000 		.4byte	.LASF55
+ 589 00b1 FB020000 		.4byte	.LASF55
  590 00b5 01       		.byte	0x1
- 591 00b6 AC       		.byte	0xac
+ 591 00b6 B3       		.byte	0xb3
  592 00b7 6F000000 		.4byte	0x6f
  593 00bb 00000000 		.4byte	.LFB65
  594 00bf 04000000 		.4byte	.LFE65-.LFB65
@@ -944,34 +951,34 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  596 00c4 9C       		.byte	0x9c
  597 00c5 D6000000 		.4byte	0xd6
  598 00c9 07       		.uleb128 0x7
- 599 00ca 87020000 		.4byte	.LASF56
+ 599 00ca F0020000 		.4byte	.LASF56
  600 00ce 01       		.byte	0x1
- 601 00cf AE       		.byte	0xae
+ 601 00cf B5       		.byte	0xb5
  602 00d0 6F000000 		.4byte	0x6f
  603 00d4 00       		.byte	0
  604 00d5 00       		.byte	0
  605 00d6 08       		.uleb128 0x8
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 17
+
+
  606 00d7 C4000000 		.4byte	.LASF19
  607 00db 01       		.byte	0x1
- 608 00dc B2       		.byte	0xb2
+ 608 00dc B9       		.byte	0xb9
  609 00dd 00000000 		.4byte	.LFB66
  610 00e1 30000000 		.4byte	.LFE66-.LFB66
  611 00e5 01       		.uleb128 0x1
  612 00e6 9C       		.byte	0x9c
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 17
-
-
  613 00e7 3D010000 		.4byte	0x13d
  614 00eb 09       		.uleb128 0x9
- 615 00ec D7020000 		.4byte	.LASF17
+ 615 00ec 40030000 		.4byte	.LASF17
  616 00f0 01       		.byte	0x1
- 617 00f1 B2       		.byte	0xb2
+ 617 00f1 B9       		.byte	0xb9
  618 00f2 6F000000 		.4byte	0x6f
  619 00f6 00000000 		.4byte	.LLST0
  620 00fa 09       		.uleb128 0x9
  621 00fb 90000000 		.4byte	.LASF18
  622 00ff 01       		.byte	0x1
- 623 0100 B2       		.byte	0xb2
+ 623 0100 B9       		.byte	0xb9
  624 0101 25000000 		.4byte	0x25
  625 0105 2C000000 		.4byte	.LLST1
  626 0109 0A       		.uleb128 0xa
@@ -1009,8 +1016,11 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  658 013b 00       		.byte	0
  659 013c 00       		.byte	0
  660 013d 08       		.uleb128 0x8
- 661 013e 0F040000 		.4byte	.LASF20
+ 661 013e 13040000 		.4byte	.LASF20
  662 0142 01       		.byte	0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 18
+
+
  663 0143 28       		.byte	0x28
  664 0144 00000000 		.4byte	.LFB64
  665 0148 20010000 		.4byte	.LFE64-.LFB64
@@ -1018,9 +1028,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  667 014d 9C       		.byte	0x9c
  668 014e 94010000 		.4byte	0x194
  669 0152 0D       		.uleb128 0xd
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 18
-
-
  670 0153 06000000 		.4byte	.LVL7
  671 0157 6C040000 		.4byte	0x46c
  672 015b 0D       		.uleb128 0xd
@@ -1048,9 +1055,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  694 018f B0000000 		.4byte	0xb0
  695 0193 00       		.byte	0
  696 0194 0E       		.uleb128 0xe
- 697 0195 D3030000 		.4byte	.LASF21
+ 697 0195 D7030000 		.4byte	.LASF21
  698 0199 01       		.byte	0x1
- 699 019a C7       		.byte	0xc7
+ 699 019a CE       		.byte	0xce
  700 019b 00000000 		.4byte	.LFB67
  701 019f 80000000 		.4byte	.LFE67-.LFB67
  702 01a3 01       		.uleb128 0x1
@@ -1059,7 +1066,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  705 01a9 09       		.uleb128 0x9
  706 01aa 0E000000 		.4byte	.LASF22
  707 01ae 01       		.byte	0x1
- 708 01af C7       		.byte	0xc7
+ 708 01af CE       		.byte	0xce
  709 01b0 6F000000 		.4byte	0x6f
  710 01b4 4F000000 		.4byte	.LLST2
  711 01b8 0A       		.uleb128 0xa
@@ -1071,6 +1078,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  717 01c7 50       		.byte	0x50
  718 01c8 02       		.uleb128 0x2
  719 01c9 74       		.byte	0x74
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 19
+
+
  720 01ca 00       		.sleb128 0
  721 01cb 00       		.byte	0
  722 01cc 0D       		.uleb128 0xd
@@ -1078,9 +1088,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  724 01d1 A3040000 		.4byte	0x4a3
  725 01d5 0A       		.uleb128 0xa
  726 01d6 22000000 		.4byte	.LVL29
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 19
-
-
  727 01da AE040000 		.4byte	0x4ae
  728 01de E8010000 		.4byte	0x1e8
  729 01e2 0B       		.uleb128 0xb
@@ -1131,6 +1138,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  774 0233 00       		.byte	0
  775 0234 0A       		.uleb128 0xa
  776 0235 42000000 		.4byte	.LVL35
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 20
+
+
  777 0239 C4040000 		.4byte	0x4c4
  778 023d 47020000 		.4byte	0x247
  779 0241 0B       		.uleb128 0xb
@@ -1138,9 +1148,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  781 0243 50       		.byte	0x50
  782 0244 01       		.uleb128 0x1
  783 0245 30       		.byte	0x30
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 20
-
-
  784 0246 00       		.byte	0
  785 0247 0A       		.uleb128 0xa
  786 0248 4A000000 		.4byte	.LVL37
@@ -1191,6 +1198,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  831 02a2 50       		.byte	0x50
  832 02a3 01       		.uleb128 0x1
  833 02a4 3A       		.byte	0x3a
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 21
+
+
  834 02a5 00       		.byte	0
  835 02a6 0A       		.uleb128 0xa
  836 02a7 6A000000 		.4byte	.LVL43
@@ -1198,9 +1208,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  838 02af B9020000 		.4byte	0x2b9
  839 02b3 0B       		.uleb128 0xb
  840 02b4 01       		.uleb128 0x1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 21
-
-
  841 02b5 50       		.byte	0x50
  842 02b6 01       		.uleb128 0x1
  843 02b7 30       		.byte	0x30
@@ -1236,9 +1243,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  873 02ed 00       		.byte	0
  874 02ee 00       		.byte	0
  875 02ef 0F       		.uleb128 0xf
- 876 02f0 F7010000 		.4byte	.LASF57
+ 876 02f0 03020000 		.4byte	.LASF57
  877 02f4 01       		.byte	0x1
- 878 02f5 0901     		.2byte	0x109
+ 878 02f5 1001     		.2byte	0x110
  879 02f7 00000000 		.4byte	.LFB68
  880 02fb 2C000000 		.4byte	.LFE68-.LFB68
  881 02ff 01       		.uleb128 0x1
@@ -1251,6 +1258,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  888 030f 14000000 		.4byte	.LVL49
  889 0313 F0040000 		.4byte	0x4f0
  890 0317 0B       		.uleb128 0xb
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 22
+
+
  891 0318 01       		.uleb128 0x1
  892 0319 50       		.byte	0x50
  893 031a 02       		.uleb128 0x2
@@ -1258,9 +1268,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  895 031c 32       		.byte	0x32
  896 031d 00       		.byte	0
  897 031e 00       		.byte	0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 22
-
-
  898 031f 10       		.uleb128 0x10
  899 0320 25000000 		.4byte	0x25
  900 0324 2F030000 		.4byte	0x32f
@@ -1269,7 +1276,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  903 032d 04       		.byte	0x4
  904 032e 00       		.byte	0
  905 032f 12       		.uleb128 0x12
- 906 0330 22020000 		.4byte	.LASF23
+ 906 0330 2E020000 		.4byte	.LASF23
  907 0334 01       		.byte	0x1
  908 0335 1F       		.byte	0x1f
  909 0336 1F030000 		.4byte	0x31f
@@ -1277,7 +1284,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  911 033b 03       		.byte	0x3
  912 033c 00000000 		.4byte	ultrasonic_distances
  913 0340 12       		.uleb128 0x12
- 914 0341 73020000 		.4byte	.LASF24
+ 914 0341 DC020000 		.4byte	.LASF24
  915 0345 05       		.byte	0x5
  916 0346 22       		.byte	0x22
  917 0347 6F000000 		.4byte	0x6f
@@ -1300,7 +1307,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  934 0370 04       		.byte	0x4
  935 0371 00       		.byte	0
  936 0372 12       		.uleb128 0x12
- 937 0373 E7010000 		.4byte	.LASF26
+ 937 0373 F3010000 		.4byte	.LASF26
  938 0377 06       		.byte	0x6
  939 0378 22       		.byte	0x22
  940 0379 62030000 		.4byte	0x362
@@ -1308,19 +1315,19 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  942 037e 03       		.byte	0x3
  943 037f 00000000 		.4byte	puckRackColours
  944 0383 12       		.uleb128 0x12
- 945 0384 CF010000 		.4byte	.LASF27
+ 945 0384 DB010000 		.4byte	.LASF27
  946 0388 06       		.byte	0x6
  947 0389 23       		.byte	0x23
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 23
+
+
  948 038a 62030000 		.4byte	0x362
  949 038e 05       		.uleb128 0x5
  950 038f 03       		.byte	0x3
  951 0390 00000000 		.4byte	puckRackOffsetsFromWest
  952 0394 12       		.uleb128 0x12
- 953 0395 A0030000 		.4byte	.LASF28
+ 953 0395 A4030000 		.4byte	.LASF28
  954 0399 06       		.byte	0x6
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 23
-
-
  955 039a 24       		.byte	0x24
  956 039b 6F000000 		.4byte	0x6f
  957 039f 05       		.uleb128 0x5
@@ -1362,7 +1369,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  993 03ec 03       		.byte	0x3
  994 03ed 00000000 		.4byte	i
  995 03f1 12       		.uleb128 0x12
- 996 03f2 D1020000 		.4byte	.LASF32
+ 996 03f2 3A030000 		.4byte	.LASF32
  997 03f6 01       		.byte	0x1
  998 03f7 1D       		.byte	0x1d
  999 03f8 6F000000 		.4byte	0x6f
@@ -1370,7 +1377,10 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1001 03fd 03       		.byte	0x3
  1002 03fe 00000000 		.4byte	count
  1003 0402 12       		.uleb128 0x12
- 1004 0403 F5020000 		.4byte	.LASF33
+ 1004 0403 5E030000 		.4byte	.LASF33
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 24
+
+
  1005 0407 01       		.byte	0x1
  1006 0408 1E       		.byte	0x1e
  1007 0409 6F000000 		.4byte	0x6f
@@ -1378,9 +1388,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1009 040e 03       		.byte	0x3
  1010 040f 00000000 		.4byte	distance_measured
  1011 0413 12       		.uleb128 0x12
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 24
-
-
  1012 0414 97010000 		.4byte	.LASF34
  1013 0418 01       		.byte	0x1
  1014 0419 20       		.byte	0x20
@@ -1404,7 +1411,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1032 0443 27       		.byte	0x27
  1033 0444 00       		.byte	0
  1034 0445 12       		.uleb128 0x12
- 1035 0446 EE020000 		.4byte	.LASF36
+ 1035 0446 57030000 		.4byte	.LASF36
  1036 044a 01       		.byte	0x1
  1037 044b 26       		.byte	0x26
  1038 044c 35040000 		.4byte	0x435
@@ -1412,41 +1419,41 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1040 0451 03       		.byte	0x3
  1041 0452 00000000 		.4byte	output
  1042 0456 17       		.uleb128 0x17
- 1043 0457 E2030000 		.4byte	.LASF37
- 1044 045b E2030000 		.4byte	.LASF37
+ 1043 0457 E6030000 		.4byte	.LASF37
+ 1044 045b E6030000 		.4byte	.LASF37
  1045 045f 08       		.byte	0x8
  1046 0460 E7       		.byte	0xe7
  1047 0461 17       		.uleb128 0x17
- 1048 0462 C2030000 		.4byte	.LASF38
- 1049 0466 C2030000 		.4byte	.LASF38
+ 1048 0462 C6030000 		.4byte	.LASF38
+ 1049 0466 C6030000 		.4byte	.LASF38
  1050 046a 09       		.byte	0x9
  1051 046b 8B       		.byte	0x8b
  1052 046c 17       		.uleb128 0x17
- 1053 046d 07030000 		.4byte	.LASF39
- 1054 0471 07030000 		.4byte	.LASF39
+ 1053 046d 70030000 		.4byte	.LASF39
+ 1054 0471 70030000 		.4byte	.LASF39
  1055 0475 0A       		.byte	0xa
  1056 0476 5E       		.byte	0x5e
  1057 0477 17       		.uleb128 0x17
- 1058 0478 AD020000 		.4byte	.LASF40
- 1059 047c AD020000 		.4byte	.LASF40
+ 1058 0478 16030000 		.4byte	.LASF40
+ 1059 047c 16030000 		.4byte	.LASF40
  1060 0480 0A       		.byte	0xa
  1061 0481 69       		.byte	0x69
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 25
+
+
  1062 0482 17       		.uleb128 0x17
- 1063 0483 B5030000 		.4byte	.LASF41
- 1064 0487 B5030000 		.4byte	.LASF41
+ 1063 0483 B9030000 		.4byte	.LASF41
+ 1064 0487 B9030000 		.4byte	.LASF41
  1065 048b 0A       		.byte	0xa
  1066 048c 5B       		.byte	0x5b
  1067 048d 17       		.uleb128 0x17
  1068 048e 6D000000 		.4byte	.LASF42
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 25
-
-
  1069 0492 6D000000 		.4byte	.LASF42
  1070 0496 0B       		.byte	0xb
  1071 0497 0D       		.byte	0xd
  1072 0498 17       		.uleb128 0x17
- 1073 0499 F2030000 		.4byte	.LASF43
- 1074 049d F2030000 		.4byte	.LASF43
+ 1073 0499 F6030000 		.4byte	.LASF43
+ 1074 049d F6030000 		.4byte	.LASF43
  1075 04a1 0C       		.byte	0xc
  1076 04a2 2F       		.byte	0x2f
  1077 04a3 17       		.uleb128 0x17
@@ -1455,42 +1462,45 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1080 04ac 0A       		.byte	0xa
  1081 04ad 5A       		.byte	0x5a
  1082 04ae 17       		.uleb128 0x17
- 1083 04af B5010000 		.4byte	.LASF45
- 1084 04b3 B5010000 		.4byte	.LASF45
+ 1083 04af C1010000 		.4byte	.LASF45
+ 1084 04b3 C1010000 		.4byte	.LASF45
  1085 04b7 0D       		.byte	0xd
  1086 04b8 26       		.byte	0x26
  1087 04b9 17       		.uleb128 0x17
- 1088 04ba C5010000 		.4byte	.LASF46
- 1089 04be C5010000 		.4byte	.LASF46
+ 1088 04ba D1010000 		.4byte	.LASF46
+ 1089 04be D1010000 		.4byte	.LASF46
  1090 04c2 0E       		.byte	0xe
  1091 04c3 77       		.byte	0x77
  1092 04c4 17       		.uleb128 0x17
- 1093 04c5 12020000 		.4byte	.LASF47
- 1094 04c9 12020000 		.4byte	.LASF47
+ 1093 04c5 1E020000 		.4byte	.LASF47
+ 1094 04c9 1E020000 		.4byte	.LASF47
  1095 04cd 0F       		.byte	0xf
  1096 04ce 26       		.byte	0x26
  1097 04cf 17       		.uleb128 0x17
- 1098 04d0 4E020000 		.4byte	.LASF48
- 1099 04d4 4E020000 		.4byte	.LASF48
+ 1098 04d0 5A020000 		.4byte	.LASF48
+ 1099 04d4 5A020000 		.4byte	.LASF48
  1100 04d8 10       		.byte	0x10
  1101 04d9 26       		.byte	0x26
  1102 04da 17       		.uleb128 0x17
- 1103 04db C1020000 		.4byte	.LASF49
- 1104 04df C1020000 		.4byte	.LASF49
+ 1103 04db 2A030000 		.4byte	.LASF49
+ 1104 04df 2A030000 		.4byte	.LASF49
  1105 04e3 11       		.byte	0x11
  1106 04e4 26       		.byte	0x26
  1107 04e5 17       		.uleb128 0x17
- 1108 04e6 22030000 		.4byte	.LASF50
- 1109 04ea 22030000 		.4byte	.LASF50
+ 1108 04e6 8B030000 		.4byte	.LASF50
+ 1109 04ea 8B030000 		.4byte	.LASF50
  1110 04ee 12       		.byte	0x12
  1111 04ef 26       		.byte	0x26
  1112 04f0 17       		.uleb128 0x17
- 1113 04f1 EA030000 		.4byte	.LASF51
- 1114 04f5 EA030000 		.4byte	.LASF51
+ 1113 04f1 EE030000 		.4byte	.LASF51
+ 1114 04f5 EE030000 		.4byte	.LASF51
  1115 04f9 0E       		.byte	0xe
  1116 04fa 76       		.byte	0x76
  1117 04fb 00       		.byte	0
  1118              		.section	.debug_abbrev,"",%progbits
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 26
+
+
  1119              	.Ldebug_abbrev0:
  1120 0000 01       		.uleb128 0x1
  1121 0001 11       		.uleb128 0x11
@@ -1498,9 +1508,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1123 0003 25       		.uleb128 0x25
  1124 0004 0E       		.uleb128 0xe
  1125 0005 13       		.uleb128 0x13
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 26
-
-
  1126 0006 0B       		.uleb128 0xb
  1127 0007 03       		.uleb128 0x3
  1128 0008 0E       		.uleb128 0xe
@@ -1551,6 +1558,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1173 0035 00       		.byte	0
  1174 0036 05       		.uleb128 0x5
  1175 0037 16       		.uleb128 0x16
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 27
+
+
  1176 0038 00       		.byte	0
  1177 0039 03       		.uleb128 0x3
  1178 003a 0E       		.uleb128 0xe
@@ -1558,9 +1568,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1180 003c 0B       		.uleb128 0xb
  1181 003d 3B       		.uleb128 0x3b
  1182 003e 05       		.uleb128 0x5
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 27
-
-
  1183 003f 49       		.uleb128 0x49
  1184 0040 13       		.uleb128 0x13
  1185 0041 00       		.byte	0
@@ -1611,6 +1618,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1230 006f 2E       		.uleb128 0x2e
  1231 0070 01       		.byte	0x1
  1232 0071 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 28
+
+
  1233 0072 19       		.uleb128 0x19
  1234 0073 03       		.uleb128 0x3
  1235 0074 0E       		.uleb128 0xe
@@ -1618,9 +1628,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1237 0076 0B       		.uleb128 0xb
  1238 0077 3B       		.uleb128 0x3b
  1239 0078 0B       		.uleb128 0xb
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 28
-
-
  1240 0079 27       		.uleb128 0x27
  1241 007a 19       		.uleb128 0x19
  1242 007b 11       		.uleb128 0x11
@@ -1671,6 +1678,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1287 00ae 00       		.byte	0
  1288 00af 00       		.byte	0
  1289 00b0 0C       		.uleb128 0xc
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 29
+
+
  1290 00b1 898201   		.uleb128 0x4109
  1291 00b4 01       		.byte	0x1
  1292 00b5 11       		.uleb128 0x11
@@ -1678,9 +1688,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1294 00b7 31       		.uleb128 0x31
  1295 00b8 13       		.uleb128 0x13
  1296 00b9 00       		.byte	0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 29
-
-
  1297 00ba 00       		.byte	0
  1298 00bb 0D       		.uleb128 0xd
  1299 00bc 898201   		.uleb128 0x4109
@@ -1731,6 +1738,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1344 00ec 01       		.uleb128 0x1
  1345 00ed 12       		.uleb128 0x12
  1346 00ee 06       		.uleb128 0x6
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 30
+
+
  1347 00ef 40       		.uleb128 0x40
  1348 00f0 18       		.uleb128 0x18
  1349 00f1 9742     		.uleb128 0x2117
@@ -1738,9 +1748,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1351 00f4 01       		.uleb128 0x1
  1352 00f5 13       		.uleb128 0x13
  1353 00f6 00       		.byte	0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 30
-
-
  1354 00f7 00       		.byte	0
  1355 00f8 10       		.uleb128 0x10
  1356 00f9 01       		.uleb128 0x1
@@ -1791,6 +1798,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1401 0126 3F       		.uleb128 0x3f
  1402 0127 19       		.uleb128 0x19
  1403 0128 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 31
+
+
  1404 0129 19       		.uleb128 0x19
  1405 012a 00       		.byte	0
  1406 012b 00       		.byte	0
@@ -1798,9 +1808,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1408 012d 34       		.uleb128 0x34
  1409 012e 00       		.byte	0
  1410 012f 03       		.uleb128 0x3
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 31
-
-
  1411 0130 0E       		.uleb128 0xe
  1412 0131 3A       		.uleb128 0x3a
  1413 0132 0B       		.uleb128 0xb
@@ -1851,6 +1858,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1458 015f 0E       		.uleb128 0xe
  1459 0160 3A       		.uleb128 0x3a
  1460 0161 0B       		.uleb128 0xb
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 32
+
+
  1461 0162 3B       		.uleb128 0x3b
  1462 0163 0B       		.uleb128 0xb
  1463 0164 00       		.byte	0
@@ -1858,9 +1868,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1465 0166 00       		.byte	0
  1466              		.section	.debug_loc,"",%progbits
  1467              	.Ldebug_loc0:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 32
-
-
  1468              	.LLST0:
  1469 0000 00000000 		.4byte	.LVL1
  1470 0004 0A000000 		.4byte	.LVL2
@@ -1911,6 +1918,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1515 0004 0200     		.2byte	0x2
  1516 0006 00000000 		.4byte	.Ldebug_info0
  1517 000a 04       		.byte	0x4
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 33
+
+
  1518 000b 00       		.byte	0
  1519 000c 0000     		.2byte	0
  1520 000e 0000     		.2byte	0
@@ -1918,9 +1928,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1522 0014 04000000 		.4byte	.LFE65-.LFB65
  1523 0018 00000000 		.4byte	.LFB66
  1524 001c 30000000 		.4byte	.LFE66-.LFB66
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 33
-
-
  1525 0020 00000000 		.4byte	.LFB64
  1526 0024 20010000 		.4byte	.LFE64-.LFB64
  1527 0028 00000000 		.4byte	.LFB67
@@ -1945,8 +1952,8 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1546 002c 00000000 		.4byte	0
  1547              		.section	.debug_line,"",%progbits
  1548              	.Ldebug_line0:
- 1549 0000 1E030000 		.section	.debug_str,"MS",%progbits,1
- 1549      02007A02 
+ 1549 0000 21030000 		.section	.debug_str,"MS",%progbits,1
+ 1549      02007D02 
  1549      00000201 
  1549      FB0E0D00 
  1549      01010101 
@@ -1971,6 +1978,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1557      6500
  1558              	.LASF10:
  1559 0035 5F5F696E 		.ascii	"__int32_t\000"
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 34
+
+
  1559      7433325F 
  1559      7400
  1560              	.LASF35:
@@ -1978,9 +1988,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1561      6B5F7374 
  1561      61727400 
  1562              	.LASF4:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 34
-
-
  1563 004b 73686F72 		.ascii	"short unsigned int\000"
  1563      7420756E 
  1563      7369676E 
@@ -2031,6 +2038,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1581      352E342E 
  1581      31203230 
  1581      31363036 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 35
+
+
  1582 0109 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
  1582      20726576 
  1582      6973696F 
@@ -2038,9 +2048,6 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1582      37373135 
  1583 013c 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
  1583      66756E63 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 35
-
-
  1583      74696F6E 
  1583      2D736563 
  1583      74696F6E 
@@ -2072,192 +2079,194 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 1
  1594              	.LASF13:
  1595 01ae 646F7562 		.ascii	"double\000"
  1595      6C6500
- 1596              	.LASF45:
- 1597 01b5 54726967 		.ascii	"Trigger_1_Write\000"
- 1597      6765725F 
- 1597      315F5772 
- 1597      69746500 
- 1598              	.LASF46:
- 1599 01c5 43794465 		.ascii	"CyDelayUs\000"
- 1599      6C617955 
- 1599      7300
- 1600              	.LASF27:
- 1601 01cf 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
- 1601      5261636B 
- 1601      4F666673 
- 1601      65747346 
- 1601      726F6D57 
- 1602              	.LASF26:
- 1603 01e7 7075636B 		.ascii	"puckRackColours\000"
+ 1596              	.LASF15:
+ 1597 01b5 6C6F6E67 		.ascii	"long double\000"
+ 1597      20646F75 
+ 1597      626C6500 
+ 1598              	.LASF45:
+ 1599 01c1 54726967 		.ascii	"Trigger_1_Write\000"
+ 1599      6765725F 
+ 1599      315F5772 
+ 1599      69746500 
+ 1600              	.LASF46:
+ 1601 01d1 43794465 		.ascii	"CyDelayUs\000"
+ 1601      6C617955 
+ 1601      7300
+ 1602              	.LASF27:
+ 1603 01db 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
  1603      5261636B 
- 1603      436F6C6F 
- 1603      75727300 
- 1604              	.LASF57:
- 1605 01f7 64697374 		.ascii	"distanceCheck\000"
- 1605      616E6365 
- 1605      43686563 
- 1605      6B00
- 1606              	.LASF9:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 36
+ 1603      4F666673 
+ 1603      65747346 
+ 1603      726F6D57 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 36
 
 
- 1607 0205 756E7369 		.ascii	"unsigned int\000"
- 1607      676E6564 
- 1607      20696E74 
- 1607      00
- 1608              	.LASF47:
- 1609 0212 54726967 		.ascii	"Trigger_2_Write\000"
- 1609      6765725F 
- 1609      325F5772 
- 1609      69746500 
- 1610              	.LASF23:
- 1611 0222 756C7472 		.ascii	"ultrasonic_distances\000"
- 1611      61736F6E 
- 1611      69635F64 
- 1611      69737461 
- 1611      6E636573 
- 1612              	.LASF8:
- 1613 0237 6C6F6E67 		.ascii	"long long unsigned int\000"
- 1613      206C6F6E 
- 1613      6720756E 
- 1613      7369676E 
- 1613      65642069 
- 1614              	.LASF48:
- 1615 024e 54726967 		.ascii	"Trigger_3_Write\000"
- 1615      6765725F 
- 1615      335F5772 
- 1615      69746500 
- 1616              	.LASF15:
- 1617 025e 6C6F6E67 		.ascii	"long double\000"
- 1617      20646F75 
- 1617      626C6500 
- 1618              	.LASF16:
- 1619 026a 73697A65 		.ascii	"sizetype\000"
- 1619      74797065 
- 1619      00
- 1620              	.LASF24:
- 1621 0273 64726976 		.ascii	"driveStraightEnable\000"
- 1621      65537472 
- 1621      61696768 
- 1621      74456E61 
- 1621      626C6500 
- 1622              	.LASF56:
- 1623 0287 70726564 		.ascii	"prediction\000"
- 1623      69637469 
- 1623      6F6E00
- 1624              	.LASF55:
- 1625 0292 74616B65 		.ascii	"takeColourMeasurement\000"
- 1625      436F6C6F 
- 1625      75724D65 
- 1625      61737572 
- 1625      656D656E 
- 1626              	.LASF14:
- 1627 02a8 63686172 		.ascii	"char\000"
- 1627      00
- 1628              	.LASF40:
- 1629 02ad 54696D65 		.ascii	"Timer_1_ReadCounter\000"
- 1629      725F315F 
- 1629      52656164 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 37
+ 1604              	.LASF26:
+ 1605 01f3 7075636B 		.ascii	"puckRackColours\000"
+ 1605      5261636B 
+ 1605      436F6C6F 
+ 1605      75727300 
+ 1606              	.LASF57:
+ 1607 0203 64697374 		.ascii	"distanceCheck\000"
+ 1607      616E6365 
+ 1607      43686563 
+ 1607      6B00
+ 1608              	.LASF9:
+ 1609 0211 756E7369 		.ascii	"unsigned int\000"
+ 1609      676E6564 
+ 1609      20696E74 
+ 1609      00
+ 1610              	.LASF47:
+ 1611 021e 54726967 		.ascii	"Trigger_2_Write\000"
+ 1611      6765725F 
+ 1611      325F5772 
+ 1611      69746500 
+ 1612              	.LASF23:
+ 1613 022e 756C7472 		.ascii	"ultrasonic_distances\000"
+ 1613      61736F6E 
+ 1613      69635F64 
+ 1613      69737461 
+ 1613      6E636573 
+ 1614              	.LASF8:
+ 1615 0243 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1615      206C6F6E 
+ 1615      6720756E 
+ 1615      7369676E 
+ 1615      65642069 
+ 1616              	.LASF48:
+ 1617 025a 54726967 		.ascii	"Trigger_3_Write\000"
+ 1617      6765725F 
+ 1617      335F5772 
+ 1617      69746500 
+ 1618              	.LASF54:
+ 1619 026a 5C5C6164 		.ascii	"\\\\ad.monash.edu\\home\\User026\\bamcg3\\Documents"
+ 1619      2E6D6F6E 
+ 1619      6173682E 
+ 1619      6564755C 
+ 1619      686F6D65 
+ 1620 0297 5C476974 		.ascii	"\\GitHub\\ECE3091_Group17\\Group17RobotReal\\Group1"
+ 1620      4875625C 
+ 1620      45434533 
+ 1620      3039315F 
+ 1620      47726F75 
+ 1621 02c6 37526F62 		.ascii	"7Robot.cydsn\000"
+ 1621      6F742E63 
+ 1621      7964736E 
+ 1621      00
+ 1622              	.LASF16:
+ 1623 02d3 73697A65 		.ascii	"sizetype\000"
+ 1623      74797065 
+ 1623      00
+ 1624              	.LASF24:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 37
 
 
- 1629      436F756E 
- 1629      74657200 
- 1630              	.LASF49:
- 1631 02c1 54726967 		.ascii	"Trigger_4_Write\000"
- 1631      6765725F 
- 1631      345F5772 
- 1631      69746500 
- 1632              	.LASF32:
- 1633 02d1 636F756E 		.ascii	"count\000"
- 1633      7400
- 1634              	.LASF17:
- 1635 02d7 73656E73 		.ascii	"sensorNumber\000"
- 1635      6F724E75 
- 1635      6D626572 
- 1635      00
- 1636              	.LASF3:
- 1637 02e4 73686F72 		.ascii	"short int\000"
- 1637      7420696E 
+ 1625 02dc 64726976 		.ascii	"driveStraightEnable\000"
+ 1625      65537472 
+ 1625      61696768 
+ 1625      74456E61 
+ 1625      626C6500 
+ 1626              	.LASF56:
+ 1627 02f0 70726564 		.ascii	"prediction\000"
+ 1627      69637469 
+ 1627      6F6E00
+ 1628              	.LASF55:
+ 1629 02fb 74616B65 		.ascii	"takeColourMeasurement\000"
+ 1629      436F6C6F 
+ 1629      75724D65 
+ 1629      61737572 
+ 1629      656D656E 
+ 1630              	.LASF14:
+ 1631 0311 63686172 		.ascii	"char\000"
+ 1631      00
+ 1632              	.LASF40:
+ 1633 0316 54696D65 		.ascii	"Timer_1_ReadCounter\000"
+ 1633      725F315F 
+ 1633      52656164 
+ 1633      436F756E 
+ 1633      74657200 
+ 1634              	.LASF49:
+ 1635 032a 54726967 		.ascii	"Trigger_4_Write\000"
+ 1635      6765725F 
+ 1635      345F5772 
+ 1635      69746500 
+ 1636              	.LASF32:
+ 1637 033a 636F756E 		.ascii	"count\000"
  1637      7400
- 1638              	.LASF36:
- 1639 02ee 6F757470 		.ascii	"output\000"
- 1639      757400
- 1640              	.LASF33:
- 1641 02f5 64697374 		.ascii	"distance_measured\000"
- 1641      616E6365 
- 1641      5F6D6561 
- 1641      73757265 
- 1641      6400
- 1642              	.LASF39:
- 1643 0307 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
- 1643      725F315F 
- 1643      52656164 
- 1643      53746174 
- 1643      75735265 
- 1644              	.LASF50:
- 1645 0322 54726967 		.ascii	"Trigger_5_Write\000"
- 1645      6765725F 
- 1645      355F5772 
- 1645      69746500 
- 1646              	.LASF5:
- 1647 0332 6C6F6E67 		.ascii	"long int\000"
- 1647      20696E74 
- 1647      00
- 1648              	.LASF54:
- 1649 033b 453A5C44 		.ascii	"E:\\Documents\\Uni S12019 Notes\\ECE3091\\Temp Clon"
- 1649      6F63756D 
- 1649      656E7473 
- 1649      5C556E69 
- 1649      20533132 
- 1650 036a 655C4543 		.ascii	"e\\ECE3091_Group17\\Group17RobotReal\\Group17Robot."
- 1650      45333039 
- 1650      315F4772 
- 1650      6F757031 
- 1650      375C4772 
- 1651 039a 63796473 		.ascii	"cydsn\000"
- 1651      6E00
+ 1638              	.LASF17:
+ 1639 0340 73656E73 		.ascii	"sensorNumber\000"
+ 1639      6F724E75 
+ 1639      6D626572 
+ 1639      00
+ 1640              	.LASF3:
+ 1641 034d 73686F72 		.ascii	"short int\000"
+ 1641      7420696E 
+ 1641      7400
+ 1642              	.LASF36:
+ 1643 0357 6F757470 		.ascii	"output\000"
+ 1643      757400
+ 1644              	.LASF33:
+ 1645 035e 64697374 		.ascii	"distance_measured\000"
+ 1645      616E6365 
+ 1645      5F6D6561 
+ 1645      73757265 
+ 1645      6400
+ 1646              	.LASF39:
+ 1647 0370 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
+ 1647      725F315F 
+ 1647      52656164 
+ 1647      53746174 
+ 1647      75735265 
+ 1648              	.LASF50:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccMgdLyd.s 			page 38
+
+
+ 1649 038b 54726967 		.ascii	"Trigger_5_Write\000"
+ 1649      6765725F 
+ 1649      355F5772 
+ 1649      69746500 
+ 1650              	.LASF5:
+ 1651 039b 6C6F6E67 		.ascii	"long int\000"
+ 1651      20696E74 
+ 1651      00
  1652              	.LASF28:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccjhCRIf.s 			page 38
-
-
- 1653 03a0 73776565 		.ascii	"sweeping\000"
+ 1653 03a4 73776565 		.ascii	"sweeping\000"
  1653      70696E67 
  1653      00
  1654              	.LASF1:
- 1655 03a9 7369676E 		.ascii	"signed char\000"
+ 1655 03ad 7369676E 		.ascii	"signed char\000"
  1655      65642063 
  1655      68617200 
  1656              	.LASF41:
- 1657 03b5 54696D65 		.ascii	"Timer_1_Stop\000"
+ 1657 03b9 54696D65 		.ascii	"Timer_1_Stop\000"
  1657      725F315F 
  1657      53746F70 
  1657      00
  1658              	.LASF38:
- 1659 03c2 55415254 		.ascii	"UART_1_PutString\000"
+ 1659 03c6 55415254 		.ascii	"UART_1_PutString\000"
  1659      5F315F50 
  1659      75745374 
  1659      72696E67 
  1659      00
  1660              	.LASF21:
- 1661 03d3 64697374 		.ascii	"distanceSensor\000"
+ 1661 03d7 64697374 		.ascii	"distanceSensor\000"
  1661      616E6365 
  1661      53656E73 
  1661      6F7200
  1662              	.LASF37:
- 1663 03e2 73707269 		.ascii	"sprintf\000"
+ 1663 03e6 73707269 		.ascii	"sprintf\000"
  1663      6E746600 
  1664              	.LASF51:
- 1665 03ea 43794465 		.ascii	"CyDelay\000"
+ 1665 03ee 43794465 		.ascii	"CyDelay\000"
  1665      6C617900 
  1666              	.LASF43:
- 1667 03f2 556C7472 		.ascii	"Ultrasonic_Mux_Control_Write\000"
+ 1667 03f6 556C7472 		.ascii	"Ultrasonic_Mux_Control_Write\000"
  1667      61736F6E 
  1667      69635F4D 
  1667      75785F43 
  1667      6F6E7472 
  1668              	.LASF20:
- 1669 040f 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
+ 1669 0413 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
  1669      61736F6E 
  1669      6963496E 
  1669      74657272 

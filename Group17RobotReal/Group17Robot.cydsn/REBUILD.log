@@ -1,4 +1,4 @@
---------------- Rebuild Started: 09/19/2019 21:03:38 Project: Group17Robot, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Rebuild Started: 10/02/2019 12:29:31 Project: Group17Robot, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\main.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\colour.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\ultrasonic.o"
@@ -83,6 +83,7 @@ Deleting file ".\CortexM3\ARM_GCC_541\Debug\Sonic.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\Gripper_Servo_Disable.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\Rack_Servo_Disable.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\Group17Robot.hex"
+Deleting file ".\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\Group17Robot.map"
 Deleting file ".\Group17Robot.cycdx"
 Deleting file ".\Group17Robot.svd"
@@ -90,11 +91,11 @@ Deleting file ".\Group17Robot.rpt"
 Deleting file ".\Group17Robot_timing.html"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\.deps\SOURCE_C__ARM_GCC_GENERIC.P"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\.deps\SOURCE_ASM__ARM_GCC_GENERIC.P"
-cydsfit.exe -.appdatapath "C:\Users\Blayke\AppData\Local\Cypress Semiconductor\PSoC Creator\4.2" -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p "E:\Documents\Uni S12019 Notes\ECE3091\Temp Clone\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\Group17Robot.cyprj" -d CY8C5888LTI-LP097 -s "E:\Documents\Uni S12019 Notes\ECE3091\Temp Clone\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\Generated_Source\PSoC5" -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
+cydsfit.exe -.appdatapath "C:\Users\bamcg3\AppData\Local\Cypress Semiconductor\PSoC Creator\4.2" -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p \\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\Group17Robot.cyprj -d CY8C5888LTI-LP097 -s \\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\Generated_Source\PSoC5 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
 Elaborating Design...
 ADD: fit.M0029: information: Voltage Reference Information: Vref '1.024V' is connected to terminal 'vminus' of '\ADC:DSM\' but no direct hardware connection exists.
- * D:\Program Files (x86)\Cyprus\PSoC Creator\4.2\PSoC Creator\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\ADC_DelSig_v3_30\PSoC5\ADC_DelSig_v3_30.cysch (Instance:DSM)
- * E:\Documents\Uni S12019 Notes\ECE3091\Temp Clone\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\TopDesign\TopDesign.cysch (Instance:vRef_2)
+ * \\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\TopDesign\TopDesign.cysch (Instance:vRef_2)
+ * C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\ADC_DelSig_v3_30\PSoC5\ADC_DelSig_v3_30.cysch (Instance:DSM)
 HDL Generation...
 Synthesis...
 Tech Mapping...
@@ -120,7 +121,7 @@ ultrasonic.h:18:0: warning: "BLOCK_WEST_EDGE" redefined
  #define BLOCK_WEST_EDGE 0
  ^
 In file included from main.c:21:0:
-main.h:57:0: note: this is the location of the previous definition
+main.h:59:0: note: this is the location of the previous definition
  #define BLOCK_WEST_EDGE (ARENA_WIDTH - BLOCK_LENGTH) / 2
  ^
 In file included from main.c:23:0:
@@ -128,10 +129,13 @@ ultrasonic.h:19:0: warning: "BLOCK_EAST_EDGE" redefined
  #define BLOCK_EAST_EDGE 1
  ^
 In file included from main.c:21:0:
-main.h:58:0: note: this is the location of the previous definition
+main.h:60:0: note: this is the location of the previous definition
  #define BLOCK_EAST_EDGE (BLOCK_WEST_EDGE + BLOCK_LENGTH)
  ^
 main.c: In function 'main':
+main.c:140:17: warning: implicit declaration of function 'Status_Start_Read' [-Wimplicit-function-declaration]
+             if (Status_Start_Read() == 1) {
+                 ^
 main.c:118:9: warning: unused variable 'tmp' [-Wunused-variable]
      int tmp = 0;
          ^
@@ -192,7 +196,7 @@ ultrasonic.h:18:0: warning: "BLOCK_WEST_EDGE" redefined
  #define BLOCK_WEST_EDGE 0
  ^
 In file included from ultrasonic.c:14:0:
-main.h:57:0: note: this is the location of the previous definition
+main.h:59:0: note: this is the location of the previous definition
  #define BLOCK_WEST_EDGE (ARENA_WIDTH - BLOCK_LENGTH) / 2
  ^
 In file included from ultrasonic.c:15:0:
@@ -200,7 +204,7 @@ ultrasonic.h:19:0: warning: "BLOCK_EAST_EDGE" redefined
  #define BLOCK_EAST_EDGE 1
  ^
 In file included from ultrasonic.c:14:0:
-main.h:58:0: note: this is the location of the previous definition
+main.h:60:0: note: this is the location of the previous definition
  #define BLOCK_EAST_EDGE (BLOCK_WEST_EDGE + BLOCK_LENGTH)
  ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/dcmotor.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c dcmotor.c -o .\CortexM3\ARM_GCC_541\Debug\dcmotor.o
@@ -209,7 +213,7 @@ ultrasonic.h:18:0: warning: "BLOCK_WEST_EDGE" redefined
  #define BLOCK_WEST_EDGE 0
  ^
 In file included from dcmotor.c:16:0:
-main.h:57:0: note: this is the location of the previous definition
+main.h:59:0: note: this is the location of the previous definition
  #define BLOCK_WEST_EDGE (ARENA_WIDTH - BLOCK_LENGTH) / 2
  ^
 In file included from dcmotor.c:17:0:
@@ -217,7 +221,7 @@ ultrasonic.h:19:0: warning: "BLOCK_EAST_EDGE" redefined
  #define BLOCK_EAST_EDGE 1
  ^
 In file included from dcmotor.c:16:0:
-main.h:58:0: note: this is the location of the previous definition
+main.h:60:0: note: this is the location of the previous definition
  #define BLOCK_EAST_EDGE (BLOCK_WEST_EDGE + BLOCK_LENGTH)
  ^
 dcmotor.c: In function 'displaceRight':
@@ -319,12 +323,9 @@ arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-
 arm-none-eabi-as.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -alh=.\CortexM3\ARM_GCC_541\Debug/CyBootAsmGnu.lst -g -W -o .\CortexM3\ARM_GCC_541\Debug\CyBootAsmGnu.o Generated_Source\PSoC5\CyBootAsmGnu.s
 arm-none-eabi-ar.exe -rs .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a .\CortexM3\ARM_GCC_541\Debug\TIA_1.o .\CortexM3\ARM_GCC_541\Debug\TIA_1_PM.o .\CortexM3\ARM_GCC_541\Debug\CyDmac.o .\CortexM3\ARM_GCC_541\Debug\CyFlash.o .\CortexM3\ARM_GCC_541\Debug\CyLib.o .\CortexM3\ARM_GCC_541\Debug\cyPm.o .\CortexM3\ARM_GCC_541\Debug\CySpc.o .\CortexM3\ARM_GCC_541\Debug\cyutils.o .\CortexM3\ARM_GCC_541\Debug\cy_em_eeprom.o .\CortexM3\ARM_GCC_541\Debug\UART_1.o .\CortexM3\ARM_GCC_541\Debug\UART_1_PM.o .\CortexM3\ARM_GCC_541\Debug\UART_1_INT.o .\CortexM3\ARM_GCC_541\Debug\UART_1_BOOT.o .\CortexM3\ARM_GCC_541\Debug\UART_1_IntClock.o .\CortexM3\ARM_GCC_541\Debug\ADC.o .\CortexM3\ARM_GCC_541\Debug\ADC_PM.o .\CortexM3\ARM_GCC_541\Debug\ADC_INT.o .\CortexM3\ARM_GCC_541\Debug\ADC_Ext_CP_Clk.o .\CortexM3\ARM_GCC_541\Debug\ADC_IRQ.o .\CortexM3\ARM_GCC_541\Debug\ADC_theACLK.o .\CortexM3\ARM_GCC_541\Debug\IDAC8_1.o .\CortexM3\ARM_GCC_541\Debug\IDAC8_1_PM.o .\CortexM3\ARM_GCC_541\Debug\LED_Blue.o .\CortexM3\ARM_GCC_541\Debug\LED_Red.o .\CortexM3\ARM_GCC_541\Debug\LED_Green.o .\CortexM3\ARM_GCC_541\Debug\RGB_Green.o .\CortexM3\ARM_GCC_541\Debug\RGB_Red.o .\CortexM3\ARM_GCC_541\Debug\RGB_Blue.o .\CortexM3\ARM_GCC_541\Debug\Photo_Diode_1.o .\CortexM3\ARM_GCC_541\Debug\Photo_Diode_2.o .\CortexM3\ARM_GCC_541\Debug\timer_clock.o .\CortexM3\ARM_GCC_541\Debug\Timer_1.o .\CortexM3\ARM_GCC_541\Debug\Timer_1_PM.o .\CortexM3\ARM_GCC_541\Debug\Trigger_1.o .\CortexM3\ARM_GCC_541\Debug\Echo_1.o .\CortexM3\ARM_GCC_541\Debug\Trigger_2.o .\CortexM3\ARM_GCC_541\Debug\Trigger_3.o .\CortexM3\ARM_GCC_541\Debug\Trigger_4.o .\CortexM3\ARM_GCC_541\Debug\Trigger_5.o .\CortexM3\ARM_GCC_541\Debug\Echo_2.o .\CortexM3\ARM_GCC_541\Debug\Echo_3.o .\CortexM3\ARM_GCC_541\Debug\Echo_4.o .\CortexM3\ARM_GCC_541\Debug\Echo_5.o .\CortexM3\ARM_GCC_541\Debug\Ultrasonic_Mux_Control.o .\CortexM3\ARM_GCC_541\Debug\Ultrasonic_Mux_Control_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_2_driver.o .\CortexM3\ARM_GCC_541\Debug\Motor_2_driver_PM.o .\CortexM3\ARM_GCC_541\Debug\Clock_2.o .\CortexM3\ARM_GCC_541\Debug\Motor_1_driver.o .\CortexM3\ARM_GCC_541\Debug\Motor_1_driver_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_1_Forward.o .\CortexM3\ARM_GCC_541\Debug\Motor_1_Backward.o .\CortexM3\ARM_GCC_541\Debug\Motor_2_Forward.o .\CortexM3\ARM_GCC_541\Debug\Motor_2_Backward.o .\CortexM3\ARM_GCC_541\Debug\Gripper_Servo_PWM.o .\CortexM3\ARM_GCC_541\Debug\Gripper_Servo_PWM_PM.o .\CortexM3\ARM_GCC_541\Debug\Servo_Clock.o .\CortexM3\ARM_GCC_541\Debug\Rack_Servo_PWM.o .\CortexM3\ARM_GCC_541\Debug\Rack_Servo_PWM_PM.o .\CortexM3\ARM_GCC_541\Debug\Gripper_Servo.o .\CortexM3\ARM_GCC_541\Debug\Rack_Servo.o .\CortexM3\ARM_GCC_541\Debug\PWM_colour.o .\CortexM3\ARM_GCC_541\Debug\PWM_colour_PM.o .\CortexM3\ARM_GCC_541\Debug\Clock_3.o .\CortexM3\ARM_GCC_541\Debug\Pin_Start.o .\CortexM3\ARM_GCC_541\Debug\control_led.o .\CortexM3\ARM_GCC_541\Debug\control_led_PM.o .\CortexM3\ARM_GCC_541\Debug\control_photodiode.o .\CortexM3\ARM_GCC_541\Debug\control_photodiode_PM.o .\CortexM3\ARM_GCC_541\Debug\Start.o .\CortexM3\ARM_GCC_541\Debug\Sonic.o .\CortexM3\ARM_GCC_541\Debug\Gripper_Servo_Disable.o .\CortexM3\ARM_GCC_541\Debug\Rack_Servo_Disable.o .\CortexM3\ARM_GCC_541\Debug\CyBootAsmGnu.o
 arm-none-eabi-ar.exe: creating .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a
-arm-none-eabi-gcc.exe -Wl,--start-group -o "E:\Documents\Uni S12019 Notes\ECE3091\Temp Clone\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf" .\CortexM3\ARM_GCC_541\Debug\main.o .\CortexM3\ARM_GCC_541\Debug\colour.o .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o .\CortexM3\ARM_GCC_541\Debug\dcmotor.o .\CortexM3\ARM_GCC_541\Debug\servo.o .\CortexM3\ARM_GCC_541\Debug\customMath.o .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o .\CortexM3\ARM_GCC_541\Debug\cymetadata.o .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a "D:\Program Files (x86)\Cyprus\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_541\Debug\CyComponentLibrary.a" -mcpu=cortex-m3 -mthumb -l m -L Generated_Source\PSoC5 -Wl,-Map,.\CortexM3\ARM_GCC_541\Debug/Group17Robot.map -T Generated_Source\PSoC5\cm3gcc.ld -specs=nano.specs -u _printf_float -Wl,--gc-sections -uprintf_float -g -ffunction-sections -Og -ffat-lto-objects -Wl,--end-group
-cyelftool.exe -C "E:\Documents\Uni S12019 Notes\ECE3091\Temp Clone\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf" --flash_row_size 256 --flash_size 262144 --flash_offset 0x00000000
-No ELF section .cychecksum found, creating one
-Application checksum calculated and stored in ELF section .cychecksum
-Checksum calculated and stored in ELF section .cymeta
-cyelftool.exe -S "E:\Documents\Uni S12019 Notes\ECE3091\Temp Clone\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf"
-Flash used: 28088 of 262144 bytes (10.7%).
-SRAM used: 3345 of 65536 bytes (5.1%). Stack: 2048 bytes. Heap: 512 bytes.
---------------- Rebuild Succeeded: 09/19/2019 21:04:06 ---------------
+arm-none-eabi-gcc.exe -Wl,--start-group -o \\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf .\CortexM3\ARM_GCC_541\Debug\main.o .\CortexM3\ARM_GCC_541\Debug\colour.o .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o .\CortexM3\ARM_GCC_541\Debug\dcmotor.o .\CortexM3\ARM_GCC_541\Debug\servo.o .\CortexM3\ARM_GCC_541\Debug\customMath.o .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o .\CortexM3\ARM_GCC_541\Debug\cymetadata.o .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_541\Debug\CyComponentLibrary.a" -mcpu=cortex-m3 -mthumb -l m -L Generated_Source\PSoC5 -Wl,-Map,.\CortexM3\ARM_GCC_541\Debug/Group17Robot.map -T Generated_Source\PSoC5\cm3gcc.ld -specs=nano.specs -u _printf_float -Wl,--gc-sections -uprintf_float -g -ffunction-sections -Og -ffat-lto-objects -Wl,--end-group
+.\CortexM3\ARM_GCC_541\Debug\main.o: In function `main':
+\\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn/main.c:140: undefined reference to `Status_Start_Read'
+collect2.exe: error: ld returned 1 exit status
+The command 'arm-none-eabi-gcc.exe' failed with exit code '1'.
+--------------- Rebuild Failed: 10/02/2019 12:31:42 ---------------
