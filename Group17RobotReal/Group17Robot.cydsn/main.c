@@ -32,25 +32,7 @@ int colour_flag = 1;                    // sets which photodiode to use
 extern float ultrasonic_distances[5];
 int beginNavigation = 0;
 
-int state = STATE_GO_WEST;
-
-// Flag Initialisation
-
-
-int findingPuck = 1;
-int returningHome = 0;
-
-int setup = 1;
-
-int homeToNW = 1;
-int NWToHome = 0;
-int homeToNE = 0;
-int NEToHome = 0;
-
-int southWall = 1;
-int westWall = 0;
-int northWall = 1;
-int eastWall = 0;
+int state = STATE_SCAN_PLAN;
 
 int running = 1;
 
@@ -177,34 +159,16 @@ int main(void)
 	}
         
         // Now we need to locate the pucks
-        
-        state = STATE_FIND_PUCKS;
-        
-        
+ 
         while (state == STATE_FIND_PUCKS) {
             // We are at the EAST wall facing the EAST wall
             turnRight(180); // Now facing WEST at EAST wall
             moveForwardIndefinitely();
         }
-        
-        // * Navigation Loop * //
-        
-                
-        while(running) {
-            distanceCheck(); // This seems to be a quick fix to the first values recorded upon bootup being wacky.
-            distanceCheck();
-            
-            
-            state = STATE_GO_NORTH_CARELESS; 
+
+            // Sequence of movements required for picking up a puck
             driveStraightEnable = 1;
-            moveForwardIndefinitely();
-            turnRight(94); // CHANGE TO 90 WHEN THE TURN FUNCTION IS ACCURATE. WE OVER COMPENSATE TEMPORARILY
-            // Now facing east in the NW corner
-            
-            // state = STATE_SWEEP_N_PUCKS;
-            
-            driveStraightEnable = 1;
-            state = STATE_FORWARD_TO_PUCK; 
+            //state = STATE_FORWARD_TO_PUCK; 
             
             armDown();
             armOpen();
@@ -214,52 +178,6 @@ int main(void)
             moveForward(8);
             armClose();
             armUp();
-                    
-                    
-            // Code for finding pucks along N wall and navigating towards the puck
-            
-            state = STATE_RETURN_TO_NW_FROM_PUCK;
-            driveStraightEnable = 1;
-            moveBackwardIndefinitely();
-            turnLeft(87);
-            
-            state = STATE_RETURN_HOME_SIDE;
-            driveStraightEnable = 1;
-            moveBackwardIndefinitely();
-            turnRight(94);
-            
-            state = STATE_LAND_ON_HOME_BASE;
-            driveStraightEnable = 1;
-            moveForwardIndefinitely();
-            //displaceRight(ultrasonic_distances[RIGHT_SIDE] - 20,30);
-            
-            distanceCheck();
-            
-            while (ultrasonic_distances[RIGHT_SIDE] > 5){
-                  
-                displaceRight(3,10);
-                turnRight(3);
-                distanceCheck();
-            
-            }
-            
-            state = STATE_LAND_ON_HOME_BASE;
-            driveStraightEnable = 1;
-            moveForwardIndefinitely();
-            
-            state = STATE_FINISH_LANDING;
-            driveStraightEnable = 1;
-            moveBackwardIndefinitely();
-            
-           // state = STATE_LAND_ON_HOME_BASE;
-           // driveStraightEnable = 1;
-            //moveForwardIndefinitely();
-            
-            beginNavigation = 0;
-            running = 0;
-            
-        }
     
-    }
-        
+    }  
 }

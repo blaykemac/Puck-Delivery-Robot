@@ -17,6 +17,8 @@
 #define SENSOR_PULSE_DELAY_MS 50
 #define BLOCK_WEST_EDGE 0
 #define BLOCK_EAST_EDGE 1
+#define BLOCK_NORTH_EDGE 2
+#define BLOCK_SOUTH_EDGE 3
 
 void distanceCheck();  
 void distanceSensor(int currentSensorIndex);
@@ -28,7 +30,6 @@ int takeColourMeasurement(void);
 
 // External variables (ie. globals)
 extern int driveStraightEnable;
-extern int northWall;
 extern int state;
 extern int currentPuckRackScanningIndex;
 extern int puckRackColours[5];

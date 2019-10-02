@@ -11,23 +11,10 @@
 */
 #define TOTAL_SONIC_SENSORS 5
 
-#define STATE_GO_WEST 0
-#define STATE_GO_NORTH_CAREFUL 1
-#define STATE_GO_NORTH_CARELESS 2
-#define STATE_SWEEP_NW_PUCKS 3
-#define STATE_SWEEP_N_PUCKS 4
-#define STATE_RETURN_HOME_SIDE 5
-#define STATE_LAND_ON_HOME_BASE 6
-#define STATE_FORWARD_TO_PUCK 7
-#define STATE_RETURN_TO_NW_FROM_PUCK 8
-#define STATE_FINISH_LANDING 9
-#define STATE_FIND_PUCKS 10
 
-
-// States for final comp
-
-#define STATE_SCAN_PLAN 10
-#define STATE_LOCATE_BLOCK 11
+#define STATE_FIND_PUCKS 1
+#define STATE_SCAN_PLAN 2
+#define STATE_LOCATE_BLOCK 3
 
 // Constants / Hard-coded values for final comp
 #define PUCK_RACK_0_WEST_DISTANCE 72
@@ -95,7 +82,6 @@
 
 extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
 int driveStraightEnable;
-extern int westWall;
 int currentPuckRackScanningIndex;
 int puckRackColours[5];
 int puckRackOffsetsFromWest[5];

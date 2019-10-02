@@ -66,12 +66,35 @@ void ultrasonicInterruptHandler(){
                 currentPuckRackScanningIndex++;
             }
         }
+   
+    }
+
+    if (state == STATE_LOCATE_BLOCK){
         
         
-        
+        // Only care about detecting block when we have turned around and are ready to do a full sweep of the arena
+    	if (sweeping){
+    		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - BLOCK_TOLERANCE){ // Then we have discrepancy
+    			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK ;} // We know where west side of block is
+    	    }
+            
+    		else if (block_start){ // We already know the west edge, drive until we find east edge
+    			block_start = 0; // We have found the east edge of the block
+    			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
+    			sweeping = 0;
+    			state = STATE_FIND_PUCKS;
+	
+    	    }
+    	}
+	}
+    
+    if (state == STATE_FIND_PUCKS){
+        if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE){ // Then we have discrepancy
+    			
+    	    }   
     }
     
-    /*
+     /* THIS IS A SAMPLE OF THE PRELIM CODE, KEEPING IT TO REFERENCE THE MOTOR SLEEP FUNCTIONS
     
     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < 24 || ultrasonic_distances[RIGHT_FRONT] < 24 ) && ( ultrasonic_distances[LEFT_FRONT] > 1 && ultrasonic_distances[RIGHT_FRONT] > 1 )) {
     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
@@ -85,107 +108,7 @@ void ultrasonicInterruptHandler(){
         }
     }
     
-    if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < 30 || ultrasonic_distances[RIGHT_FRONT] < 30 ) && ( ultrasonic_distances[LEFT_FRONT] > 1 && ultrasonic_distances[RIGHT_FRONT] > 1 )) {
-    //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-        if(state == STATE_GO_NORTH_CAREFUL && ultrasonic_mux_control == 4){
-            driveStraightEnable = 0;
-            northWall = 1;
-            //state = STATE_GO_NORTH_CARELESS;
-            Motor_1_driver_Sleep();
-            Motor_2_driver_Sleep();
-            
-        }
-    }
-    
-    if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < NW_PUCK_POSITION_FROM_NORTH - 1 || ultrasonic_distances[RIGHT_FRONT] < NW_PUCK_POSITION_FROM_NORTH - 1) && ( ultrasonic_distances[LEFT_FRONT] > 1 && ultrasonic_distances[RIGHT_FRONT] > 1 )) {
-    //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-        if(state == STATE_GO_NORTH_CARELESS && ultrasonic_mux_control == 4){
-            driveStraightEnable = 0;
-            Motor_1_driver_Sleep();
-            Motor_2_driver_Sleep();
-            
-        }
-    }
-    
-    if (driveStraightEnable && ( ultrasonic_distances[BACK] > NW_PUCK_POSITION_FROM_WEST - 31 - 10   ) && ( ultrasonic_distances[BACK] > 1 )) {
-    //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-        if(state == STATE_FORWARD_TO_PUCK && ultrasonic_mux_control == 4){
-            driveStraightEnable = 0;
-           // northWall = 1;
-            //state = STATE_GO_NORTH_CARELESS;
-            Motor_1_driver_Sleep();
-            Motor_2_driver_Sleep();
-            
-        }
-    }
-    
-    if (driveStraightEnable && ( ultrasonic_distances[BACK] < 13   ) && ( ultrasonic_distances[BACK] > 1 )) {
-    //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-        if(state == STATE_RETURN_TO_NW_FROM_PUCK && ultrasonic_mux_control == 4){
-            driveStraightEnable = 0;
-           // northWall = 1;
-            //state = STATE_GO_NORTH_CARELESS;
-            Motor_1_driver_Sleep();
-            Motor_2_driver_Sleep();
-            
-        }
-    }
-    
-    if (driveStraightEnable && ( ultrasonic_distances[BACK] < 10 ) && ( ultrasonic_distances[BACK] > 1 )) {
-    //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-        if(state == STATE_RETURN_HOME_SIDE && ultrasonic_mux_control == 4){
-            driveStraightEnable = 0;
-            Motor_1_driver_Sleep();
-            Motor_2_driver_Sleep();
-            
-        }
-    }
-    
-    if (driveStraightEnable && ( ultrasonic_distances[RIGHT_FRONT] < FINISH_CENTER_FROM_E - 5 ) && ( ultrasonic_distances[RIGHT_FRONT] > 1 )) {
-    //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-        if(state == STATE_LAND_ON_HOME_BASE && ultrasonic_mux_control == 4){
-            driveStraightEnable = 0;
-            Motor_1_driver_Sleep();
-            Motor_2_driver_Sleep();
-            
-        }
-    }
-    
-    if (driveStraightEnable && ( ultrasonic_distances[RIGHT_FRONT] > FINISH_CENTER_FROM_E - 5 ) && ( ultrasonic_distances[RIGHT_FRONT] > 1 )) {
-    //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
-        if(state == STATE_FINISH_LANDING && ultrasonic_mux_control == 4){
-            driveStraightEnable = 0;
-            Motor_1_driver_Sleep();
-            Motor_2_driver_Sleep();
-            
-        }
-    }
-    
     */
-	
-    if (state == STATE_LOCATE_BLOCK){
-    	if (sweeping){
-    		if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - BLOCK_TOLERANCE){ // Then we have discrepancy
-    			if (!block_start) {block_start = 1; block_location[BLOCK_WEST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK ;}
-    	    }
-            
-    		else if (block_start){
-    			block_start = 0; // We have found the east edge of the block
-    			block_location[BLOCK_EAST_EDGE] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
-    			sweeping = 0;
-    			// state = 
-
-    			
-    			
-    	    }
-    	}
-	}
-    
-    if (state == STATE_FIND_PUCKS){
-        if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE){ // Then we have discrepancy
-    			
-    	    }   
-    }
     
 }
 

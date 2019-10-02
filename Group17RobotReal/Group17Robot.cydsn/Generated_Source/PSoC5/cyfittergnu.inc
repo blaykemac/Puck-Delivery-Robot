@@ -1534,11 +1534,11 @@
 .set Motor_2_driver_PWMUDB_sP16_pwmdp_u1__PER_DP_AUX_CTL_REG, CYREG_B1_UDB05_MSK_ACTL
 
 /* Motor_1_Forward */
-.set Motor_1_Forward__0__INTTYPE, CYREG_PICU12_INTTYPE5
-.set Motor_1_Forward__0__MASK, 0x20
-.set Motor_1_Forward__0__PC, CYREG_PRT12_PC5
+.set Motor_1_Forward__0__INTTYPE, CYREG_PICU12_INTTYPE4
+.set Motor_1_Forward__0__MASK, 0x10
+.set Motor_1_Forward__0__PC, CYREG_PRT12_PC4
 .set Motor_1_Forward__0__PORT, 12
-.set Motor_1_Forward__0__SHIFT, 5
+.set Motor_1_Forward__0__SHIFT, 4
 .set Motor_1_Forward__AG, CYREG_PRT12_AG
 .set Motor_1_Forward__BIE, CYREG_PRT12_BIE
 .set Motor_1_Forward__BIT_MASK, CYREG_PRT12_BIT_MASK
@@ -1549,7 +1549,7 @@
 .set Motor_1_Forward__DR, CYREG_PRT12_DR
 .set Motor_1_Forward__INP_DIS, CYREG_PRT12_INP_DIS
 .set Motor_1_Forward__INTTYPE_BASE, CYDEV_PICU_INTTYPE_PICU12_BASE
-.set Motor_1_Forward__MASK, 0x20
+.set Motor_1_Forward__MASK, 0x10
 .set Motor_1_Forward__PORT, 12
 .set Motor_1_Forward__PRT, CYREG_PRT12_PRT
 .set Motor_1_Forward__PRTDSI__DBL_SYNC_IN, CYREG_PRT12_DBL_SYNC_IN
@@ -1559,7 +1559,7 @@
 .set Motor_1_Forward__PRTDSI__OUT_SEL1, CYREG_PRT12_OUT_SEL1
 .set Motor_1_Forward__PRTDSI__SYNC_OUT, CYREG_PRT12_SYNC_OUT
 .set Motor_1_Forward__PS, CYREG_PRT12_PS
-.set Motor_1_Forward__SHIFT, 5
+.set Motor_1_Forward__SHIFT, 4
 .set Motor_1_Forward__SIO_CFG, CYREG_PRT12_SIO_CFG
 .set Motor_1_Forward__SIO_DIFF, CYREG_PRT12_SIO_DIFF
 .set Motor_1_Forward__SIO_HYST_EN, CYREG_PRT12_SIO_HYST_EN
@@ -1600,11 +1600,11 @@
 .set Motor_2_Forward__SLW, CYREG_PRT12_SLW
 
 /* Motor_1_Backward */
-.set Motor_1_Backward__0__INTTYPE, CYREG_PICU12_INTTYPE4
-.set Motor_1_Backward__0__MASK, 0x10
-.set Motor_1_Backward__0__PC, CYREG_PRT12_PC4
+.set Motor_1_Backward__0__INTTYPE, CYREG_PICU12_INTTYPE5
+.set Motor_1_Backward__0__MASK, 0x20
+.set Motor_1_Backward__0__PC, CYREG_PRT12_PC5
 .set Motor_1_Backward__0__PORT, 12
-.set Motor_1_Backward__0__SHIFT, 4
+.set Motor_1_Backward__0__SHIFT, 5
 .set Motor_1_Backward__AG, CYREG_PRT12_AG
 .set Motor_1_Backward__BIE, CYREG_PRT12_BIE
 .set Motor_1_Backward__BIT_MASK, CYREG_PRT12_BIT_MASK
@@ -1615,7 +1615,7 @@
 .set Motor_1_Backward__DR, CYREG_PRT12_DR
 .set Motor_1_Backward__INP_DIS, CYREG_PRT12_INP_DIS
 .set Motor_1_Backward__INTTYPE_BASE, CYDEV_PICU_INTTYPE_PICU12_BASE
-.set Motor_1_Backward__MASK, 0x10
+.set Motor_1_Backward__MASK, 0x20
 .set Motor_1_Backward__PORT, 12
 .set Motor_1_Backward__PRT, CYREG_PRT12_PRT
 .set Motor_1_Backward__PRTDSI__DBL_SYNC_IN, CYREG_PRT12_DBL_SYNC_IN
@@ -1625,7 +1625,7 @@
 .set Motor_1_Backward__PRTDSI__OUT_SEL1, CYREG_PRT12_OUT_SEL1
 .set Motor_1_Backward__PRTDSI__SYNC_OUT, CYREG_PRT12_SYNC_OUT
 .set Motor_1_Backward__PS, CYREG_PRT12_PS
-.set Motor_1_Backward__SHIFT, 4
+.set Motor_1_Backward__SHIFT, 5
 .set Motor_1_Backward__SIO_CFG, CYREG_PRT12_SIO_CFG
 .set Motor_1_Backward__SIO_DIFF, CYREG_PRT12_SIO_DIFF
 .set Motor_1_Backward__SIO_HYST_EN, CYREG_PRT12_SIO_HYST_EN
