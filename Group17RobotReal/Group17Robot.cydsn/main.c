@@ -136,6 +136,7 @@ int main(void)
     {   
         // Start button is pressed so quit sensing
 
+        /*
         while (beginNavigation == 0) {
             distanceCheck();           
             UART_1_PutString("\n");
@@ -143,16 +144,20 @@ int main(void)
                 
         }
         
+        */
+        
         
         
         
         while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed 
-            
-            moveForwardIndefinitely();
+            if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
+            else {moveForwardIndefinitely();}        
             
             ColourSensingViaHardware();
             // ColourOutput();
             // CyDelay(100);
+            
+            if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK;}
                      
         }
 

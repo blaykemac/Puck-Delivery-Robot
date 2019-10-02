@@ -52,9 +52,22 @@ void ultrasonicInterruptHandler(){
     // In this state 
     if (state == STATE_SCAN_PLAN){
         
-        if (averageSensor(ultrasonic_distances[LEFT_FRONT], ultrasonic_distances[LEFT_FRONT] ) > puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT){
+        float front_average = averageSensor(ultrasonic_distances[LEFT_FRONT], ultrasonic_distances[RIGHT_FRONT]);
+        
+        if (currentPuckRackScanningIndex == 0){
+            if ( front_average > puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT){
                 puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
+                currentPuckRackScanningIndex++;
+            }
         }
+        else {
+            if (front_average < puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT){
+                puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
+                currentPuckRackScanningIndex++;
+            }
+        }
+        
+        
         
     }
     
