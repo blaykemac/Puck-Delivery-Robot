@@ -29,6 +29,13 @@
 #define GREEN 2
 #define BLUE 3
 
+// Cardinal Directions. North faces the pucks from the home base
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
+
 // * ARENA CONSTRAINTS IN CM !* //
 #define MIN_OBJECT_SOUTH 50
 #define MAX_OBJECT_NORTH 70
@@ -87,3 +94,4 @@ int puckRackColours[5];
 int puckRackOffsetsFromWest[5];
 int sweeping;
 float block_location[4]; // WEST, EAST, SOUTH, NORTH
+float puckPileLocation;

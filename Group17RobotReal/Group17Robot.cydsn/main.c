@@ -168,8 +168,11 @@ int main(void)
 
             // Sequence of movements required for picking up a puck
             driveStraightEnable = 1;
-            //state = STATE_FORWARD_TO_PUCK; 
             
+        //state = STATE_FORWARD_TO_PUCK; 
+            
+        
+        
             armDown();
             armOpen();
             
@@ -179,5 +182,5 @@ int main(void)
             armClose();
             armUp();
     
-    }  
+    }          
 }

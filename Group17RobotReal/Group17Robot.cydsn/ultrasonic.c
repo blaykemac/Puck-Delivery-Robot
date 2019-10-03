@@ -89,8 +89,8 @@ void ultrasonicInterruptHandler(){
 	}
     
     if (state == STATE_FIND_PUCKS){
-        if (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE){ // Then we have discrepancy
-    			
+        if ( (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE) && (ultrasonic_distances[LEFT_SIDE] > ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE) ){ // Then we have discrepancy
+    			puckPileLocation = _
     	    }   
     }
     
