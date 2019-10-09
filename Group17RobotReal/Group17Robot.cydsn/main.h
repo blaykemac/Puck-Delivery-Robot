@@ -12,9 +12,6 @@
 // In case we change the number of ultrasonic sensors used
 #define TOTAL_SONIC_SENSORS 5
 
-<<<<<<< HEAD
-// Main states for overall navigation and motor control
-=======
 //Constants in main for dcmotor function
 #define TRUE 1
 #define FALSE 0
@@ -30,7 +27,7 @@
 #define ENCODER_COUNTS_MAX 65500 //The maximum number of counts the encoder can have
 #define COLLISION_THRESHOLD 5 //Distance in cm from any obstacle that we should stop
 
->>>>>>> 3ff4c21452c85d0585b97b153b2735bf98d38dd9
+// Main states for overall navigation and motor control
 #define STATE_FIND_PUCKS 1
 #define STATE_SCAN_PLAN 2
 #define STATE_LOCATE_BLOCK 3
