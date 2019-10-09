@@ -31,11 +31,7 @@ int distance_measured = 0;
 float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0};
 uint8 ultrasonic_mux_control = 0;
 int block_start = 0;
-extern const int COLLISION_THRESHOLD;
 
-//From main
-extern const short TRUE;
-extern const short FALSE;
 
 //The four flags below let the rest of the program know if the robot is trying to drive 
 //forward or back, turn left or right. At the start of every motion, turn these flags on

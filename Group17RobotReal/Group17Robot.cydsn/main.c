@@ -88,7 +88,13 @@ int state = STATE_SCAN_PLAN;
 int running = 1;
 
 int sweeping = 0;
+
+int pathToPucks;
+int pathPastBlock;
+
 float block_edge_location[4] = {0,0,0,0}; // N E S W
+
+int currentPuckStackSize = 0;
 
 // Puck Construction Scanning
 int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
@@ -187,9 +193,7 @@ int main(void)
         
         */
         
-        
-        
-        
+
         while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed 
             if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
             else {moveForwardIndefinitely();}        
@@ -218,10 +222,12 @@ int main(void)
             // Figure out direction we want to travel
             
             if (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN){
-                
+                pathPastBlock = WEST;
             }
+            else {pathPastBlock = EAST;}
             
-            
+            // Calculate puck position here too, then make a decision as to whether
+            // pathToPucks = ... ;
 
 	}
         
@@ -232,28 +238,40 @@ int main(void)
             turnRight(180); // Now facing WEST at EAST wall
             moveForwardIndefinitely();
         }
+        
+        state = STATE_GO_TO_PUCKS;
 
         if (state == STATE_GO_TO_PUCKS){
-            
+            if (pathPastBlock == WEST){
+                if (pathToPucks != WEST) {
+                    moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN, EAST_ANGLE); // Take us to NW corner and then face EAST in preparation for finding the pucks
+                }
+                else {moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NW corner
+            }
+            else {
+                if (pathToPucks != EAST) {
+                    moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN, WEST_ANGLE); // Take us to NE corner and then face WEST in preparation for finding the pucks
+                }
+                else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NE corner
+            }
+        
+        }
+        
+        state = STATE_FIND_REQUIRED_PUCK;
+        if (state == STATE_FIND_REQUIRED_PUCK){
+               
         }
         
         
-        
-            // Sequence of movements required for picking up a puck
-            driveStraightEnable = 1;
-            
-        //state = STATE_FORWARD_TO_PUCK; 
-            
-        
-        
-            armDown();
-            armOpen();
-            
-            moveForwardIndefinitely();
+    }
+}
 
-            moveForward(8);
-            armClose();
-            armUp();
-    
-    }          
+void lowerAndOpen(int puck_stack_position){
+    changeHeightToPuck(puck_stack_position);
+    armOpen();
+}
+
+void closeAndRaise(int puck_stack_position){
+    armClose();
+    changeHeightToPuck(puck_stack_position);
 }

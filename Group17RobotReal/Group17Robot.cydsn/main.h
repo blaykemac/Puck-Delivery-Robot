@@ -32,6 +32,7 @@
 #define STATE_SCAN_PLAN 2
 #define STATE_LOCATE_BLOCK 3
 #define STATE_GO_TO_PUCKS 4
+#define STATE_FIND_REQUIRED_PUCK 5
 
 // Hard-coded distances from the west for where each puck may sit in the construction plan.
 #define PUCK_RACK_0_WEST_DISTANCE 72
@@ -46,6 +47,12 @@
 #define EAST 1
 #define SOUTH 2
 #define WEST 3
+
+// These are the numbers that represent the angle we are facing taken from the CCW vector pointing east
+#define NORTH_ANGLE 90
+#define EAST_ANGLE 0
+#define SOUTH_ANGLE 270
+#define WEST_ANGLE 180
 
 
 // * ARENA CONSTRAINTS IN CM !* //
@@ -71,6 +78,8 @@
 #define CONSTRUCTION_BASE_EAST_EDGE 20 // Measure arena to find this edge
 #define CONSTRUCTION_BASE_WEST_EDGE (CONSTRUCTION_BASE_EAST_EDGE + CONSTRUCTION_EDGE_LENGTH)
 
+#define DISTANCE_PUCKS_FROM_NORTH 28 // Where the southmost part of the pucks can extend to from the north wall
+
 
 // Robot Body Orientation Constants
 #define LEFT_SIDE 0
@@ -87,6 +96,7 @@
 #define DISPLACE_DISTANCE_NW_PUCK_CHECK_CM 3
 #define BLOCK_TOLERANCE 10 // Used for sweeping block location. This affects sensitivity in detecting block.
 #define SIDE_SENSOR_OFFSET_FROM_BACK 15 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
+#define FRONT_CLAW_DISTANCE_FROM_CENTRE
 #define PUCK_TOLERANCE 15 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 
 

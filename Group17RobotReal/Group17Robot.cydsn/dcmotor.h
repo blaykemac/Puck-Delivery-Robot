@@ -27,5 +27,6 @@ void displaceRight(int amount,int degrees);
 void nextMotion(int * desiredPosition);
 void stopMotor1AndUpdate(void);
 void stopMotor2AndUpdate(void);
+void moveAndAngle(int horizontal, int vertical, int angle);
 
 /* [] END OF FILE */
