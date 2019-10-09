@@ -15,10 +15,7 @@
 #define OFFSET_COLOUR_SENSOR_FROM_FRONT 20 // cm
 #define FINISH_CENTER_FROM_E 47
 #define SENSOR_PULSE_DELAY_MS 50
-#define BLOCK_WEST_EDGE 0
-#define BLOCK_EAST_EDGE 1
-#define BLOCK_NORTH_EDGE 2
-#define BLOCK_SOUTH_EDGE 3
+
 
 void distanceCheck();  
 void distanceSensor(int currentSensorIndex);
@@ -35,5 +32,5 @@ extern int currentPuckRackScanningIndex;
 extern int puckRackColours[5];
 extern int puckRackOffsetsFromWest[5];
 extern int sweeping;
-extern float block_location[4];
+extern float block_edge_location[4];
 

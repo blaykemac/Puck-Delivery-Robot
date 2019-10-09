@@ -9,25 +9,22 @@
  *
  * ========================================
 */
+// In case we change the number of ultrasonic sensors used
 #define TOTAL_SONIC_SENSORS 5
 
-
+// Main states for overall navigation and motor control
 #define STATE_FIND_PUCKS 1
 #define STATE_SCAN_PLAN 2
 #define STATE_LOCATE_BLOCK 3
+#define STATE_GO_TO_PUCKS 4
 
-// Constants / Hard-coded values for final comp
+// Hard-coded distances from the west for where each puck may sit in the construction plan.
 #define PUCK_RACK_0_WEST_DISTANCE 72
 #define PUCK_RACK_1_WEST_DISTANCE 66
 #define PUCK_RACK_2_WEST_DISTANCE 60
 #define PUCK_RACK_3_WEST_DISTANCE 54
 #define PUCK_RACK_4_WEST_DISTANCE 48
 
-// Colour Sensing Constants
-#define BLANK 0
-#define RED 1
-#define GREEN 2
-#define BLUE 3
 
 // Cardinal Directions. North faces the pucks from the home base
 #define NORTH 0
@@ -49,12 +46,6 @@
 #define HOME_EDGE_LENGTH 25
 #define CONSTRUCTION_EDGE_LENGTH 10
 
-// Assume block is square for prelim
-#define BLOCK_WEST_EDGE (ARENA_WIDTH - BLOCK_LENGTH) / 2
-#define BLOCK_EAST_EDGE (BLOCK_WEST_EDGE + BLOCK_LENGTH)
-#define BLOCK_NORTH_EDGE (BLOCK_SOUTH_EDGE + BLOCK_LENGTH)
-#define BLOCK_SOUTH_EDGE (ARENA_LENGTH - BLOCK_LENGTH) / 2
-
 #define HOME_BASE_NORTH_EDGE HOME_EDGE_LENGTH
 #define HOME_BASE_SOUTH_EDGE 0
 #define HOME_BASE_WEST_EDGE (ARENA_WIDTH - HOME_EDGE_LENGTH) / 2   // Measure arena to find this edge
@@ -64,6 +55,7 @@
 #define CONSTRUCTION_BASE_SOUTH_EDGE 0
 #define CONSTRUCTION_BASE_EAST_EDGE 20 // Measure arena to find this edge
 #define CONSTRUCTION_BASE_WEST_EDGE (CONSTRUCTION_BASE_EAST_EDGE + CONSTRUCTION_EDGE_LENGTH)
+
 
 // Robot Body Orientation Constants
 #define LEFT_SIDE 0
@@ -75,23 +67,20 @@
 #define SIDE_SENSORS_WIDTH 25
 
 // Miscellaneous Constants
-#define SAFETY_MARGIN 10
-#define WIDTH_SENSOR_TO_SENSOR 22
+#define SAFETY_MARGIN 10 // The margin we will enforce be kept around us clear at all times.
+#define WIDTH_SENSOR_TO_SENSOR 22 // The distance measured from the very outer edge of each side ultrasonic sensor.
 #define DISPLACE_DISTANCE_NW_PUCK_CHECK_CM 3
-#define BLOCK_TOLERANCE 10
-#define SIDE_SENSOR_OFFSET_FROM_BACK 15
-#define PUCK_TOLERANCE 15
+#define BLOCK_TOLERANCE 10 // Used for sweeping block location. This affects sensitivity in detecting block.
+#define SIDE_SENSOR_OFFSET_FROM_BACK 15 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
+#define PUCK_TOLERANCE 15 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 
-// 
 
-#define NW_PUCK_POSITION_FROM_WEST 49
-#define NW_PUCK_POSITION_FROM_NORTH 26
-
+// Variables to be shared / imported
 extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
 int driveStraightEnable;
 int currentPuckRackScanningIndex;
 int puckRackColours[5];
 int puckRackOffsetsFromWest[5];
 int sweeping;
-float block_location[4]; // WEST, EAST, SOUTH, NORTH
+float block_edge_location[4];
 float puckPileLocation;

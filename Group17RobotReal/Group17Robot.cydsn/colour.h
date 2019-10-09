@@ -12,6 +12,12 @@
 //#ifndef _COLOUR_H
 //#define _COLOUR_H
 
+// Colour Sensing Constants
+#define BLANK 0
+#define RED 1
+#define GREEN 2
+#define BLUE 3
+
 // * INSTANTIATING FUNCTIONS * //
 
 void RGB1Initialise(void);

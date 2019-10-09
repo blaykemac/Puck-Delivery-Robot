@@ -104,7 +104,7 @@ int state = STATE_SCAN_PLAN;
 int running = 1;
 
 int sweeping = 0;
-float block_location[4] = {0,0,0,0}; // WEST, EAST, SOUTH, NORTH (xmin,xmax,ymin,ymax)
+float block_edge_location[4] = {0,0,0,0}; // N E S W
 
 // Puck Construction Scanning
 int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
@@ -218,7 +218,7 @@ int main(void)
                      
         }
 
-    	while (state == STATE_LOCATE_BLOCK){
+    	if (state == STATE_LOCATE_BLOCK){
             
             // Finding where the boundaries of the block are
     		// Sweep across WEST to EAST until discrepancy
@@ -229,18 +229,32 @@ int main(void)
     		turnRight(180); // Now facing EAST wall
     		moveForwardIndefinitely(); // Do this until we get to EAST wall
             
+            
             // Will now know the boundaries of the block.
+            // Figure out direction we want to travel
+            
+            if (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN){
+                
+            }
+            
+            
 
 	}
         
         // Now we need to locate the pucks
  
-        while (state == STATE_FIND_PUCKS) {
+        if (state == STATE_FIND_PUCKS) {
             // We are at the EAST wall facing the EAST wall
             turnRight(180); // Now facing WEST at EAST wall
             moveForwardIndefinitely();
         }
 
+        if (state == STATE_GO_TO_PUCKS){
+            
+        }
+        
+        
+        
             // Sequence of movements required for picking up a puck
             driveStraightEnable = 1;
             
