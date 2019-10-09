@@ -16,20 +16,7 @@
 #include <string.h>
 #include <math.h>
 #include "ultrasonic.h"
-
-//Constants from main
-extern const short TRUE;
-extern const short FALSE;
-extern const int EAST_DIRECTION; //This is just to remind us that we have our east as zero and
-//angle increases counterclockwise (so toward the north of the arena will be 90)
-extern const float CM_PER_COUNT; //0.0175*1.06849 cm per encoder count
-extern const float DEGREES_PER_COUNT; //11.465 cm per deg*0.0187 cm per count (equal to CM_PER_COUNT)
-extern const short DRIFT_CORRECT_FREQ;
-extern const int DCMOTOR_PWM_PERIOD;
-extern const int DCMOTOR_IDEAL_DUTY_CYCLE;
-extern const int NUM_TO_PERCENT_CONVERTER;
-extern const short DRIFT_ADJUST_THRESHOLD; //If the timer counts discrepancy between the timers is greater than this, we adjust
-extern const int ENCODER_COUNTS_MAX; //The maximum number of counts the encoder can have
+#include "main.h"
 
 //global variable currentPosition and currentOrientation (in main). Declare as externs in 
 //dcmotor, I guess

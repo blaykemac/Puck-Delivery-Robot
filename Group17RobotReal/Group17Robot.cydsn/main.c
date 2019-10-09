@@ -24,22 +24,6 @@
 #include "dcmotor.h"
 #include "servo.h"
 
-
-//Constants in main for dcmotor function
-const short TRUE = 1;
-const short FALSE = 0;
-const int EAST_DIRECTION = 0; //This is just to remind us that we have our east as zero and
-//angle increases counterclockwise (so toward the north of the arena will be 90)
-const float CM_PER_COUNT = 0.0187; //0.0175*1.06849 cm per encoder count
-const float DEGREES_PER_COUNT = 0.105; //11.465 cm per deg*0.0187 cm per count (equal to CM_PER_COUNT)
-const short DRIFT_CORRECT_FREQ = 10;
-const int DCMOTOR_PWM_PERIOD = 300;
-const int DCMOTOR_IDEAL_DUTY_CYCLE = 80;
-const int NUM_TO_PERCENT_CONVERTER = 100;
-const short DRIFT_ADJUST_THRESHOLD = 5; //If the timer counts discrepancy between the timers is greater than this, we adjust
-const int ENCODER_COUNTS_MAX = 65500; //The maximum number of counts the encoder can have
-const int COLLISION_THRESHOLD = 5; //Distance in cm from any obstacle that we should stop
-
 //global variable currentPosition and currentOrientation (in main). Declare as externs in 
 //dcmotor, I guess
 float currentPosition[2] = {0,0};
