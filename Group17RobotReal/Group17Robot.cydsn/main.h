@@ -12,7 +12,25 @@
 // In case we change the number of ultrasonic sensors used
 #define TOTAL_SONIC_SENSORS 5
 
+<<<<<<< HEAD
 // Main states for overall navigation and motor control
+=======
+//Constants in main for dcmotor function
+#define TRUE 1
+#define FALSE 0
+#define EAST_DIRECTION 0 //This is just to remind us that we have our east as zero and
+//angle increases counterclockwise (so toward the north of the arena will be 90)
+#define CM_PER_COUNT 0.0187 //0.0175*1.06849 cm per encoder count
+#define DEGREES_PER_COUNT 0.105 //11.465 cm per deg*0.0187 cm per count (equal to CM_PER_COUNT)
+#define DRIFT_CORRECT_FREQ 10
+#define DCMOTOR_PWM_PERIOD 300
+#define DCMOTOR_IDEAL_DUTY_CYCLE 80
+#define NUM_TO_PERCENT_CONVERTER 100
+#define DRIFT_ADJUST_THRESHOLD 5 //If the timer counts discrepancy between the timers is greater than this, we adjust
+#define ENCODER_COUNTS_MAX 65500 //The maximum number of counts the encoder can have
+#define COLLISION_THRESHOLD 5 //Distance in cm from any obstacle that we should stop
+
+>>>>>>> 3ff4c21452c85d0585b97b153b2735bf98d38dd9
 #define STATE_FIND_PUCKS 1
 #define STATE_SCAN_PLAN 2
 #define STATE_LOCATE_BLOCK 3
