@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
   28:main.c        **** //dcmotor, I guess
   29:main.c        **** float currentPosition[2] = {0,0};
   30:main.c        **** float desiredPosition[2];
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 2
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 2
 
 
   31:main.c        **** int currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start fa
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
   47              		.thumb_func
   48              		.type	Encoder_Counts_2_IH, %function
   49              	Encoder_Counts_2_IH:
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 3
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 3
 
 
   50              	.LFB65:
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
   93              		.loc 1 76 0
   94 0012 FFF7FEFF 		bl	Motor_2_Encoder_Counts_ReadCounter
   95              	.LVL5:
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 4
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 4
 
 
   96 0016 034B     		ldr	r3, .L7+4
@@ -217,34 +217,40 @@ ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
   88:main.c        **** int running = 1;
   89:main.c        **** 
   90:main.c        **** int sweeping = 0;
-  91:main.c        **** float block_location[4] = {0,0,0,0}; // WEST, EAST, SOUTH, NORTH (xmin,xmax,ymin,ymax)
-  92:main.c        **** 
-  93:main.c        **** // Puck Construction Scanning
-  94:main.c        **** int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
-  95:main.c        **** int currentPuckRackScanningIndex = 0;
-  96:main.c        **** int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
-  97:main.c        ****                                 PUCK_RACK_1_WEST_DISTANCE,
-  98:main.c        ****                                 PUCK_RACK_2_WEST_DISTANCE,
-  99:main.c        ****                                 PUCK_RACK_3_WEST_DISTANCE,
- 100:main.c        ****                                 PUCK_RACK_4_WEST_DISTANCE };
- 101:main.c        **** 
- 102:main.c        **** 
- 103:main.c        **** // * INTERRUPT HANDLING * // 
- 104:main.c        **** CY_ISR(TIH)                             // Ultrasonic ISR Definition
- 105:main.c        **** {
- 118              		.loc 1 105 0
+  91:main.c        **** 
+  92:main.c        **** int pathToPucks;
+  93:main.c        **** int pathPastBlock;
+  94:main.c        **** 
+  95:main.c        **** float block_edge_location[4] = {0,0,0,0}; // N E S W
+  96:main.c        **** 
+  97:main.c        **** int currentPuckStackSize = 0;
+  98:main.c        **** 
+  99:main.c        **** // Puck Construction Scanning
+ 100:main.c        **** int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
+ 101:main.c        **** int currentPuckRackScanningIndex = 0;
+ 102:main.c        **** int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
+ 103:main.c        ****                                 PUCK_RACK_1_WEST_DISTANCE,
+ 104:main.c        ****                                 PUCK_RACK_2_WEST_DISTANCE,
+ 105:main.c        ****                                 PUCK_RACK_3_WEST_DISTANCE,
+ 106:main.c        ****                                 PUCK_RACK_4_WEST_DISTANCE };
+ 107:main.c        **** 
+ 108:main.c        **** 
+ 109:main.c        **** // * INTERRUPT HANDLING * // 
+ 110:main.c        **** CY_ISR(TIH)                             // Ultrasonic ISR Definition
+ 111:main.c        **** {
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 5
+
+
+ 118              		.loc 1 111 0
  119              		.cfi_startproc
  120              		@ args = 0, pretend = 0, frame = 0
  121              		@ frame_needed = 0, uses_anonymous_args = 0
  122 0000 08B5     		push	{r3, lr}
  123              		.cfi_def_cfa_offset 8
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 5
-
-
  124              		.cfi_offset 3, -8
  125              		.cfi_offset 14, -4
- 106:main.c        ****     ultrasonicInterruptHandler();
- 126              		.loc 1 106 0
+ 112:main.c        ****     ultrasonicInterruptHandler();
+ 126              		.loc 1 112 0
  127 0002 FFF7FEFF 		bl	ultrasonicInterruptHandler
  128              	.LVL7:
  129 0006 08BD     		pop	{r3, pc}
@@ -259,11 +265,11 @@ ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
  138              		.type	StartIH, %function
  139              	StartIH:
  140              	.LFB68:
- 107:main.c        **** }
- 108:main.c        **** 
- 109:main.c        **** CY_ISR(StartIH)                             // Ultrasonic ISR Definition
- 110:main.c        **** {
- 141              		.loc 1 110 0
+ 113:main.c        **** }
+ 114:main.c        **** 
+ 115:main.c        **** CY_ISR(StartIH)                             // Ultrasonic ISR Definition
+ 116:main.c        **** {
+ 141              		.loc 1 116 0
  142              		.cfi_startproc
  143              		@ args = 0, pretend = 0, frame = 0
  144              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -271,19 +277,19 @@ ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
  146              		.cfi_def_cfa_offset 8
  147              		.cfi_offset 3, -8
  148              		.cfi_offset 14, -4
- 111:main.c        ****     CyDelay(100);
- 149              		.loc 1 111 0
+ 117:main.c        ****     CyDelay(100);
+ 149              		.loc 1 117 0
  150 0002 6420     		movs	r0, #100
  151 0004 FFF7FEFF 		bl	CyDelay
  152              	.LVL8:
- 112:main.c        ****     
- 113:main.c        ****     beginNavigation = 1;
- 153              		.loc 1 113 0
+ 118:main.c        ****     
+ 119:main.c        ****     beginNavigation = 1;
+ 153              		.loc 1 119 0
  154 0008 0122     		movs	r2, #1
  155 000a 034B     		ldr	r3, .L13
  156 000c 1A60     		str	r2, [r3]
- 114:main.c        ****     colour_flag = 0; 
- 157              		.loc 1 114 0
+ 120:main.c        ****     colour_flag = 0; 
+ 157              		.loc 1 120 0
  158 000e 0022     		movs	r2, #0
  159 0010 024B     		ldr	r3, .L13+4
  160 0012 1A60     		str	r2, [r3]
@@ -292,2344 +298,2754 @@ ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 1
  163 0016 00BF     		.align	2
  164              	.L13:
  165 0018 00000000 		.word	.LANCHOR0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 6
+
+
  166 001c 00000000 		.word	.LANCHOR1
  167              		.cfi_endproc
  168              	.LFE68:
  169              		.size	StartIH, .-StartIH
- 170              		.section	.text.main,"ax",%progbits
- 171              		.align	2
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 6
+ 170              		.global	__aeabi_fcmpge
+ 171              		.section	.text.main,"ax",%progbits
+ 172              		.align	2
+ 173              		.global	main
+ 174              		.thumb
+ 175              		.thumb_func
+ 176              		.type	main, %function
+ 177              	main:
+ 178              	.LFB69:
+ 121:main.c        **** }
+ 122:main.c        ****                     
+ 123:main.c        **** int main(void)
+ 124:main.c        **** {
+ 179              		.loc 1 124 0
+ 180              		.cfi_startproc
+ 181              		@ args = 0, pretend = 0, frame = 0
+ 182              		@ frame_needed = 0, uses_anonymous_args = 0
+ 183 0000 10B5     		push	{r4, lr}
+ 184              		.cfi_def_cfa_offset 8
+ 185              		.cfi_offset 4, -8
+ 186              		.cfi_offset 14, -4
+ 125:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 187              		.loc 1 125 0
+ 188              		.syntax unified
+ 189              	@ 125 "main.c" 1
+ 190 0002 62B6     		CPSIE   i
+ 191              	@ 0 "" 2
+ 126:main.c        **** 
+ 127:main.c        ****     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+ 128:main.c        ****     TIA_1_Start();
+ 192              		.loc 1 128 0
+ 193              		.thumb
+ 194              		.syntax unified
+ 195 0004 FFF7FEFF 		bl	TIA_1_Start
+ 196              	.LVL9:
+ 129:main.c        ****     UART_1_Start();
+ 197              		.loc 1 129 0
+ 198 0008 FFF7FEFF 		bl	UART_1_Start
+ 199              	.LVL10:
+ 130:main.c        ****     UART_1_PutString("UART commencing... \n");
+ 200              		.loc 1 130 0
+ 201 000c 4E48     		ldr	r0, .L32
+ 202 000e FFF7FEFF 		bl	UART_1_PutString
+ 203              	.LVL11:
+ 131:main.c        ****     ADC_Start();
+ 204              		.loc 1 131 0
+ 205 0012 FFF7FEFF 		bl	ADC_Start
+ 206              	.LVL12:
+ 132:main.c        ****     IDAC8_1_Start();
+ 207              		.loc 1 132 0
+ 208 0016 FFF7FEFF 		bl	IDAC8_1_Start
+ 209              	.LVL13:
+ 133:main.c        ****     
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 7
 
 
- 172              		.global	main
- 173              		.thumb
- 174              		.thumb_func
- 175              		.type	main, %function
- 176              	main:
- 177              	.LFB69:
- 115:main.c        **** }
- 116:main.c        ****                     
- 117:main.c        **** int main(void)
- 118:main.c        **** {
- 178              		.loc 1 118 0
- 179              		.cfi_startproc
- 180              		@ args = 0, pretend = 0, frame = 0
- 181              		@ frame_needed = 0, uses_anonymous_args = 0
- 182 0000 10B5     		push	{r4, lr}
- 183              		.cfi_def_cfa_offset 8
- 184              		.cfi_offset 4, -8
- 185              		.cfi_offset 14, -4
- 119:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
- 186              		.loc 1 119 0
- 187              		.syntax unified
- 188              	@ 119 "main.c" 1
- 189 0002 62B6     		CPSIE   i
- 190              	@ 0 "" 2
- 120:main.c        **** 
- 121:main.c        ****     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
- 122:main.c        ****     TIA_1_Start();
- 191              		.loc 1 122 0
- 192              		.thumb
- 193              		.syntax unified
- 194 0004 FFF7FEFF 		bl	TIA_1_Start
- 195              	.LVL9:
- 123:main.c        ****     UART_1_Start();
- 196              		.loc 1 123 0
- 197 0008 FFF7FEFF 		bl	UART_1_Start
- 198              	.LVL10:
- 124:main.c        ****     UART_1_PutString("UART commencing... \n");
- 199              		.loc 1 124 0
- 200 000c 3D48     		ldr	r0, .L26
- 201 000e FFF7FEFF 		bl	UART_1_PutString
- 202              	.LVL11:
- 125:main.c        ****     ADC_Start();
- 203              		.loc 1 125 0
- 204 0012 FFF7FEFF 		bl	ADC_Start
- 205              	.LVL12:
- 126:main.c        ****     IDAC8_1_Start();
- 206              		.loc 1 126 0
- 207 0016 FFF7FEFF 		bl	IDAC8_1_Start
- 208              	.LVL13:
- 127:main.c        ****     
- 128:main.c        ****     // IDAC initialisation: 
- 129:main.c        ****     IDAC8_1_SetRange(IDAC8_1_RANGE_32uA);       // Sets the range between 0 and 32uA
- 209              		.loc 1 129 0
- 210 001a 0020     		movs	r0, #0
- 211 001c FFF7FEFF 		bl	IDAC8_1_SetRange
- 212              	.LVL14:
- 130:main.c        ****     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 7
+ 134:main.c        ****     // IDAC initialisation: 
+ 135:main.c        ****     IDAC8_1_SetRange(IDAC8_1_RANGE_32uA);       // Sets the range between 0 and 32uA
+ 210              		.loc 1 135 0
+ 211 001a 0020     		movs	r0, #0
+ 212 001c FFF7FEFF 		bl	IDAC8_1_SetRange
+ 213              	.LVL14:
+ 136:main.c        ****     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
+ 214              		.loc 1 136 0
+ 215 0020 4A4C     		ldr	r4, .L32+4
+ 216 0022 2079     		ldrb	r0, [r4, #4]	@ zero_extendqisi2
+ 217 0024 FFF7FEFF 		bl	IDAC8_1_SetValue
+ 218              	.LVL15:
+ 137:main.c        ****     
+ 138:main.c        ****     // Colour Sensing Initialisation:
+ 139:main.c        ****     PWM_colour_Start();                         // Starts the PWM
+ 219              		.loc 1 139 0
+ 220 0028 FFF7FEFF 		bl	PWM_colour_Start
+ 221              	.LVL16:
+ 140:main.c        ****     PWM_colour_Sleep();                         // Puts it to sleep until we need it
+ 222              		.loc 1 140 0
+ 223 002c FFF7FEFF 		bl	PWM_colour_Sleep
+ 224              	.LVL17:
+ 141:main.c        ****     //RGB1Initialise();                         // Initialise 2nd RGB
+ 142:main.c        ****     //RGB2Initialise();                         // Initialise 2nd RGB
+ 143:main.c        ****     ColourIntialiseViaHardware();               // Initialises via hardware 
+ 225              		.loc 1 143 0
+ 226 0030 FFF7FEFF 		bl	ColourIntialiseViaHardware
+ 227              	.LVL18:
+ 144:main.c        ****     
+ 145:main.c        ****     // Ultrasonic Initialisation: 
+ 146:main.c        ****     
+ 147:main.c        ****         
+ 148:main.c        ****     // Timer and ISR instantiation
+ 149:main.c        ****     Timer_1_Start();
+ 228              		.loc 1 149 0
+ 229 0034 FFF7FEFF 		bl	Timer_1_Start
+ 230              	.LVL19:
+ 150:main.c        ****     Timer_1_ReadStatusRegister();
+ 231              		.loc 1 150 0
+ 232 0038 FFF7FEFF 		bl	Timer_1_ReadStatusRegister
+ 233              	.LVL20:
+ 151:main.c        ****     Sonic_StartEx(TIH);
+ 234              		.loc 1 151 0
+ 235 003c 4448     		ldr	r0, .L32+8
+ 236 003e FFF7FEFF 		bl	Sonic_StartEx
+ 237              	.LVL21:
+ 152:main.c        ****     Start_StartEx(StartIH);
+ 238              		.loc 1 152 0
+ 239 0042 4448     		ldr	r0, .L32+12
+ 240 0044 FFF7FEFF 		bl	Start_StartEx
+ 241              	.LVL22:
+ 153:main.c        ****     beginNavigation = 0;
+ 242              		.loc 1 153 0
+ 243 0048 0023     		movs	r3, #0
+ 244 004a 2360     		str	r3, [r4]
+ 245              	.LVL23:
+ 154:main.c        ****     int tmp = 0;
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 8
 
 
- 213              		.loc 1 130 0
- 214 0020 394C     		ldr	r4, .L26+4
- 215 0022 2079     		ldrb	r0, [r4, #4]	@ zero_extendqisi2
- 216 0024 FFF7FEFF 		bl	IDAC8_1_SetValue
- 217              	.LVL15:
- 131:main.c        ****     
- 132:main.c        ****     // Colour Sensing Initialisation:
- 133:main.c        ****     PWM_colour_Start();                         // Starts the PWM
- 218              		.loc 1 133 0
- 219 0028 FFF7FEFF 		bl	PWM_colour_Start
- 220              	.LVL16:
- 134:main.c        ****     PWM_colour_Sleep();                         // Puts it to sleep until we need it
- 221              		.loc 1 134 0
- 222 002c FFF7FEFF 		bl	PWM_colour_Sleep
- 223              	.LVL17:
- 135:main.c        ****     //RGB1Initialise();                         // Initialise 2nd RGB
- 136:main.c        ****     //RGB2Initialise();                         // Initialise 2nd RGB
- 137:main.c        ****     ColourIntialiseViaHardware();               // Initialises via hardware 
- 224              		.loc 1 137 0
- 225 0030 FFF7FEFF 		bl	ColourIntialiseViaHardware
- 226              	.LVL18:
- 138:main.c        ****     
- 139:main.c        ****     // Ultrasonic Initialisation: 
- 140:main.c        ****     
- 141:main.c        ****         
- 142:main.c        ****     // Timer and ISR instantiation
- 143:main.c        ****     Timer_1_Start();
- 227              		.loc 1 143 0
- 228 0034 FFF7FEFF 		bl	Timer_1_Start
- 229              	.LVL19:
- 144:main.c        ****     Timer_1_ReadStatusRegister();
- 230              		.loc 1 144 0
- 231 0038 FFF7FEFF 		bl	Timer_1_ReadStatusRegister
- 232              	.LVL20:
- 145:main.c        ****     Sonic_StartEx(TIH);
- 233              		.loc 1 145 0
- 234 003c 3348     		ldr	r0, .L26+8
- 235 003e FFF7FEFF 		bl	Sonic_StartEx
- 236              	.LVL21:
- 146:main.c        ****     Start_StartEx(StartIH);
- 237              		.loc 1 146 0
- 238 0042 3348     		ldr	r0, .L26+12
- 239 0044 FFF7FEFF 		bl	Start_StartEx
- 240              	.LVL22:
- 147:main.c        ****     beginNavigation = 0;
- 241              		.loc 1 147 0
- 242 0048 0023     		movs	r3, #0
- 243 004a 2360     		str	r3, [r4]
- 244              	.LVL23:
- 148:main.c        ****     int tmp = 0;
- 149:main.c        ****     
- 150:main.c        ****     //Initialising DC motors
- 151:main.c        ****     Motor_1_driver_Start();
- 245              		.loc 1 151 0
- 246 004c FFF7FEFF 		bl	Motor_1_driver_Start
- 247              	.LVL24:
- 152:main.c        ****     Motor_2_driver_Start();
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 8
+ 155:main.c        ****     
+ 156:main.c        ****     //Initialising DC motors
+ 157:main.c        ****     Motor_1_driver_Start();
+ 246              		.loc 1 157 0
+ 247 004c FFF7FEFF 		bl	Motor_1_driver_Start
+ 248              	.LVL24:
+ 158:main.c        ****     Motor_2_driver_Start();
+ 249              		.loc 1 158 0
+ 250 0050 FFF7FEFF 		bl	Motor_2_driver_Start
+ 251              	.LVL25:
+ 159:main.c        ****     motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
+ 252              		.loc 1 159 0
+ 253 0054 0020     		movs	r0, #0
+ 254 0056 0346     		mov	r3, r0
+ 255 0058 0246     		mov	r2, r0
+ 256 005a 0146     		mov	r1, r0
+ 257 005c FFF7FEFF 		bl	motorDutyCycleUpdate
+ 258              	.LVL26:
+ 160:main.c        ****     
+ 161:main.c        ****     //Initialising counters
+ 162:main.c        ****     Motor_1_Encoder_Counts_Start();
+ 259              		.loc 1 162 0
+ 260 0060 FFF7FEFF 		bl	Motor_1_Encoder_Counts_Start
+ 261              	.LVL27:
+ 163:main.c        ****     Motor_2_Encoder_Counts_Start();
+ 262              		.loc 1 163 0
+ 263 0064 FFF7FEFF 		bl	Motor_2_Encoder_Counts_Start
+ 264              	.LVL28:
+ 164:main.c        ****     
+ 165:main.c        ****     //Initialising timers
+ 166:main.c        ****     Drift_Check_Timer_Start();
+ 265              		.loc 1 166 0
+ 266 0068 FFF7FEFF 		bl	Drift_Check_Timer_Start
+ 267              	.LVL29:
+ 167:main.c        ****     
+ 168:main.c        ****     //Starts and enables the interrupts for the motor encoder counts
+ 169:main.c        ****     Encoder_Counts_1_Interrupt_StartEx(Encoder_Counts_1_IH); 
+ 268              		.loc 1 169 0
+ 269 006c 3A48     		ldr	r0, .L32+16
+ 270 006e FFF7FEFF 		bl	Encoder_Counts_1_Interrupt_StartEx
+ 271              	.LVL30:
+ 170:main.c        ****     Encoder_Counts_2_Interrupt_StartEx(Encoder_Counts_2_IH);
+ 272              		.loc 1 170 0
+ 273 0072 3A48     		ldr	r0, .L32+20
+ 274 0074 FFF7FEFF 		bl	Encoder_Counts_2_Interrupt_StartEx
+ 275              	.LVL31:
+ 171:main.c        ****     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
+ 276              		.loc 1 171 0
+ 277 0078 3948     		ldr	r0, .L32+24
+ 278 007a FFF7FEFF 		bl	Drift_Check_Interrupt_StartEx
+ 279              	.LVL32:
+ 172:main.c        ****     
+ 173:main.c        ****     //Servos for the arm initialisation
+ 174:main.c        ****     //Gripper_Servo_PWM_WriteCompare(1250); //This is the closed gripper pos
+ 175:main.c        ****     //Rack_Servo_PWM_WriteCompare(1000); //This is the up arm pos
+ 176:main.c        ****    
+ 177:main.c        ****     Rack_Servo_PWM_Start();
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 9
 
 
- 248              		.loc 1 152 0
- 249 0050 FFF7FEFF 		bl	Motor_2_driver_Start
- 250              	.LVL25:
- 153:main.c        ****     motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
- 251              		.loc 1 153 0
- 252 0054 0020     		movs	r0, #0
- 253 0056 0346     		mov	r3, r0
- 254 0058 0246     		mov	r2, r0
- 255 005a 0146     		mov	r1, r0
- 256 005c FFF7FEFF 		bl	motorDutyCycleUpdate
- 257              	.LVL26:
- 154:main.c        ****     
- 155:main.c        ****     //Initialising counters
- 156:main.c        ****     Motor_1_Encoder_Counts_Start();
- 258              		.loc 1 156 0
- 259 0060 FFF7FEFF 		bl	Motor_1_Encoder_Counts_Start
- 260              	.LVL27:
- 157:main.c        ****     Motor_2_Encoder_Counts_Start();
- 261              		.loc 1 157 0
- 262 0064 FFF7FEFF 		bl	Motor_2_Encoder_Counts_Start
- 263              	.LVL28:
- 158:main.c        ****     
- 159:main.c        ****     //Initialising timers
- 160:main.c        ****     Drift_Check_Timer_Start();
- 264              		.loc 1 160 0
- 265 0068 FFF7FEFF 		bl	Drift_Check_Timer_Start
- 266              	.LVL29:
- 161:main.c        ****     
- 162:main.c        ****     //Starts and enables the interrupts for the motor encoder counts
- 163:main.c        ****     Encoder_Counts_1_Interrupt_StartEx(Encoder_Counts_1_IH); 
- 267              		.loc 1 163 0
- 268 006c 2948     		ldr	r0, .L26+16
- 269 006e FFF7FEFF 		bl	Encoder_Counts_1_Interrupt_StartEx
- 270              	.LVL30:
- 164:main.c        ****     Encoder_Counts_2_Interrupt_StartEx(Encoder_Counts_2_IH);
- 271              		.loc 1 164 0
- 272 0072 2948     		ldr	r0, .L26+20
- 273 0074 FFF7FEFF 		bl	Encoder_Counts_2_Interrupt_StartEx
- 274              	.LVL31:
- 165:main.c        ****     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
- 275              		.loc 1 165 0
- 276 0078 2848     		ldr	r0, .L26+24
- 277 007a FFF7FEFF 		bl	Drift_Check_Interrupt_StartEx
- 278              	.LVL32:
- 166:main.c        ****     
- 167:main.c        ****     //Servos for the arm initialisation
- 168:main.c        ****     //Gripper_Servo_PWM_WriteCompare(1250); //This is the closed gripper pos
- 169:main.c        ****     //Rack_Servo_PWM_WriteCompare(1000); //This is the up arm pos
- 170:main.c        ****    
- 171:main.c        ****     Rack_Servo_PWM_Start();
- 279              		.loc 1 171 0
- 280 007e FFF7FEFF 		bl	Rack_Servo_PWM_Start
- 281              	.LVL33:
- 172:main.c        ****     Gripper_Servo_PWM_Start();
- 282              		.loc 1 172 0
- 283 0082 FFF7FEFF 		bl	Gripper_Servo_PWM_Start
- 284              	.LVL34:
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 9
-
-
- 285 0086 10E0     		b	.L16
- 286              	.L20:
- 173:main.c        ****     
- 174:main.c        **** 
- 175:main.c        ****         
- 176:main.c        ****     for(;;)
- 177:main.c        ****     {   
- 178:main.c        ****         // Start button is pressed so quit sensing
- 179:main.c        **** 
- 180:main.c        ****         /*
- 181:main.c        ****         while (beginNavigation == 0) {
- 182:main.c        ****             distanceCheck();           
- 183:main.c        ****             UART_1_PutString("\n");
- 184:main.c        ****             CyDelay(1000); // Check distance once a second.
- 185:main.c        ****                 
- 186:main.c        ****         }
- 187:main.c        ****         
- 188:main.c        ****         */
- 189:main.c        ****         
- 190:main.c        ****         
- 191:main.c        ****         
- 192:main.c        ****         
- 193:main.c        ****         while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not bee
- 194:main.c        ****             if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
- 287              		.loc 1 194 0
- 288 0088 1F4B     		ldr	r3, .L26+4
- 289 008a 9B68     		ldr	r3, [r3, #8]
- 290 008c 13B9     		cbnz	r3, .L17
- 291              		.loc 1 194 0 is_stmt 0 discriminator 1
- 292 008e FFF7FEFF 		bl	moveBackwardIndefinitely
- 293              	.LVL35:
- 294 0092 01E0     		b	.L18
- 295              	.L17:
- 195:main.c        ****             else {moveForwardIndefinitely();}        
- 296              		.loc 1 195 0 is_stmt 1
- 297 0094 FFF7FEFF 		bl	moveForwardIndefinitely
- 298              	.LVL36:
- 299              	.L18:
- 196:main.c        ****             
- 197:main.c        ****             ColourSensingViaHardware();
- 300              		.loc 1 197 0
- 301 0098 FFF7FEFF 		bl	ColourSensingViaHardware
- 302              	.LVL37:
- 198:main.c        ****             // ColourOutput();
- 199:main.c        ****             // CyDelay(100);
+ 280              		.loc 1 177 0
+ 281 007e FFF7FEFF 		bl	Rack_Servo_PWM_Start
+ 282              	.LVL33:
+ 178:main.c        ****     Gripper_Servo_PWM_Start();
+ 283              		.loc 1 178 0
+ 284 0082 FFF7FEFF 		bl	Gripper_Servo_PWM_Start
+ 285              	.LVL34:
+ 286 0086 10E0     		b	.L16
+ 287              	.L20:
+ 179:main.c        ****     
+ 180:main.c        **** 
+ 181:main.c        ****         
+ 182:main.c        ****     for(;;)
+ 183:main.c        ****     {   
+ 184:main.c        ****         // Start button is pressed so quit sensing
+ 185:main.c        **** 
+ 186:main.c        ****         /*
+ 187:main.c        ****         while (beginNavigation == 0) {
+ 188:main.c        ****             distanceCheck();           
+ 189:main.c        ****             UART_1_PutString("\n");
+ 190:main.c        ****             CyDelay(1000); // Check distance once a second.
+ 191:main.c        ****                 
+ 192:main.c        ****         }
+ 193:main.c        ****         
+ 194:main.c        ****         */
+ 195:main.c        ****         
+ 196:main.c        **** 
+ 197:main.c        ****         while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not bee
+ 198:main.c        ****             if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
+ 288              		.loc 1 198 0
+ 289 0088 304B     		ldr	r3, .L32+4
+ 290 008a 9B68     		ldr	r3, [r3, #8]
+ 291 008c 13B9     		cbnz	r3, .L17
+ 292              		.loc 1 198 0 is_stmt 0 discriminator 1
+ 293 008e FFF7FEFF 		bl	moveBackwardIndefinitely
+ 294              	.LVL35:
+ 295 0092 01E0     		b	.L18
+ 296              	.L17:
+ 199:main.c        ****             else {moveForwardIndefinitely();}        
+ 297              		.loc 1 199 0 is_stmt 1
+ 298 0094 FFF7FEFF 		bl	moveForwardIndefinitely
+ 299              	.LVL36:
+ 300              	.L18:
  200:main.c        ****             
- 201:main.c        ****             if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK;}
- 303              		.loc 1 201 0
- 304 009c 1A4B     		ldr	r3, .L26+4
- 305 009e 9B68     		ldr	r3, [r3, #8]
- 306 00a0 042B     		cmp	r3, #4
- 307 00a2 02D1     		bne	.L16
- 308              		.loc 1 201 0 is_stmt 0 discriminator 1
- 309 00a4 0322     		movs	r2, #3
- 310 00a6 1E4B     		ldr	r3, .L26+28
- 311 00a8 5A60     		str	r2, [r3, #4]
- 312              	.L16:
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 10
+ 201:main.c        ****             ColourSensingViaHardware();
+ 301              		.loc 1 201 0
+ 302 0098 FFF7FEFF 		bl	ColourSensingViaHardware
+ 303              	.LVL37:
+ 202:main.c        ****             // ColourOutput();
+ 203:main.c        ****             // CyDelay(100);
+ 204:main.c        ****             
+ 205:main.c        ****             if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK;}
+ 304              		.loc 1 205 0
+ 305 009c 2B4B     		ldr	r3, .L32+4
+ 306 009e 9B68     		ldr	r3, [r3, #8]
+ 307 00a0 042B     		cmp	r3, #4
+ 308 00a2 02D1     		bne	.L16
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 10
 
 
- 193:main.c        ****             if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
- 313              		.loc 1 193 0 is_stmt 1
- 314 00aa 1D4B     		ldr	r3, .L26+28
- 315 00ac 5B68     		ldr	r3, [r3, #4]
- 316 00ae 022B     		cmp	r3, #2
- 317 00b0 07D1     		bne	.L21
- 318 00b2 E9E7     		b	.L20
- 319              	.L22:
- 202:main.c        ****                      
- 203:main.c        ****         }
- 204:main.c        **** 
- 205:main.c        ****     	while (state == STATE_LOCATE_BLOCK){
- 206:main.c        ****             
- 207:main.c        ****             // Finding where the boundaries of the block are
- 208:main.c        ****     		// Sweep across WEST to EAST until discrepancy
- 209:main.c        ****             // But first sense the construction plan and then drive to wall and turn around to prep
+ 309              		.loc 1 205 0 is_stmt 0 discriminator 1
+ 310 00a4 0322     		movs	r2, #3
+ 311 00a6 2F4B     		ldr	r3, .L32+28
+ 312 00a8 5A60     		str	r2, [r3, #4]
+ 313              	.L16:
+ 197:main.c        ****             if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
+ 314              		.loc 1 197 0 is_stmt 1
+ 315 00aa 2E4B     		ldr	r3, .L32+28
+ 316 00ac 5B68     		ldr	r3, [r3, #4]
+ 317 00ae 022B     		cmp	r3, #2
+ 318 00b0 EAD0     		beq	.L20
+ 206:main.c        ****                      
+ 207:main.c        ****         }
+ 208:main.c        **** 
+ 209:main.c        ****     	if (state == STATE_LOCATE_BLOCK){
+ 319              		.loc 1 209 0
+ 320 00b2 032B     		cmp	r3, #3
+ 321 00b4 14D1     		bne	.L21
  210:main.c        ****             
- 211:main.c        ****             
- 212:main.c        ****     		moveForwardIndefinitely();
- 320              		.loc 1 212 0
- 321 00b4 FFF7FEFF 		bl	moveForwardIndefinitely
- 322              	.LVL38:
- 213:main.c        ****     		turnRight(180); // Now facing EAST wall
- 323              		.loc 1 213 0
- 324 00b8 1A48     		ldr	r0, .L26+32
- 325 00ba FFF7FEFF 		bl	turnRight
- 326              	.LVL39:
- 214:main.c        ****     		moveForwardIndefinitely(); // Do this until we get to EAST wall
- 327              		.loc 1 214 0
- 328 00be FFF7FEFF 		bl	moveForwardIndefinitely
- 329              	.LVL40:
- 330              	.L21:
- 205:main.c        ****             
- 331              		.loc 1 205 0
- 332 00c2 174B     		ldr	r3, .L26+28
- 333 00c4 5B68     		ldr	r3, [r3, #4]
- 334 00c6 032B     		cmp	r3, #3
- 335 00c8 F4D0     		beq	.L22
- 336 00ca 04E0     		b	.L23
- 337              	.L24:
+ 211:main.c        ****             // Finding where the boundaries of the block are
+ 212:main.c        ****     		// Sweep across WEST to EAST until discrepancy
+ 213:main.c        ****             // But first sense the construction plan and then drive to wall and turn around to prep
+ 214:main.c        ****             
  215:main.c        ****             
- 216:main.c        ****             // Will now know the boundaries of the block.
- 217:main.c        **** 
- 218:main.c        **** 	}
- 219:main.c        ****         
- 220:main.c        ****         // Now we need to locate the pucks
- 221:main.c        ****  
- 222:main.c        ****         while (state == STATE_FIND_PUCKS) {
- 223:main.c        ****             // We are at the EAST wall facing the EAST wall
- 224:main.c        ****             turnRight(180); // Now facing WEST at EAST wall
- 338              		.loc 1 224 0
- 339 00cc 1548     		ldr	r0, .L26+32
- 340 00ce FFF7FEFF 		bl	turnRight
- 341              	.LVL41:
- 225:main.c        ****             moveForwardIndefinitely();
- 342              		.loc 1 225 0
- 343 00d2 FFF7FEFF 		bl	moveForwardIndefinitely
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 11
+ 216:main.c        ****     		moveForwardIndefinitely();
+ 322              		.loc 1 216 0
+ 323 00b6 FFF7FEFF 		bl	moveForwardIndefinitely
+ 324              	.LVL38:
+ 217:main.c        ****     		turnRight(180); // Now facing EAST wall
+ 325              		.loc 1 217 0
+ 326 00ba 2B48     		ldr	r0, .L32+32
+ 327 00bc FFF7FEFF 		bl	turnRight
+ 328              	.LVL39:
+ 218:main.c        ****     		moveForwardIndefinitely(); // Do this until we get to EAST wall
+ 329              		.loc 1 218 0
+ 330 00c0 FFF7FEFF 		bl	moveForwardIndefinitely
+ 331              	.LVL40:
+ 219:main.c        ****             
+ 220:main.c        ****             
+ 221:main.c        ****             // Will now know the boundaries of the block.
+ 222:main.c        ****             // Figure out direction we want to travel
+ 223:main.c        ****             
+ 224:main.c        ****             if (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN){
+ 332              		.loc 1 224 0
+ 333 00c4 4FF08441 		mov	r1, #1107296256
+ 334 00c8 204B     		ldr	r3, .L32+4
+ 335 00ca 9869     		ldr	r0, [r3, #24]	@ float
+ 336 00cc FFF7FEFF 		bl	__aeabi_fcmpge
+ 337              	.LVL41:
+ 338 00d0 18B1     		cbz	r0, .L30
+ 225:main.c        ****                 pathPastBlock = WEST;
+ 339              		.loc 1 225 0
+ 340 00d2 0322     		movs	r2, #3
+ 341 00d4 254B     		ldr	r3, .L32+36
+ 342 00d6 1A60     		str	r2, [r3]
+ 343 00d8 02E0     		b	.L21
+ 344              	.L30:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 11
 
 
- 344              	.LVL42:
- 345              	.L23:
- 222:main.c        ****             // We are at the EAST wall facing the EAST wall
- 346              		.loc 1 222 0
- 347 00d6 124B     		ldr	r3, .L26+28
- 348 00d8 5B68     		ldr	r3, [r3, #4]
- 349 00da 012B     		cmp	r3, #1
- 350 00dc F6D0     		beq	.L24
- 226:main.c        ****         }
- 227:main.c        **** 
- 228:main.c        ****             // Sequence of movements required for picking up a puck
- 229:main.c        ****             driveStraightEnable = 1;
- 351              		.loc 1 229 0
- 352 00de 0122     		movs	r2, #1
- 353 00e0 114B     		ldr	r3, .L26+36
- 354 00e2 1A60     		str	r2, [r3]
- 230:main.c        ****             
- 231:main.c        ****         //state = STATE_FORWARD_TO_PUCK; 
- 232:main.c        ****             
+ 226:main.c        ****             }
+ 227:main.c        ****             else {pathPastBlock = EAST;}
+ 345              		.loc 1 227 0
+ 346 00da 0122     		movs	r2, #1
+ 347 00dc 234B     		ldr	r3, .L32+36
+ 348 00de 1A60     		str	r2, [r3]
+ 349              	.L21:
+ 228:main.c        ****             
+ 229:main.c        ****             // Calculate puck position here too, then make a decision as to whether
+ 230:main.c        ****             // pathToPucks = ... ;
+ 231:main.c        **** 
+ 232:main.c        **** 	}
  233:main.c        ****         
- 234:main.c        ****         
- 235:main.c        ****             armDown();
- 355              		.loc 1 235 0
- 356 00e4 FFF7FEFF 		bl	armDown
- 357              	.LVL43:
- 236:main.c        ****             armOpen();
- 358              		.loc 1 236 0
- 359 00e8 FFF7FEFF 		bl	armOpen
- 360              	.LVL44:
- 237:main.c        ****             
- 238:main.c        ****             moveForwardIndefinitely();
- 361              		.loc 1 238 0
- 362 00ec FFF7FEFF 		bl	moveForwardIndefinitely
- 363              	.LVL45:
- 239:main.c        **** 
- 240:main.c        ****             moveForward(8);
- 364              		.loc 1 240 0
- 365 00f0 4FF08240 		mov	r0, #1090519040
- 366 00f4 FFF7FEFF 		bl	moveForward
- 367              	.LVL46:
- 241:main.c        ****             armClose();
- 368              		.loc 1 241 0
- 369 00f8 FFF7FEFF 		bl	armClose
- 370              	.LVL47:
- 242:main.c        ****             armUp();
- 371              		.loc 1 242 0
- 372 00fc FFF7FEFF 		bl	armUp
- 373              	.LVL48:
- 243:main.c        ****     
- 244:main.c        ****     }          
- 374              		.loc 1 244 0
- 375 0100 D3E7     		b	.L16
- 376              	.L27:
- 377 0102 00BF     		.align	2
- 378              	.L26:
- 379 0104 00000000 		.word	.LC0
- 380 0108 00000000 		.word	.LANCHOR0
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 12
-
-
- 381 010c 00000000 		.word	TIH
- 382 0110 00000000 		.word	StartIH
- 383 0114 00000000 		.word	Encoder_Counts_1_IH
- 384 0118 00000000 		.word	Encoder_Counts_2_IH
- 385 011c 00000000 		.word	Drift_Check_IH
- 386 0120 00000000 		.word	.LANCHOR1
- 387 0124 00003443 		.word	1127481344
- 388 0128 00000000 		.word	driveStraightEnable
- 389              		.cfi_endproc
- 390              	.LFE69:
- 391              		.size	main, .-main
- 392              		.global	running
- 393              		.global	state
- 394              		.global	beginNavigation
- 395              		.global	colour_flag
- 396              		.global	idac_value
- 397              		.comm	moveBackwardAllowed,2,2
- 398              		.comm	moveForwardAllowed,2,2
- 399              		.comm	moveRightAllowed,2,2
- 400              		.comm	moveLeftAllowed,2,2
- 401              		.global	turningRightFlag
- 402              		.global	turningLeftFlag
- 403              		.global	drivingBackwardFlag
- 404              		.global	drivingForwardFlag
- 405              		.global	moveNow
- 406              		.comm	motor2EncoderCounts,4,4
- 407              		.comm	motor1EncoderCounts,4,4
- 408              		.global	motor2Enable
- 409              		.global	motor1Enable
- 410              		.comm	M2_BD,4,4
- 411              		.comm	M2_FD,4,4
- 412              		.comm	M1_BD,4,4
- 413              		.comm	M1_FD,4,4
- 414              		.comm	desiredOrientation,4,4
- 415              		.global	currentOrientation
- 416              		.comm	desiredPosition,8,4
- 417              		.global	currentPosition
- 418              		.comm	puckPileLocation,4,4
- 419              		.global	block_location
- 420              		.global	sweeping
- 421              		.global	puckRackOffsetsFromWest
- 422              		.global	puckRackColours
- 423              		.global	currentPuckRackScanningIndex
- 424              		.comm	driveStraightEnable,4,4
- 425              		.data
- 426              		.align	2
- 427              		.set	.LANCHOR1,. + 0
- 428              		.type	colour_flag, %object
- 429              		.size	colour_flag, 4
- 430              	colour_flag:
- 431 0000 01000000 		.word	1
- 432              		.type	state, %object
- 433              		.size	state, 4
- 434              	state:
- 435 0004 02000000 		.word	2
- 436              		.type	running, %object
- 437              		.size	running, 4
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 13
-
-
- 438              	running:
- 439 0008 01000000 		.word	1
- 440              		.type	moveNow, %object
- 441              		.size	moveNow, 2
- 442              	moveNow:
- 443 000c 0100     		.short	1
- 444 000e 0000     		.space	2
- 445              		.type	currentOrientation, %object
- 446              		.size	currentOrientation, 4
- 447              	currentOrientation:
- 448 0010 5A000000 		.word	90
- 449              		.type	puckRackOffsetsFromWest, %object
- 450              		.size	puckRackOffsetsFromWest, 20
- 451              	puckRackOffsetsFromWest:
- 452 0014 48000000 		.word	72
- 453 0018 42000000 		.word	66
- 454 001c 3C000000 		.word	60
- 455 0020 36000000 		.word	54
- 456 0024 30000000 		.word	48
- 457              		.section	.rodata.str1.4,"aMS",%progbits,1
- 458              		.align	2
- 459              	.LC0:
- 460 0000 55415254 		.ascii	"UART commencing... \012\000"
- 460      20636F6D 
- 460      6D656E63 
- 460      696E672E 
- 460      2E2E200A 
- 461              		.bss
- 462              		.align	2
- 463              		.set	.LANCHOR0,. + 0
- 464              		.type	beginNavigation, %object
- 465              		.size	beginNavigation, 4
- 466              	beginNavigation:
- 467 0000 00000000 		.space	4
- 468              		.type	idac_value, %object
- 469              		.size	idac_value, 4
- 470              	idac_value:
- 471 0004 00000000 		.space	4
- 472              		.type	currentPuckRackScanningIndex, %object
- 473              		.size	currentPuckRackScanningIndex, 4
- 474              	currentPuckRackScanningIndex:
- 475 0008 00000000 		.space	4
- 476              		.type	turningRightFlag, %object
- 477              		.size	turningRightFlag, 2
- 478              	turningRightFlag:
- 479 000c 0000     		.space	2
- 480              		.type	turningLeftFlag, %object
- 481              		.size	turningLeftFlag, 2
- 482              	turningLeftFlag:
- 483 000e 0000     		.space	2
- 484              		.type	drivingBackwardFlag, %object
- 485              		.size	drivingBackwardFlag, 2
- 486              	drivingBackwardFlag:
- 487 0010 0000     		.space	2
- 488              		.type	drivingForwardFlag, %object
- 489              		.size	drivingForwardFlag, 2
- 490              	drivingForwardFlag:
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 14
-
-
- 491 0012 0000     		.space	2
- 492              		.type	motor2Enable, %object
- 493              		.size	motor2Enable, 2
- 494              	motor2Enable:
- 495 0014 0000     		.space	2
- 496              		.type	motor1Enable, %object
- 497              		.size	motor1Enable, 2
- 498              	motor1Enable:
- 499 0016 0000     		.space	2
- 500              		.type	currentPosition, %object
- 501              		.size	currentPosition, 8
- 502              	currentPosition:
- 503 0018 00000000 		.space	8
- 503      00000000 
- 504              		.type	block_location, %object
- 505              		.size	block_location, 16
- 506              	block_location:
- 507 0020 00000000 		.space	16
- 507      00000000 
- 507      00000000 
- 507      00000000 
- 508              		.type	sweeping, %object
- 509              		.size	sweeping, 4
- 510              	sweeping:
- 511 0030 00000000 		.space	4
- 512              		.type	puckRackColours, %object
- 513              		.size	puckRackColours, 20
- 514              	puckRackColours:
- 515 0034 00000000 		.space	20
- 515      00000000 
- 515      00000000 
- 515      00000000 
- 515      00000000 
- 516              		.text
- 517              	.Letext0:
- 518              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 519              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 520              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
- 521              		.file 5 "ultrasonic.h"
- 522              		.file 6 "main.h"
- 523              		.file 7 "dcmotor.h"
- 524              		.file 8 "Generated_Source\\PSoC5/Drift_Check_Timer.h"
- 525              		.file 9 "Generated_Source\\PSoC5/Motor_1_Encoder_Counts.h"
- 526              		.file 10 "Generated_Source\\PSoC5/Motor_2_Encoder_Counts.h"
- 527              		.file 11 "Generated_Source\\PSoC5/CyLib.h"
- 528              		.file 12 "Generated_Source\\PSoC5/TIA_1.h"
- 529              		.file 13 "Generated_Source\\PSoC5/UART_1.h"
- 530              		.file 14 "Generated_Source\\PSoC5/ADC.h"
- 531              		.file 15 "Generated_Source\\PSoC5/IDAC8_1.h"
- 532              		.file 16 "Generated_Source\\PSoC5/PWM_colour.h"
- 533              		.file 17 "colour.h"
- 534              		.file 18 "Generated_Source\\PSoC5/Timer_1.h"
- 535              		.file 19 "Generated_Source\\PSoC5/Sonic.h"
- 536              		.file 20 "Generated_Source\\PSoC5/Start.h"
- 537              		.file 21 "Generated_Source\\PSoC5/Motor_1_driver.h"
- 538              		.file 22 "Generated_Source\\PSoC5/Motor_2_driver.h"
- 539              		.file 23 "Generated_Source\\PSoC5/Encoder_Counts_1_Interrupt.h"
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 15
-
-
- 540              		.file 24 "Generated_Source\\PSoC5/Encoder_Counts_2_Interrupt.h"
- 541              		.file 25 "Generated_Source\\PSoC5/Drift_Check_Interrupt.h"
- 542              		.file 26 "Generated_Source\\PSoC5/Rack_Servo_PWM.h"
- 543              		.file 27 "Generated_Source\\PSoC5/Gripper_Servo_PWM.h"
- 544              		.file 28 "servo.h"
- 545              		.section	.debug_info,"",%progbits
- 546              	.Ldebug_info0:
- 547 0000 95070000 		.4byte	0x795
- 548 0004 0400     		.2byte	0x4
- 549 0006 00000000 		.4byte	.Ldebug_abbrev0
- 550 000a 04       		.byte	0x4
- 551 000b 01       		.uleb128 0x1
- 552 000c 60060000 		.4byte	.LASF97
- 553 0010 0C       		.byte	0xc
- 554 0011 65050000 		.4byte	.LASF98
- 555 0015 D1000000 		.4byte	.LASF99
- 556 0019 00000000 		.4byte	.Ldebug_ranges0+0
- 557 001d 00000000 		.4byte	0
- 558 0021 00000000 		.4byte	.Ldebug_line0
- 559 0025 02       		.uleb128 0x2
- 560 0026 01       		.byte	0x1
- 561 0027 06       		.byte	0x6
- 562 0028 48000000 		.4byte	.LASF0
- 563 002c 02       		.uleb128 0x2
- 564 002d 01       		.byte	0x1
- 565 002e 08       		.byte	0x8
- 566 002f 0C040000 		.4byte	.LASF1
- 567 0033 02       		.uleb128 0x2
- 568 0034 02       		.byte	0x2
- 569 0035 05       		.byte	0x5
- 570 0036 6C000000 		.4byte	.LASF2
- 571 003a 02       		.uleb128 0x2
- 572 003b 02       		.byte	0x2
- 573 003c 07       		.byte	0x7
- 574 003d CD040000 		.4byte	.LASF3
- 575 0041 03       		.uleb128 0x3
- 576 0042 FF050000 		.4byte	.LASF9
- 577 0046 02       		.byte	0x2
- 578 0047 3F       		.byte	0x3f
- 579 0048 4C000000 		.4byte	0x4c
- 580 004c 02       		.uleb128 0x2
- 581 004d 04       		.byte	0x4
- 582 004e 05       		.byte	0x5
- 583 004f 4A030000 		.4byte	.LASF4
- 584 0053 02       		.uleb128 0x2
- 585 0054 04       		.byte	0x4
- 586 0055 07       		.byte	0x7
- 587 0056 6C050000 		.4byte	.LASF5
- 588 005a 02       		.uleb128 0x2
- 589 005b 08       		.byte	0x8
- 590 005c 05       		.byte	0x5
- 591 005d F1020000 		.4byte	.LASF6
- 592 0061 02       		.uleb128 0x2
- 593 0062 08       		.byte	0x8
- 594 0063 07       		.byte	0x7
- 595 0064 33040000 		.4byte	.LASF7
- 596 0068 04       		.uleb128 0x4
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 16
-
-
- 597 0069 04       		.byte	0x4
- 598 006a 05       		.byte	0x5
- 599 006b 696E7400 		.ascii	"int\000"
- 600 006f 02       		.uleb128 0x2
- 601 0070 04       		.byte	0x4
- 602 0071 07       		.byte	0x7
- 603 0072 5E040000 		.4byte	.LASF8
- 604 0076 03       		.uleb128 0x3
- 605 0077 00050000 		.4byte	.LASF10
- 606 007b 03       		.byte	0x3
- 607 007c 2C       		.byte	0x2c
- 608 007d 41000000 		.4byte	0x41
- 609 0081 02       		.uleb128 0x2
- 610 0082 04       		.byte	0x4
- 611 0083 04       		.byte	0x4
- 612 0084 CE020000 		.4byte	.LASF11
- 613 0088 02       		.uleb128 0x2
- 614 0089 08       		.byte	0x8
- 615 008a 04       		.byte	0x4
- 616 008b 8C050000 		.4byte	.LASF12
- 617 008f 02       		.uleb128 0x2
- 618 0090 01       		.byte	0x1
- 619 0091 08       		.byte	0x8
- 620 0092 F5040000 		.4byte	.LASF13
- 621 0096 02       		.uleb128 0x2
- 622 0097 08       		.byte	0x8
- 623 0098 04       		.byte	0x4
- 624 0099 00040000 		.4byte	.LASF14
- 625 009d 02       		.uleb128 0x2
- 626 009e 04       		.byte	0x4
- 627 009f 07       		.byte	0x7
- 628 00a0 33060000 		.4byte	.LASF15
- 629 00a4 05       		.uleb128 0x5
- 630 00a5 A4050000 		.4byte	.LASF16
- 631 00a9 01       		.byte	0x1
- 632 00aa 40       		.byte	0x40
- 633 00ab 00000000 		.4byte	.LFB64
- 634 00af 08000000 		.4byte	.LFE64-.LFB64
- 635 00b3 01       		.uleb128 0x1
- 636 00b4 9C       		.byte	0x9c
- 637 00b5 C3000000 		.4byte	0xc3
- 638 00b9 06       		.uleb128 0x6
- 639 00ba 06000000 		.4byte	.LVL0
- 640 00be BF050000 		.4byte	0x5bf
- 641 00c2 00       		.byte	0
- 642 00c3 05       		.uleb128 0x5
- 643 00c4 34000000 		.4byte	.LASF17
- 644 00c8 01       		.byte	0x1
- 645 00c9 44       		.byte	0x44
- 646 00ca 00000000 		.4byte	.LFB65
- 647 00ce 08000000 		.4byte	.LFE65-.LFB65
- 648 00d2 01       		.uleb128 0x1
- 649 00d3 9C       		.byte	0x9c
- 650 00d4 E2000000 		.4byte	0xe2
- 651 00d8 06       		.uleb128 0x6
- 652 00d9 06000000 		.4byte	.LVL1
- 653 00dd CA050000 		.4byte	0x5ca
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 17
-
-
- 654 00e1 00       		.byte	0
- 655 00e2 05       		.uleb128 0x5
- 656 00e3 CB050000 		.4byte	.LASF18
- 657 00e7 01       		.byte	0x1
- 658 00e8 48       		.byte	0x48
- 659 00e9 00000000 		.4byte	.LFB66
- 660 00ed 28000000 		.4byte	.LFE66-.LFB66
- 661 00f1 01       		.uleb128 0x1
- 662 00f2 9C       		.byte	0x9c
- 663 00f3 25010000 		.4byte	0x125
- 664 00f7 06       		.uleb128 0x6
- 665 00f8 06000000 		.4byte	.LVL2
- 666 00fc D5050000 		.4byte	0x5d5
- 667 0100 06       		.uleb128 0x6
- 668 0101 0A000000 		.4byte	.LVL3
- 669 0105 E0050000 		.4byte	0x5e0
- 670 0109 06       		.uleb128 0x6
- 671 010a 0E000000 		.4byte	.LVL4
- 672 010e EB050000 		.4byte	0x5eb
- 673 0112 06       		.uleb128 0x6
- 674 0113 16000000 		.4byte	.LVL5
- 675 0117 F6050000 		.4byte	0x5f6
- 676 011b 06       		.uleb128 0x6
- 677 011c 1E000000 		.4byte	.LVL6
- 678 0120 01060000 		.4byte	0x601
- 679 0124 00       		.byte	0
- 680 0125 07       		.uleb128 0x7
- 681 0126 54494800 		.ascii	"TIH\000"
- 682 012a 01       		.byte	0x1
- 683 012b 68       		.byte	0x68
- 684 012c 00000000 		.4byte	.LFB67
- 685 0130 08000000 		.4byte	.LFE67-.LFB67
- 686 0134 01       		.uleb128 0x1
- 687 0135 9C       		.byte	0x9c
- 688 0136 44010000 		.4byte	0x144
- 689 013a 06       		.uleb128 0x6
- 690 013b 06000000 		.4byte	.LVL7
- 691 013f 0C060000 		.4byte	0x60c
- 692 0143 00       		.byte	0
- 693 0144 05       		.uleb128 0x5
- 694 0145 9E010000 		.4byte	.LASF19
- 695 0149 01       		.byte	0x1
- 696 014a 6D       		.byte	0x6d
- 697 014b 00000000 		.4byte	.LFB68
- 698 014f 20000000 		.4byte	.LFE68-.LFB68
- 699 0153 01       		.uleb128 0x1
- 700 0154 9C       		.byte	0x9c
- 701 0155 6A010000 		.4byte	0x16a
- 702 0159 08       		.uleb128 0x8
- 703 015a 08000000 		.4byte	.LVL8
- 704 015e 17060000 		.4byte	0x617
- 705 0162 09       		.uleb128 0x9
- 706 0163 01       		.uleb128 0x1
- 707 0164 50       		.byte	0x50
- 708 0165 02       		.uleb128 0x2
- 709 0166 08       		.byte	0x8
- 710 0167 64       		.byte	0x64
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 18
-
-
- 711 0168 00       		.byte	0
- 712 0169 00       		.byte	0
- 713 016a 0A       		.uleb128 0xa
- 714 016b 99010000 		.4byte	.LASF100
- 715 016f 01       		.byte	0x1
- 716 0170 75       		.byte	0x75
- 717 0171 68000000 		.4byte	0x68
- 718 0175 00000000 		.4byte	.LFB69
- 719 0179 2C010000 		.4byte	.LFE69-.LFB69
- 720 017d 01       		.uleb128 0x1
- 721 017e 9C       		.byte	0x9c
- 722 017f 4D030000 		.4byte	0x34d
- 723 0183 0B       		.uleb128 0xb
- 724 0184 746D7000 		.ascii	"tmp\000"
- 725 0188 01       		.byte	0x1
- 726 0189 94       		.byte	0x94
- 727 018a 68000000 		.4byte	0x68
- 728 018e 00       		.byte	0
- 729 018f 06       		.uleb128 0x6
- 730 0190 08000000 		.4byte	.LVL9
- 731 0194 22060000 		.4byte	0x622
- 732 0198 06       		.uleb128 0x6
- 733 0199 0C000000 		.4byte	.LVL10
- 734 019d 2D060000 		.4byte	0x62d
- 735 01a1 0C       		.uleb128 0xc
- 736 01a2 12000000 		.4byte	.LVL11
- 737 01a6 38060000 		.4byte	0x638
- 738 01aa B8010000 		.4byte	0x1b8
- 739 01ae 09       		.uleb128 0x9
- 740 01af 01       		.uleb128 0x1
- 741 01b0 50       		.byte	0x50
- 742 01b1 05       		.uleb128 0x5
- 743 01b2 03       		.byte	0x3
- 744 01b3 00000000 		.4byte	.LC0
- 745 01b7 00       		.byte	0
- 746 01b8 06       		.uleb128 0x6
- 747 01b9 16000000 		.4byte	.LVL12
- 748 01bd 43060000 		.4byte	0x643
- 749 01c1 06       		.uleb128 0x6
- 750 01c2 1A000000 		.4byte	.LVL13
- 751 01c6 4E060000 		.4byte	0x64e
- 752 01ca 0C       		.uleb128 0xc
- 753 01cb 20000000 		.4byte	.LVL14
- 754 01cf 59060000 		.4byte	0x659
- 755 01d3 DD010000 		.4byte	0x1dd
- 756 01d7 09       		.uleb128 0x9
- 757 01d8 01       		.uleb128 0x1
- 758 01d9 50       		.byte	0x50
- 759 01da 01       		.uleb128 0x1
- 760 01db 30       		.byte	0x30
- 761 01dc 00       		.byte	0
- 762 01dd 06       		.uleb128 0x6
- 763 01de 28000000 		.4byte	.LVL15
- 764 01e2 64060000 		.4byte	0x664
- 765 01e6 06       		.uleb128 0x6
- 766 01e7 2C000000 		.4byte	.LVL16
- 767 01eb 6F060000 		.4byte	0x66f
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 19
-
-
- 768 01ef 06       		.uleb128 0x6
- 769 01f0 30000000 		.4byte	.LVL17
- 770 01f4 7A060000 		.4byte	0x67a
- 771 01f8 06       		.uleb128 0x6
- 772 01f9 34000000 		.4byte	.LVL18
- 773 01fd 85060000 		.4byte	0x685
- 774 0201 06       		.uleb128 0x6
- 775 0202 38000000 		.4byte	.LVL19
- 776 0206 90060000 		.4byte	0x690
- 777 020a 06       		.uleb128 0x6
- 778 020b 3C000000 		.4byte	.LVL20
- 779 020f 9B060000 		.4byte	0x69b
- 780 0213 0C       		.uleb128 0xc
- 781 0214 42000000 		.4byte	.LVL21
- 782 0218 A6060000 		.4byte	0x6a6
- 783 021c 2A020000 		.4byte	0x22a
- 784 0220 09       		.uleb128 0x9
- 785 0221 01       		.uleb128 0x1
- 786 0222 50       		.byte	0x50
- 787 0223 05       		.uleb128 0x5
- 788 0224 03       		.byte	0x3
- 789 0225 00000000 		.4byte	TIH
- 790 0229 00       		.byte	0
- 791 022a 0C       		.uleb128 0xc
- 792 022b 48000000 		.4byte	.LVL22
- 793 022f B1060000 		.4byte	0x6b1
- 794 0233 41020000 		.4byte	0x241
- 795 0237 09       		.uleb128 0x9
- 796 0238 01       		.uleb128 0x1
- 797 0239 50       		.byte	0x50
- 798 023a 05       		.uleb128 0x5
- 799 023b 03       		.byte	0x3
- 800 023c 00000000 		.4byte	StartIH
- 801 0240 00       		.byte	0
- 802 0241 06       		.uleb128 0x6
- 803 0242 50000000 		.4byte	.LVL24
- 804 0246 BC060000 		.4byte	0x6bc
- 805 024a 06       		.uleb128 0x6
- 806 024b 54000000 		.4byte	.LVL25
- 807 024f C7060000 		.4byte	0x6c7
- 808 0253 06       		.uleb128 0x6
- 809 0254 60000000 		.4byte	.LVL26
- 810 0258 D2060000 		.4byte	0x6d2
- 811 025c 06       		.uleb128 0x6
- 812 025d 64000000 		.4byte	.LVL27
- 813 0261 DD060000 		.4byte	0x6dd
- 814 0265 06       		.uleb128 0x6
- 815 0266 68000000 		.4byte	.LVL28
- 816 026a E8060000 		.4byte	0x6e8
- 817 026e 06       		.uleb128 0x6
- 818 026f 6C000000 		.4byte	.LVL29
- 819 0273 F3060000 		.4byte	0x6f3
- 820 0277 0C       		.uleb128 0xc
- 821 0278 72000000 		.4byte	.LVL30
- 822 027c FE060000 		.4byte	0x6fe
- 823 0280 8E020000 		.4byte	0x28e
- 824 0284 09       		.uleb128 0x9
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 20
-
-
- 825 0285 01       		.uleb128 0x1
- 826 0286 50       		.byte	0x50
- 827 0287 05       		.uleb128 0x5
- 828 0288 03       		.byte	0x3
- 829 0289 00000000 		.4byte	Encoder_Counts_1_IH
- 830 028d 00       		.byte	0
- 831 028e 0C       		.uleb128 0xc
- 832 028f 78000000 		.4byte	.LVL31
- 833 0293 09070000 		.4byte	0x709
- 834 0297 A5020000 		.4byte	0x2a5
- 835 029b 09       		.uleb128 0x9
- 836 029c 01       		.uleb128 0x1
- 837 029d 50       		.byte	0x50
- 838 029e 05       		.uleb128 0x5
- 839 029f 03       		.byte	0x3
- 840 02a0 00000000 		.4byte	Encoder_Counts_2_IH
- 841 02a4 00       		.byte	0
- 842 02a5 0C       		.uleb128 0xc
- 843 02a6 7E000000 		.4byte	.LVL32
- 844 02aa 14070000 		.4byte	0x714
- 845 02ae BC020000 		.4byte	0x2bc
- 846 02b2 09       		.uleb128 0x9
- 847 02b3 01       		.uleb128 0x1
- 848 02b4 50       		.byte	0x50
- 849 02b5 05       		.uleb128 0x5
- 850 02b6 03       		.byte	0x3
- 851 02b7 00000000 		.4byte	Drift_Check_IH
- 852 02bb 00       		.byte	0
- 853 02bc 06       		.uleb128 0x6
- 854 02bd 82000000 		.4byte	.LVL33
- 855 02c1 1F070000 		.4byte	0x71f
- 856 02c5 06       		.uleb128 0x6
- 857 02c6 86000000 		.4byte	.LVL34
- 858 02ca 2A070000 		.4byte	0x72a
- 859 02ce 06       		.uleb128 0x6
- 860 02cf 92000000 		.4byte	.LVL35
- 861 02d3 35070000 		.4byte	0x735
- 862 02d7 06       		.uleb128 0x6
- 863 02d8 98000000 		.4byte	.LVL36
- 864 02dc 40070000 		.4byte	0x740
- 865 02e0 06       		.uleb128 0x6
- 866 02e1 9C000000 		.4byte	.LVL37
- 867 02e5 4B070000 		.4byte	0x74b
- 868 02e9 06       		.uleb128 0x6
- 869 02ea B8000000 		.4byte	.LVL38
- 870 02ee 40070000 		.4byte	0x740
- 871 02f2 06       		.uleb128 0x6
- 872 02f3 BE000000 		.4byte	.LVL39
- 873 02f7 56070000 		.4byte	0x756
- 874 02fb 06       		.uleb128 0x6
- 875 02fc C2000000 		.4byte	.LVL40
- 876 0300 40070000 		.4byte	0x740
- 877 0304 06       		.uleb128 0x6
- 878 0305 D2000000 		.4byte	.LVL41
- 879 0309 56070000 		.4byte	0x756
- 880 030d 06       		.uleb128 0x6
- 881 030e D6000000 		.4byte	.LVL42
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 21
-
-
- 882 0312 40070000 		.4byte	0x740
- 883 0316 06       		.uleb128 0x6
- 884 0317 E8000000 		.4byte	.LVL43
- 885 031b 61070000 		.4byte	0x761
- 886 031f 06       		.uleb128 0x6
- 887 0320 EC000000 		.4byte	.LVL44
- 888 0324 6C070000 		.4byte	0x76c
- 889 0328 06       		.uleb128 0x6
- 890 0329 F0000000 		.4byte	.LVL45
- 891 032d 40070000 		.4byte	0x740
- 892 0331 06       		.uleb128 0x6
- 893 0332 F8000000 		.4byte	.LVL46
- 894 0336 77070000 		.4byte	0x777
- 895 033a 06       		.uleb128 0x6
- 896 033b FC000000 		.4byte	.LVL47
- 897 033f 82070000 		.4byte	0x782
- 898 0343 06       		.uleb128 0x6
- 899 0344 00010000 		.4byte	.LVL48
- 900 0348 8D070000 		.4byte	0x78d
- 901 034c 00       		.byte	0
- 902 034d 0D       		.uleb128 0xd
- 903 034e 53060000 		.4byte	.LASF20
- 904 0352 04       		.byte	0x4
- 905 0353 1207     		.2byte	0x712
- 906 0355 59030000 		.4byte	0x359
- 907 0359 0E       		.uleb128 0xe
- 908 035a 76000000 		.4byte	0x76
- 909 035e 0F       		.uleb128 0xf
- 910 035f 08050000 		.4byte	.LASF21
- 911 0363 05       		.byte	0x5
- 912 0364 20       		.byte	0x20
- 913 0365 68000000 		.4byte	0x68
- 914 0369 05       		.uleb128 0x5
- 915 036a 03       		.byte	0x3
- 916 036b 00000000 		.4byte	driveStraightEnable
- 917 036f 0F       		.uleb128 0xf
- 918 0370 B3030000 		.4byte	.LASF22
- 919 0374 01       		.byte	0x1
- 920 0375 5F       		.byte	0x5f
- 921 0376 68000000 		.4byte	0x68
- 922 037a 05       		.uleb128 0x5
- 923 037b 03       		.byte	0x3
- 924 037c 00000000 		.4byte	currentPuckRackScanningIndex
- 925 0380 10       		.uleb128 0x10
- 926 0381 68000000 		.4byte	0x68
- 927 0385 90030000 		.4byte	0x390
- 928 0389 11       		.uleb128 0x11
- 929 038a 9D000000 		.4byte	0x9d
- 930 038e 04       		.byte	0x4
- 931 038f 00       		.byte	0
- 932 0390 0F       		.uleb128 0xf
- 933 0391 09060000 		.4byte	.LASF23
- 934 0395 01       		.byte	0x1
- 935 0396 5E       		.byte	0x5e
- 936 0397 80030000 		.4byte	0x380
- 937 039b 05       		.uleb128 0x5
- 938 039c 03       		.byte	0x3
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 22
-
-
- 939 039d 00000000 		.4byte	puckRackColours
- 940 03a1 0F       		.uleb128 0xf
- 941 03a2 6E010000 		.4byte	.LASF24
- 942 03a6 01       		.byte	0x1
- 943 03a7 60       		.byte	0x60
- 944 03a8 80030000 		.4byte	0x380
- 945 03ac 05       		.uleb128 0x5
- 946 03ad 03       		.byte	0x3
- 947 03ae 00000000 		.4byte	puckRackOffsetsFromWest
- 948 03b2 0F       		.uleb128 0xf
- 949 03b3 EC040000 		.4byte	.LASF25
- 950 03b7 01       		.byte	0x1
- 951 03b8 5A       		.byte	0x5a
- 952 03b9 68000000 		.4byte	0x68
- 953 03bd 05       		.uleb128 0x5
- 954 03be 03       		.byte	0x3
- 955 03bf 00000000 		.4byte	sweeping
- 956 03c3 10       		.uleb128 0x10
- 957 03c4 81000000 		.4byte	0x81
- 958 03c8 D3030000 		.4byte	0x3d3
- 959 03cc 11       		.uleb128 0x11
- 960 03cd 9D000000 		.4byte	0x9d
- 961 03d1 03       		.byte	0x3
- 962 03d2 00       		.byte	0
- 963 03d3 0F       		.uleb128 0xf
- 964 03d4 6F020000 		.4byte	.LASF26
- 965 03d8 01       		.byte	0x1
- 966 03d9 5B       		.byte	0x5b
- 967 03da C3030000 		.4byte	0x3c3
- 968 03de 05       		.uleb128 0x5
- 969 03df 03       		.byte	0x3
- 970 03e0 00000000 		.4byte	block_location
- 971 03e4 0F       		.uleb128 0xf
- 972 03e5 A2030000 		.4byte	.LASF27
- 973 03e9 06       		.byte	0x6
- 974 03ea 6F       		.byte	0x6f
- 975 03eb 81000000 		.4byte	0x81
- 976 03ef 05       		.uleb128 0x5
- 977 03f0 03       		.byte	0x3
- 978 03f1 00000000 		.4byte	puckPileLocation
- 979 03f5 0F       		.uleb128 0xf
- 980 03f6 B8050000 		.4byte	.LASF28
- 981 03fa 01       		.byte	0x1
- 982 03fb 56       		.byte	0x56
- 983 03fc 68000000 		.4byte	0x68
- 984 0400 05       		.uleb128 0x5
- 985 0401 03       		.byte	0x3
- 986 0402 00000000 		.4byte	state
- 987 0406 10       		.uleb128 0x10
- 988 0407 81000000 		.4byte	0x81
- 989 040b 16040000 		.4byte	0x416
- 990 040f 11       		.uleb128 0x11
- 991 0410 9D000000 		.4byte	0x9d
- 992 0414 01       		.byte	0x1
- 993 0415 00       		.byte	0
- 994 0416 0F       		.uleb128 0xf
- 995 0417 8A000000 		.4byte	.LASF29
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 23
-
-
- 996 041b 01       		.byte	0x1
- 997 041c 1D       		.byte	0x1d
- 998 041d 06040000 		.4byte	0x406
- 999 0421 05       		.uleb128 0x5
- 1000 0422 03       		.byte	0x3
- 1001 0423 00000000 		.4byte	currentPosition
- 1002 0427 0F       		.uleb128 0xf
- 1003 0428 3E050000 		.4byte	.LASF30
- 1004 042c 01       		.byte	0x1
- 1005 042d 1E       		.byte	0x1e
- 1006 042e 06040000 		.4byte	0x406
- 1007 0432 05       		.uleb128 0x5
- 1008 0433 03       		.byte	0x3
- 1009 0434 00000000 		.4byte	desiredPosition
- 1010 0438 0F       		.uleb128 0xf
- 1011 0439 A7040000 		.4byte	.LASF31
- 1012 043d 01       		.byte	0x1
- 1013 043e 1F       		.byte	0x1f
- 1014 043f 68000000 		.4byte	0x68
- 1015 0443 05       		.uleb128 0x5
- 1016 0444 03       		.byte	0x3
- 1017 0445 00000000 		.4byte	currentOrientation
- 1018 0449 0F       		.uleb128 0xf
- 1019 044a 86010000 		.4byte	.LASF32
- 1020 044e 01       		.byte	0x1
- 1021 044f 20       		.byte	0x20
- 1022 0450 68000000 		.4byte	0x68
- 1023 0454 05       		.uleb128 0x5
- 1024 0455 03       		.byte	0x3
- 1025 0456 00000000 		.4byte	desiredOrientation
- 1026 045a 0F       		.uleb128 0xf
- 1027 045b 4E050000 		.4byte	.LASF33
- 1028 045f 01       		.byte	0x1
- 1029 0460 27       		.byte	0x27
- 1030 0461 68000000 		.4byte	0x68
- 1031 0465 05       		.uleb128 0x5
- 1032 0466 03       		.byte	0x3
- 1033 0467 00000000 		.4byte	M1_FD
- 1034 046b 0F       		.uleb128 0xf
- 1035 046c FA040000 		.4byte	.LASF34
- 1036 0470 01       		.byte	0x1
- 1037 0471 28       		.byte	0x28
- 1038 0472 68000000 		.4byte	0x68
- 1039 0476 05       		.uleb128 0x5
- 1040 0477 03       		.byte	0x3
- 1041 0478 00000000 		.4byte	M1_BD
- 1042 047c 0F       		.uleb128 0xf
- 1043 047d 3B070000 		.4byte	.LASF35
- 1044 0481 01       		.byte	0x1
- 1045 0482 29       		.byte	0x29
- 1046 0483 68000000 		.4byte	0x68
- 1047 0487 05       		.uleb128 0x5
- 1048 0488 03       		.byte	0x3
- 1049 0489 00000000 		.4byte	M2_FD
- 1050 048d 0F       		.uleb128 0xf
- 1051 048e 4D060000 		.4byte	.LASF36
- 1052 0492 01       		.byte	0x1
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 24
-
-
- 1053 0493 2A       		.byte	0x2a
- 1054 0494 68000000 		.4byte	0x68
- 1055 0498 05       		.uleb128 0x5
- 1056 0499 03       		.byte	0x3
- 1057 049a 00000000 		.4byte	M2_BD
- 1058 049e 0F       		.uleb128 0xf
- 1059 049f 62020000 		.4byte	.LASF37
- 1060 04a3 01       		.byte	0x1
- 1061 04a4 25       		.byte	0x25
- 1062 04a5 33000000 		.4byte	0x33
- 1063 04a9 05       		.uleb128 0x5
- 1064 04aa 03       		.byte	0x3
- 1065 04ab 00000000 		.4byte	motor1Enable
- 1066 04af 0F       		.uleb128 0xf
- 1067 04b0 BE050000 		.4byte	.LASF38
- 1068 04b4 01       		.byte	0x1
- 1069 04b5 26       		.byte	0x26
- 1070 04b6 33000000 		.4byte	0x33
- 1071 04ba 05       		.uleb128 0x5
- 1072 04bb 03       		.byte	0x3
- 1073 04bc 00000000 		.4byte	motor2Enable
- 1074 04c0 0F       		.uleb128 0xf
- 1075 04c1 5A010000 		.4byte	.LASF39
- 1076 04c5 01       		.byte	0x1
- 1077 04c6 2B       		.byte	0x2b
- 1078 04c7 68000000 		.4byte	0x68
- 1079 04cb 05       		.uleb128 0x5
- 1080 04cc 03       		.byte	0x3
- 1081 04cd 00000000 		.4byte	motor1EncoderCounts
- 1082 04d1 0F       		.uleb128 0xf
- 1083 04d2 00000000 		.4byte	.LASF40
- 1084 04d6 01       		.byte	0x1
- 1085 04d7 2C       		.byte	0x2c
- 1086 04d8 68000000 		.4byte	0x68
- 1087 04dc 05       		.uleb128 0x5
- 1088 04dd 03       		.byte	0x3
- 1089 04de 00000000 		.4byte	motor2EncoderCounts
- 1090 04e2 0F       		.uleb128 0xf
- 1091 04e3 2B040000 		.4byte	.LASF41
- 1092 04e7 01       		.byte	0x1
- 1093 04e8 2D       		.byte	0x2d
- 1094 04e9 33000000 		.4byte	0x33
- 1095 04ed 05       		.uleb128 0x5
- 1096 04ee 03       		.byte	0x3
- 1097 04ef 00000000 		.4byte	moveNow
- 1098 04f3 0F       		.uleb128 0xf
- 1099 04f4 A8000000 		.4byte	.LASF42
- 1100 04f8 01       		.byte	0x1
- 1101 04f9 34       		.byte	0x34
- 1102 04fa 33000000 		.4byte	0x33
- 1103 04fe 05       		.uleb128 0x5
- 1104 04ff 03       		.byte	0x3
- 1105 0500 00000000 		.4byte	drivingForwardFlag
- 1106 0504 0F       		.uleb128 0xf
- 1107 0505 8E030000 		.4byte	.LASF43
- 1108 0509 01       		.byte	0x1
- 1109 050a 35       		.byte	0x35
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 25
-
-
- 1110 050b 33000000 		.4byte	0x33
- 1111 050f 05       		.uleb128 0x5
- 1112 0510 03       		.byte	0x3
- 1113 0511 00000000 		.4byte	drivingBackwardFlag
- 1114 0515 0F       		.uleb128 0xf
- 1115 0516 5C000000 		.4byte	.LASF44
- 1116 051a 01       		.byte	0x1
- 1117 051b 36       		.byte	0x36
- 1118 051c 33000000 		.4byte	0x33
- 1119 0520 05       		.uleb128 0x5
- 1120 0521 03       		.byte	0x3
- 1121 0522 00000000 		.4byte	turningLeftFlag
- 1122 0526 0F       		.uleb128 0xf
- 1123 0527 BD020000 		.4byte	.LASF45
- 1124 052b 01       		.byte	0x1
- 1125 052c 37       		.byte	0x37
- 1126 052d 33000000 		.4byte	0x33
- 1127 0531 05       		.uleb128 0x5
- 1128 0532 03       		.byte	0x3
- 1129 0533 00000000 		.4byte	turningRightFlag
- 1130 0537 0F       		.uleb128 0xf
- 1131 0538 19060000 		.4byte	.LASF46
- 1132 053c 01       		.byte	0x1
- 1133 053d 3A       		.byte	0x3a
- 1134 053e 33000000 		.4byte	0x33
- 1135 0542 05       		.uleb128 0x5
- 1136 0543 03       		.byte	0x3
- 1137 0544 00000000 		.4byte	moveLeftAllowed
- 1138 0548 0F       		.uleb128 0xf
- 1139 0549 3C060000 		.4byte	.LASF47
- 1140 054d 01       		.byte	0x1
- 1141 054e 3B       		.byte	0x3b
- 1142 054f 33000000 		.4byte	0x33
- 1143 0553 05       		.uleb128 0x5
- 1144 0554 03       		.byte	0x3
- 1145 0555 00000000 		.4byte	moveRightAllowed
- 1146 0559 0F       		.uleb128 0xf
- 1147 055a BA040000 		.4byte	.LASF48
- 1148 055e 01       		.byte	0x1
- 1149 055f 3C       		.byte	0x3c
- 1150 0560 33000000 		.4byte	0x33
- 1151 0564 05       		.uleb128 0x5
- 1152 0565 03       		.byte	0x3
- 1153 0566 00000000 		.4byte	moveForwardAllowed
- 1154 056a 0F       		.uleb128 0xf
- 1155 056b 4A040000 		.4byte	.LASF49
- 1156 056f 01       		.byte	0x1
- 1157 0570 3D       		.byte	0x3d
- 1158 0571 33000000 		.4byte	0x33
- 1159 0575 05       		.uleb128 0x5
- 1160 0576 03       		.byte	0x3
- 1161 0577 00000000 		.4byte	moveBackwardAllowed
- 1162 057b 0F       		.uleb128 0xf
- 1163 057c 6B040000 		.4byte	.LASF50
- 1164 0580 01       		.byte	0x1
- 1165 0581 51       		.byte	0x51
- 1166 0582 68000000 		.4byte	0x68
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 26
-
-
- 1167 0586 05       		.uleb128 0x5
- 1168 0587 03       		.byte	0x3
- 1169 0588 00000000 		.4byte	idac_value
- 1170 058c 0F       		.uleb128 0xf
- 1171 058d F4030000 		.4byte	.LASF51
- 1172 0591 01       		.byte	0x1
- 1173 0592 52       		.byte	0x52
- 1174 0593 68000000 		.4byte	0x68
- 1175 0597 05       		.uleb128 0x5
- 1176 0598 03       		.byte	0x3
- 1177 0599 00000000 		.4byte	colour_flag
- 1178 059d 0F       		.uleb128 0xf
- 1179 059e C1000000 		.4byte	.LASF52
- 1180 05a2 01       		.byte	0x1
- 1181 05a3 54       		.byte	0x54
- 1182 05a4 68000000 		.4byte	0x68
- 1183 05a8 05       		.uleb128 0x5
- 1184 05a9 03       		.byte	0x3
- 1185 05aa 00000000 		.4byte	beginNavigation
- 1186 05ae 0F       		.uleb128 0xf
- 1187 05af 5A020000 		.4byte	.LASF53
- 1188 05b3 01       		.byte	0x1
- 1189 05b4 58       		.byte	0x58
- 1190 05b5 68000000 		.4byte	0x68
- 1191 05b9 05       		.uleb128 0x5
- 1192 05ba 03       		.byte	0x3
- 1193 05bb 00000000 		.4byte	running
- 1194 05bf 12       		.uleb128 0x12
- 1195 05c0 1C050000 		.4byte	.LASF54
- 1196 05c4 1C050000 		.4byte	.LASF54
- 1197 05c8 07       		.byte	0x7
- 1198 05c9 1C       		.byte	0x1c
- 1199 05ca 12       		.uleb128 0x12
- 1200 05cb 76000000 		.4byte	.LASF55
- 1201 05cf 76000000 		.4byte	.LASF55
- 1202 05d3 07       		.byte	0x7
- 1203 05d4 1D       		.byte	0x1d
- 1204 05d5 12       		.uleb128 0x12
- 1205 05d6 DA050000 		.4byte	.LASF56
- 1206 05da DA050000 		.4byte	.LASF56
- 1207 05de 08       		.byte	0x8
- 1208 05df 5E       		.byte	0x5e
- 1209 05e0 12       		.uleb128 0x12
- 1210 05e1 D0030000 		.4byte	.LASF57
- 1211 05e5 D0030000 		.4byte	.LASF57
- 1212 05e9 08       		.byte	0x8
- 1213 05ea 5B       		.byte	0x5b
- 1214 05eb 12       		.uleb128 0x12
- 1215 05ec 59070000 		.4byte	.LASF58
- 1216 05f0 59070000 		.4byte	.LASF58
- 1217 05f4 09       		.byte	0x9
- 1218 05f5 5D       		.byte	0x5d
- 1219 05f6 12       		.uleb128 0x12
- 1220 05f7 76040000 		.4byte	.LASF59
- 1221 05fb 76040000 		.4byte	.LASF59
- 1222 05ff 0A       		.byte	0xa
- 1223 0600 5D       		.byte	0x5d
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 27
-
-
- 1224 0601 12       		.uleb128 0x12
- 1225 0602 C3010000 		.4byte	.LASF60
- 1226 0606 C3010000 		.4byte	.LASF60
- 1227 060a 07       		.byte	0x7
- 1228 060b 11       		.byte	0x11
- 1229 060c 12       		.uleb128 0x12
- 1230 060d A2020000 		.4byte	.LASF61
- 1231 0611 A2020000 		.4byte	.LASF61
- 1232 0615 05       		.byte	0x5
- 1233 0616 1B       		.byte	0x1b
- 1234 0617 12       		.uleb128 0x12
- 1235 0618 EE060000 		.4byte	.LASF62
- 1236 061c EE060000 		.4byte	.LASF62
- 1237 0620 0B       		.byte	0xb
- 1238 0621 76       		.byte	0x76
- 1239 0622 12       		.uleb128 0x12
- 1240 0623 E0040000 		.4byte	.LASF63
- 1241 0627 E0040000 		.4byte	.LASF63
- 1242 062b 0C       		.byte	0xc
- 1243 062c 3D       		.byte	0x3d
- 1244 062d 12       		.uleb128 0x12
- 1245 062e E7030000 		.4byte	.LASF64
- 1246 0632 E7030000 		.4byte	.LASF64
- 1247 0636 0D       		.byte	0xd
- 1248 0637 54       		.byte	0x54
- 1249 0638 12       		.uleb128 0x12
- 1250 0639 93050000 		.4byte	.LASF65
- 1251 063d 93050000 		.4byte	.LASF65
- 1252 0641 0D       		.byte	0xd
- 1253 0642 8B       		.byte	0x8b
- 1254 0643 12       		.uleb128 0x12
- 1255 0644 40030000 		.4byte	.LASF66
- 1256 0648 40030000 		.4byte	.LASF66
- 1257 064c 0E       		.byte	0xe
- 1258 064d 3A       		.byte	0x3a
- 1259 064e 12       		.uleb128 0x12
- 1260 064f 99040000 		.4byte	.LASF67
- 1261 0653 99040000 		.4byte	.LASF67
- 1262 0657 0F       		.byte	0xf
- 1263 0658 3C       		.byte	0x3c
- 1264 0659 12       		.uleb128 0x12
- 1265 065a 1A040000 		.4byte	.LASF68
- 1266 065e 1A040000 		.4byte	.LASF68
- 1267 0662 0F       		.byte	0xf
- 1268 0663 40       		.byte	0x40
- 1269 0664 12       		.uleb128 0x12
- 1270 0665 54050000 		.4byte	.LASF69
- 1271 0669 54050000 		.4byte	.LASF69
- 1272 066d 0F       		.byte	0xf
- 1273 066e 41       		.byte	0x41
- 1274 066f 12       		.uleb128 0x12
- 1275 0670 7D030000 		.4byte	.LASF70
- 1276 0674 7D030000 		.4byte	.LASF70
- 1277 0678 10       		.byte	0x10
- 1278 0679 92       		.byte	0x92
- 1279 067a 12       		.uleb128 0x12
- 1280 067b 53030000 		.4byte	.LASF71
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 28
-
-
- 1281 067f 53030000 		.4byte	.LASF71
- 1282 0683 10       		.byte	0x10
- 1283 0684 DC       		.byte	0xdc
- 1284 0685 12       		.uleb128 0x12
- 1285 0686 F6060000 		.4byte	.LASF72
- 1286 068a F6060000 		.4byte	.LASF72
- 1287 068e 11       		.byte	0x11
- 1288 068f 1C       		.byte	0x1c
- 1289 0690 12       		.uleb128 0x12
- 1290 0691 30050000 		.4byte	.LASF73
- 1291 0695 30050000 		.4byte	.LASF73
- 1292 0699 12       		.byte	0x12
- 1293 069a 5A       		.byte	0x5a
- 1294 069b 12       		.uleb128 0x12
- 1295 069c D0010000 		.4byte	.LASF74
- 1296 06a0 D0010000 		.4byte	.LASF74
- 1297 06a4 12       		.byte	0x12
- 1298 06a5 5E       		.byte	0x5e
- 1299 06a6 12       		.uleb128 0x12
- 1300 06a7 9A000000 		.4byte	.LASF75
- 1301 06ab 9A000000 		.4byte	.LASF75
- 1302 06af 13       		.byte	0x13
- 1303 06b0 18       		.byte	0x18
- 1304 06b1 12       		.uleb128 0x12
- 1305 06b2 7E050000 		.4byte	.LASF76
- 1306 06b6 7E050000 		.4byte	.LASF76
- 1307 06ba 14       		.byte	0x14
- 1308 06bb 18       		.byte	0x18
- 1309 06bc 12       		.uleb128 0x12
- 1310 06bd 11070000 		.4byte	.LASF77
- 1311 06c1 11070000 		.4byte	.LASF77
- 1312 06c5 15       		.byte	0x15
- 1313 06c6 92       		.byte	0x92
- 1314 06c7 12       		.uleb128 0x12
- 1315 06c8 26070000 		.4byte	.LASF78
- 1316 06cc 26070000 		.4byte	.LASF78
- 1317 06d0 16       		.byte	0x16
- 1318 06d1 92       		.byte	0x92
- 1319 06d2 12       		.uleb128 0x12
- 1320 06d3 2B030000 		.4byte	.LASF79
- 1321 06d7 2B030000 		.4byte	.LASF79
- 1322 06db 07       		.byte	0x7
- 1323 06dc 10       		.byte	0x10
- 1324 06dd 12       		.uleb128 0x12
- 1325 06de A6010000 		.4byte	.LASF80
- 1326 06e2 A6010000 		.4byte	.LASF80
- 1327 06e6 09       		.byte	0x9
- 1328 06e7 4F       		.byte	0x4f
- 1329 06e8 12       		.uleb128 0x12
- 1330 06e9 D4020000 		.4byte	.LASF81
- 1331 06ed D4020000 		.4byte	.LASF81
- 1332 06f1 0A       		.byte	0xa
- 1333 06f2 4F       		.byte	0x4f
- 1334 06f3 12       		.uleb128 0x12
- 1335 06f4 41070000 		.4byte	.LASF82
- 1336 06f8 41070000 		.4byte	.LASF82
- 1337 06fc 08       		.byte	0x8
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 29
-
-
- 1338 06fd 5A       		.byte	0x5a
- 1339 06fe 12       		.uleb128 0x12
- 1340 06ff 00020000 		.4byte	.LASF83
- 1341 0703 00020000 		.4byte	.LASF83
- 1342 0707 17       		.byte	0x17
- 1343 0708 18       		.byte	0x18
- 1344 0709 12       		.uleb128 0x12
- 1345 070a FF020000 		.4byte	.LASF84
- 1346 070e FF020000 		.4byte	.LASF84
- 1347 0712 18       		.byte	0x18
- 1348 0713 18       		.byte	0x18
- 1349 0714 12       		.uleb128 0x12
- 1350 0715 23020000 		.4byte	.LASF85
- 1351 0719 23020000 		.4byte	.LASF85
- 1352 071d 19       		.byte	0x19
- 1353 071e 18       		.byte	0x18
- 1354 071f 12       		.uleb128 0x12
- 1355 0720 EB010000 		.4byte	.LASF86
- 1356 0724 EB010000 		.4byte	.LASF86
- 1357 0728 1A       		.byte	0x1a
- 1358 0729 92       		.byte	0x92
- 1359 072a 12       		.uleb128 0x12
- 1360 072b 7E020000 		.4byte	.LASF87
- 1361 072f 7E020000 		.4byte	.LASF87
- 1362 0733 1B       		.byte	0x1b
- 1363 0734 92       		.byte	0x92
- 1364 0735 12       		.uleb128 0x12
- 1365 0736 64030000 		.4byte	.LASF88
- 1366 073a 64030000 		.4byte	.LASF88
- 1367 073e 07       		.byte	0x7
- 1368 073f 16       		.byte	0x16
- 1369 0740 12       		.uleb128 0x12
- 1370 0741 1C000000 		.4byte	.LASF89
- 1371 0745 1C000000 		.4byte	.LASF89
- 1372 0749 07       		.byte	0x7
- 1373 074a 14       		.byte	0x14
- 1374 074b 12       		.uleb128 0x12
- 1375 074c 41020000 		.4byte	.LASF90
- 1376 0750 41020000 		.4byte	.LASF90
- 1377 0754 11       		.byte	0x11
- 1378 0755 1D       		.byte	0x1d
- 1379 0756 12       		.uleb128 0x12
- 1380 0757 29060000 		.4byte	.LASF91
- 1381 075b 29060000 		.4byte	.LASF91
- 1382 075f 07       		.byte	0x7
- 1383 0760 18       		.byte	0x18
- 1384 0761 12       		.uleb128 0x12
- 1385 0762 54000000 		.4byte	.LASF92
- 1386 0766 54000000 		.4byte	.LASF92
- 1387 076a 1C       		.byte	0x1c
- 1388 076b 0F       		.byte	0xf
- 1389 076c 12       		.uleb128 0x12
- 1390 076d 14000000 		.4byte	.LASF93
- 1391 0771 14000000 		.4byte	.LASF93
- 1392 0775 1C       		.byte	0x1c
- 1393 0776 0E       		.byte	0xe
- 1394 0777 12       		.uleb128 0x12
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 30
-
-
- 1395 0778 96020000 		.4byte	.LASF94
- 1396 077c 96020000 		.4byte	.LASF94
- 1397 0780 07       		.byte	0x7
- 1398 0781 13       		.byte	0x13
- 1399 0782 12       		.uleb128 0x12
- 1400 0783 22030000 		.4byte	.LASF95
- 1401 0787 22030000 		.4byte	.LASF95
- 1402 078b 1C       		.byte	0x1c
- 1403 078c 0D       		.byte	0xd
- 1404 078d 12       		.uleb128 0x12
- 1405 078e BB000000 		.4byte	.LASF96
- 1406 0792 BB000000 		.4byte	.LASF96
- 1407 0796 1C       		.byte	0x1c
- 1408 0797 0C       		.byte	0xc
- 1409 0798 00       		.byte	0
- 1410              		.section	.debug_abbrev,"",%progbits
- 1411              	.Ldebug_abbrev0:
- 1412 0000 01       		.uleb128 0x1
- 1413 0001 11       		.uleb128 0x11
- 1414 0002 01       		.byte	0x1
- 1415 0003 25       		.uleb128 0x25
- 1416 0004 0E       		.uleb128 0xe
- 1417 0005 13       		.uleb128 0x13
- 1418 0006 0B       		.uleb128 0xb
- 1419 0007 03       		.uleb128 0x3
- 1420 0008 0E       		.uleb128 0xe
- 1421 0009 1B       		.uleb128 0x1b
- 1422 000a 0E       		.uleb128 0xe
- 1423 000b 55       		.uleb128 0x55
- 1424 000c 17       		.uleb128 0x17
- 1425 000d 11       		.uleb128 0x11
- 1426 000e 01       		.uleb128 0x1
- 1427 000f 10       		.uleb128 0x10
- 1428 0010 17       		.uleb128 0x17
- 1429 0011 00       		.byte	0
- 1430 0012 00       		.byte	0
- 1431 0013 02       		.uleb128 0x2
- 1432 0014 24       		.uleb128 0x24
- 1433 0015 00       		.byte	0
- 1434 0016 0B       		.uleb128 0xb
- 1435 0017 0B       		.uleb128 0xb
- 1436 0018 3E       		.uleb128 0x3e
- 1437 0019 0B       		.uleb128 0xb
- 1438 001a 03       		.uleb128 0x3
- 1439 001b 0E       		.uleb128 0xe
- 1440 001c 00       		.byte	0
- 1441 001d 00       		.byte	0
- 1442 001e 03       		.uleb128 0x3
- 1443 001f 16       		.uleb128 0x16
- 1444 0020 00       		.byte	0
- 1445 0021 03       		.uleb128 0x3
- 1446 0022 0E       		.uleb128 0xe
- 1447 0023 3A       		.uleb128 0x3a
- 1448 0024 0B       		.uleb128 0xb
- 1449 0025 3B       		.uleb128 0x3b
- 1450 0026 0B       		.uleb128 0xb
- 1451 0027 49       		.uleb128 0x49
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 31
-
-
- 1452 0028 13       		.uleb128 0x13
- 1453 0029 00       		.byte	0
- 1454 002a 00       		.byte	0
- 1455 002b 04       		.uleb128 0x4
- 1456 002c 24       		.uleb128 0x24
- 1457 002d 00       		.byte	0
- 1458 002e 0B       		.uleb128 0xb
- 1459 002f 0B       		.uleb128 0xb
- 1460 0030 3E       		.uleb128 0x3e
- 1461 0031 0B       		.uleb128 0xb
- 1462 0032 03       		.uleb128 0x3
- 1463 0033 08       		.uleb128 0x8
- 1464 0034 00       		.byte	0
- 1465 0035 00       		.byte	0
- 1466 0036 05       		.uleb128 0x5
- 1467 0037 2E       		.uleb128 0x2e
- 1468 0038 01       		.byte	0x1
- 1469 0039 3F       		.uleb128 0x3f
- 1470 003a 19       		.uleb128 0x19
- 1471 003b 03       		.uleb128 0x3
- 1472 003c 0E       		.uleb128 0xe
- 1473 003d 3A       		.uleb128 0x3a
- 1474 003e 0B       		.uleb128 0xb
- 1475 003f 3B       		.uleb128 0x3b
- 1476 0040 0B       		.uleb128 0xb
- 1477 0041 27       		.uleb128 0x27
- 1478 0042 19       		.uleb128 0x19
- 1479 0043 11       		.uleb128 0x11
- 1480 0044 01       		.uleb128 0x1
- 1481 0045 12       		.uleb128 0x12
- 1482 0046 06       		.uleb128 0x6
- 1483 0047 40       		.uleb128 0x40
- 1484 0048 18       		.uleb128 0x18
- 1485 0049 9742     		.uleb128 0x2117
- 1486 004b 19       		.uleb128 0x19
- 1487 004c 01       		.uleb128 0x1
- 1488 004d 13       		.uleb128 0x13
- 1489 004e 00       		.byte	0
- 1490 004f 00       		.byte	0
- 1491 0050 06       		.uleb128 0x6
- 1492 0051 898201   		.uleb128 0x4109
- 1493 0054 00       		.byte	0
- 1494 0055 11       		.uleb128 0x11
- 1495 0056 01       		.uleb128 0x1
- 1496 0057 31       		.uleb128 0x31
- 1497 0058 13       		.uleb128 0x13
- 1498 0059 00       		.byte	0
- 1499 005a 00       		.byte	0
- 1500 005b 07       		.uleb128 0x7
- 1501 005c 2E       		.uleb128 0x2e
- 1502 005d 01       		.byte	0x1
- 1503 005e 3F       		.uleb128 0x3f
- 1504 005f 19       		.uleb128 0x19
- 1505 0060 03       		.uleb128 0x3
- 1506 0061 08       		.uleb128 0x8
- 1507 0062 3A       		.uleb128 0x3a
- 1508 0063 0B       		.uleb128 0xb
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 32
-
-
- 1509 0064 3B       		.uleb128 0x3b
- 1510 0065 0B       		.uleb128 0xb
- 1511 0066 27       		.uleb128 0x27
- 1512 0067 19       		.uleb128 0x19
- 1513 0068 11       		.uleb128 0x11
- 1514 0069 01       		.uleb128 0x1
- 1515 006a 12       		.uleb128 0x12
- 1516 006b 06       		.uleb128 0x6
- 1517 006c 40       		.uleb128 0x40
- 1518 006d 18       		.uleb128 0x18
- 1519 006e 9742     		.uleb128 0x2117
- 1520 0070 19       		.uleb128 0x19
- 1521 0071 01       		.uleb128 0x1
- 1522 0072 13       		.uleb128 0x13
- 1523 0073 00       		.byte	0
- 1524 0074 00       		.byte	0
- 1525 0075 08       		.uleb128 0x8
- 1526 0076 898201   		.uleb128 0x4109
- 1527 0079 01       		.byte	0x1
- 1528 007a 11       		.uleb128 0x11
- 1529 007b 01       		.uleb128 0x1
- 1530 007c 31       		.uleb128 0x31
- 1531 007d 13       		.uleb128 0x13
- 1532 007e 00       		.byte	0
- 1533 007f 00       		.byte	0
- 1534 0080 09       		.uleb128 0x9
- 1535 0081 8A8201   		.uleb128 0x410a
- 1536 0084 00       		.byte	0
- 1537 0085 02       		.uleb128 0x2
- 1538 0086 18       		.uleb128 0x18
- 1539 0087 9142     		.uleb128 0x2111
- 1540 0089 18       		.uleb128 0x18
- 1541 008a 00       		.byte	0
- 1542 008b 00       		.byte	0
- 1543 008c 0A       		.uleb128 0xa
- 1544 008d 2E       		.uleb128 0x2e
- 1545 008e 01       		.byte	0x1
- 1546 008f 3F       		.uleb128 0x3f
- 1547 0090 19       		.uleb128 0x19
- 1548 0091 03       		.uleb128 0x3
- 1549 0092 0E       		.uleb128 0xe
- 1550 0093 3A       		.uleb128 0x3a
- 1551 0094 0B       		.uleb128 0xb
- 1552 0095 3B       		.uleb128 0x3b
- 1553 0096 0B       		.uleb128 0xb
- 1554 0097 27       		.uleb128 0x27
- 1555 0098 19       		.uleb128 0x19
- 1556 0099 49       		.uleb128 0x49
- 1557 009a 13       		.uleb128 0x13
- 1558 009b 8701     		.uleb128 0x87
- 1559 009d 19       		.uleb128 0x19
- 1560 009e 11       		.uleb128 0x11
- 1561 009f 01       		.uleb128 0x1
- 1562 00a0 12       		.uleb128 0x12
- 1563 00a1 06       		.uleb128 0x6
- 1564 00a2 40       		.uleb128 0x40
- 1565 00a3 18       		.uleb128 0x18
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 33
-
-
- 1566 00a4 9742     		.uleb128 0x2117
- 1567 00a6 19       		.uleb128 0x19
- 1568 00a7 01       		.uleb128 0x1
- 1569 00a8 13       		.uleb128 0x13
- 1570 00a9 00       		.byte	0
- 1571 00aa 00       		.byte	0
- 1572 00ab 0B       		.uleb128 0xb
- 1573 00ac 34       		.uleb128 0x34
- 1574 00ad 00       		.byte	0
- 1575 00ae 03       		.uleb128 0x3
- 1576 00af 08       		.uleb128 0x8
- 1577 00b0 3A       		.uleb128 0x3a
- 1578 00b1 0B       		.uleb128 0xb
- 1579 00b2 3B       		.uleb128 0x3b
- 1580 00b3 0B       		.uleb128 0xb
- 1581 00b4 49       		.uleb128 0x49
- 1582 00b5 13       		.uleb128 0x13
- 1583 00b6 1C       		.uleb128 0x1c
- 1584 00b7 0B       		.uleb128 0xb
- 1585 00b8 00       		.byte	0
- 1586 00b9 00       		.byte	0
- 1587 00ba 0C       		.uleb128 0xc
- 1588 00bb 898201   		.uleb128 0x4109
- 1589 00be 01       		.byte	0x1
- 1590 00bf 11       		.uleb128 0x11
- 1591 00c0 01       		.uleb128 0x1
- 1592 00c1 31       		.uleb128 0x31
- 1593 00c2 13       		.uleb128 0x13
- 1594 00c3 01       		.uleb128 0x1
- 1595 00c4 13       		.uleb128 0x13
- 1596 00c5 00       		.byte	0
- 1597 00c6 00       		.byte	0
- 1598 00c7 0D       		.uleb128 0xd
- 1599 00c8 34       		.uleb128 0x34
- 1600 00c9 00       		.byte	0
- 1601 00ca 03       		.uleb128 0x3
- 1602 00cb 0E       		.uleb128 0xe
- 1603 00cc 3A       		.uleb128 0x3a
- 1604 00cd 0B       		.uleb128 0xb
- 1605 00ce 3B       		.uleb128 0x3b
- 1606 00cf 05       		.uleb128 0x5
- 1607 00d0 49       		.uleb128 0x49
- 1608 00d1 13       		.uleb128 0x13
- 1609 00d2 3F       		.uleb128 0x3f
- 1610 00d3 19       		.uleb128 0x19
- 1611 00d4 3C       		.uleb128 0x3c
- 1612 00d5 19       		.uleb128 0x19
- 1613 00d6 00       		.byte	0
- 1614 00d7 00       		.byte	0
- 1615 00d8 0E       		.uleb128 0xe
- 1616 00d9 35       		.uleb128 0x35
- 1617 00da 00       		.byte	0
- 1618 00db 49       		.uleb128 0x49
- 1619 00dc 13       		.uleb128 0x13
- 1620 00dd 00       		.byte	0
- 1621 00de 00       		.byte	0
- 1622 00df 0F       		.uleb128 0xf
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 34
-
-
- 1623 00e0 34       		.uleb128 0x34
- 1624 00e1 00       		.byte	0
- 1625 00e2 03       		.uleb128 0x3
- 1626 00e3 0E       		.uleb128 0xe
- 1627 00e4 3A       		.uleb128 0x3a
- 1628 00e5 0B       		.uleb128 0xb
- 1629 00e6 3B       		.uleb128 0x3b
- 1630 00e7 0B       		.uleb128 0xb
- 1631 00e8 49       		.uleb128 0x49
- 1632 00e9 13       		.uleb128 0x13
- 1633 00ea 3F       		.uleb128 0x3f
- 1634 00eb 19       		.uleb128 0x19
- 1635 00ec 02       		.uleb128 0x2
- 1636 00ed 18       		.uleb128 0x18
- 1637 00ee 00       		.byte	0
- 1638 00ef 00       		.byte	0
- 1639 00f0 10       		.uleb128 0x10
- 1640 00f1 01       		.uleb128 0x1
- 1641 00f2 01       		.byte	0x1
- 1642 00f3 49       		.uleb128 0x49
- 1643 00f4 13       		.uleb128 0x13
- 1644 00f5 01       		.uleb128 0x1
- 1645 00f6 13       		.uleb128 0x13
- 1646 00f7 00       		.byte	0
- 1647 00f8 00       		.byte	0
- 1648 00f9 11       		.uleb128 0x11
- 1649 00fa 21       		.uleb128 0x21
- 1650 00fb 00       		.byte	0
- 1651 00fc 49       		.uleb128 0x49
- 1652 00fd 13       		.uleb128 0x13
- 1653 00fe 2F       		.uleb128 0x2f
- 1654 00ff 0B       		.uleb128 0xb
- 1655 0100 00       		.byte	0
- 1656 0101 00       		.byte	0
- 1657 0102 12       		.uleb128 0x12
- 1658 0103 2E       		.uleb128 0x2e
- 1659 0104 00       		.byte	0
- 1660 0105 3F       		.uleb128 0x3f
- 1661 0106 19       		.uleb128 0x19
- 1662 0107 3C       		.uleb128 0x3c
- 1663 0108 19       		.uleb128 0x19
- 1664 0109 6E       		.uleb128 0x6e
- 1665 010a 0E       		.uleb128 0xe
- 1666 010b 03       		.uleb128 0x3
- 1667 010c 0E       		.uleb128 0xe
- 1668 010d 3A       		.uleb128 0x3a
- 1669 010e 0B       		.uleb128 0xb
- 1670 010f 3B       		.uleb128 0x3b
- 1671 0110 0B       		.uleb128 0xb
- 1672 0111 00       		.byte	0
- 1673 0112 00       		.byte	0
- 1674 0113 00       		.byte	0
- 1675              		.section	.debug_aranges,"",%progbits
- 1676 0000 44000000 		.4byte	0x44
- 1677 0004 0200     		.2byte	0x2
- 1678 0006 00000000 		.4byte	.Ldebug_info0
- 1679 000a 04       		.byte	0x4
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 35
-
-
- 1680 000b 00       		.byte	0
- 1681 000c 0000     		.2byte	0
- 1682 000e 0000     		.2byte	0
- 1683 0010 00000000 		.4byte	.LFB64
- 1684 0014 08000000 		.4byte	.LFE64-.LFB64
- 1685 0018 00000000 		.4byte	.LFB65
- 1686 001c 08000000 		.4byte	.LFE65-.LFB65
- 1687 0020 00000000 		.4byte	.LFB66
- 1688 0024 28000000 		.4byte	.LFE66-.LFB66
- 1689 0028 00000000 		.4byte	.LFB67
- 1690 002c 08000000 		.4byte	.LFE67-.LFB67
- 1691 0030 00000000 		.4byte	.LFB68
- 1692 0034 20000000 		.4byte	.LFE68-.LFB68
- 1693 0038 00000000 		.4byte	.LFB69
- 1694 003c 2C010000 		.4byte	.LFE69-.LFB69
- 1695 0040 00000000 		.4byte	0
- 1696 0044 00000000 		.4byte	0
- 1697              		.section	.debug_ranges,"",%progbits
- 1698              	.Ldebug_ranges0:
- 1699 0000 00000000 		.4byte	.LFB64
- 1700 0004 08000000 		.4byte	.LFE64
- 1701 0008 00000000 		.4byte	.LFB65
- 1702 000c 08000000 		.4byte	.LFE65
- 1703 0010 00000000 		.4byte	.LFB66
- 1704 0014 28000000 		.4byte	.LFE66
- 1705 0018 00000000 		.4byte	.LFB67
- 1706 001c 08000000 		.4byte	.LFE67
- 1707 0020 00000000 		.4byte	.LFB68
- 1708 0024 20000000 		.4byte	.LFE68
- 1709 0028 00000000 		.4byte	.LFB69
- 1710 002c 2C010000 		.4byte	.LFE69
- 1711 0030 00000000 		.4byte	0
- 1712 0034 00000000 		.4byte	0
- 1713              		.section	.debug_line,"",%progbits
- 1714              	.Ldebug_line0:
- 1715 0000 9C030000 		.section	.debug_str,"MS",%progbits,1
- 1715      0200E502 
- 1715      00000201 
- 1715      FB0E0D00 
- 1715      01010101 
- 1716              	.LASF40:
- 1717 0000 6D6F746F 		.ascii	"motor2EncoderCounts\000"
- 1717      7232456E 
- 1717      636F6465 
- 1717      72436F75 
- 1717      6E747300 
- 1718              	.LASF93:
- 1719 0014 61726D4F 		.ascii	"armOpen\000"
- 1719      70656E00 
- 1720              	.LASF89:
- 1721 001c 6D6F7665 		.ascii	"moveForwardIndefinitely\000"
- 1721      466F7277 
- 1721      61726449 
- 1721      6E646566 
- 1721      696E6974 
- 1722              	.LASF17:
- 1723 0034 456E636F 		.ascii	"Encoder_Counts_2_IH\000"
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 36
-
-
- 1723      6465725F 
- 1723      436F756E 
- 1723      74735F32 
- 1723      5F494800 
- 1724              	.LASF0:
- 1725 0048 7369676E 		.ascii	"signed char\000"
- 1725      65642063 
- 1725      68617200 
- 1726              	.LASF92:
- 1727 0054 61726D44 		.ascii	"armDown\000"
- 1727      6F776E00 
- 1728              	.LASF44:
- 1729 005c 7475726E 		.ascii	"turningLeftFlag\000"
- 1729      696E674C 
- 1729      65667446 
- 1729      6C616700 
- 1730              	.LASF2:
- 1731 006c 73686F72 		.ascii	"short int\000"
- 1731      7420696E 
- 1731      7400
- 1732              	.LASF55:
- 1733 0076 73746F70 		.ascii	"stopMotor2AndUpdate\000"
- 1733      4D6F746F 
- 1733      7232416E 
- 1733      64557064 
- 1733      61746500 
- 1734              	.LASF29:
- 1735 008a 63757272 		.ascii	"currentPosition\000"
- 1735      656E7450 
- 1735      6F736974 
- 1735      696F6E00 
- 1736              	.LASF75:
- 1737 009a 536F6E69 		.ascii	"Sonic_StartEx\000"
- 1737      635F5374 
- 1737      61727445 
- 1737      7800
- 1738              	.LASF42:
- 1739 00a8 64726976 		.ascii	"drivingForwardFlag\000"
- 1739      696E6746 
- 1739      6F727761 
- 1739      7264466C 
- 1739      616700
- 1740              	.LASF96:
- 1741 00bb 61726D55 		.ascii	"armUp\000"
- 1741      7000
- 1742              	.LASF52:
- 1743 00c1 62656769 		.ascii	"beginNavigation\000"
- 1743      6E4E6176 
- 1743      69676174 
- 1743      696F6E00 
- 1744              	.LASF99:
- 1745 00d1 433A5C55 		.ascii	"C:\\Users\\jerry\\OneDrive\\Documents\\Folder in wh"
- 1745      73657273 
- 1745      5C6A6572 
- 1745      72795C4F 
- 1745      6E654472 
- 1746 00ff 69636820 		.ascii	"ich all goes\\ECE3091\\GitTrackedRobotv1\\ECE3091_G"
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 37
-
-
- 1746      616C6C20 
- 1746      676F6573 
- 1746      5C454345 
- 1746      33303931 
- 1747 012f 726F7570 		.ascii	"roup17\\Group17RobotReal\\Group17Robot.cydsn\000"
- 1747      31375C47 
- 1747      726F7570 
- 1747      3137526F 
- 1747      626F7452 
- 1748              	.LASF39:
- 1749 015a 6D6F746F 		.ascii	"motor1EncoderCounts\000"
- 1749      7231456E 
- 1749      636F6465 
- 1749      72436F75 
- 1749      6E747300 
- 1750              	.LASF24:
- 1751 016e 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
- 1751      5261636B 
- 1751      4F666673 
- 1751      65747346 
- 1751      726F6D57 
- 1752              	.LASF32:
- 1753 0186 64657369 		.ascii	"desiredOrientation\000"
- 1753      7265644F 
- 1753      7269656E 
- 1753      74617469 
- 1753      6F6E00
- 1754              	.LASF100:
- 1755 0199 6D61696E 		.ascii	"main\000"
- 1755      00
- 1756              	.LASF19:
- 1757 019e 53746172 		.ascii	"StartIH\000"
- 1757      74494800 
- 1758              	.LASF80:
- 1759 01a6 4D6F746F 		.ascii	"Motor_1_Encoder_Counts_Start\000"
- 1759      725F315F 
- 1759      456E636F 
- 1759      6465725F 
- 1759      436F756E 
- 1760              	.LASF60:
- 1761 01c3 64726966 		.ascii	"driftCorrect\000"
- 1761      74436F72 
- 1761      72656374 
- 1761      00
- 1762              	.LASF74:
- 1763 01d0 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
- 1763      725F315F 
- 1763      52656164 
- 1763      53746174 
- 1763      75735265 
- 1764              	.LASF86:
- 1765 01eb 5261636B 		.ascii	"Rack_Servo_PWM_Start\000"
- 1765      5F536572 
- 1765      766F5F50 
- 1765      574D5F53 
- 1765      74617274 
- 1766              	.LASF83:
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 38
-
-
- 1767 0200 456E636F 		.ascii	"Encoder_Counts_1_Interrupt_StartEx\000"
- 1767      6465725F 
- 1767      436F756E 
- 1767      74735F31 
- 1767      5F496E74 
- 1768              	.LASF85:
- 1769 0223 44726966 		.ascii	"Drift_Check_Interrupt_StartEx\000"
- 1769      745F4368 
- 1769      65636B5F 
- 1769      496E7465 
- 1769      72727570 
- 1770              	.LASF90:
- 1771 0241 436F6C6F 		.ascii	"ColourSensingViaHardware\000"
- 1771      75725365 
- 1771      6E73696E 
- 1771      67566961 
- 1771      48617264 
- 1772              	.LASF53:
- 1773 025a 72756E6E 		.ascii	"running\000"
- 1773      696E6700 
- 1774              	.LASF37:
- 1775 0262 6D6F746F 		.ascii	"motor1Enable\000"
- 1775      7231456E 
- 1775      61626C65 
- 1775      00
- 1776              	.LASF26:
- 1777 026f 626C6F63 		.ascii	"block_location\000"
- 1777      6B5F6C6F 
- 1777      63617469 
- 1777      6F6E00
- 1778              	.LASF87:
- 1779 027e 47726970 		.ascii	"Gripper_Servo_PWM_Start\000"
- 1779      7065725F 
- 1779      53657276 
- 1779      6F5F5057 
- 1779      4D5F5374 
- 1780              	.LASF94:
- 1781 0296 6D6F7665 		.ascii	"moveForward\000"
- 1781      466F7277 
- 1781      61726400 
- 1782              	.LASF61:
- 1783 02a2 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
- 1783      61736F6E 
- 1783      6963496E 
- 1783      74657272 
- 1783      75707448 
- 1784              	.LASF45:
- 1785 02bd 7475726E 		.ascii	"turningRightFlag\000"
- 1785      696E6752 
- 1785      69676874 
- 1785      466C6167 
- 1785      00
- 1786              	.LASF11:
- 1787 02ce 666C6F61 		.ascii	"float\000"
- 1787      7400
- 1788              	.LASF81:
- 1789 02d4 4D6F746F 		.ascii	"Motor_2_Encoder_Counts_Start\000"
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 39
-
-
- 1789      725F325F 
- 1789      456E636F 
- 1789      6465725F 
- 1789      436F756E 
- 1790              	.LASF6:
- 1791 02f1 6C6F6E67 		.ascii	"long long int\000"
- 1791      206C6F6E 
- 1791      6720696E 
- 1791      7400
- 1792              	.LASF84:
- 1793 02ff 456E636F 		.ascii	"Encoder_Counts_2_Interrupt_StartEx\000"
- 1793      6465725F 
- 1793      436F756E 
- 1793      74735F32 
- 1793      5F496E74 
- 1794              	.LASF95:
- 1795 0322 61726D43 		.ascii	"armClose\000"
- 1795      6C6F7365 
- 1795      00
- 1796              	.LASF79:
- 1797 032b 6D6F746F 		.ascii	"motorDutyCycleUpdate\000"
- 1797      72447574 
- 1797      79437963 
- 1797      6C655570 
- 1797      64617465 
- 1798              	.LASF66:
- 1799 0340 4144435F 		.ascii	"ADC_Start\000"
- 1799      53746172 
- 1799      7400
- 1800              	.LASF4:
- 1801 034a 6C6F6E67 		.ascii	"long int\000"
- 1801      20696E74 
- 1801      00
- 1802              	.LASF71:
- 1803 0353 50574D5F 		.ascii	"PWM_colour_Sleep\000"
- 1803      636F6C6F 
- 1803      75725F53 
- 1803      6C656570 
- 1803      00
- 1804              	.LASF88:
- 1805 0364 6D6F7665 		.ascii	"moveBackwardIndefinitely\000"
- 1805      4261636B 
- 1805      77617264 
- 1805      496E6465 
- 1805      66696E69 
- 1806              	.LASF70:
- 1807 037d 50574D5F 		.ascii	"PWM_colour_Start\000"
- 1807      636F6C6F 
- 1807      75725F53 
- 1807      74617274 
- 1807      00
- 1808              	.LASF43:
- 1809 038e 64726976 		.ascii	"drivingBackwardFlag\000"
- 1809      696E6742 
- 1809      61636B77 
- 1809      61726446 
- 1809      6C616700 
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 40
-
-
- 1810              	.LASF27:
- 1811 03a2 7075636B 		.ascii	"puckPileLocation\000"
- 1811      50696C65 
- 1811      4C6F6361 
- 1811      74696F6E 
- 1811      00
- 1812              	.LASF22:
- 1813 03b3 63757272 		.ascii	"currentPuckRackScanningIndex\000"
- 1813      656E7450 
- 1813      75636B52 
- 1813      61636B53 
- 1813      63616E6E 
- 1814              	.LASF57:
- 1815 03d0 44726966 		.ascii	"Drift_Check_Timer_Stop\000"
- 1815      745F4368 
- 1815      65636B5F 
- 1815      54696D65 
- 1815      725F5374 
- 1816              	.LASF64:
- 1817 03e7 55415254 		.ascii	"UART_1_Start\000"
- 1817      5F315F53 
- 1817      74617274 
- 1817      00
- 1818              	.LASF51:
- 1819 03f4 636F6C6F 		.ascii	"colour_flag\000"
- 1819      75725F66 
- 1819      6C616700 
- 1820              	.LASF14:
- 1821 0400 6C6F6E67 		.ascii	"long double\000"
- 1821      20646F75 
- 1821      626C6500 
- 1822              	.LASF1:
- 1823 040c 756E7369 		.ascii	"unsigned char\000"
- 1823      676E6564 
- 1823      20636861 
- 1823      7200
- 1824              	.LASF68:
- 1825 041a 49444143 		.ascii	"IDAC8_1_SetRange\000"
- 1825      385F315F 
- 1825      53657452 
- 1825      616E6765 
- 1825      00
- 1826              	.LASF41:
- 1827 042b 6D6F7665 		.ascii	"moveNow\000"
- 1827      4E6F7700 
- 1828              	.LASF7:
- 1829 0433 6C6F6E67 		.ascii	"long long unsigned int\000"
- 1829      206C6F6E 
- 1829      6720756E 
- 1829      7369676E 
- 1829      65642069 
- 1830              	.LASF49:
- 1831 044a 6D6F7665 		.ascii	"moveBackwardAllowed\000"
- 1831      4261636B 
- 1831      77617264 
- 1831      416C6C6F 
- 1831      77656400 
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 41
-
-
- 1832              	.LASF8:
- 1833 045e 756E7369 		.ascii	"unsigned int\000"
- 1833      676E6564 
- 1833      20696E74 
- 1833      00
- 1834              	.LASF50:
- 1835 046b 69646163 		.ascii	"idac_value\000"
- 1835      5F76616C 
- 1835      756500
- 1836              	.LASF59:
- 1837 0476 4D6F746F 		.ascii	"Motor_2_Encoder_Counts_ReadCounter\000"
- 1837      725F325F 
- 1837      456E636F 
- 1837      6465725F 
- 1837      436F756E 
- 1838              	.LASF67:
- 1839 0499 49444143 		.ascii	"IDAC8_1_Start\000"
- 1839      385F315F 
- 1839      53746172 
- 1839      7400
- 1840              	.LASF31:
- 1841 04a7 63757272 		.ascii	"currentOrientation\000"
- 1841      656E744F 
- 1841      7269656E 
- 1841      74617469 
- 1841      6F6E00
- 1842              	.LASF48:
- 1843 04ba 6D6F7665 		.ascii	"moveForwardAllowed\000"
- 1843      466F7277 
- 1843      61726441 
- 1843      6C6C6F77 
- 1843      656400
- 1844              	.LASF3:
- 1845 04cd 73686F72 		.ascii	"short unsigned int\000"
- 1845      7420756E 
- 1845      7369676E 
- 1845      65642069 
- 1845      6E7400
- 1846              	.LASF63:
- 1847 04e0 5449415F 		.ascii	"TIA_1_Start\000"
- 1847      315F5374 
- 1847      61727400 
- 1848              	.LASF25:
- 1849 04ec 73776565 		.ascii	"sweeping\000"
- 1849      70696E67 
- 1849      00
- 1850              	.LASF13:
- 1851 04f5 63686172 		.ascii	"char\000"
- 1851      00
- 1852              	.LASF34:
- 1853 04fa 4D315F42 		.ascii	"M1_BD\000"
- 1853      4400
- 1854              	.LASF10:
- 1855 0500 696E7433 		.ascii	"int32_t\000"
- 1855      325F7400 
- 1856              	.LASF21:
- 1857 0508 64726976 		.ascii	"driveStraightEnable\000"
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 42
-
-
- 1857      65537472 
- 1857      61696768 
- 1857      74456E61 
- 1857      626C6500 
- 1858              	.LASF54:
- 1859 051c 73746F70 		.ascii	"stopMotor1AndUpdate\000"
- 1859      4D6F746F 
- 1859      7231416E 
- 1859      64557064 
- 1859      61746500 
- 1860              	.LASF73:
- 1861 0530 54696D65 		.ascii	"Timer_1_Start\000"
- 1861      725F315F 
- 1861      53746172 
- 1861      7400
- 1862              	.LASF30:
- 1863 053e 64657369 		.ascii	"desiredPosition\000"
- 1863      72656450 
- 1863      6F736974 
- 1863      696F6E00 
- 1864              	.LASF33:
- 1865 054e 4D315F46 		.ascii	"M1_FD\000"
- 1865      4400
- 1866              	.LASF69:
- 1867 0554 49444143 		.ascii	"IDAC8_1_SetValue\000"
- 1867      385F315F 
- 1867      53657456 
- 1867      616C7565 
- 1867      00
- 1868              	.LASF98:
- 1869 0565 6D61696E 		.ascii	"main.c\000"
- 1869      2E6300
- 1870              	.LASF5:
- 1871 056c 6C6F6E67 		.ascii	"long unsigned int\000"
- 1871      20756E73 
- 1871      69676E65 
- 1871      6420696E 
- 1871      7400
- 1872              	.LASF76:
- 1873 057e 53746172 		.ascii	"Start_StartEx\000"
- 1873      745F5374 
- 1873      61727445 
- 1873      7800
- 1874              	.LASF12:
- 1875 058c 646F7562 		.ascii	"double\000"
- 1875      6C6500
- 1876              	.LASF65:
- 1877 0593 55415254 		.ascii	"UART_1_PutString\000"
- 1877      5F315F50 
- 1877      75745374 
- 1877      72696E67 
- 1877      00
- 1878              	.LASF16:
- 1879 05a4 456E636F 		.ascii	"Encoder_Counts_1_IH\000"
- 1879      6465725F 
- 1879      436F756E 
- 1879      74735F31 
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 43
-
-
- 1879      5F494800 
- 1880              	.LASF28:
- 1881 05b8 73746174 		.ascii	"state\000"
- 1881      6500
- 1882              	.LASF38:
- 1883 05be 6D6F746F 		.ascii	"motor2Enable\000"
- 1883      7232456E 
- 1883      61626C65 
- 1883      00
- 1884              	.LASF18:
- 1885 05cb 44726966 		.ascii	"Drift_Check_IH\000"
- 1885      745F4368 
- 1885      65636B5F 
- 1885      494800
- 1886              	.LASF56:
- 1887 05da 44726966 		.ascii	"Drift_Check_Timer_ReadStatusRegister\000"
- 1887      745F4368 
- 1887      65636B5F 
- 1887      54696D65 
- 1887      725F5265 
- 1888              	.LASF9:
- 1889 05ff 5F5F696E 		.ascii	"__int32_t\000"
- 1889      7433325F 
- 1889      7400
- 1890              	.LASF23:
- 1891 0609 7075636B 		.ascii	"puckRackColours\000"
- 1891      5261636B 
- 1891      436F6C6F 
- 1891      75727300 
- 1892              	.LASF46:
- 1893 0619 6D6F7665 		.ascii	"moveLeftAllowed\000"
- 1893      4C656674 
- 1893      416C6C6F 
- 1893      77656400 
- 1894              	.LASF91:
- 1895 0629 7475726E 		.ascii	"turnRight\000"
- 1895      52696768 
- 1895      7400
- 1896              	.LASF15:
- 1897 0633 73697A65 		.ascii	"sizetype\000"
- 1897      74797065 
- 1897      00
- 1898              	.LASF47:
- 1899 063c 6D6F7665 		.ascii	"moveRightAllowed\000"
- 1899      52696768 
- 1899      74416C6C 
- 1899      6F776564 
- 1899      00
- 1900              	.LASF36:
- 1901 064d 4D325F42 		.ascii	"M2_BD\000"
- 1901      4400
- 1902              	.LASF20:
- 1903 0653 49544D5F 		.ascii	"ITM_RxBuffer\000"
- 1903      52784275 
- 1903      66666572 
- 1903      00
- 1904              	.LASF97:
-ARM GAS  C:\Users\jerry\AppData\Local\Temp\ccX0SnJ0.s 			page 44
-
-
- 1905 0660 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 1905      43313120 
- 1905      352E342E 
- 1905      31203230 
- 1905      31363036 
- 1906 0693 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
- 1906      20726576 
- 1906      6973696F 
- 1906      6E203233 
- 1906      37373135 
- 1907 06c6 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 1907      66756E63 
- 1907      74696F6E 
- 1907      2D736563 
- 1907      74696F6E 
- 1908              	.LASF62:
- 1909 06ee 43794465 		.ascii	"CyDelay\000"
- 1909      6C617900 
- 1910              	.LASF72:
- 1911 06f6 436F6C6F 		.ascii	"ColourIntialiseViaHardware\000"
- 1911      7572496E 
- 1911      7469616C 
- 1911      69736556 
- 1911      69614861 
- 1912              	.LASF77:
- 1913 0711 4D6F746F 		.ascii	"Motor_1_driver_Start\000"
- 1913      725F315F 
- 1913      64726976 
- 1913      65725F53 
- 1913      74617274 
- 1914              	.LASF78:
- 1915 0726 4D6F746F 		.ascii	"Motor_2_driver_Start\000"
- 1915      725F325F 
- 1915      64726976 
- 1915      65725F53 
- 1915      74617274 
- 1916              	.LASF35:
- 1917 073b 4D325F46 		.ascii	"M2_FD\000"
- 1917      4400
- 1918              	.LASF82:
- 1919 0741 44726966 		.ascii	"Drift_Check_Timer_Start\000"
- 1919      745F4368 
- 1919      65636B5F 
- 1919      54696D65 
- 1919      725F5374 
- 1920              	.LASF58:
- 1921 0759 4D6F746F 		.ascii	"Motor_1_Encoder_Counts_ReadCounter\000"
- 1921      725F315F 
- 1921      456E636F 
- 1921      6465725F 
- 1921      436F756E 
- 1922              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ 234:main.c        ****         // Now we need to locate the pucks
+ 235:main.c        ****  
+ 236:main.c        ****         if (state == STATE_FIND_PUCKS) {
+ 350              		.loc 1 236 0
+ 351 00e0 204B     		ldr	r3, .L32+28
+ 352 00e2 5B68     		ldr	r3, [r3, #4]
+ 353 00e4 012B     		cmp	r3, #1
+ 354 00e6 04D1     		bne	.L24
+ 237:main.c        ****             // We are at the EAST wall facing the EAST wall
+ 238:main.c        ****             turnRight(180); // Now facing WEST at EAST wall
+ 355              		.loc 1 238 0
+ 356 00e8 1F48     		ldr	r0, .L32+32
+ 357 00ea FFF7FEFF 		bl	turnRight
+ 358              	.LVL42:
+ 239:main.c        ****             moveForwardIndefinitely();
+ 359              		.loc 1 239 0
+ 360 00ee FFF7FEFF 		bl	moveForwardIndefinitely
+ 361              	.LVL43:
+ 362              	.L24:
+ 240:main.c        ****         }
+ 241:main.c        ****         
+ 242:main.c        ****         state = STATE_GO_TO_PUCKS;
+ 363              		.loc 1 242 0
+ 364 00f2 0422     		movs	r2, #4
+ 365 00f4 1B4B     		ldr	r3, .L32+28
+ 366 00f6 5A60     		str	r2, [r3, #4]
+ 243:main.c        **** 
+ 244:main.c        ****         if (state == STATE_GO_TO_PUCKS){
+ 245:main.c        ****             if (pathPastBlock == WEST){
+ 367              		.loc 1 245 0
+ 368 00f8 1C4B     		ldr	r3, .L32+36
+ 369 00fa 1B68     		ldr	r3, [r3]
+ 370 00fc 032B     		cmp	r3, #3
+ 371 00fe 0FD1     		bne	.L25
+ 246:main.c        ****                 if (pathToPucks != WEST) {
+ 372              		.loc 1 246 0
+ 373 0100 1B4B     		ldr	r3, .L32+40
+ 374 0102 1B68     		ldr	r3, [r3]
+ 375 0104 032B     		cmp	r3, #3
+ 376 0106 05D0     		beq	.L26
+ 247:main.c        ****                     moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRO
+ 377              		.loc 1 247 0
+ 378 0108 0022     		movs	r2, #0
+ 379 010a 8221     		movs	r1, #130
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 12
+
+
+ 380 010c 1020     		movs	r0, #16
+ 381 010e FFF7FEFF 		bl	moveAndAngle
+ 382              	.LVL44:
+ 383 0112 14E0     		b	.L27
+ 384              	.L26:
+ 248:main.c        ****                 }
+ 249:main.c        ****                 else {moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - F
+ 385              		.loc 1 249 0
+ 386 0114 5A22     		movs	r2, #90
+ 387 0116 6621     		movs	r1, #102
+ 388 0118 1020     		movs	r0, #16
+ 389 011a FFF7FEFF 		bl	moveAndAngle
+ 390              	.LVL45:
+ 391 011e 0EE0     		b	.L27
+ 392              	.L25:
+ 250:main.c        ****             }
+ 251:main.c        ****             else {
+ 252:main.c        ****                 if (pathToPucks != EAST) {
+ 393              		.loc 1 252 0
+ 394 0120 134B     		ldr	r3, .L32+40
+ 395 0122 1B68     		ldr	r3, [r3]
+ 396 0124 012B     		cmp	r3, #1
+ 397 0126 05D0     		beq	.L28
+ 253:main.c        ****                     moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, AREN
+ 398              		.loc 1 253 0
+ 399 0128 B422     		movs	r2, #180
+ 400 012a 8221     		movs	r1, #130
+ 401 012c 6820     		movs	r0, #104
+ 402 012e FFF7FEFF 		bl	moveAndAngle
+ 403              	.LVL46:
+ 404 0132 04E0     		b	.L27
+ 405              	.L28:
+ 254:main.c        ****                 }
+ 255:main.c        ****                 else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, AR
+ 406              		.loc 1 255 0
+ 407 0134 5A22     		movs	r2, #90
+ 408 0136 6621     		movs	r1, #102
+ 409 0138 6820     		movs	r0, #104
+ 410 013a FFF7FEFF 		bl	moveAndAngle
+ 411              	.LVL47:
+ 412              	.L27:
+ 256:main.c        ****             }
+ 257:main.c        ****         
+ 258:main.c        ****         }
+ 259:main.c        ****         
+ 260:main.c        ****         state = STATE_FIND_REQUIRED_PUCK;
+ 413              		.loc 1 260 0
+ 414 013e 0522     		movs	r2, #5
+ 415 0140 084B     		ldr	r3, .L32+28
+ 416 0142 5A60     		str	r2, [r3, #4]
+ 417 0144 B1E7     		b	.L16
+ 418              	.L33:
+ 419 0146 00BF     		.align	2
+ 420              	.L32:
+ 421 0148 00000000 		.word	.LC0
+ 422 014c 00000000 		.word	.LANCHOR0
+ 423 0150 00000000 		.word	TIH
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 13
+
+
+ 424 0154 00000000 		.word	StartIH
+ 425 0158 00000000 		.word	Encoder_Counts_1_IH
+ 426 015c 00000000 		.word	Encoder_Counts_2_IH
+ 427 0160 00000000 		.word	Drift_Check_IH
+ 428 0164 00000000 		.word	.LANCHOR1
+ 429 0168 00003443 		.word	1127481344
+ 430 016c 00000000 		.word	pathPastBlock
+ 431 0170 00000000 		.word	pathToPucks
+ 432              		.cfi_endproc
+ 433              	.LFE69:
+ 434              		.size	main, .-main
+ 435              		.section	.text.lowerAndOpen,"ax",%progbits
+ 436              		.align	2
+ 437              		.global	lowerAndOpen
+ 438              		.thumb
+ 439              		.thumb_func
+ 440              		.type	lowerAndOpen, %function
+ 441              	lowerAndOpen:
+ 442              	.LFB70:
+ 261:main.c        ****         if (state == STATE_FIND_REQUIRED_PUCK){
+ 262:main.c        ****                
+ 263:main.c        ****         }
+ 264:main.c        ****         
+ 265:main.c        ****         if (state == STATE_DEPOSIT_PUCK){
+ 266:main.c        ****             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Ta
+ 267:main.c        ****             
+ 268:main.c        ****         }
+ 269:main.c        ****         
+ 270:main.c        ****         
+ 271:main.c        ****     }
+ 272:main.c        **** }
+ 273:main.c        **** 
+ 274:main.c        **** void lowerAndOpen(int puck_stack_position){
+ 443              		.loc 1 274 0
+ 444              		.cfi_startproc
+ 445              		@ args = 0, pretend = 0, frame = 0
+ 446              		@ frame_needed = 0, uses_anonymous_args = 0
+ 447              	.LVL48:
+ 448 0000 08B5     		push	{r3, lr}
+ 449              		.cfi_def_cfa_offset 8
+ 450              		.cfi_offset 3, -8
+ 451              		.cfi_offset 14, -4
+ 275:main.c        ****     changeHeightToPuck(puck_stack_position);
+ 452              		.loc 1 275 0
+ 453 0002 FFF7FEFF 		bl	changeHeightToPuck
+ 454              	.LVL49:
+ 276:main.c        ****     armOpen();
+ 455              		.loc 1 276 0
+ 456 0006 FFF7FEFF 		bl	armOpen
+ 457              	.LVL50:
+ 458 000a 08BD     		pop	{r3, pc}
+ 459              		.cfi_endproc
+ 460              	.LFE70:
+ 461              		.size	lowerAndOpen, .-lowerAndOpen
+ 462              		.section	.text.closeAndRaise,"ax",%progbits
+ 463              		.align	2
+ 464              		.global	closeAndRaise
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 14
+
+
+ 465              		.thumb
+ 466              		.thumb_func
+ 467              		.type	closeAndRaise, %function
+ 468              	closeAndRaise:
+ 469              	.LFB71:
+ 277:main.c        **** }
+ 278:main.c        **** 
+ 279:main.c        **** void closeAndRaise(int puck_stack_position){
+ 470              		.loc 1 279 0
+ 471              		.cfi_startproc
+ 472              		@ args = 0, pretend = 0, frame = 0
+ 473              		@ frame_needed = 0, uses_anonymous_args = 0
+ 474              	.LVL51:
+ 475 0000 10B5     		push	{r4, lr}
+ 476              		.cfi_def_cfa_offset 8
+ 477              		.cfi_offset 4, -8
+ 478              		.cfi_offset 14, -4
+ 479 0002 0446     		mov	r4, r0
+ 280:main.c        ****     armClose();
+ 480              		.loc 1 280 0
+ 481 0004 FFF7FEFF 		bl	armClose
+ 482              	.LVL52:
+ 281:main.c        ****     changeHeightToPuck(puck_stack_position);
+ 483              		.loc 1 281 0
+ 484 0008 2046     		mov	r0, r4
+ 485 000a FFF7FEFF 		bl	changeHeightToPuck
+ 486              	.LVL53:
+ 487 000e 10BD     		pop	{r4, pc}
+ 488              		.cfi_endproc
+ 489              	.LFE71:
+ 490              		.size	closeAndRaise, .-closeAndRaise
+ 491              		.global	currentPuckStackSize
+ 492              		.comm	pathPastBlock,4,4
+ 493              		.comm	pathToPucks,4,4
+ 494              		.global	running
+ 495              		.global	state
+ 496              		.global	beginNavigation
+ 497              		.global	colour_flag
+ 498              		.global	idac_value
+ 499              		.comm	moveBackwardAllowed,2,2
+ 500              		.comm	moveForwardAllowed,2,2
+ 501              		.comm	moveRightAllowed,2,2
+ 502              		.comm	moveLeftAllowed,2,2
+ 503              		.global	turningRightFlag
+ 504              		.global	turningLeftFlag
+ 505              		.global	drivingBackwardFlag
+ 506              		.global	drivingForwardFlag
+ 507              		.global	moveNow
+ 508              		.comm	motor2EncoderCounts,4,4
+ 509              		.comm	motor1EncoderCounts,4,4
+ 510              		.global	motor2Enable
+ 511              		.global	motor1Enable
+ 512              		.comm	M2_BD,4,4
+ 513              		.comm	M2_FD,4,4
+ 514              		.comm	M1_BD,4,4
+ 515              		.comm	M1_FD,4,4
+ 516              		.comm	desiredOrientation,4,4
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 15
+
+
+ 517              		.global	currentOrientation
+ 518              		.comm	desiredPosition,8,4
+ 519              		.global	currentPosition
+ 520              		.comm	puckPileLocation,4,4
+ 521              		.global	block_edge_location
+ 522              		.global	sweeping
+ 523              		.global	puckRackOffsetsFromWest
+ 524              		.global	puckRackColours
+ 525              		.global	currentPuckRackScanningIndex
+ 526              		.comm	driveStraightEnable,4,4
+ 527              		.data
+ 528              		.align	2
+ 529              		.set	.LANCHOR1,. + 0
+ 530              		.type	colour_flag, %object
+ 531              		.size	colour_flag, 4
+ 532              	colour_flag:
+ 533 0000 01000000 		.word	1
+ 534              		.type	state, %object
+ 535              		.size	state, 4
+ 536              	state:
+ 537 0004 02000000 		.word	2
+ 538              		.type	running, %object
+ 539              		.size	running, 4
+ 540              	running:
+ 541 0008 01000000 		.word	1
+ 542              		.type	moveNow, %object
+ 543              		.size	moveNow, 2
+ 544              	moveNow:
+ 545 000c 0100     		.short	1
+ 546 000e 0000     		.space	2
+ 547              		.type	currentOrientation, %object
+ 548              		.size	currentOrientation, 4
+ 549              	currentOrientation:
+ 550 0010 5A000000 		.word	90
+ 551              		.type	puckRackOffsetsFromWest, %object
+ 552              		.size	puckRackOffsetsFromWest, 20
+ 553              	puckRackOffsetsFromWest:
+ 554 0014 48000000 		.word	72
+ 555 0018 42000000 		.word	66
+ 556 001c 3C000000 		.word	60
+ 557 0020 36000000 		.word	54
+ 558 0024 30000000 		.word	48
+ 559              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 560              		.align	2
+ 561              	.LC0:
+ 562 0000 55415254 		.ascii	"UART commencing... \012\000"
+ 562      20636F6D 
+ 562      6D656E63 
+ 562      696E672E 
+ 562      2E2E200A 
+ 563              		.bss
+ 564              		.align	2
+ 565              		.set	.LANCHOR0,. + 0
+ 566              		.type	beginNavigation, %object
+ 567              		.size	beginNavigation, 4
+ 568              	beginNavigation:
+ 569 0000 00000000 		.space	4
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 16
+
+
+ 570              		.type	idac_value, %object
+ 571              		.size	idac_value, 4
+ 572              	idac_value:
+ 573 0004 00000000 		.space	4
+ 574              		.type	currentPuckRackScanningIndex, %object
+ 575              		.size	currentPuckRackScanningIndex, 4
+ 576              	currentPuckRackScanningIndex:
+ 577 0008 00000000 		.space	4
+ 578              		.type	block_edge_location, %object
+ 579              		.size	block_edge_location, 16
+ 580              	block_edge_location:
+ 581 000c 00000000 		.space	16
+ 581      00000000 
+ 581      00000000 
+ 581      00000000 
+ 582              		.type	currentPuckStackSize, %object
+ 583              		.size	currentPuckStackSize, 4
+ 584              	currentPuckStackSize:
+ 585 001c 00000000 		.space	4
+ 586              		.type	turningRightFlag, %object
+ 587              		.size	turningRightFlag, 2
+ 588              	turningRightFlag:
+ 589 0020 0000     		.space	2
+ 590              		.type	turningLeftFlag, %object
+ 591              		.size	turningLeftFlag, 2
+ 592              	turningLeftFlag:
+ 593 0022 0000     		.space	2
+ 594              		.type	drivingBackwardFlag, %object
+ 595              		.size	drivingBackwardFlag, 2
+ 596              	drivingBackwardFlag:
+ 597 0024 0000     		.space	2
+ 598              		.type	drivingForwardFlag, %object
+ 599              		.size	drivingForwardFlag, 2
+ 600              	drivingForwardFlag:
+ 601 0026 0000     		.space	2
+ 602              		.type	motor2Enable, %object
+ 603              		.size	motor2Enable, 2
+ 604              	motor2Enable:
+ 605 0028 0000     		.space	2
+ 606              		.type	motor1Enable, %object
+ 607              		.size	motor1Enable, 2
+ 608              	motor1Enable:
+ 609 002a 0000     		.space	2
+ 610              		.type	currentPosition, %object
+ 611              		.size	currentPosition, 8
+ 612              	currentPosition:
+ 613 002c 00000000 		.space	8
+ 613      00000000 
+ 614              		.type	sweeping, %object
+ 615              		.size	sweeping, 4
+ 616              	sweeping:
+ 617 0034 00000000 		.space	4
+ 618              		.type	puckRackColours, %object
+ 619              		.size	puckRackColours, 20
+ 620              	puckRackColours:
+ 621 0038 00000000 		.space	20
+ 621      00000000 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 17
+
+
+ 621      00000000 
+ 621      00000000 
+ 621      00000000 
+ 622              		.text
+ 623              	.Letext0:
+ 624              		.file 2 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 625              		.file 3 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 626              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 627              		.file 5 "ultrasonic.h"
+ 628              		.file 6 "main.h"
+ 629              		.file 7 "dcmotor.h"
+ 630              		.file 8 "Generated_Source\\PSoC5/Drift_Check_Timer.h"
+ 631              		.file 9 "Generated_Source\\PSoC5/Motor_1_Encoder_Counts.h"
+ 632              		.file 10 "Generated_Source\\PSoC5/Motor_2_Encoder_Counts.h"
+ 633              		.file 11 "Generated_Source\\PSoC5/CyLib.h"
+ 634              		.file 12 "Generated_Source\\PSoC5/TIA_1.h"
+ 635              		.file 13 "Generated_Source\\PSoC5/UART_1.h"
+ 636              		.file 14 "Generated_Source\\PSoC5/ADC.h"
+ 637              		.file 15 "Generated_Source\\PSoC5/IDAC8_1.h"
+ 638              		.file 16 "Generated_Source\\PSoC5/PWM_colour.h"
+ 639              		.file 17 "colour.h"
+ 640              		.file 18 "Generated_Source\\PSoC5/Timer_1.h"
+ 641              		.file 19 "Generated_Source\\PSoC5/Sonic.h"
+ 642              		.file 20 "Generated_Source\\PSoC5/Start.h"
+ 643              		.file 21 "Generated_Source\\PSoC5/Motor_1_driver.h"
+ 644              		.file 22 "Generated_Source\\PSoC5/Motor_2_driver.h"
+ 645              		.file 23 "Generated_Source\\PSoC5/Encoder_Counts_1_Interrupt.h"
+ 646              		.file 24 "Generated_Source\\PSoC5/Encoder_Counts_2_Interrupt.h"
+ 647              		.file 25 "Generated_Source\\PSoC5/Drift_Check_Interrupt.h"
+ 648              		.file 26 "Generated_Source\\PSoC5/Rack_Servo_PWM.h"
+ 649              		.file 27 "Generated_Source\\PSoC5/Gripper_Servo_PWM.h"
+ 650              		.file 28 "servo.h"
+ 651              		.section	.debug_info,"",%progbits
+ 652              	.Ldebug_info0:
+ 653 0000 85080000 		.4byte	0x885
+ 654 0004 0400     		.2byte	0x4
+ 655 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 656 000a 04       		.byte	0x4
+ 657 000b 01       		.uleb128 0x1
+ 658 000c 99060000 		.4byte	.LASF102
+ 659 0010 0C       		.byte	0xc
+ 660 0011 A3050000 		.4byte	.LASF103
+ 661 0015 CA040000 		.4byte	.LASF104
+ 662 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 663 001d 00000000 		.4byte	0
+ 664 0021 00000000 		.4byte	.Ldebug_line0
+ 665 0025 02       		.uleb128 0x2
+ 666 0026 01       		.byte	0x1
+ 667 0027 06       		.byte	0x6
+ 668 0028 56000000 		.4byte	.LASF0
+ 669 002c 02       		.uleb128 0x2
+ 670 002d 01       		.byte	0x1
+ 671 002e 08       		.byte	0x8
+ 672 002f 9F030000 		.4byte	.LASF1
+ 673 0033 02       		.uleb128 0x2
+ 674 0034 02       		.byte	0x2
+ 675 0035 05       		.byte	0x5
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 18
+
+
+ 676 0036 8B000000 		.4byte	.LASF2
+ 677 003a 02       		.uleb128 0x2
+ 678 003b 02       		.byte	0x2
+ 679 003c 07       		.byte	0x7
+ 680 003d 9D040000 		.4byte	.LASF3
+ 681 0041 03       		.uleb128 0x3
+ 682 0042 38060000 		.4byte	.LASF9
+ 683 0046 02       		.byte	0x2
+ 684 0047 3F       		.byte	0x3f
+ 685 0048 4C000000 		.4byte	0x4c
+ 686 004c 02       		.uleb128 0x2
+ 687 004d 04       		.byte	0x4
+ 688 004e 05       		.byte	0x5
+ 689 004f 2F050000 		.4byte	.LASF4
+ 690 0053 02       		.uleb128 0x2
+ 691 0054 04       		.byte	0x4
+ 692 0055 07       		.byte	0x7
+ 693 0056 E1020000 		.4byte	.LASF5
+ 694 005a 02       		.uleb128 0x2
+ 695 005b 08       		.byte	0x8
+ 696 005c 05       		.byte	0x5
+ 697 005d 58020000 		.4byte	.LASF6
+ 698 0061 02       		.uleb128 0x2
+ 699 0062 08       		.byte	0x8
+ 700 0063 07       		.byte	0x7
+ 701 0064 EF030000 		.4byte	.LASF7
+ 702 0068 04       		.uleb128 0x4
+ 703 0069 04       		.byte	0x4
+ 704 006a 05       		.byte	0x5
+ 705 006b 696E7400 		.ascii	"int\000"
+ 706 006f 02       		.uleb128 0x2
+ 707 0070 04       		.byte	0x4
+ 708 0071 07       		.byte	0x7
+ 709 0072 1A040000 		.4byte	.LASF8
+ 710 0076 03       		.uleb128 0x3
+ 711 0077 3E050000 		.4byte	.LASF10
+ 712 007b 03       		.byte	0x3
+ 713 007c 2C       		.byte	0x2c
+ 714 007d 41000000 		.4byte	0x41
+ 715 0081 02       		.uleb128 0x2
+ 716 0082 04       		.byte	0x4
+ 717 0083 04       		.byte	0x4
+ 718 0084 3F020000 		.4byte	.LASF11
+ 719 0088 02       		.uleb128 0x2
+ 720 0089 08       		.byte	0x8
+ 721 008a 04       		.byte	0x4
+ 722 008b C5050000 		.4byte	.LASF12
+ 723 008f 02       		.uleb128 0x2
+ 724 0090 01       		.byte	0x1
+ 725 0091 08       		.byte	0x8
+ 726 0092 C5040000 		.4byte	.LASF13
+ 727 0096 02       		.uleb128 0x2
+ 728 0097 08       		.byte	0x8
+ 729 0098 04       		.byte	0x4
+ 730 0099 93030000 		.4byte	.LASF14
+ 731 009d 02       		.uleb128 0x2
+ 732 009e 04       		.byte	0x4
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 19
+
+
+ 733 009f 07       		.byte	0x7
+ 734 00a0 6C060000 		.4byte	.LASF15
+ 735 00a4 05       		.uleb128 0x5
+ 736 00a5 DD050000 		.4byte	.LASF16
+ 737 00a9 01       		.byte	0x1
+ 738 00aa 40       		.byte	0x40
+ 739 00ab 00000000 		.4byte	.LFB64
+ 740 00af 08000000 		.4byte	.LFE64-.LFB64
+ 741 00b3 01       		.uleb128 0x1
+ 742 00b4 9C       		.byte	0x9c
+ 743 00b5 C3000000 		.4byte	0xc3
+ 744 00b9 06       		.uleb128 0x6
+ 745 00ba 06000000 		.4byte	.LVL0
+ 746 00be BA060000 		.4byte	0x6ba
+ 747 00c2 00       		.byte	0
+ 748 00c3 05       		.uleb128 0x5
+ 749 00c4 42000000 		.4byte	.LASF17
+ 750 00c8 01       		.byte	0x1
+ 751 00c9 44       		.byte	0x44
+ 752 00ca 00000000 		.4byte	.LFB65
+ 753 00ce 08000000 		.4byte	.LFE65-.LFB65
+ 754 00d2 01       		.uleb128 0x1
+ 755 00d3 9C       		.byte	0x9c
+ 756 00d4 E2000000 		.4byte	0xe2
+ 757 00d8 06       		.uleb128 0x6
+ 758 00d9 06000000 		.4byte	.LVL1
+ 759 00dd C5060000 		.4byte	0x6c5
+ 760 00e1 00       		.byte	0
+ 761 00e2 05       		.uleb128 0x5
+ 762 00e3 04060000 		.4byte	.LASF18
+ 763 00e7 01       		.byte	0x1
+ 764 00e8 48       		.byte	0x48
+ 765 00e9 00000000 		.4byte	.LFB66
+ 766 00ed 28000000 		.4byte	.LFE66-.LFB66
+ 767 00f1 01       		.uleb128 0x1
+ 768 00f2 9C       		.byte	0x9c
+ 769 00f3 25010000 		.4byte	0x125
+ 770 00f7 06       		.uleb128 0x6
+ 771 00f8 06000000 		.4byte	.LVL2
+ 772 00fc D0060000 		.4byte	0x6d0
+ 773 0100 06       		.uleb128 0x6
+ 774 0101 0A000000 		.4byte	.LVL3
+ 775 0105 DB060000 		.4byte	0x6db
+ 776 0109 06       		.uleb128 0x6
+ 777 010a 0E000000 		.4byte	.LVL4
+ 778 010e E6060000 		.4byte	0x6e6
+ 779 0112 06       		.uleb128 0x6
+ 780 0113 16000000 		.4byte	.LVL5
+ 781 0117 F1060000 		.4byte	0x6f1
+ 782 011b 06       		.uleb128 0x6
+ 783 011c 1E000000 		.4byte	.LVL6
+ 784 0120 FC060000 		.4byte	0x6fc
+ 785 0124 00       		.byte	0
+ 786 0125 07       		.uleb128 0x7
+ 787 0126 54494800 		.ascii	"TIH\000"
+ 788 012a 01       		.byte	0x1
+ 789 012b 6E       		.byte	0x6e
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 20
+
+
+ 790 012c 00000000 		.4byte	.LFB67
+ 791 0130 08000000 		.4byte	.LFE67-.LFB67
+ 792 0134 01       		.uleb128 0x1
+ 793 0135 9C       		.byte	0x9c
+ 794 0136 44010000 		.4byte	0x144
+ 795 013a 06       		.uleb128 0x6
+ 796 013b 06000000 		.4byte	.LVL7
+ 797 013f 07070000 		.4byte	0x707
+ 798 0143 00       		.byte	0
+ 799 0144 05       		.uleb128 0x5
+ 800 0145 2E010000 		.4byte	.LASF19
+ 801 0149 01       		.byte	0x1
+ 802 014a 73       		.byte	0x73
+ 803 014b 00000000 		.4byte	.LFB68
+ 804 014f 20000000 		.4byte	.LFE68-.LFB68
+ 805 0153 01       		.uleb128 0x1
+ 806 0154 9C       		.byte	0x9c
+ 807 0155 6A010000 		.4byte	0x16a
+ 808 0159 08       		.uleb128 0x8
+ 809 015a 08000000 		.4byte	.LVL8
+ 810 015e 12070000 		.4byte	0x712
+ 811 0162 09       		.uleb128 0x9
+ 812 0163 01       		.uleb128 0x1
+ 813 0164 50       		.byte	0x50
+ 814 0165 02       		.uleb128 0x2
+ 815 0166 08       		.byte	0x8
+ 816 0167 64       		.byte	0x64
+ 817 0168 00       		.byte	0
+ 818 0169 00       		.byte	0
+ 819 016a 0A       		.uleb128 0xa
+ 820 016b 29010000 		.4byte	.LASF105
+ 821 016f 01       		.byte	0x1
+ 822 0170 7B       		.byte	0x7b
+ 823 0171 68000000 		.4byte	0x68
+ 824 0175 00000000 		.4byte	.LFB69
+ 825 0179 74010000 		.4byte	.LFE69-.LFB69
+ 826 017d 01       		.uleb128 0x1
+ 827 017e 9C       		.byte	0x9c
+ 828 017f 90030000 		.4byte	0x390
+ 829 0183 0B       		.uleb128 0xb
+ 830 0184 746D7000 		.ascii	"tmp\000"
+ 831 0188 01       		.byte	0x1
+ 832 0189 9A       		.byte	0x9a
+ 833 018a 68000000 		.4byte	0x68
+ 834 018e 00       		.byte	0
+ 835 018f 06       		.uleb128 0x6
+ 836 0190 08000000 		.4byte	.LVL9
+ 837 0194 1D070000 		.4byte	0x71d
+ 838 0198 06       		.uleb128 0x6
+ 839 0199 0C000000 		.4byte	.LVL10
+ 840 019d 28070000 		.4byte	0x728
+ 841 01a1 0C       		.uleb128 0xc
+ 842 01a2 12000000 		.4byte	.LVL11
+ 843 01a6 33070000 		.4byte	0x733
+ 844 01aa B8010000 		.4byte	0x1b8
+ 845 01ae 09       		.uleb128 0x9
+ 846 01af 01       		.uleb128 0x1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 21
+
+
+ 847 01b0 50       		.byte	0x50
+ 848 01b1 05       		.uleb128 0x5
+ 849 01b2 03       		.byte	0x3
+ 850 01b3 00000000 		.4byte	.LC0
+ 851 01b7 00       		.byte	0
+ 852 01b8 06       		.uleb128 0x6
+ 853 01b9 16000000 		.4byte	.LVL12
+ 854 01bd 3E070000 		.4byte	0x73e
+ 855 01c1 06       		.uleb128 0x6
+ 856 01c2 1A000000 		.4byte	.LVL13
+ 857 01c6 49070000 		.4byte	0x749
+ 858 01ca 0C       		.uleb128 0xc
+ 859 01cb 20000000 		.4byte	.LVL14
+ 860 01cf 54070000 		.4byte	0x754
+ 861 01d3 DD010000 		.4byte	0x1dd
+ 862 01d7 09       		.uleb128 0x9
+ 863 01d8 01       		.uleb128 0x1
+ 864 01d9 50       		.byte	0x50
+ 865 01da 01       		.uleb128 0x1
+ 866 01db 30       		.byte	0x30
+ 867 01dc 00       		.byte	0
+ 868 01dd 06       		.uleb128 0x6
+ 869 01de 28000000 		.4byte	.LVL15
+ 870 01e2 5F070000 		.4byte	0x75f
+ 871 01e6 06       		.uleb128 0x6
+ 872 01e7 2C000000 		.4byte	.LVL16
+ 873 01eb 6A070000 		.4byte	0x76a
+ 874 01ef 06       		.uleb128 0x6
+ 875 01f0 30000000 		.4byte	.LVL17
+ 876 01f4 75070000 		.4byte	0x775
+ 877 01f8 06       		.uleb128 0x6
+ 878 01f9 34000000 		.4byte	.LVL18
+ 879 01fd 80070000 		.4byte	0x780
+ 880 0201 06       		.uleb128 0x6
+ 881 0202 38000000 		.4byte	.LVL19
+ 882 0206 8B070000 		.4byte	0x78b
+ 883 020a 06       		.uleb128 0x6
+ 884 020b 3C000000 		.4byte	.LVL20
+ 885 020f 96070000 		.4byte	0x796
+ 886 0213 0C       		.uleb128 0xc
+ 887 0214 42000000 		.4byte	.LVL21
+ 888 0218 A1070000 		.4byte	0x7a1
+ 889 021c 2A020000 		.4byte	0x22a
+ 890 0220 09       		.uleb128 0x9
+ 891 0221 01       		.uleb128 0x1
+ 892 0222 50       		.byte	0x50
+ 893 0223 05       		.uleb128 0x5
+ 894 0224 03       		.byte	0x3
+ 895 0225 00000000 		.4byte	TIH
+ 896 0229 00       		.byte	0
+ 897 022a 0C       		.uleb128 0xc
+ 898 022b 48000000 		.4byte	.LVL22
+ 899 022f AC070000 		.4byte	0x7ac
+ 900 0233 41020000 		.4byte	0x241
+ 901 0237 09       		.uleb128 0x9
+ 902 0238 01       		.uleb128 0x1
+ 903 0239 50       		.byte	0x50
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 22
+
+
+ 904 023a 05       		.uleb128 0x5
+ 905 023b 03       		.byte	0x3
+ 906 023c 00000000 		.4byte	StartIH
+ 907 0240 00       		.byte	0
+ 908 0241 06       		.uleb128 0x6
+ 909 0242 50000000 		.4byte	.LVL24
+ 910 0246 B7070000 		.4byte	0x7b7
+ 911 024a 06       		.uleb128 0x6
+ 912 024b 54000000 		.4byte	.LVL25
+ 913 024f C2070000 		.4byte	0x7c2
+ 914 0253 06       		.uleb128 0x6
+ 915 0254 60000000 		.4byte	.LVL26
+ 916 0258 CD070000 		.4byte	0x7cd
+ 917 025c 06       		.uleb128 0x6
+ 918 025d 64000000 		.4byte	.LVL27
+ 919 0261 D8070000 		.4byte	0x7d8
+ 920 0265 06       		.uleb128 0x6
+ 921 0266 68000000 		.4byte	.LVL28
+ 922 026a E3070000 		.4byte	0x7e3
+ 923 026e 06       		.uleb128 0x6
+ 924 026f 6C000000 		.4byte	.LVL29
+ 925 0273 EE070000 		.4byte	0x7ee
+ 926 0277 0C       		.uleb128 0xc
+ 927 0278 72000000 		.4byte	.LVL30
+ 928 027c F9070000 		.4byte	0x7f9
+ 929 0280 8E020000 		.4byte	0x28e
+ 930 0284 09       		.uleb128 0x9
+ 931 0285 01       		.uleb128 0x1
+ 932 0286 50       		.byte	0x50
+ 933 0287 05       		.uleb128 0x5
+ 934 0288 03       		.byte	0x3
+ 935 0289 00000000 		.4byte	Encoder_Counts_1_IH
+ 936 028d 00       		.byte	0
+ 937 028e 0C       		.uleb128 0xc
+ 938 028f 78000000 		.4byte	.LVL31
+ 939 0293 04080000 		.4byte	0x804
+ 940 0297 A5020000 		.4byte	0x2a5
+ 941 029b 09       		.uleb128 0x9
+ 942 029c 01       		.uleb128 0x1
+ 943 029d 50       		.byte	0x50
+ 944 029e 05       		.uleb128 0x5
+ 945 029f 03       		.byte	0x3
+ 946 02a0 00000000 		.4byte	Encoder_Counts_2_IH
+ 947 02a4 00       		.byte	0
+ 948 02a5 0C       		.uleb128 0xc
+ 949 02a6 7E000000 		.4byte	.LVL32
+ 950 02aa 0F080000 		.4byte	0x80f
+ 951 02ae BC020000 		.4byte	0x2bc
+ 952 02b2 09       		.uleb128 0x9
+ 953 02b3 01       		.uleb128 0x1
+ 954 02b4 50       		.byte	0x50
+ 955 02b5 05       		.uleb128 0x5
+ 956 02b6 03       		.byte	0x3
+ 957 02b7 00000000 		.4byte	Drift_Check_IH
+ 958 02bb 00       		.byte	0
+ 959 02bc 06       		.uleb128 0x6
+ 960 02bd 82000000 		.4byte	.LVL33
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 23
+
+
+ 961 02c1 1A080000 		.4byte	0x81a
+ 962 02c5 06       		.uleb128 0x6
+ 963 02c6 86000000 		.4byte	.LVL34
+ 964 02ca 25080000 		.4byte	0x825
+ 965 02ce 06       		.uleb128 0x6
+ 966 02cf 92000000 		.4byte	.LVL35
+ 967 02d3 30080000 		.4byte	0x830
+ 968 02d7 06       		.uleb128 0x6
+ 969 02d8 98000000 		.4byte	.LVL36
+ 970 02dc 3B080000 		.4byte	0x83b
+ 971 02e0 06       		.uleb128 0x6
+ 972 02e1 9C000000 		.4byte	.LVL37
+ 973 02e5 46080000 		.4byte	0x846
+ 974 02e9 06       		.uleb128 0x6
+ 975 02ea BA000000 		.4byte	.LVL38
+ 976 02ee 3B080000 		.4byte	0x83b
+ 977 02f2 06       		.uleb128 0x6
+ 978 02f3 C0000000 		.4byte	.LVL39
+ 979 02f7 51080000 		.4byte	0x851
+ 980 02fb 06       		.uleb128 0x6
+ 981 02fc C4000000 		.4byte	.LVL40
+ 982 0300 3B080000 		.4byte	0x83b
+ 983 0304 06       		.uleb128 0x6
+ 984 0305 EE000000 		.4byte	.LVL42
+ 985 0309 51080000 		.4byte	0x851
+ 986 030d 06       		.uleb128 0x6
+ 987 030e F2000000 		.4byte	.LVL43
+ 988 0312 3B080000 		.4byte	0x83b
+ 989 0316 0C       		.uleb128 0xc
+ 990 0317 12010000 		.4byte	.LVL44
+ 991 031b 5C080000 		.4byte	0x85c
+ 992 031f 34030000 		.4byte	0x334
+ 993 0323 09       		.uleb128 0x9
+ 994 0324 01       		.uleb128 0x1
+ 995 0325 50       		.byte	0x50
+ 996 0326 01       		.uleb128 0x1
+ 997 0327 40       		.byte	0x40
+ 998 0328 09       		.uleb128 0x9
+ 999 0329 01       		.uleb128 0x1
+ 1000 032a 51       		.byte	0x51
+ 1001 032b 02       		.uleb128 0x2
+ 1002 032c 08       		.byte	0x8
+ 1003 032d 82       		.byte	0x82
+ 1004 032e 09       		.uleb128 0x9
+ 1005 032f 01       		.uleb128 0x1
+ 1006 0330 52       		.byte	0x52
+ 1007 0331 01       		.uleb128 0x1
+ 1008 0332 30       		.byte	0x30
+ 1009 0333 00       		.byte	0
+ 1010 0334 0C       		.uleb128 0xc
+ 1011 0335 1E010000 		.4byte	.LVL45
+ 1012 0339 5C080000 		.4byte	0x85c
+ 1013 033d 53030000 		.4byte	0x353
+ 1014 0341 09       		.uleb128 0x9
+ 1015 0342 01       		.uleb128 0x1
+ 1016 0343 50       		.byte	0x50
+ 1017 0344 01       		.uleb128 0x1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 24
+
+
+ 1018 0345 40       		.byte	0x40
+ 1019 0346 09       		.uleb128 0x9
+ 1020 0347 01       		.uleb128 0x1
+ 1021 0348 51       		.byte	0x51
+ 1022 0349 02       		.uleb128 0x2
+ 1023 034a 08       		.byte	0x8
+ 1024 034b 66       		.byte	0x66
+ 1025 034c 09       		.uleb128 0x9
+ 1026 034d 01       		.uleb128 0x1
+ 1027 034e 52       		.byte	0x52
+ 1028 034f 02       		.uleb128 0x2
+ 1029 0350 08       		.byte	0x8
+ 1030 0351 5A       		.byte	0x5a
+ 1031 0352 00       		.byte	0
+ 1032 0353 0C       		.uleb128 0xc
+ 1033 0354 32010000 		.4byte	.LVL46
+ 1034 0358 5C080000 		.4byte	0x85c
+ 1035 035c 73030000 		.4byte	0x373
+ 1036 0360 09       		.uleb128 0x9
+ 1037 0361 01       		.uleb128 0x1
+ 1038 0362 50       		.byte	0x50
+ 1039 0363 02       		.uleb128 0x2
+ 1040 0364 08       		.byte	0x8
+ 1041 0365 68       		.byte	0x68
+ 1042 0366 09       		.uleb128 0x9
+ 1043 0367 01       		.uleb128 0x1
+ 1044 0368 51       		.byte	0x51
+ 1045 0369 02       		.uleb128 0x2
+ 1046 036a 08       		.byte	0x8
+ 1047 036b 82       		.byte	0x82
+ 1048 036c 09       		.uleb128 0x9
+ 1049 036d 01       		.uleb128 0x1
+ 1050 036e 52       		.byte	0x52
+ 1051 036f 02       		.uleb128 0x2
+ 1052 0370 08       		.byte	0x8
+ 1053 0371 B4       		.byte	0xb4
+ 1054 0372 00       		.byte	0
+ 1055 0373 08       		.uleb128 0x8
+ 1056 0374 3E010000 		.4byte	.LVL47
+ 1057 0378 5C080000 		.4byte	0x85c
+ 1058 037c 09       		.uleb128 0x9
+ 1059 037d 01       		.uleb128 0x1
+ 1060 037e 50       		.byte	0x50
+ 1061 037f 02       		.uleb128 0x2
+ 1062 0380 08       		.byte	0x8
+ 1063 0381 68       		.byte	0x68
+ 1064 0382 09       		.uleb128 0x9
+ 1065 0383 01       		.uleb128 0x1
+ 1066 0384 51       		.byte	0x51
+ 1067 0385 02       		.uleb128 0x2
+ 1068 0386 08       		.byte	0x8
+ 1069 0387 66       		.byte	0x66
+ 1070 0388 09       		.uleb128 0x9
+ 1071 0389 01       		.uleb128 0x1
+ 1072 038a 52       		.byte	0x52
+ 1073 038b 02       		.uleb128 0x2
+ 1074 038c 08       		.byte	0x8
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 25
+
+
+ 1075 038d 5A       		.byte	0x5a
+ 1076 038e 00       		.byte	0
+ 1077 038f 00       		.byte	0
+ 1078 0390 0D       		.uleb128 0xd
+ 1079 0391 AA020000 		.4byte	.LASF20
+ 1080 0395 01       		.byte	0x1
+ 1081 0396 1201     		.2byte	0x112
+ 1082 0398 00000000 		.4byte	.LFB70
+ 1083 039c 0C000000 		.4byte	.LFE70-.LFB70
+ 1084 03a0 01       		.uleb128 0x1
+ 1085 03a1 9C       		.byte	0x9c
+ 1086 03a2 D5030000 		.4byte	0x3d5
+ 1087 03a6 0E       		.uleb128 0xe
+ 1088 03a7 89040000 		.4byte	.LASF22
+ 1089 03ab 01       		.byte	0x1
+ 1090 03ac 1201     		.2byte	0x112
+ 1091 03ae 68000000 		.4byte	0x68
+ 1092 03b2 00000000 		.4byte	.LLST0
+ 1093 03b6 0C       		.uleb128 0xc
+ 1094 03b7 06000000 		.4byte	.LVL49
+ 1095 03bb 67080000 		.4byte	0x867
+ 1096 03bf CB030000 		.4byte	0x3cb
+ 1097 03c3 09       		.uleb128 0x9
+ 1098 03c4 01       		.uleb128 0x1
+ 1099 03c5 50       		.byte	0x50
+ 1100 03c6 03       		.uleb128 0x3
+ 1101 03c7 F3       		.byte	0xf3
+ 1102 03c8 01       		.uleb128 0x1
+ 1103 03c9 50       		.byte	0x50
+ 1104 03ca 00       		.byte	0
+ 1105 03cb 06       		.uleb128 0x6
+ 1106 03cc 0A000000 		.4byte	.LVL50
+ 1107 03d0 72080000 		.4byte	0x872
+ 1108 03d4 00       		.byte	0
+ 1109 03d5 0D       		.uleb128 0xd
+ 1110 03d6 34000000 		.4byte	.LASF21
+ 1111 03da 01       		.byte	0x1
+ 1112 03db 1701     		.2byte	0x117
+ 1113 03dd 00000000 		.4byte	.LFB71
+ 1114 03e1 10000000 		.4byte	.LFE71-.LFB71
+ 1115 03e5 01       		.uleb128 0x1
+ 1116 03e6 9C       		.byte	0x9c
+ 1117 03e7 15040000 		.4byte	0x415
+ 1118 03eb 0E       		.uleb128 0xe
+ 1119 03ec 89040000 		.4byte	.LASF22
+ 1120 03f0 01       		.byte	0x1
+ 1121 03f1 1701     		.2byte	0x117
+ 1122 03f3 68000000 		.4byte	0x68
+ 1123 03f7 21000000 		.4byte	.LLST1
+ 1124 03fb 06       		.uleb128 0x6
+ 1125 03fc 08000000 		.4byte	.LVL52
+ 1126 0400 7D080000 		.4byte	0x87d
+ 1127 0404 08       		.uleb128 0x8
+ 1128 0405 0E000000 		.4byte	.LVL53
+ 1129 0409 67080000 		.4byte	0x867
+ 1130 040d 09       		.uleb128 0x9
+ 1131 040e 01       		.uleb128 0x1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 26
+
+
+ 1132 040f 50       		.byte	0x50
+ 1133 0410 02       		.uleb128 0x2
+ 1134 0411 74       		.byte	0x74
+ 1135 0412 00       		.sleb128 0
+ 1136 0413 00       		.byte	0
+ 1137 0414 00       		.byte	0
+ 1138 0415 0F       		.uleb128 0xf
+ 1139 0416 8C060000 		.4byte	.LASF23
+ 1140 041a 04       		.byte	0x4
+ 1141 041b 1207     		.2byte	0x712
+ 1142 041d 21040000 		.4byte	0x421
+ 1143 0421 10       		.uleb128 0x10
+ 1144 0422 76000000 		.4byte	0x76
+ 1145 0426 11       		.uleb128 0x11
+ 1146 0427 46050000 		.4byte	.LASF24
+ 1147 042b 05       		.byte	0x5
+ 1148 042c 1D       		.byte	0x1d
+ 1149 042d 68000000 		.4byte	0x68
+ 1150 0431 05       		.uleb128 0x5
+ 1151 0432 03       		.byte	0x3
+ 1152 0433 00000000 		.4byte	driveStraightEnable
+ 1153 0437 11       		.uleb128 0x11
+ 1154 0438 46030000 		.4byte	.LASF25
+ 1155 043c 01       		.byte	0x1
+ 1156 043d 65       		.byte	0x65
+ 1157 043e 68000000 		.4byte	0x68
+ 1158 0442 05       		.uleb128 0x5
+ 1159 0443 03       		.byte	0x3
+ 1160 0444 00000000 		.4byte	currentPuckRackScanningIndex
+ 1161 0448 12       		.uleb128 0x12
+ 1162 0449 68000000 		.4byte	0x68
+ 1163 044d 58040000 		.4byte	0x458
+ 1164 0451 13       		.uleb128 0x13
+ 1165 0452 9D000000 		.4byte	0x9d
+ 1166 0456 04       		.byte	0x4
+ 1167 0457 00       		.byte	0
+ 1168 0458 11       		.uleb128 0x11
+ 1169 0459 42060000 		.4byte	.LASF26
+ 1170 045d 01       		.byte	0x1
+ 1171 045e 64       		.byte	0x64
+ 1172 045f 48040000 		.4byte	0x448
+ 1173 0463 05       		.uleb128 0x5
+ 1174 0464 03       		.byte	0x3
+ 1175 0465 00000000 		.4byte	puckRackColours
+ 1176 0469 11       		.uleb128 0x11
+ 1177 046a FE000000 		.4byte	.LASF27
+ 1178 046e 01       		.byte	0x1
+ 1179 046f 66       		.byte	0x66
+ 1180 0470 48040000 		.4byte	0x448
+ 1181 0474 05       		.uleb128 0x5
+ 1182 0475 03       		.byte	0x3
+ 1183 0476 00000000 		.4byte	puckRackOffsetsFromWest
+ 1184 047a 11       		.uleb128 0x11
+ 1185 047b BC040000 		.4byte	.LASF28
+ 1186 047f 01       		.byte	0x1
+ 1187 0480 5A       		.byte	0x5a
+ 1188 0481 68000000 		.4byte	0x68
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 27
+
+
+ 1189 0485 05       		.uleb128 0x5
+ 1190 0486 03       		.byte	0x3
+ 1191 0487 00000000 		.4byte	sweeping
+ 1192 048b 12       		.uleb128 0x12
+ 1193 048c 81000000 		.4byte	0x81
+ 1194 0490 9B040000 		.4byte	0x49b
+ 1195 0494 13       		.uleb128 0x13
+ 1196 0495 9D000000 		.4byte	0x9d
+ 1197 0499 03       		.byte	0x3
+ 1198 049a 00       		.byte	0
+ 1199 049b 11       		.uleb128 0x11
+ 1200 049c DB030000 		.4byte	.LASF29
+ 1201 04a0 01       		.byte	0x1
+ 1202 04a1 5F       		.byte	0x5f
+ 1203 04a2 8B040000 		.4byte	0x48b
+ 1204 04a6 05       		.uleb128 0x5
+ 1205 04a7 03       		.byte	0x3
+ 1206 04a8 00000000 		.4byte	block_edge_location
+ 1207 04ac 11       		.uleb128 0x11
+ 1208 04ad 18030000 		.4byte	.LASF30
+ 1209 04b1 06       		.byte	0x6
+ 1210 04b2 72       		.byte	0x72
+ 1211 04b3 81000000 		.4byte	0x81
+ 1212 04b7 05       		.uleb128 0x5
+ 1213 04b8 03       		.byte	0x3
+ 1214 04b9 00000000 		.4byte	puckPileLocation
+ 1215 04bd 11       		.uleb128 0x11
+ 1216 04be F1050000 		.4byte	.LASF31
+ 1217 04c2 01       		.byte	0x1
+ 1218 04c3 56       		.byte	0x56
+ 1219 04c4 68000000 		.4byte	0x68
+ 1220 04c8 05       		.uleb128 0x5
+ 1221 04c9 03       		.byte	0x3
+ 1222 04ca 00000000 		.4byte	state
+ 1223 04ce 12       		.uleb128 0x12
+ 1224 04cf 81000000 		.4byte	0x81
+ 1225 04d3 DE040000 		.4byte	0x4de
+ 1226 04d7 13       		.uleb128 0x13
+ 1227 04d8 9D000000 		.4byte	0x9d
+ 1228 04dc 01       		.byte	0x1
+ 1229 04dd 00       		.byte	0
+ 1230 04de 11       		.uleb128 0x11
+ 1231 04df A9000000 		.4byte	.LASF32
+ 1232 04e3 01       		.byte	0x1
+ 1233 04e4 1D       		.byte	0x1d
+ 1234 04e5 CE040000 		.4byte	0x4ce
+ 1235 04e9 05       		.uleb128 0x5
+ 1236 04ea 03       		.byte	0x3
+ 1237 04eb 00000000 		.4byte	currentPosition
+ 1238 04ef 11       		.uleb128 0x11
+ 1239 04f0 7C050000 		.4byte	.LASF33
+ 1240 04f4 01       		.byte	0x1
+ 1241 04f5 1E       		.byte	0x1e
+ 1242 04f6 CE040000 		.4byte	0x4ce
+ 1243 04fa 05       		.uleb128 0x5
+ 1244 04fb 03       		.byte	0x3
+ 1245 04fc 00000000 		.4byte	desiredPosition
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 28
+
+
+ 1246 0500 11       		.uleb128 0x11
+ 1247 0501 63040000 		.4byte	.LASF34
+ 1248 0505 01       		.byte	0x1
+ 1249 0506 1F       		.byte	0x1f
+ 1250 0507 68000000 		.4byte	0x68
+ 1251 050b 05       		.uleb128 0x5
+ 1252 050c 03       		.byte	0x3
+ 1253 050d 00000000 		.4byte	currentOrientation
+ 1254 0511 11       		.uleb128 0x11
+ 1255 0512 16010000 		.4byte	.LASF35
+ 1256 0516 01       		.byte	0x1
+ 1257 0517 20       		.byte	0x20
+ 1258 0518 68000000 		.4byte	0x68
+ 1259 051c 05       		.uleb128 0x5
+ 1260 051d 03       		.byte	0x3
+ 1261 051e 00000000 		.4byte	desiredOrientation
+ 1262 0522 11       		.uleb128 0x11
+ 1263 0523 8C050000 		.4byte	.LASF36
+ 1264 0527 01       		.byte	0x1
+ 1265 0528 27       		.byte	0x27
+ 1266 0529 68000000 		.4byte	0x68
+ 1267 052d 05       		.uleb128 0x5
+ 1268 052e 03       		.byte	0x3
+ 1269 052f 00000000 		.4byte	M1_FD
+ 1270 0533 11       		.uleb128 0x11
+ 1271 0534 38050000 		.4byte	.LASF37
+ 1272 0538 01       		.byte	0x1
+ 1273 0539 28       		.byte	0x28
+ 1274 053a 68000000 		.4byte	0x68
+ 1275 053e 05       		.uleb128 0x5
+ 1276 053f 03       		.byte	0x3
+ 1277 0540 00000000 		.4byte	M1_BD
+ 1278 0544 11       		.uleb128 0x11
+ 1279 0545 80070000 		.4byte	.LASF38
+ 1280 0549 01       		.byte	0x1
+ 1281 054a 29       		.byte	0x29
+ 1282 054b 68000000 		.4byte	0x68
+ 1283 054f 05       		.uleb128 0x5
+ 1284 0550 03       		.byte	0x3
+ 1285 0551 00000000 		.4byte	M2_FD
+ 1286 0555 11       		.uleb128 0x11
+ 1287 0556 86060000 		.4byte	.LASF39
+ 1288 055a 01       		.byte	0x1
+ 1289 055b 2A       		.byte	0x2a
+ 1290 055c 68000000 		.4byte	0x68
+ 1291 0560 05       		.uleb128 0x5
+ 1292 0561 03       		.byte	0x3
+ 1293 0562 00000000 		.4byte	M2_BD
+ 1294 0566 11       		.uleb128 0x11
+ 1295 0567 EE010000 		.4byte	.LASF40
+ 1296 056b 01       		.byte	0x1
+ 1297 056c 25       		.byte	0x25
+ 1298 056d 33000000 		.4byte	0x33
+ 1299 0571 05       		.uleb128 0x5
+ 1300 0572 03       		.byte	0x3
+ 1301 0573 00000000 		.4byte	motor1Enable
+ 1302 0577 11       		.uleb128 0x11
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 29
+
+
+ 1303 0578 F7050000 		.4byte	.LASF41
+ 1304 057c 01       		.byte	0x1
+ 1305 057d 26       		.byte	0x26
+ 1306 057e 33000000 		.4byte	0x33
+ 1307 0582 05       		.uleb128 0x5
+ 1308 0583 03       		.byte	0x3
+ 1309 0584 00000000 		.4byte	motor2Enable
+ 1310 0588 11       		.uleb128 0x11
+ 1311 0589 EA000000 		.4byte	.LASF42
+ 1312 058d 01       		.byte	0x1
+ 1313 058e 2B       		.byte	0x2b
+ 1314 058f 68000000 		.4byte	0x68
+ 1315 0593 05       		.uleb128 0x5
+ 1316 0594 03       		.byte	0x3
+ 1317 0595 00000000 		.4byte	motor1EncoderCounts
+ 1318 0599 11       		.uleb128 0x11
+ 1319 059a 00000000 		.4byte	.LASF43
+ 1320 059e 01       		.byte	0x1
+ 1321 059f 2C       		.byte	0x2c
+ 1322 05a0 68000000 		.4byte	0x68
+ 1323 05a4 05       		.uleb128 0x5
+ 1324 05a5 03       		.byte	0x3
+ 1325 05a6 00000000 		.4byte	motor2EncoderCounts
+ 1326 05aa 11       		.uleb128 0x11
+ 1327 05ab D3030000 		.4byte	.LASF44
+ 1328 05af 01       		.byte	0x1
+ 1329 05b0 2D       		.byte	0x2d
+ 1330 05b1 33000000 		.4byte	0x33
+ 1331 05b5 05       		.uleb128 0x5
+ 1332 05b6 03       		.byte	0x3
+ 1333 05b7 00000000 		.4byte	moveNow
+ 1334 05bb 11       		.uleb128 0x11
+ 1335 05bc C7000000 		.4byte	.LASF45
+ 1336 05c0 01       		.byte	0x1
+ 1337 05c1 34       		.byte	0x34
+ 1338 05c2 33000000 		.4byte	0x33
+ 1339 05c6 05       		.uleb128 0x5
+ 1340 05c7 03       		.byte	0x3
+ 1341 05c8 00000000 		.4byte	drivingForwardFlag
+ 1342 05cc 11       		.uleb128 0x11
+ 1343 05cd 04030000 		.4byte	.LASF46
+ 1344 05d1 01       		.byte	0x1
+ 1345 05d2 35       		.byte	0x35
+ 1346 05d3 33000000 		.4byte	0x33
+ 1347 05d7 05       		.uleb128 0x5
+ 1348 05d8 03       		.byte	0x3
+ 1349 05d9 00000000 		.4byte	drivingBackwardFlag
+ 1350 05dd 11       		.uleb128 0x11
+ 1351 05de 7B000000 		.4byte	.LASF47
+ 1352 05e2 01       		.byte	0x1
+ 1353 05e3 36       		.byte	0x36
+ 1354 05e4 33000000 		.4byte	0x33
+ 1355 05e8 05       		.uleb128 0x5
+ 1356 05e9 03       		.byte	0x3
+ 1357 05ea 00000000 		.4byte	turningLeftFlag
+ 1358 05ee 11       		.uleb128 0x11
+ 1359 05ef 2E020000 		.4byte	.LASF48
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 30
+
+
+ 1360 05f3 01       		.byte	0x1
+ 1361 05f4 37       		.byte	0x37
+ 1362 05f5 33000000 		.4byte	0x33
+ 1363 05f9 05       		.uleb128 0x5
+ 1364 05fa 03       		.byte	0x3
+ 1365 05fb 00000000 		.4byte	turningRightFlag
+ 1366 05ff 11       		.uleb128 0x11
+ 1367 0600 52060000 		.4byte	.LASF49
+ 1368 0604 01       		.byte	0x1
+ 1369 0605 3A       		.byte	0x3a
+ 1370 0606 33000000 		.4byte	0x33
+ 1371 060a 05       		.uleb128 0x5
+ 1372 060b 03       		.byte	0x3
+ 1373 060c 00000000 		.4byte	moveLeftAllowed
+ 1374 0610 11       		.uleb128 0x11
+ 1375 0611 75060000 		.4byte	.LASF50
+ 1376 0615 01       		.byte	0x1
+ 1377 0616 3B       		.byte	0x3b
+ 1378 0617 33000000 		.4byte	0x33
+ 1379 061b 05       		.uleb128 0x5
+ 1380 061c 03       		.byte	0x3
+ 1381 061d 00000000 		.4byte	moveRightAllowed
+ 1382 0621 11       		.uleb128 0x11
+ 1383 0622 76040000 		.4byte	.LASF51
+ 1384 0626 01       		.byte	0x1
+ 1385 0627 3C       		.byte	0x3c
+ 1386 0628 33000000 		.4byte	0x33
+ 1387 062c 05       		.uleb128 0x5
+ 1388 062d 03       		.byte	0x3
+ 1389 062e 00000000 		.4byte	moveForwardAllowed
+ 1390 0632 11       		.uleb128 0x11
+ 1391 0633 06040000 		.4byte	.LASF52
+ 1392 0637 01       		.byte	0x1
+ 1393 0638 3D       		.byte	0x3d
+ 1394 0639 33000000 		.4byte	0x33
+ 1395 063d 05       		.uleb128 0x5
+ 1396 063e 03       		.byte	0x3
+ 1397 063f 00000000 		.4byte	moveBackwardAllowed
+ 1398 0643 11       		.uleb128 0x11
+ 1399 0644 27040000 		.4byte	.LASF53
+ 1400 0648 01       		.byte	0x1
+ 1401 0649 51       		.byte	0x51
+ 1402 064a 68000000 		.4byte	0x68
+ 1403 064e 05       		.uleb128 0x5
+ 1404 064f 03       		.byte	0x3
+ 1405 0650 00000000 		.4byte	idac_value
+ 1406 0654 11       		.uleb128 0x11
+ 1407 0655 87030000 		.4byte	.LASF54
+ 1408 0659 01       		.byte	0x1
+ 1409 065a 52       		.byte	0x52
+ 1410 065b 68000000 		.4byte	0x68
+ 1411 065f 05       		.uleb128 0x5
+ 1412 0660 03       		.byte	0x3
+ 1413 0661 00000000 		.4byte	colour_flag
+ 1414 0665 11       		.uleb128 0x11
+ 1415 0666 DA000000 		.4byte	.LASF55
+ 1416 066a 01       		.byte	0x1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 31
+
+
+ 1417 066b 54       		.byte	0x54
+ 1418 066c 68000000 		.4byte	0x68
+ 1419 0670 05       		.uleb128 0x5
+ 1420 0671 03       		.byte	0x3
+ 1421 0672 00000000 		.4byte	beginNavigation
+ 1422 0676 11       		.uleb128 0x11
+ 1423 0677 E6010000 		.4byte	.LASF56
+ 1424 067b 01       		.byte	0x1
+ 1425 067c 58       		.byte	0x58
+ 1426 067d 68000000 		.4byte	0x68
+ 1427 0681 05       		.uleb128 0x5
+ 1428 0682 03       		.byte	0x3
+ 1429 0683 00000000 		.4byte	running
+ 1430 0687 11       		.uleb128 0x11
+ 1431 0688 5F070000 		.4byte	.LASF57
+ 1432 068c 01       		.byte	0x1
+ 1433 068d 5C       		.byte	0x5c
+ 1434 068e 68000000 		.4byte	0x68
+ 1435 0692 05       		.uleb128 0x5
+ 1436 0693 03       		.byte	0x3
+ 1437 0694 00000000 		.4byte	pathToPucks
+ 1438 0698 11       		.uleb128 0x11
+ 1439 0699 92020000 		.4byte	.LASF58
+ 1440 069d 01       		.byte	0x1
+ 1441 069e 5D       		.byte	0x5d
+ 1442 069f 68000000 		.4byte	0x68
+ 1443 06a3 05       		.uleb128 0x5
+ 1444 06a4 03       		.byte	0x3
+ 1445 06a5 00000000 		.4byte	pathPastBlock
+ 1446 06a9 11       		.uleb128 0x11
+ 1447 06aa D1010000 		.4byte	.LASF59
+ 1448 06ae 01       		.byte	0x1
+ 1449 06af 61       		.byte	0x61
+ 1450 06b0 68000000 		.4byte	0x68
+ 1451 06b4 05       		.uleb128 0x5
+ 1452 06b5 03       		.byte	0x3
+ 1453 06b6 00000000 		.4byte	currentPuckStackSize
+ 1454 06ba 14       		.uleb128 0x14
+ 1455 06bb 5A050000 		.4byte	.LASF60
+ 1456 06bf 5A050000 		.4byte	.LASF60
+ 1457 06c3 07       		.byte	0x7
+ 1458 06c4 1C       		.byte	0x1c
+ 1459 06c5 14       		.uleb128 0x14
+ 1460 06c6 95000000 		.4byte	.LASF61
+ 1461 06ca 95000000 		.4byte	.LASF61
+ 1462 06ce 07       		.byte	0x7
+ 1463 06cf 1D       		.byte	0x1d
+ 1464 06d0 14       		.uleb128 0x14
+ 1465 06d1 13060000 		.4byte	.LASF62
+ 1466 06d5 13060000 		.4byte	.LASF62
+ 1467 06d9 08       		.byte	0x8
+ 1468 06da 5E       		.byte	0x5e
+ 1469 06db 14       		.uleb128 0x14
+ 1470 06dc 63030000 		.4byte	.LASF63
+ 1471 06e0 63030000 		.4byte	.LASF63
+ 1472 06e4 08       		.byte	0x8
+ 1473 06e5 5B       		.byte	0x5b
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 32
+
+
+ 1474 06e6 14       		.uleb128 0x14
+ 1475 06e7 9E070000 		.4byte	.LASF64
+ 1476 06eb 9E070000 		.4byte	.LASF64
+ 1477 06ef 09       		.byte	0x9
+ 1478 06f0 5D       		.byte	0x5d
+ 1479 06f1 14       		.uleb128 0x14
+ 1480 06f2 32040000 		.4byte	.LASF65
+ 1481 06f6 32040000 		.4byte	.LASF65
+ 1482 06fa 0A       		.byte	0xa
+ 1483 06fb 5D       		.byte	0x5d
+ 1484 06fc 14       		.uleb128 0x14
+ 1485 06fd 53010000 		.4byte	.LASF66
+ 1486 0701 53010000 		.4byte	.LASF66
+ 1487 0705 07       		.byte	0x7
+ 1488 0706 11       		.byte	0x11
+ 1489 0707 14       		.uleb128 0x14
+ 1490 0708 13020000 		.4byte	.LASF67
+ 1491 070c 13020000 		.4byte	.LASF67
+ 1492 0710 05       		.byte	0x5
+ 1493 0711 18       		.byte	0x18
+ 1494 0712 14       		.uleb128 0x14
+ 1495 0713 27070000 		.4byte	.LASF68
+ 1496 0717 27070000 		.4byte	.LASF68
+ 1497 071b 0B       		.byte	0xb
+ 1498 071c 76       		.byte	0x76
+ 1499 071d 14       		.uleb128 0x14
+ 1500 071e B0040000 		.4byte	.LASF69
+ 1501 0722 B0040000 		.4byte	.LASF69
+ 1502 0726 0C       		.byte	0xc
+ 1503 0727 3D       		.byte	0x3d
+ 1504 0728 14       		.uleb128 0x14
+ 1505 0729 7A030000 		.4byte	.LASF70
+ 1506 072d 7A030000 		.4byte	.LASF70
+ 1507 0731 0D       		.byte	0xd
+ 1508 0732 54       		.byte	0x54
+ 1509 0733 14       		.uleb128 0x14
+ 1510 0734 CC050000 		.4byte	.LASF71
+ 1511 0738 CC050000 		.4byte	.LASF71
+ 1512 073c 0D       		.byte	0xd
+ 1513 073d 8B       		.byte	0x8b
+ 1514 073e 14       		.uleb128 0x14
+ 1515 073f A0020000 		.4byte	.LASF72
+ 1516 0743 A0020000 		.4byte	.LASF72
+ 1517 0747 0E       		.byte	0xe
+ 1518 0748 3A       		.byte	0x3a
+ 1519 0749 14       		.uleb128 0x14
+ 1520 074a 55040000 		.4byte	.LASF73
+ 1521 074e 55040000 		.4byte	.LASF73
+ 1522 0752 0F       		.byte	0xf
+ 1523 0753 3C       		.byte	0x3c
+ 1524 0754 14       		.uleb128 0x14
+ 1525 0755 C2030000 		.4byte	.LASF74
+ 1526 0759 C2030000 		.4byte	.LASF74
+ 1527 075d 0F       		.byte	0xf
+ 1528 075e 40       		.byte	0x40
+ 1529 075f 14       		.uleb128 0x14
+ 1530 0760 92050000 		.4byte	.LASF75
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 33
+
+
+ 1531 0764 92050000 		.4byte	.LASF75
+ 1532 0768 0F       		.byte	0xf
+ 1533 0769 41       		.byte	0x41
+ 1534 076a 14       		.uleb128 0x14
+ 1535 076b F3020000 		.4byte	.LASF76
+ 1536 076f F3020000 		.4byte	.LASF76
+ 1537 0773 10       		.byte	0x10
+ 1538 0774 92       		.byte	0x92
+ 1539 0775 14       		.uleb128 0x14
+ 1540 0776 B7020000 		.4byte	.LASF77
+ 1541 077a B7020000 		.4byte	.LASF77
+ 1542 077e 10       		.byte	0x10
+ 1543 077f DC       		.byte	0xdc
+ 1544 0780 14       		.uleb128 0x14
+ 1545 0781 2F070000 		.4byte	.LASF78
+ 1546 0785 2F070000 		.4byte	.LASF78
+ 1547 0789 11       		.byte	0x11
+ 1548 078a 22       		.byte	0x22
+ 1549 078b 14       		.uleb128 0x14
+ 1550 078c 6E050000 		.4byte	.LASF79
+ 1551 0790 6E050000 		.4byte	.LASF79
+ 1552 0794 12       		.byte	0x12
+ 1553 0795 5A       		.byte	0x5a
+ 1554 0796 14       		.uleb128 0x14
+ 1555 0797 60010000 		.4byte	.LASF80
+ 1556 079b 60010000 		.4byte	.LASF80
+ 1557 079f 12       		.byte	0x12
+ 1558 07a0 5E       		.byte	0x5e
+ 1559 07a1 14       		.uleb128 0x14
+ 1560 07a2 B9000000 		.4byte	.LASF81
+ 1561 07a6 B9000000 		.4byte	.LASF81
+ 1562 07aa 13       		.byte	0x13
+ 1563 07ab 18       		.byte	0x18
+ 1564 07ac 14       		.uleb128 0x14
+ 1565 07ad B7050000 		.4byte	.LASF82
+ 1566 07b1 B7050000 		.4byte	.LASF82
+ 1567 07b5 14       		.byte	0x14
+ 1568 07b6 18       		.byte	0x18
+ 1569 07b7 14       		.uleb128 0x14
+ 1570 07b8 4A070000 		.4byte	.LASF83
+ 1571 07bc 4A070000 		.4byte	.LASF83
+ 1572 07c0 15       		.byte	0x15
+ 1573 07c1 92       		.byte	0x92
+ 1574 07c2 14       		.uleb128 0x14
+ 1575 07c3 6B070000 		.4byte	.LASF84
+ 1576 07c7 6B070000 		.4byte	.LASF84
+ 1577 07cb 16       		.byte	0x16
+ 1578 07cc 92       		.byte	0x92
+ 1579 07cd 14       		.uleb128 0x14
+ 1580 07ce AD030000 		.4byte	.LASF85
+ 1581 07d2 AD030000 		.4byte	.LASF85
+ 1582 07d6 07       		.byte	0x7
+ 1583 07d7 10       		.byte	0x10
+ 1584 07d8 14       		.uleb128 0x14
+ 1585 07d9 36010000 		.4byte	.LASF86
+ 1586 07dd 36010000 		.4byte	.LASF86
+ 1587 07e1 09       		.byte	0x9
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 34
+
+
+ 1588 07e2 4F       		.byte	0x4f
+ 1589 07e3 14       		.uleb128 0x14
+ 1590 07e4 29030000 		.4byte	.LASF87
+ 1591 07e8 29030000 		.4byte	.LASF87
+ 1592 07ec 0A       		.byte	0xa
+ 1593 07ed 4F       		.byte	0x4f
+ 1594 07ee 14       		.uleb128 0x14
+ 1595 07ef 86070000 		.4byte	.LASF88
+ 1596 07f3 86070000 		.4byte	.LASF88
+ 1597 07f7 08       		.byte	0x8
+ 1598 07f8 5A       		.byte	0x5a
+ 1599 07f9 14       		.uleb128 0x14
+ 1600 07fa 90010000 		.4byte	.LASF89
+ 1601 07fe 90010000 		.4byte	.LASF89
+ 1602 0802 17       		.byte	0x17
+ 1603 0803 18       		.byte	0x18
+ 1604 0804 14       		.uleb128 0x14
+ 1605 0805 66020000 		.4byte	.LASF90
+ 1606 0809 66020000 		.4byte	.LASF90
+ 1607 080d 18       		.byte	0x18
+ 1608 080e 18       		.byte	0x18
+ 1609 080f 14       		.uleb128 0x14
+ 1610 0810 B3010000 		.4byte	.LASF91
+ 1611 0814 B3010000 		.4byte	.LASF91
+ 1612 0818 19       		.byte	0x19
+ 1613 0819 18       		.byte	0x18
+ 1614 081a 14       		.uleb128 0x14
+ 1615 081b 7B010000 		.4byte	.LASF92
+ 1616 081f 7B010000 		.4byte	.LASF92
+ 1617 0823 1A       		.byte	0x1a
+ 1618 0824 92       		.byte	0x92
+ 1619 0825 14       		.uleb128 0x14
+ 1620 0826 FB010000 		.4byte	.LASF93
+ 1621 082a FB010000 		.4byte	.LASF93
+ 1622 082e 1B       		.byte	0x1b
+ 1623 082f 92       		.byte	0x92
+ 1624 0830 14       		.uleb128 0x14
+ 1625 0831 C8020000 		.4byte	.LASF94
+ 1626 0835 C8020000 		.4byte	.LASF94
+ 1627 0839 07       		.byte	0x7
+ 1628 083a 16       		.byte	0x16
+ 1629 083b 14       		.uleb128 0x14
+ 1630 083c 1C000000 		.4byte	.LASF95
+ 1631 0840 1C000000 		.4byte	.LASF95
+ 1632 0844 07       		.byte	0x7
+ 1633 0845 14       		.byte	0x14
+ 1634 0846 14       		.uleb128 0x14
+ 1635 0847 62000000 		.4byte	.LASF96
+ 1636 084b 62000000 		.4byte	.LASF96
+ 1637 084f 11       		.byte	0x11
+ 1638 0850 23       		.byte	0x23
+ 1639 0851 14       		.uleb128 0x14
+ 1640 0852 62060000 		.4byte	.LASF97
+ 1641 0856 62060000 		.4byte	.LASF97
+ 1642 085a 07       		.byte	0x7
+ 1643 085b 18       		.byte	0x18
+ 1644 085c 14       		.uleb128 0x14
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 35
+
+
+ 1645 085d AA050000 		.4byte	.LASF98
+ 1646 0861 AA050000 		.4byte	.LASF98
+ 1647 0865 07       		.byte	0x7
+ 1648 0866 1E       		.byte	0x1e
+ 1649 0867 14       		.uleb128 0x14
+ 1650 0868 45020000 		.4byte	.LASF99
+ 1651 086c 45020000 		.4byte	.LASF99
+ 1652 0870 1C       		.byte	0x1c
+ 1653 0871 13       		.byte	0x13
+ 1654 0872 14       		.uleb128 0x14
+ 1655 0873 14000000 		.4byte	.LASF100
+ 1656 0877 14000000 		.4byte	.LASF100
+ 1657 087b 1C       		.byte	0x1c
+ 1658 087c 0E       		.byte	0xe
+ 1659 087d 14       		.uleb128 0x14
+ 1660 087e 89020000 		.4byte	.LASF101
+ 1661 0882 89020000 		.4byte	.LASF101
+ 1662 0886 1C       		.byte	0x1c
+ 1663 0887 0D       		.byte	0xd
+ 1664 0888 00       		.byte	0
+ 1665              		.section	.debug_abbrev,"",%progbits
+ 1666              	.Ldebug_abbrev0:
+ 1667 0000 01       		.uleb128 0x1
+ 1668 0001 11       		.uleb128 0x11
+ 1669 0002 01       		.byte	0x1
+ 1670 0003 25       		.uleb128 0x25
+ 1671 0004 0E       		.uleb128 0xe
+ 1672 0005 13       		.uleb128 0x13
+ 1673 0006 0B       		.uleb128 0xb
+ 1674 0007 03       		.uleb128 0x3
+ 1675 0008 0E       		.uleb128 0xe
+ 1676 0009 1B       		.uleb128 0x1b
+ 1677 000a 0E       		.uleb128 0xe
+ 1678 000b 55       		.uleb128 0x55
+ 1679 000c 17       		.uleb128 0x17
+ 1680 000d 11       		.uleb128 0x11
+ 1681 000e 01       		.uleb128 0x1
+ 1682 000f 10       		.uleb128 0x10
+ 1683 0010 17       		.uleb128 0x17
+ 1684 0011 00       		.byte	0
+ 1685 0012 00       		.byte	0
+ 1686 0013 02       		.uleb128 0x2
+ 1687 0014 24       		.uleb128 0x24
+ 1688 0015 00       		.byte	0
+ 1689 0016 0B       		.uleb128 0xb
+ 1690 0017 0B       		.uleb128 0xb
+ 1691 0018 3E       		.uleb128 0x3e
+ 1692 0019 0B       		.uleb128 0xb
+ 1693 001a 03       		.uleb128 0x3
+ 1694 001b 0E       		.uleb128 0xe
+ 1695 001c 00       		.byte	0
+ 1696 001d 00       		.byte	0
+ 1697 001e 03       		.uleb128 0x3
+ 1698 001f 16       		.uleb128 0x16
+ 1699 0020 00       		.byte	0
+ 1700 0021 03       		.uleb128 0x3
+ 1701 0022 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 36
+
+
+ 1702 0023 3A       		.uleb128 0x3a
+ 1703 0024 0B       		.uleb128 0xb
+ 1704 0025 3B       		.uleb128 0x3b
+ 1705 0026 0B       		.uleb128 0xb
+ 1706 0027 49       		.uleb128 0x49
+ 1707 0028 13       		.uleb128 0x13
+ 1708 0029 00       		.byte	0
+ 1709 002a 00       		.byte	0
+ 1710 002b 04       		.uleb128 0x4
+ 1711 002c 24       		.uleb128 0x24
+ 1712 002d 00       		.byte	0
+ 1713 002e 0B       		.uleb128 0xb
+ 1714 002f 0B       		.uleb128 0xb
+ 1715 0030 3E       		.uleb128 0x3e
+ 1716 0031 0B       		.uleb128 0xb
+ 1717 0032 03       		.uleb128 0x3
+ 1718 0033 08       		.uleb128 0x8
+ 1719 0034 00       		.byte	0
+ 1720 0035 00       		.byte	0
+ 1721 0036 05       		.uleb128 0x5
+ 1722 0037 2E       		.uleb128 0x2e
+ 1723 0038 01       		.byte	0x1
+ 1724 0039 3F       		.uleb128 0x3f
+ 1725 003a 19       		.uleb128 0x19
+ 1726 003b 03       		.uleb128 0x3
+ 1727 003c 0E       		.uleb128 0xe
+ 1728 003d 3A       		.uleb128 0x3a
+ 1729 003e 0B       		.uleb128 0xb
+ 1730 003f 3B       		.uleb128 0x3b
+ 1731 0040 0B       		.uleb128 0xb
+ 1732 0041 27       		.uleb128 0x27
+ 1733 0042 19       		.uleb128 0x19
+ 1734 0043 11       		.uleb128 0x11
+ 1735 0044 01       		.uleb128 0x1
+ 1736 0045 12       		.uleb128 0x12
+ 1737 0046 06       		.uleb128 0x6
+ 1738 0047 40       		.uleb128 0x40
+ 1739 0048 18       		.uleb128 0x18
+ 1740 0049 9742     		.uleb128 0x2117
+ 1741 004b 19       		.uleb128 0x19
+ 1742 004c 01       		.uleb128 0x1
+ 1743 004d 13       		.uleb128 0x13
+ 1744 004e 00       		.byte	0
+ 1745 004f 00       		.byte	0
+ 1746 0050 06       		.uleb128 0x6
+ 1747 0051 898201   		.uleb128 0x4109
+ 1748 0054 00       		.byte	0
+ 1749 0055 11       		.uleb128 0x11
+ 1750 0056 01       		.uleb128 0x1
+ 1751 0057 31       		.uleb128 0x31
+ 1752 0058 13       		.uleb128 0x13
+ 1753 0059 00       		.byte	0
+ 1754 005a 00       		.byte	0
+ 1755 005b 07       		.uleb128 0x7
+ 1756 005c 2E       		.uleb128 0x2e
+ 1757 005d 01       		.byte	0x1
+ 1758 005e 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 37
+
+
+ 1759 005f 19       		.uleb128 0x19
+ 1760 0060 03       		.uleb128 0x3
+ 1761 0061 08       		.uleb128 0x8
+ 1762 0062 3A       		.uleb128 0x3a
+ 1763 0063 0B       		.uleb128 0xb
+ 1764 0064 3B       		.uleb128 0x3b
+ 1765 0065 0B       		.uleb128 0xb
+ 1766 0066 27       		.uleb128 0x27
+ 1767 0067 19       		.uleb128 0x19
+ 1768 0068 11       		.uleb128 0x11
+ 1769 0069 01       		.uleb128 0x1
+ 1770 006a 12       		.uleb128 0x12
+ 1771 006b 06       		.uleb128 0x6
+ 1772 006c 40       		.uleb128 0x40
+ 1773 006d 18       		.uleb128 0x18
+ 1774 006e 9742     		.uleb128 0x2117
+ 1775 0070 19       		.uleb128 0x19
+ 1776 0071 01       		.uleb128 0x1
+ 1777 0072 13       		.uleb128 0x13
+ 1778 0073 00       		.byte	0
+ 1779 0074 00       		.byte	0
+ 1780 0075 08       		.uleb128 0x8
+ 1781 0076 898201   		.uleb128 0x4109
+ 1782 0079 01       		.byte	0x1
+ 1783 007a 11       		.uleb128 0x11
+ 1784 007b 01       		.uleb128 0x1
+ 1785 007c 31       		.uleb128 0x31
+ 1786 007d 13       		.uleb128 0x13
+ 1787 007e 00       		.byte	0
+ 1788 007f 00       		.byte	0
+ 1789 0080 09       		.uleb128 0x9
+ 1790 0081 8A8201   		.uleb128 0x410a
+ 1791 0084 00       		.byte	0
+ 1792 0085 02       		.uleb128 0x2
+ 1793 0086 18       		.uleb128 0x18
+ 1794 0087 9142     		.uleb128 0x2111
+ 1795 0089 18       		.uleb128 0x18
+ 1796 008a 00       		.byte	0
+ 1797 008b 00       		.byte	0
+ 1798 008c 0A       		.uleb128 0xa
+ 1799 008d 2E       		.uleb128 0x2e
+ 1800 008e 01       		.byte	0x1
+ 1801 008f 3F       		.uleb128 0x3f
+ 1802 0090 19       		.uleb128 0x19
+ 1803 0091 03       		.uleb128 0x3
+ 1804 0092 0E       		.uleb128 0xe
+ 1805 0093 3A       		.uleb128 0x3a
+ 1806 0094 0B       		.uleb128 0xb
+ 1807 0095 3B       		.uleb128 0x3b
+ 1808 0096 0B       		.uleb128 0xb
+ 1809 0097 27       		.uleb128 0x27
+ 1810 0098 19       		.uleb128 0x19
+ 1811 0099 49       		.uleb128 0x49
+ 1812 009a 13       		.uleb128 0x13
+ 1813 009b 8701     		.uleb128 0x87
+ 1814 009d 19       		.uleb128 0x19
+ 1815 009e 11       		.uleb128 0x11
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 38
+
+
+ 1816 009f 01       		.uleb128 0x1
+ 1817 00a0 12       		.uleb128 0x12
+ 1818 00a1 06       		.uleb128 0x6
+ 1819 00a2 40       		.uleb128 0x40
+ 1820 00a3 18       		.uleb128 0x18
+ 1821 00a4 9642     		.uleb128 0x2116
+ 1822 00a6 19       		.uleb128 0x19
+ 1823 00a7 01       		.uleb128 0x1
+ 1824 00a8 13       		.uleb128 0x13
+ 1825 00a9 00       		.byte	0
+ 1826 00aa 00       		.byte	0
+ 1827 00ab 0B       		.uleb128 0xb
+ 1828 00ac 34       		.uleb128 0x34
+ 1829 00ad 00       		.byte	0
+ 1830 00ae 03       		.uleb128 0x3
+ 1831 00af 08       		.uleb128 0x8
+ 1832 00b0 3A       		.uleb128 0x3a
+ 1833 00b1 0B       		.uleb128 0xb
+ 1834 00b2 3B       		.uleb128 0x3b
+ 1835 00b3 0B       		.uleb128 0xb
+ 1836 00b4 49       		.uleb128 0x49
+ 1837 00b5 13       		.uleb128 0x13
+ 1838 00b6 1C       		.uleb128 0x1c
+ 1839 00b7 0B       		.uleb128 0xb
+ 1840 00b8 00       		.byte	0
+ 1841 00b9 00       		.byte	0
+ 1842 00ba 0C       		.uleb128 0xc
+ 1843 00bb 898201   		.uleb128 0x4109
+ 1844 00be 01       		.byte	0x1
+ 1845 00bf 11       		.uleb128 0x11
+ 1846 00c0 01       		.uleb128 0x1
+ 1847 00c1 31       		.uleb128 0x31
+ 1848 00c2 13       		.uleb128 0x13
+ 1849 00c3 01       		.uleb128 0x1
+ 1850 00c4 13       		.uleb128 0x13
+ 1851 00c5 00       		.byte	0
+ 1852 00c6 00       		.byte	0
+ 1853 00c7 0D       		.uleb128 0xd
+ 1854 00c8 2E       		.uleb128 0x2e
+ 1855 00c9 01       		.byte	0x1
+ 1856 00ca 3F       		.uleb128 0x3f
+ 1857 00cb 19       		.uleb128 0x19
+ 1858 00cc 03       		.uleb128 0x3
+ 1859 00cd 0E       		.uleb128 0xe
+ 1860 00ce 3A       		.uleb128 0x3a
+ 1861 00cf 0B       		.uleb128 0xb
+ 1862 00d0 3B       		.uleb128 0x3b
+ 1863 00d1 05       		.uleb128 0x5
+ 1864 00d2 27       		.uleb128 0x27
+ 1865 00d3 19       		.uleb128 0x19
+ 1866 00d4 11       		.uleb128 0x11
+ 1867 00d5 01       		.uleb128 0x1
+ 1868 00d6 12       		.uleb128 0x12
+ 1869 00d7 06       		.uleb128 0x6
+ 1870 00d8 40       		.uleb128 0x40
+ 1871 00d9 18       		.uleb128 0x18
+ 1872 00da 9742     		.uleb128 0x2117
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 39
+
+
+ 1873 00dc 19       		.uleb128 0x19
+ 1874 00dd 01       		.uleb128 0x1
+ 1875 00de 13       		.uleb128 0x13
+ 1876 00df 00       		.byte	0
+ 1877 00e0 00       		.byte	0
+ 1878 00e1 0E       		.uleb128 0xe
+ 1879 00e2 05       		.uleb128 0x5
+ 1880 00e3 00       		.byte	0
+ 1881 00e4 03       		.uleb128 0x3
+ 1882 00e5 0E       		.uleb128 0xe
+ 1883 00e6 3A       		.uleb128 0x3a
+ 1884 00e7 0B       		.uleb128 0xb
+ 1885 00e8 3B       		.uleb128 0x3b
+ 1886 00e9 05       		.uleb128 0x5
+ 1887 00ea 49       		.uleb128 0x49
+ 1888 00eb 13       		.uleb128 0x13
+ 1889 00ec 02       		.uleb128 0x2
+ 1890 00ed 17       		.uleb128 0x17
+ 1891 00ee 00       		.byte	0
+ 1892 00ef 00       		.byte	0
+ 1893 00f0 0F       		.uleb128 0xf
+ 1894 00f1 34       		.uleb128 0x34
+ 1895 00f2 00       		.byte	0
+ 1896 00f3 03       		.uleb128 0x3
+ 1897 00f4 0E       		.uleb128 0xe
+ 1898 00f5 3A       		.uleb128 0x3a
+ 1899 00f6 0B       		.uleb128 0xb
+ 1900 00f7 3B       		.uleb128 0x3b
+ 1901 00f8 05       		.uleb128 0x5
+ 1902 00f9 49       		.uleb128 0x49
+ 1903 00fa 13       		.uleb128 0x13
+ 1904 00fb 3F       		.uleb128 0x3f
+ 1905 00fc 19       		.uleb128 0x19
+ 1906 00fd 3C       		.uleb128 0x3c
+ 1907 00fe 19       		.uleb128 0x19
+ 1908 00ff 00       		.byte	0
+ 1909 0100 00       		.byte	0
+ 1910 0101 10       		.uleb128 0x10
+ 1911 0102 35       		.uleb128 0x35
+ 1912 0103 00       		.byte	0
+ 1913 0104 49       		.uleb128 0x49
+ 1914 0105 13       		.uleb128 0x13
+ 1915 0106 00       		.byte	0
+ 1916 0107 00       		.byte	0
+ 1917 0108 11       		.uleb128 0x11
+ 1918 0109 34       		.uleb128 0x34
+ 1919 010a 00       		.byte	0
+ 1920 010b 03       		.uleb128 0x3
+ 1921 010c 0E       		.uleb128 0xe
+ 1922 010d 3A       		.uleb128 0x3a
+ 1923 010e 0B       		.uleb128 0xb
+ 1924 010f 3B       		.uleb128 0x3b
+ 1925 0110 0B       		.uleb128 0xb
+ 1926 0111 49       		.uleb128 0x49
+ 1927 0112 13       		.uleb128 0x13
+ 1928 0113 3F       		.uleb128 0x3f
+ 1929 0114 19       		.uleb128 0x19
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 40
+
+
+ 1930 0115 02       		.uleb128 0x2
+ 1931 0116 18       		.uleb128 0x18
+ 1932 0117 00       		.byte	0
+ 1933 0118 00       		.byte	0
+ 1934 0119 12       		.uleb128 0x12
+ 1935 011a 01       		.uleb128 0x1
+ 1936 011b 01       		.byte	0x1
+ 1937 011c 49       		.uleb128 0x49
+ 1938 011d 13       		.uleb128 0x13
+ 1939 011e 01       		.uleb128 0x1
+ 1940 011f 13       		.uleb128 0x13
+ 1941 0120 00       		.byte	0
+ 1942 0121 00       		.byte	0
+ 1943 0122 13       		.uleb128 0x13
+ 1944 0123 21       		.uleb128 0x21
+ 1945 0124 00       		.byte	0
+ 1946 0125 49       		.uleb128 0x49
+ 1947 0126 13       		.uleb128 0x13
+ 1948 0127 2F       		.uleb128 0x2f
+ 1949 0128 0B       		.uleb128 0xb
+ 1950 0129 00       		.byte	0
+ 1951 012a 00       		.byte	0
+ 1952 012b 14       		.uleb128 0x14
+ 1953 012c 2E       		.uleb128 0x2e
+ 1954 012d 00       		.byte	0
+ 1955 012e 3F       		.uleb128 0x3f
+ 1956 012f 19       		.uleb128 0x19
+ 1957 0130 3C       		.uleb128 0x3c
+ 1958 0131 19       		.uleb128 0x19
+ 1959 0132 6E       		.uleb128 0x6e
+ 1960 0133 0E       		.uleb128 0xe
+ 1961 0134 03       		.uleb128 0x3
+ 1962 0135 0E       		.uleb128 0xe
+ 1963 0136 3A       		.uleb128 0x3a
+ 1964 0137 0B       		.uleb128 0xb
+ 1965 0138 3B       		.uleb128 0x3b
+ 1966 0139 0B       		.uleb128 0xb
+ 1967 013a 00       		.byte	0
+ 1968 013b 00       		.byte	0
+ 1969 013c 00       		.byte	0
+ 1970              		.section	.debug_loc,"",%progbits
+ 1971              	.Ldebug_loc0:
+ 1972              	.LLST0:
+ 1973 0000 00000000 		.4byte	.LVL48
+ 1974 0004 05000000 		.4byte	.LVL49-1
+ 1975 0008 0100     		.2byte	0x1
+ 1976 000a 50       		.byte	0x50
+ 1977 000b 05000000 		.4byte	.LVL49-1
+ 1978 000f 0C000000 		.4byte	.LFE70
+ 1979 0013 0400     		.2byte	0x4
+ 1980 0015 F3       		.byte	0xf3
+ 1981 0016 01       		.uleb128 0x1
+ 1982 0017 50       		.byte	0x50
+ 1983 0018 9F       		.byte	0x9f
+ 1984 0019 00000000 		.4byte	0
+ 1985 001d 00000000 		.4byte	0
+ 1986              	.LLST1:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 41
+
+
+ 1987 0021 00000000 		.4byte	.LVL51
+ 1988 0025 07000000 		.4byte	.LVL52-1
+ 1989 0029 0100     		.2byte	0x1
+ 1990 002b 50       		.byte	0x50
+ 1991 002c 07000000 		.4byte	.LVL52-1
+ 1992 0030 10000000 		.4byte	.LFE71
+ 1993 0034 0100     		.2byte	0x1
+ 1994 0036 54       		.byte	0x54
+ 1995 0037 00000000 		.4byte	0
+ 1996 003b 00000000 		.4byte	0
+ 1997              		.section	.debug_aranges,"",%progbits
+ 1998 0000 54000000 		.4byte	0x54
+ 1999 0004 0200     		.2byte	0x2
+ 2000 0006 00000000 		.4byte	.Ldebug_info0
+ 2001 000a 04       		.byte	0x4
+ 2002 000b 00       		.byte	0
+ 2003 000c 0000     		.2byte	0
+ 2004 000e 0000     		.2byte	0
+ 2005 0010 00000000 		.4byte	.LFB64
+ 2006 0014 08000000 		.4byte	.LFE64-.LFB64
+ 2007 0018 00000000 		.4byte	.LFB65
+ 2008 001c 08000000 		.4byte	.LFE65-.LFB65
+ 2009 0020 00000000 		.4byte	.LFB66
+ 2010 0024 28000000 		.4byte	.LFE66-.LFB66
+ 2011 0028 00000000 		.4byte	.LFB67
+ 2012 002c 08000000 		.4byte	.LFE67-.LFB67
+ 2013 0030 00000000 		.4byte	.LFB68
+ 2014 0034 20000000 		.4byte	.LFE68-.LFB68
+ 2015 0038 00000000 		.4byte	.LFB69
+ 2016 003c 74010000 		.4byte	.LFE69-.LFB69
+ 2017 0040 00000000 		.4byte	.LFB70
+ 2018 0044 0C000000 		.4byte	.LFE70-.LFB70
+ 2019 0048 00000000 		.4byte	.LFB71
+ 2020 004c 10000000 		.4byte	.LFE71-.LFB71
+ 2021 0050 00000000 		.4byte	0
+ 2022 0054 00000000 		.4byte	0
+ 2023              		.section	.debug_ranges,"",%progbits
+ 2024              	.Ldebug_ranges0:
+ 2025 0000 00000000 		.4byte	.LFB64
+ 2026 0004 08000000 		.4byte	.LFE64
+ 2027 0008 00000000 		.4byte	.LFB65
+ 2028 000c 08000000 		.4byte	.LFE65
+ 2029 0010 00000000 		.4byte	.LFB66
+ 2030 0014 28000000 		.4byte	.LFE66
+ 2031 0018 00000000 		.4byte	.LFB67
+ 2032 001c 08000000 		.4byte	.LFE67
+ 2033 0020 00000000 		.4byte	.LFB68
+ 2034 0024 20000000 		.4byte	.LFE68
+ 2035 0028 00000000 		.4byte	.LFB69
+ 2036 002c 74010000 		.4byte	.LFE69
+ 2037 0030 00000000 		.4byte	.LFB70
+ 2038 0034 0C000000 		.4byte	.LFE70
+ 2039 0038 00000000 		.4byte	.LFB71
+ 2040 003c 10000000 		.4byte	.LFE71
+ 2041 0040 00000000 		.4byte	0
+ 2042 0044 00000000 		.4byte	0
+ 2043              		.section	.debug_line,"",%progbits
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 42
+
+
+ 2044              	.Ldebug_line0:
+ 2045 0000 C0030000 		.section	.debug_str,"MS",%progbits,1
+ 2045      0200E302 
+ 2045      00000201 
+ 2045      FB0E0D00 
+ 2045      01010101 
+ 2046              	.LASF43:
+ 2047 0000 6D6F746F 		.ascii	"motor2EncoderCounts\000"
+ 2047      7232456E 
+ 2047      636F6465 
+ 2047      72436F75 
+ 2047      6E747300 
+ 2048              	.LASF100:
+ 2049 0014 61726D4F 		.ascii	"armOpen\000"
+ 2049      70656E00 
+ 2050              	.LASF95:
+ 2051 001c 6D6F7665 		.ascii	"moveForwardIndefinitely\000"
+ 2051      466F7277 
+ 2051      61726449 
+ 2051      6E646566 
+ 2051      696E6974 
+ 2052              	.LASF21:
+ 2053 0034 636C6F73 		.ascii	"closeAndRaise\000"
+ 2053      65416E64 
+ 2053      52616973 
+ 2053      6500
+ 2054              	.LASF17:
+ 2055 0042 456E636F 		.ascii	"Encoder_Counts_2_IH\000"
+ 2055      6465725F 
+ 2055      436F756E 
+ 2055      74735F32 
+ 2055      5F494800 
+ 2056              	.LASF0:
+ 2057 0056 7369676E 		.ascii	"signed char\000"
+ 2057      65642063 
+ 2057      68617200 
+ 2058              	.LASF96:
+ 2059 0062 436F6C6F 		.ascii	"ColourSensingViaHardware\000"
+ 2059      75725365 
+ 2059      6E73696E 
+ 2059      67566961 
+ 2059      48617264 
+ 2060              	.LASF47:
+ 2061 007b 7475726E 		.ascii	"turningLeftFlag\000"
+ 2061      696E674C 
+ 2061      65667446 
+ 2061      6C616700 
+ 2062              	.LASF2:
+ 2063 008b 73686F72 		.ascii	"short int\000"
+ 2063      7420696E 
+ 2063      7400
+ 2064              	.LASF61:
+ 2065 0095 73746F70 		.ascii	"stopMotor2AndUpdate\000"
+ 2065      4D6F746F 
+ 2065      7232416E 
+ 2065      64557064 
+ 2065      61746500 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 43
+
+
+ 2066              	.LASF32:
+ 2067 00a9 63757272 		.ascii	"currentPosition\000"
+ 2067      656E7450 
+ 2067      6F736974 
+ 2067      696F6E00 
+ 2068              	.LASF81:
+ 2069 00b9 536F6E69 		.ascii	"Sonic_StartEx\000"
+ 2069      635F5374 
+ 2069      61727445 
+ 2069      7800
+ 2070              	.LASF45:
+ 2071 00c7 64726976 		.ascii	"drivingForwardFlag\000"
+ 2071      696E6746 
+ 2071      6F727761 
+ 2071      7264466C 
+ 2071      616700
+ 2072              	.LASF55:
+ 2073 00da 62656769 		.ascii	"beginNavigation\000"
+ 2073      6E4E6176 
+ 2073      69676174 
+ 2073      696F6E00 
+ 2074              	.LASF42:
+ 2075 00ea 6D6F746F 		.ascii	"motor1EncoderCounts\000"
+ 2075      7231456E 
+ 2075      636F6465 
+ 2075      72436F75 
+ 2075      6E747300 
+ 2076              	.LASF27:
+ 2077 00fe 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 2077      5261636B 
+ 2077      4F666673 
+ 2077      65747346 
+ 2077      726F6D57 
+ 2078              	.LASF35:
+ 2079 0116 64657369 		.ascii	"desiredOrientation\000"
+ 2079      7265644F 
+ 2079      7269656E 
+ 2079      74617469 
+ 2079      6F6E00
+ 2080              	.LASF105:
+ 2081 0129 6D61696E 		.ascii	"main\000"
+ 2081      00
+ 2082              	.LASF19:
+ 2083 012e 53746172 		.ascii	"StartIH\000"
+ 2083      74494800 
+ 2084              	.LASF86:
+ 2085 0136 4D6F746F 		.ascii	"Motor_1_Encoder_Counts_Start\000"
+ 2085      725F315F 
+ 2085      456E636F 
+ 2085      6465725F 
+ 2085      436F756E 
+ 2086              	.LASF66:
+ 2087 0153 64726966 		.ascii	"driftCorrect\000"
+ 2087      74436F72 
+ 2087      72656374 
+ 2087      00
+ 2088              	.LASF80:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 44
+
+
+ 2089 0160 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
+ 2089      725F315F 
+ 2089      52656164 
+ 2089      53746174 
+ 2089      75735265 
+ 2090              	.LASF92:
+ 2091 017b 5261636B 		.ascii	"Rack_Servo_PWM_Start\000"
+ 2091      5F536572 
+ 2091      766F5F50 
+ 2091      574D5F53 
+ 2091      74617274 
+ 2092              	.LASF89:
+ 2093 0190 456E636F 		.ascii	"Encoder_Counts_1_Interrupt_StartEx\000"
+ 2093      6465725F 
+ 2093      436F756E 
+ 2093      74735F31 
+ 2093      5F496E74 
+ 2094              	.LASF91:
+ 2095 01b3 44726966 		.ascii	"Drift_Check_Interrupt_StartEx\000"
+ 2095      745F4368 
+ 2095      65636B5F 
+ 2095      496E7465 
+ 2095      72727570 
+ 2096              	.LASF59:
+ 2097 01d1 63757272 		.ascii	"currentPuckStackSize\000"
+ 2097      656E7450 
+ 2097      75636B53 
+ 2097      7461636B 
+ 2097      53697A65 
+ 2098              	.LASF56:
+ 2099 01e6 72756E6E 		.ascii	"running\000"
+ 2099      696E6700 
+ 2100              	.LASF40:
+ 2101 01ee 6D6F746F 		.ascii	"motor1Enable\000"
+ 2101      7231456E 
+ 2101      61626C65 
+ 2101      00
+ 2102              	.LASF93:
+ 2103 01fb 47726970 		.ascii	"Gripper_Servo_PWM_Start\000"
+ 2103      7065725F 
+ 2103      53657276 
+ 2103      6F5F5057 
+ 2103      4D5F5374 
+ 2104              	.LASF67:
+ 2105 0213 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
+ 2105      61736F6E 
+ 2105      6963496E 
+ 2105      74657272 
+ 2105      75707448 
+ 2106              	.LASF48:
+ 2107 022e 7475726E 		.ascii	"turningRightFlag\000"
+ 2107      696E6752 
+ 2107      69676874 
+ 2107      466C6167 
+ 2107      00
+ 2108              	.LASF11:
+ 2109 023f 666C6F61 		.ascii	"float\000"
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 45
+
+
+ 2109      7400
+ 2110              	.LASF99:
+ 2111 0245 6368616E 		.ascii	"changeHeightToPuck\000"
+ 2111      67654865 
+ 2111      69676874 
+ 2111      546F5075 
+ 2111      636B00
+ 2112              	.LASF6:
+ 2113 0258 6C6F6E67 		.ascii	"long long int\000"
+ 2113      206C6F6E 
+ 2113      6720696E 
+ 2113      7400
+ 2114              	.LASF90:
+ 2115 0266 456E636F 		.ascii	"Encoder_Counts_2_Interrupt_StartEx\000"
+ 2115      6465725F 
+ 2115      436F756E 
+ 2115      74735F32 
+ 2115      5F496E74 
+ 2116              	.LASF101:
+ 2117 0289 61726D43 		.ascii	"armClose\000"
+ 2117      6C6F7365 
+ 2117      00
+ 2118              	.LASF58:
+ 2119 0292 70617468 		.ascii	"pathPastBlock\000"
+ 2119      50617374 
+ 2119      426C6F63 
+ 2119      6B00
+ 2120              	.LASF72:
+ 2121 02a0 4144435F 		.ascii	"ADC_Start\000"
+ 2121      53746172 
+ 2121      7400
+ 2122              	.LASF20:
+ 2123 02aa 6C6F7765 		.ascii	"lowerAndOpen\000"
+ 2123      72416E64 
+ 2123      4F70656E 
+ 2123      00
+ 2124              	.LASF77:
+ 2125 02b7 50574D5F 		.ascii	"PWM_colour_Sleep\000"
+ 2125      636F6C6F 
+ 2125      75725F53 
+ 2125      6C656570 
+ 2125      00
+ 2126              	.LASF94:
+ 2127 02c8 6D6F7665 		.ascii	"moveBackwardIndefinitely\000"
+ 2127      4261636B 
+ 2127      77617264 
+ 2127      496E6465 
+ 2127      66696E69 
+ 2128              	.LASF5:
+ 2129 02e1 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2129      20756E73 
+ 2129      69676E65 
+ 2129      6420696E 
+ 2129      7400
+ 2130              	.LASF76:
+ 2131 02f3 50574D5F 		.ascii	"PWM_colour_Start\000"
+ 2131      636F6C6F 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 46
+
+
+ 2131      75725F53 
+ 2131      74617274 
+ 2131      00
+ 2132              	.LASF46:
+ 2133 0304 64726976 		.ascii	"drivingBackwardFlag\000"
+ 2133      696E6742 
+ 2133      61636B77 
+ 2133      61726446 
+ 2133      6C616700 
+ 2134              	.LASF30:
+ 2135 0318 7075636B 		.ascii	"puckPileLocation\000"
+ 2135      50696C65 
+ 2135      4C6F6361 
+ 2135      74696F6E 
+ 2135      00
+ 2136              	.LASF87:
+ 2137 0329 4D6F746F 		.ascii	"Motor_2_Encoder_Counts_Start\000"
+ 2137      725F325F 
+ 2137      456E636F 
+ 2137      6465725F 
+ 2137      436F756E 
+ 2138              	.LASF25:
+ 2139 0346 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 2139      656E7450 
+ 2139      75636B52 
+ 2139      61636B53 
+ 2139      63616E6E 
+ 2140              	.LASF63:
+ 2141 0363 44726966 		.ascii	"Drift_Check_Timer_Stop\000"
+ 2141      745F4368 
+ 2141      65636B5F 
+ 2141      54696D65 
+ 2141      725F5374 
+ 2142              	.LASF70:
+ 2143 037a 55415254 		.ascii	"UART_1_Start\000"
+ 2143      5F315F53 
+ 2143      74617274 
+ 2143      00
+ 2144              	.LASF54:
+ 2145 0387 636F6C6F 		.ascii	"colour_flag\000"
+ 2145      75725F66 
+ 2145      6C616700 
+ 2146              	.LASF14:
+ 2147 0393 6C6F6E67 		.ascii	"long double\000"
+ 2147      20646F75 
+ 2147      626C6500 
+ 2148              	.LASF1:
+ 2149 039f 756E7369 		.ascii	"unsigned char\000"
+ 2149      676E6564 
+ 2149      20636861 
+ 2149      7200
+ 2150              	.LASF85:
+ 2151 03ad 6D6F746F 		.ascii	"motorDutyCycleUpdate\000"
+ 2151      72447574 
+ 2151      79437963 
+ 2151      6C655570 
+ 2151      64617465 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 47
+
+
+ 2152              	.LASF74:
+ 2153 03c2 49444143 		.ascii	"IDAC8_1_SetRange\000"
+ 2153      385F315F 
+ 2153      53657452 
+ 2153      616E6765 
+ 2153      00
+ 2154              	.LASF44:
+ 2155 03d3 6D6F7665 		.ascii	"moveNow\000"
+ 2155      4E6F7700 
+ 2156              	.LASF29:
+ 2157 03db 626C6F63 		.ascii	"block_edge_location\000"
+ 2157      6B5F6564 
+ 2157      67655F6C 
+ 2157      6F636174 
+ 2157      696F6E00 
+ 2158              	.LASF7:
+ 2159 03ef 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2159      206C6F6E 
+ 2159      6720756E 
+ 2159      7369676E 
+ 2159      65642069 
+ 2160              	.LASF52:
+ 2161 0406 6D6F7665 		.ascii	"moveBackwardAllowed\000"
+ 2161      4261636B 
+ 2161      77617264 
+ 2161      416C6C6F 
+ 2161      77656400 
+ 2162              	.LASF8:
+ 2163 041a 756E7369 		.ascii	"unsigned int\000"
+ 2163      676E6564 
+ 2163      20696E74 
+ 2163      00
+ 2164              	.LASF53:
+ 2165 0427 69646163 		.ascii	"idac_value\000"
+ 2165      5F76616C 
+ 2165      756500
+ 2166              	.LASF65:
+ 2167 0432 4D6F746F 		.ascii	"Motor_2_Encoder_Counts_ReadCounter\000"
+ 2167      725F325F 
+ 2167      456E636F 
+ 2167      6465725F 
+ 2167      436F756E 
+ 2168              	.LASF73:
+ 2169 0455 49444143 		.ascii	"IDAC8_1_Start\000"
+ 2169      385F315F 
+ 2169      53746172 
+ 2169      7400
+ 2170              	.LASF34:
+ 2171 0463 63757272 		.ascii	"currentOrientation\000"
+ 2171      656E744F 
+ 2171      7269656E 
+ 2171      74617469 
+ 2171      6F6E00
+ 2172              	.LASF51:
+ 2173 0476 6D6F7665 		.ascii	"moveForwardAllowed\000"
+ 2173      466F7277 
+ 2173      61726441 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 48
+
+
+ 2173      6C6C6F77 
+ 2173      656400
+ 2174              	.LASF22:
+ 2175 0489 7075636B 		.ascii	"puck_stack_position\000"
+ 2175      5F737461 
+ 2175      636B5F70 
+ 2175      6F736974 
+ 2175      696F6E00 
+ 2176              	.LASF3:
+ 2177 049d 73686F72 		.ascii	"short unsigned int\000"
+ 2177      7420756E 
+ 2177      7369676E 
+ 2177      65642069 
+ 2177      6E7400
+ 2178              	.LASF69:
+ 2179 04b0 5449415F 		.ascii	"TIA_1_Start\000"
+ 2179      315F5374 
+ 2179      61727400 
+ 2180              	.LASF28:
+ 2181 04bc 73776565 		.ascii	"sweeping\000"
+ 2181      70696E67 
+ 2181      00
+ 2182              	.LASF13:
+ 2183 04c5 63686172 		.ascii	"char\000"
+ 2183      00
+ 2184              	.LASF104:
+ 2185 04ca 453A5C44 		.ascii	"E:\\Documents\\Uni S12019 Notes\\ECE3091\\Temp Clon"
+ 2185      6F63756D 
+ 2185      656E7473 
+ 2185      5C556E69 
+ 2185      20533132 
+ 2186 04f9 655C4543 		.ascii	"e\\ECE3091_Group17\\Group17RobotReal\\Group17Robot."
+ 2186      45333039 
+ 2186      315F4772 
+ 2186      6F757031 
+ 2186      375C4772 
+ 2187 0529 63796473 		.ascii	"cydsn\000"
+ 2187      6E00
+ 2188              	.LASF4:
+ 2189 052f 6C6F6E67 		.ascii	"long int\000"
+ 2189      20696E74 
+ 2189      00
+ 2190              	.LASF37:
+ 2191 0538 4D315F42 		.ascii	"M1_BD\000"
+ 2191      4400
+ 2192              	.LASF10:
+ 2193 053e 696E7433 		.ascii	"int32_t\000"
+ 2193      325F7400 
+ 2194              	.LASF24:
+ 2195 0546 64726976 		.ascii	"driveStraightEnable\000"
+ 2195      65537472 
+ 2195      61696768 
+ 2195      74456E61 
+ 2195      626C6500 
+ 2196              	.LASF60:
+ 2197 055a 73746F70 		.ascii	"stopMotor1AndUpdate\000"
+ 2197      4D6F746F 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 49
+
+
+ 2197      7231416E 
+ 2197      64557064 
+ 2197      61746500 
+ 2198              	.LASF79:
+ 2199 056e 54696D65 		.ascii	"Timer_1_Start\000"
+ 2199      725F315F 
+ 2199      53746172 
+ 2199      7400
+ 2200              	.LASF33:
+ 2201 057c 64657369 		.ascii	"desiredPosition\000"
+ 2201      72656450 
+ 2201      6F736974 
+ 2201      696F6E00 
+ 2202              	.LASF36:
+ 2203 058c 4D315F46 		.ascii	"M1_FD\000"
+ 2203      4400
+ 2204              	.LASF75:
+ 2205 0592 49444143 		.ascii	"IDAC8_1_SetValue\000"
+ 2205      385F315F 
+ 2205      53657456 
+ 2205      616C7565 
+ 2205      00
+ 2206              	.LASF103:
+ 2207 05a3 6D61696E 		.ascii	"main.c\000"
+ 2207      2E6300
+ 2208              	.LASF98:
+ 2209 05aa 6D6F7665 		.ascii	"moveAndAngle\000"
+ 2209      416E6441 
+ 2209      6E676C65 
+ 2209      00
+ 2210              	.LASF82:
+ 2211 05b7 53746172 		.ascii	"Start_StartEx\000"
+ 2211      745F5374 
+ 2211      61727445 
+ 2211      7800
+ 2212              	.LASF12:
+ 2213 05c5 646F7562 		.ascii	"double\000"
+ 2213      6C6500
+ 2214              	.LASF71:
+ 2215 05cc 55415254 		.ascii	"UART_1_PutString\000"
+ 2215      5F315F50 
+ 2215      75745374 
+ 2215      72696E67 
+ 2215      00
+ 2216              	.LASF16:
+ 2217 05dd 456E636F 		.ascii	"Encoder_Counts_1_IH\000"
+ 2217      6465725F 
+ 2217      436F756E 
+ 2217      74735F31 
+ 2217      5F494800 
+ 2218              	.LASF31:
+ 2219 05f1 73746174 		.ascii	"state\000"
+ 2219      6500
+ 2220              	.LASF41:
+ 2221 05f7 6D6F746F 		.ascii	"motor2Enable\000"
+ 2221      7232456E 
+ 2221      61626C65 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 50
+
+
+ 2221      00
+ 2222              	.LASF18:
+ 2223 0604 44726966 		.ascii	"Drift_Check_IH\000"
+ 2223      745F4368 
+ 2223      65636B5F 
+ 2223      494800
+ 2224              	.LASF62:
+ 2225 0613 44726966 		.ascii	"Drift_Check_Timer_ReadStatusRegister\000"
+ 2225      745F4368 
+ 2225      65636B5F 
+ 2225      54696D65 
+ 2225      725F5265 
+ 2226              	.LASF9:
+ 2227 0638 5F5F696E 		.ascii	"__int32_t\000"
+ 2227      7433325F 
+ 2227      7400
+ 2228              	.LASF26:
+ 2229 0642 7075636B 		.ascii	"puckRackColours\000"
+ 2229      5261636B 
+ 2229      436F6C6F 
+ 2229      75727300 
+ 2230              	.LASF49:
+ 2231 0652 6D6F7665 		.ascii	"moveLeftAllowed\000"
+ 2231      4C656674 
+ 2231      416C6C6F 
+ 2231      77656400 
+ 2232              	.LASF97:
+ 2233 0662 7475726E 		.ascii	"turnRight\000"
+ 2233      52696768 
+ 2233      7400
+ 2234              	.LASF15:
+ 2235 066c 73697A65 		.ascii	"sizetype\000"
+ 2235      74797065 
+ 2235      00
+ 2236              	.LASF50:
+ 2237 0675 6D6F7665 		.ascii	"moveRightAllowed\000"
+ 2237      52696768 
+ 2237      74416C6C 
+ 2237      6F776564 
+ 2237      00
+ 2238              	.LASF39:
+ 2239 0686 4D325F42 		.ascii	"M2_BD\000"
+ 2239      4400
+ 2240              	.LASF23:
+ 2241 068c 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2241      52784275 
+ 2241      66666572 
+ 2241      00
+ 2242              	.LASF102:
+ 2243 0699 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2243      43313120 
+ 2243      352E342E 
+ 2243      31203230 
+ 2243      31363036 
+ 2244 06cc 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2244      20726576 
+ 2244      6973696F 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccdd70QF.s 			page 51
+
+
+ 2244      6E203233 
+ 2244      37373135 
+ 2245 06ff 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2245      66756E63 
+ 2245      74696F6E 
+ 2245      2D736563 
+ 2245      74696F6E 
+ 2246              	.LASF68:
+ 2247 0727 43794465 		.ascii	"CyDelay\000"
+ 2247      6C617900 
+ 2248              	.LASF78:
+ 2249 072f 436F6C6F 		.ascii	"ColourIntialiseViaHardware\000"
+ 2249      7572496E 
+ 2249      7469616C 
+ 2249      69736556 
+ 2249      69614861 
+ 2250              	.LASF83:
+ 2251 074a 4D6F746F 		.ascii	"Motor_1_driver_Start\000"
+ 2251      725F315F 
+ 2251      64726976 
+ 2251      65725F53 
+ 2251      74617274 
+ 2252              	.LASF57:
+ 2253 075f 70617468 		.ascii	"pathToPucks\000"
+ 2253      546F5075 
+ 2253      636B7300 
+ 2254              	.LASF84:
+ 2255 076b 4D6F746F 		.ascii	"Motor_2_driver_Start\000"
+ 2255      725F325F 
+ 2255      64726976 
+ 2255      65725F53 
+ 2255      74617274 
+ 2256              	.LASF38:
+ 2257 0780 4D325F46 		.ascii	"M2_FD\000"
+ 2257      4400
+ 2258              	.LASF88:
+ 2259 0786 44726966 		.ascii	"Drift_Check_Timer_Start\000"
+ 2259      745F4368 
+ 2259      65636B5F 
+ 2259      54696D65 
+ 2259      725F5374 
+ 2260              	.LASF64:
+ 2261 079e 4D6F746F 		.ascii	"Motor_1_Encoder_Counts_ReadCounter\000"
+ 2261      725F315F 
+ 2261      456E636F 
+ 2261      6465725F 
+ 2261      436F756E 
+ 2262              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

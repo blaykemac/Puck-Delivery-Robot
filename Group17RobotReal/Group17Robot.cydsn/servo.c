@@ -97,4 +97,18 @@ void rackAngle(int amount)
     CyDelay(500);
 }
 
+void changeHeightToPuck(int puckHeightIndex){
+    // TO COMPLETE NIDHIN   
+}
+
+void lowerAndOpen(int puck_stack_position){
+    changeHeightToPuck(puck_stack_position);
+    armOpen();
+}
+
+void closeAndRaise(int puck_stack_position){
+    armClose();
+    changeHeightToPuck(puck_stack_position);
+}
+
 /* [] END OF FILE */

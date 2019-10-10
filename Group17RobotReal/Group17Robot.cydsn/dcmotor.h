@@ -28,5 +28,8 @@ void nextMotion(int * desiredPosition);
 void stopMotor1AndUpdate(void);
 void stopMotor2AndUpdate(void);
 void moveAndAngle(int horizontal, int vertical, int angle);
+void correctAngle();
+
+#define ANGLE_TOLERANCE 0.01
 
 /* [] END OF FILE */

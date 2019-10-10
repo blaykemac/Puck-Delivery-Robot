@@ -24,6 +24,8 @@
 #include "dcmotor.h"
 #include "servo.h"
 
+
+
 //global variable currentPosition and currentOrientation (in main). Declare as externs in 
 //dcmotor, I guess
 float currentPosition[2] = {0,0};
@@ -258,20 +260,30 @@ int main(void)
         }
         
         state = STATE_FIND_REQUIRED_PUCK;
+        
         if (state == STATE_FIND_REQUIRED_PUCK){
                
+        }
+        
+        if (state == STATE_DEPOSIT_PUCK){
+            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
+            lowerAndOpen(currentPuckStackSize);
+            changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack
+            
+            currentPuckStackSize++;
+            
+            if (currentPuckStackSize == 3){state = STATE_PARK_HOME;}
+            
+        }
+        
+        if (state == STATE_PARK_HOME){
+            moveAndAngle(HOME_MIDPOINT, HOME_PARKING_DISTANCE, NORTH_ANGLE); // Should reverse into the spot to fit properly
+            
+            // Run code to stop robot entirely.
         }
         
         
     }
 }
 
-void lowerAndOpen(int puck_stack_position){
-    changeHeightToPuck(puck_stack_position);
-    armOpen();
-}
 
-void closeAndRaise(int puck_stack_position){
-    armClose();
-    changeHeightToPuck(puck_stack_position);
-}

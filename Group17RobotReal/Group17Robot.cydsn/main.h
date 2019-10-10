@@ -33,6 +33,8 @@
 #define STATE_LOCATE_BLOCK 3
 #define STATE_GO_TO_PUCKS 4
 #define STATE_FIND_REQUIRED_PUCK 5
+#define STATE_DEPOSIT_PUCK 6
+#define STATE_PARK_HOME 7
 
 // Hard-coded distances from the west for where each puck may sit in the construction plan.
 #define PUCK_RACK_0_WEST_DISTANCE 72
@@ -72,11 +74,15 @@
 #define HOME_BASE_SOUTH_EDGE 0
 #define HOME_BASE_WEST_EDGE (ARENA_WIDTH - HOME_EDGE_LENGTH) / 2   // Measure arena to find this edge
 #define HOME_BASE_EAST_EDGE (HOME_BASE_WEST_EDGE + HOME_EDGE_LENGTH)
+#define HOME_MIDPOINT (ARENA_WIDTH / 2)
+#define HOME_PARKING_DISTANCE 3
 
 #define CONSTRUCTION_BASE_NORTH_EDGE CONSTRUCTION_EDGE_LENGTH
 #define CONSTRUCTION_BASE_SOUTH_EDGE 0
-#define CONSTRUCTION_BASE_EAST_EDGE 20 // Measure arena to find this edge
-#define CONSTRUCTION_BASE_WEST_EDGE (CONSTRUCTION_BASE_EAST_EDGE + CONSTRUCTION_EDGE_LENGTH)
+#define CONSTRUCTION_BASE_WEST_EDGE 20 // Measure arena to find this edge
+#define CONSTRUCTION_BASE_EAST_EDGE (CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_EDGE_LENGTH)
+#define CONSTRUCTION_MIDPOINT ((CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_BASE_EAST_EDGE + CONSTRUCTION_EDGE_LENGTH) / 2)
+#define CONSTRUCTION_DISTANCE_FROM_WALL 5 // How far we should put the front of the robot to the wall when depositing hte puck
 
 #define DISTANCE_PUCKS_FROM_NORTH 28 // Where the southmost part of the pucks can extend to from the north wall
 
