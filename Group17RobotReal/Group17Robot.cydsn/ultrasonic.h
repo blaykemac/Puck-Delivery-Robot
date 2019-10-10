@@ -12,11 +12,10 @@
 
 /* Function headers */
 
-#define OFFSET_COLOUR_SENSOR_FROM_FRONT 8 // cm
+#define OFFSET_COLOUR_SENSOR_FROM_FRONT 20 // cm
 #define FINISH_CENTER_FROM_E 47
 #define SENSOR_PULSE_DELAY_MS 50
-#define BLOCK_WEST_EDGE 0
-#define BLOCK_EAST_EDGE 1
+
 
 void distanceCheck();  
 void distanceSensor(int currentSensorIndex);
@@ -28,11 +27,10 @@ int takeColourMeasurement(void);
 
 // External variables (ie. globals)
 extern int driveStraightEnable;
-extern int northWall;
 extern int state;
 extern int currentPuckRackScanningIndex;
 extern int puckRackColours[5];
 extern int puckRackOffsetsFromWest[5];
 extern int sweeping;
-extern float block_location[4];
+extern float block_edge_location[4];
 

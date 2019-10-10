@@ -10,30 +10,23 @@
  * ========================================
 */
 
-void motor_driver_compare_update(short m1_d1,short m1_d2,short m2_d1,short m2_d2);
-void startMotion(short requiredCount);
+void positionUpdate(int counts, int drivingForwardFlag, int drivingBackwardFlag);
+void orientationUpdate(int counts,int turningLeftFlag, int turningRightFlag);
 void stopMotion(void);
-void moveForward(short amount);
-void moveBackward(short amount);
-//void turnLeft(void);
-//void turnRight(void);
-void turnLeft(short amount);
-void turnRight(short amount);
-void updatePosition(short * currentPosition, short currentOrientation);
-void moveClosedLoop(short desiredPosition[2]);
-void moveForwardABit(void);
-void moveBackwardABit(void);
-void turnLeftABit(void);
-void turnRightABit(void);
-void displaceRight(int amount,int degrees);
-void displaceLeft(int amount,int degrees);
+void motorDutyCycleUpdate(float M1_FD, float M1_BD, float M2_FD, float M2_BD);
+void driftCorrect(void);
+void counterInitialise(int count1, int count2);
+void moveForward(float amount);
 void moveForwardIndefinitely(void);
+void moveBackward(float amount);
 void moveBackwardIndefinitely(void);
-void correctAngleDrift();
-
-extern int driveStraightEnable;
-extern int state;
-
-
+void turnLeft(float amount);
+void turnRight(float amount);
+void displaceLeft(int amount,int degrees);
+void displaceRight(int amount,int degrees);
+void nextMotion(int * desiredPosition);
+void stopMotor1AndUpdate(void);
+void stopMotor2AndUpdate(void);
+void moveAndAngle(int horizontal, int vertical, int angle);
 
 /* [] END OF FILE */

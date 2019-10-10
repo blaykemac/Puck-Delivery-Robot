@@ -24,7 +24,58 @@
 #include "dcmotor.h"
 #include "servo.h"
 
+//global variable currentPosition and currentOrientation (in main). Declare as externs in 
+//dcmotor, I guess
+float currentPosition[2] = {0,0};
+float desiredPosition[2];
+int currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start facing north
+int desiredOrientation;
+int M1_FD; //The four values shown here will be the duty cycles of the motors
+int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
+int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
+int M2_BD; //known variable
+short int motor1Enable = 0; //These two will be on if the motors are on
+short int motor2Enable = 0;
+int M1_FD; //The four values shown here will be the duty cycles of the motors
+int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
+int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
+int M2_BD; //known variable
+int motor1EncoderCounts; //These two variables will allow the entire program to keep 
+int motor2EncoderCounts; //track of how many turns the motors have spun 
+short int moveNow = 1; //This is a flag that lets the main program tell the moving functions
+//whether we want the robot to be moving or not. For example, when we need to operate servos
+//the main program would set moveNow to FALSE.
 
+//The four flags below let the rest of the program know if the robot is trying to drive 
+//forward or back, turn left or right. At the start of every motion, turn these flags on
+//at the end turn them off.
+short int drivingForwardFlag = 0;
+short int drivingBackwardFlag = 0;
+short int turningLeftFlag = 0;
+short int turningRightFlag = 0;
+
+//These flags will be used by the main program to allow the robot to move in certain directions
+short int moveLeftAllowed;
+short int moveRightAllowed;
+short int moveForwardAllowed;
+short int moveBackwardAllowed;
+
+//Interrupt service routines for dcmotor function
+CY_ISR(Encoder_Counts_1_IH){
+    stopMotor1AndUpdate();
+}
+
+CY_ISR(Encoder_Counts_2_IH){
+    stopMotor2AndUpdate();
+}
+
+CY_ISR(Drift_Check_IH){    
+    Drift_Check_Timer_ReadStatusRegister(); //Clears the interrupt
+    Drift_Check_Timer_Stop(); //Stops the timer
+    motor1EncoderCounts = Motor_1_Encoder_Counts_ReadCounter();
+    motor2EncoderCounts = Motor_2_Encoder_Counts_ReadCounter();
+    driftCorrect(); //Does checking
+}
 
 // * VARIABLES * //
 int idac_value = 0;
@@ -32,33 +83,18 @@ int colour_flag = 1;                    // sets which photodiode to use
 extern float ultrasonic_distances[5];
 int beginNavigation = 0;
 
-int state = STATE_GO_WEST;
-
-// Flag Initialisation
-
-
-int findingPuck = 1;
-int returningHome = 0;
-
-int setup = 1;
-
-int homeToNW = 1;
-int NWToHome = 0;
-int homeToNE = 0;
-int NEToHome = 0;
-
-int southWall = 1;
-int westWall = 0;
-int northWall = 1;
-int eastWall = 0;
+int state = STATE_SCAN_PLAN;
 
 int running = 1;
 
-// Driving Flags
-int driveStraightEnable = 0; // Set to 1 as we can drive to begin with
-
 int sweeping = 0;
-float block_location[4] = {0,0,0,0}; // WEST, EAST, SOUTH, NORTH
+
+int pathToPucks;
+int pathPastBlock;
+
+float block_edge_location[4] = {0,0,0,0}; // N E S W
+
+int currentPuckStackSize = 0;
 
 // Puck Construction Scanning
 int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
@@ -117,11 +153,22 @@ int main(void)
     beginNavigation = 0;
     int tmp = 0;
     
-    //Motor stuff initialisation		
-    Motor_1_driver_Start();		
-    Motor_2_driver_Start();		
-    Motor_1_driver_Sleep();		
-    Motor_2_driver_Sleep();		
+    //Initialising DC motors
+    Motor_1_driver_Start();
+    Motor_2_driver_Start();
+    motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
+    
+    //Initialising counters
+    Motor_1_Encoder_Counts_Start();
+    Motor_2_Encoder_Counts_Start();
+    
+    //Initialising timers
+    Drift_Check_Timer_Start();
+    
+    //Starts and enables the interrupts for the motor encoder counts
+    Encoder_Counts_1_Interrupt_StartEx(Encoder_Counts_1_IH); 
+    Encoder_Counts_2_Interrupt_StartEx(Encoder_Counts_2_IH);
+    Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
     
     //Servos for the arm initialisation
     //Gripper_Servo_PWM_WriteCompare(1250); //This is the closed gripper pos
@@ -134,236 +181,97 @@ int main(void)
         
     for(;;)
     {   
-        // * DC MOTOR MODULES * //
-        
-        /* Test Movement
-        moveForward(5);
-        moveBackward(5);
-        turnLeft(90);
-        turnRight(90);
-        
-        */
-        /*
-        moveForward(10);
-        moveBackward(10);
-        turnLeft();
-        turnRight();
-        */
-                
-        //while(1){
-        
-       // }
-        //Feedback control
-            //Use the ultrasonic sensors to locate yourself in the grid
-            //Use the position asked for and the current location to generate error signal
-            //While the error signal is not within acceptable limit, move till it is
-            //Once you get to the position you want, hand back control
-        
-        // * SERVO MODULES * //
-        
-        /*
-        gripperAngle(10);
-        rackAngle(300);
-        gripperAngle(190);
-        rackAngle(90);
-        CyDelay(3000);
-        */
+        // Start button is pressed so quit sensing
 
-        // * ULTRASONIC MODULES * //
+        /*
+        while (beginNavigation == 0) {
+            distanceCheck();           
+            UART_1_PutString("\n");
+            CyDelay(1000); // Check distance once a second.
+                
+        }
         
-        //if (tmp == 0) distanceCheck(); tmp = 1;
+        */
         
-            //Remove comment when done testing
-            // Repeatedly run the distance check on all 5 sensors to gain wall and obstacle location.
-            //distanceCheck();           
-            //UART_1_PutString("\n");
-            //CyDelay(1000); // Check distance once a second.
-        
-        
-        // * COLOUR SENSING MODULES * //
-        //ColourSensingCalibrationRGB2();
-        
-        
-        
-       
-        // * Begin Colour Sensing Before Switch Is Pressed * //
-        
-        
+
         while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed 
-            
-            moveForwardIndefinitely();
+            if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
+            else {moveForwardIndefinitely();}        
             
             ColourSensingViaHardware();
             // ColourOutput();
             // CyDelay(100);
             
-            
-            
-                       
-            // Start button is pressed so quit sensing
-           
-            /*
-            if (Status_Start_Read() == 1) {
-                beginNavigation = 1; 
-                colour_flag = 0;                // changes colour sensing to the claw 
-            }
-            */
-            /*
-            char output[32];
-            int inter;
-            
-            while(1){
-                inter = Pin_Start_Read();
-                sprintf(output,"%d",inter);
-                UART_1_PutString(output);
-            }
-            */
-            
+            if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK;}
+                     
         }
 
-	while (state == STATE_LOCATE_BLOCK){ // Finding where the boundaries of the block are
-		// Sweep across EAST to WEST until discrepancy
-		moveForwardIndefinitely();
-		turnRight(180); // Now facing EAST wall
-		moveForwardIndefinitely(); // Do this until we get to EAST wall
-		
-		
-		
+    	if (state == STATE_LOCATE_BLOCK){
+            
+            // Finding where the boundaries of the block are
+    		// Sweep across WEST to EAST until discrepancy
+            // But first sense the construction plan and then drive to wall and turn around to prepare for full width scan
+            
+            
+    		moveForwardIndefinitely();
+    		turnRight(180); // Now facing EAST wall
+    		moveForwardIndefinitely(); // Do this until we get to EAST wall
+            
+            
+            // Will now know the boundaries of the block.
+            // Figure out direction we want to travel
+            
+            if (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN){
+                pathPastBlock = WEST;
+            }
+            else {pathPastBlock = EAST;}
+            
+            // Calculate puck position here too, then make a decision as to whether
+            // pathToPucks = ... ;
+
 	}
         
-        // * Navigation Loop * //
-        
-                
-        while(running) {
-            distanceCheck(); // This seems to be a quick fix to the first values recorded upon bootup being wacky.
-            distanceCheck();
-            
-
-            if (setup) {displaceRight(11,35); turnRight(3); setup = 0; driveStraightEnable = 1;}
-                        
-            // Begin driving until interrupt stops
+        // Now we need to locate the pucks
+ 
+        if (state == STATE_FIND_PUCKS) {
+            // We are at the EAST wall facing the EAST wall
+            turnRight(180); // Now facing WEST at EAST wall
             moveForwardIndefinitely();
-            turnRight(95); // CHANGE TO 90 WHEN THE TURN FUNCTION IS ACCURATE. WE OVER COMPENSATE TEMPORARILY
-            // POTENTIALLY CALL SOME alignFront() WHICH USES turnRight AND turnLeft TO MAKE ULTRASONIC 1 AND 2 PERPENDICULAR TO WALL
-            // OR EVEN LEFT SIDE AND FRONT 
-            
-            /* UNCOMMENT FOR FINAL COMP
-            // After first turn
-            driveStraightEnable = 1;
-            northWall = 0;     
-            state = STATE_GO_NORTH_CAREFUL;
-            moveForwardIndefinitely();
-            //correctAngleDrift();
-            
-            state = STATE_SWEEP_NW_PUCKS;
-            driveStraightEnable = 1;
-            
-            */
-            /*
-            while(state == STATE_SWEEP_NW_PUCKS){
-                
-                // CHANGE TO if(puckDetection()) if we can use a lower ultrasonic sensor to determine pucks
-                 if ( redDetection() ){
-               // Then execute the movement to reverse, open claw, drive forward, close claw, lift claw
-                
-                    // If we do the ultrasonic sweeping, we must then use this function to center claw
-                    // displaceLeftOrRight(SENSOR_OFFSET_FROM_CENTER) 
-                    
-                    // Reverse so we have room to open claw and drive into puck
-                    moveBackward(7); 
-                    armDown();
-                    armOpen();
-                    moveForward(10);
-                    armClose();
-                    armUp();
-                   
-                    // Now we have the puck lifted by our claw
-                    // Now we return home
-                    
-                    findingPuck = 0;
-                
-                }
-                else {
-                    distanceCheck(); // Do we need to delay toensure all readings are taken before checking ifstatement?
-                    if (ultrasonic_distances[LEFT_SIDE] < (BLOCK_WEST_EDGE - SAFETY_MARGIN - WIDTH_SENSOR_TO_SENSOR)){
-                        displaceRight(DISPLACE_DISTANCE_NW_PUCK_CHECK_CM, 45);
-                    }
-                    else {
-                        
-                        // No pucks found in NW corner so  move forward and turn right
-                        state = STATE_GO_NORTH_CARELESS;   
-                    }
-                }
-                
-               
-            }     
-            */
-            
-            state = STATE_GO_NORTH_CARELESS; 
-            driveStraightEnable = 1;
-            moveForwardIndefinitely();
-            turnRight(94); // CHANGE TO 90 WHEN THE TURN FUNCTION IS ACCURATE. WE OVER COMPENSATE TEMPORARILY
-            // Now facing east in the NW corner
-            
-            // state = STATE_SWEEP_N_PUCKS;
-            
-            driveStraightEnable = 1;
-            state = STATE_FORWARD_TO_PUCK; 
-            
-            armDown();
-            armOpen();
-            
-            moveForwardIndefinitely();
-
-            moveForward(8);
-            armClose();
-            armUp();
-                    
-                    
-            // Code for finding pucks along N wall and navigating towards the puck
-            
-            state = STATE_RETURN_TO_NW_FROM_PUCK;
-            driveStraightEnable = 1;
-            moveBackwardIndefinitely();
-            turnLeft(87);
-            
-            state = STATE_RETURN_HOME_SIDE;
-            driveStraightEnable = 1;
-            moveBackwardIndefinitely();
-            turnRight(94);
-            
-            state = STATE_LAND_ON_HOME_BASE;
-            driveStraightEnable = 1;
-            moveForwardIndefinitely();
-            //displaceRight(ultrasonic_distances[RIGHT_SIDE] - 20,30);
-            
-            distanceCheck();
-            
-            while (ultrasonic_distances[RIGHT_SIDE] > 5){
-                  
-                displaceRight(3,10);
-                turnRight(3);
-                distanceCheck();
-            
-            }
-            
-            state = STATE_LAND_ON_HOME_BASE;
-            driveStraightEnable = 1;
-            moveForwardIndefinitely();
-            
-            state = STATE_FINISH_LANDING;
-            driveStraightEnable = 1;
-            moveBackwardIndefinitely();
-            
-           // state = STATE_LAND_ON_HOME_BASE;
-           // driveStraightEnable = 1;
-            //moveForwardIndefinitely();
-            
-            beginNavigation = 0;
-            running = 0;
-            
         }
-    
-    }
         
+        state = STATE_GO_TO_PUCKS;
+
+        if (state == STATE_GO_TO_PUCKS){
+            if (pathPastBlock == WEST){
+                if (pathToPucks != WEST) {
+                    moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN, EAST_ANGLE); // Take us to NW corner and then face EAST in preparation for finding the pucks
+                }
+                else {moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NW corner
+            }
+            else {
+                if (pathToPucks != EAST) {
+                    moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN, WEST_ANGLE); // Take us to NE corner and then face WEST in preparation for finding the pucks
+                }
+                else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NE corner
+            }
+        
+        }
+        
+        state = STATE_FIND_REQUIRED_PUCK;
+        if (state == STATE_FIND_REQUIRED_PUCK){
+               
+        }
+        
+        
+    }
+}
+
+void lowerAndOpen(int puck_stack_position){
+    changeHeightToPuck(puck_stack_position);
+    armOpen();
+}
+
+void closeAndRaise(int puck_stack_position){
+    armClose();
+    changeHeightToPuck(puck_stack_position);
 }

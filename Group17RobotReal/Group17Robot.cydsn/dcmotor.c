@@ -10,383 +10,365 @@
  * ========================================
 */
 
-
-#include <project.h>
-#include "dcmotor.h"
-#include "main.h"
-#include "ultrasonic.h"
-
-// * C LIBRARIES * //
+//Standard C libraries
+#include "project.h"
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
+#include "ultrasonic.h"
+#include "main.h"
 
+//global variable currentPosition and currentOrientation (in main). Declare as externs in 
+//dcmotor, I guess
+extern float currentPosition[2];
+extern float desiredPosition[2];
+extern int currentOrientation; //in degrees (convert to radians when needed)
+extern int desiredOrientation;
+extern short int motor1Enable; //These two will be on if the motors are on
+extern short int motor2Enable;
+extern int M1_FD; //The four values shown here will be the duty cycles of the motors
+extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
+extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
+extern int M2_BD; //known variable
+extern int motor1EncoderCounts; //These two variables will allow the entire program to keep 
+extern int motor2EncoderCounts; //track of how many turns the motors have spun 
+extern short int moveNow; //This is a flag that lets the main program tell the moving functions
+//whether we want the robot to be moving or not. For example, when we need to operate servos
+//the main program would set moveNow to FALSE.
+extern float block_location[4]; //This will hold the co-ordinates for the obstacle block. 0,1 will be xmin
+//and xmax, 2,3 will be ymin, ymax.
+extern int state; //The state of the robot as defined in main 
 
-#define FALSE 0
-#define TRUE 1
-#define NORTH 0
-#define WEST 1
-#define SOUTH 2
-#define EAST 3
+//The four flags below let the rest of the program know if the robot is trying to drive 
+//forward or back, turn left or right. At the start of every motion, turn these flags on
+//at the end turn them off.
+extern int drivingForwardFlag;
+extern int drivingBackwardFlag;
+extern int turningLeftFlag;
+extern int turningRightFlag;
 
-#define FULL_SENSOR_DELAY_MS 200
+//These flags will be used by the main program to allow the robot to move in certain directions
+extern short int moveLeftAllowed;
+extern short int moveRightAllowed;
+extern short int moveForwardAllowed;
+extern short int moveBackwardAllowed;
 
-typedef uint8 bool;
+extern char output[32]; //for the UART
 
-const short MOTOR_1_DUTY_CYCLE = 70; //Could split this up into left and right if we notice
-const short MOTOR_2_DUTY_CYCLE = 70;
-//one motor being permanently slower than another.
-const short MOTOR_DRIVER_PERIOD = 300;
-
-//Change between 0 and MOTOR_DRIVER_PERIOD/100 to see which one makes the robot drive straightest
-const short ADDED_EXTRA_COMPARE_VALUE = 1; 
-
-const int TIME = 70; //Delay time for the moveABit functions. This needs to be altered
-//to ensure that we have 1 cm movement per call of moveForwardABit etc
-const int TURNING_TIME_LEFT = 13; //This is for the turning functions, we wanna turn by a deg
-const int TURNING_TIME_RIGHT = 12;
-
-short currentPosition[2] = {0,0}; //Just defining the variable here, 
-//we will need to initialise when power on
-short currentOrientation = NORTH; //Just defining here again, the orientation 
-//also needs to be initalised
-
-bool forwardMoveEnable = FALSE;
-bool backwardMoveEnable = FALSE;
-bool leftTurnEnable = FALSE;
-bool rightTurnEnable = FALSE;
-bool motor1Enable = FALSE;
-bool motor2Enable = FALSE;
-
-//Feedforward control
-    //Figure out how many counts equate to how much distance
-    //In the function take a value indicating how much you want to move
-    //Move exactly the right number of counts to get to the position you want
-
-/*
-//How to use ISR? 
-//In this ISR, disable the relevant motor, stop the relevant counter and reset the relevant counter
-CY_ISR(ISR_STOP_MOTOR_1){
-    //The three commands here may make the ISRs a bit too long.
-    Motor_1_Encoder_Counts_ReadStatusRegister();
-    motor1Enable = FALSE;
+//This function takes a number of counts from the encoder and, assuming that the number of 
+//counts has been moved in the currentOrientation direction, updates the current position. 
+//Current position can only be updated from within this function
+void positionUpdate(int counts, int drivingForwardFlag, int drivingBackwardFlag){
+    float currentOrientation_Radians = (M_PI*currentOrientation/180);
+    if (drivingForwardFlag == TRUE){
+        //When we update position, be aware that we measure orientation as 0 degres facing
+        //to the east of the arena and increasing counterclockwise
+        currentPosition[0] += CM_PER_COUNT*counts*cos(currentOrientation_Radians);
+        currentPosition[1] += CM_PER_COUNT*counts*sin(currentOrientation_Radians);
+    }else if (drivingBackwardFlag == TRUE){
+        currentPosition[0] += CM_PER_COUNT*counts*cos(currentOrientation_Radians + M_PI); 
+        currentPosition[1] += CM_PER_COUNT*counts*sin(currentOrientation_Radians + M_PI);
+    }
 }
 
-CY_ISR(ISR_STOP_MOTOR_2){
-    //The three commands here may make the ISRs a bit too long.
-    Motor_2_Encoder_Counts_ReadStatusRegister();
-    motor2Enable = FALSE;
+//This function takes a number of counts from the encoder, and based on whether we are 
+//turning left or right, updates the current orientation. Current orientation can only
+//be updated from within this function
+void orientationUpdate(int counts,int turningLeftFlag, int turningRightFlag){
+    int degreesMoved = counts*DEGREES_PER_COUNT;
+    if (turningLeftFlag == TRUE){
+        currentOrientation += degreesMoved;
+        currentOrientation = currentOrientation%360;
+    }else if (turningRightFlag == TRUE){
+        currentOrientation -= degreesMoved;
+        currentOrientation = currentOrientation%360;
+        if (currentOrientation < 0){
+            currentOrientation += 360;
+        }
+    }
 }
 
-*/
-
-/*
-//Takes four arguments (each a percentage duty cycle as a short) and writes them to 
-//the compare values of the motors. Will be used inside the open-loop move and rotate 
-//functions
-void motor_driver_compare_update(short m1_d1,short m1_d2,short m2_d1,short m2_d2){
-    Motor_1_driver_WriteCompare1(MOTOR_DRIVER_PERIOD*m1_d1/100); //Using 80% duty cycle for movement in general. 
-    Motor_1_driver_WriteCompare2(MOTOR_DRIVER_PERIOD*m1_d2/100);
-    Motor_2_driver_WriteCompare1(MOTOR_DRIVER_PERIOD*m2_d1/100); 
-    Motor_2_driver_WriteCompare2(MOTOR_DRIVER_PERIOD*m2_d2/100);
+//This function will be called once the ultrasonics or the encoders decide that it is time
+//to stop moving. 
+void stopMotion(void){
+    if ((motor1Enable == FALSE) && (motor2Enable == FALSE)){
+        //Update the driving permission flags
+        //Read encoder counts and update from previous position
+        int completedCounts;
+        if ((drivingForwardFlag == TRUE)||(drivingBackwardFlag == TRUE)){
+            //We assume that the two counter will have identical counts
+            completedCounts = Motor_1_Encoder_Counts_ReadCounter();
+            positionUpdate(completedCounts,drivingForwardFlag,drivingBackwardFlag);
+        }else if (turningLeftFlag == TRUE){
+            completedCounts = Motor_2_Encoder_Counts_ReadCounter();
+            orientationUpdate(completedCounts,turningLeftFlag,turningRightFlag);
+        }else if (turningRightFlag == TRUE){
+            completedCounts = Motor_1_Encoder_Counts_ReadCounter();
+            orientationUpdate(completedCounts,turningLeftFlag,turningRightFlag);
+        }
+                
+        //Clear encoder counts
+        Motor_1_Encoder_Counts_WriteCounter(0);
+        Motor_2_Encoder_Counts_WriteCounter(0);
+        
+        motor1EncoderCounts = 0;
+        motor2EncoderCounts = 0;
+        
+        //Just for now, we are going to update driving flags by turning all of them off
+        drivingForwardFlag = FALSE;
+        drivingBackwardFlag = FALSE;
+        turningLeftFlag = FALSE;
+        turningRightFlag = FALSE;
+        
+        //Have code here to plan the route which should also update the driving flags
+        
+    }
 }
-*/
 
-/*
-void startMotion(short requiredCount){
+//Takes the duty cycles must be expressed as a percentage and runs the motors at those duty
+//cycles
+void motorDutyCycleUpdate(float M1_FD, float M1_BD, float M2_FD, float M2_BD){
+    Motor_1_driver_WriteCompare1((M1_FD/NUM_TO_PERCENT_CONVERTER)*DCMOTOR_PWM_PERIOD);
+    Motor_2_driver_WriteCompare1((M2_FD/NUM_TO_PERCENT_CONVERTER)*DCMOTOR_PWM_PERIOD);
+    Motor_1_driver_WriteCompare2((M1_BD/NUM_TO_PERCENT_CONVERTER)*DCMOTOR_PWM_PERIOD);
+    Motor_2_driver_WriteCompare2((M2_BD/NUM_TO_PERCENT_CONVERTER)*DCMOTOR_PWM_PERIOD);
+}
+
+//This function will be responsible for adjusting any drift. It will read and modify 
+//global variables M1_FD,M1_BD,M2_FD and M2_BD to do so.
+void driftCorrect(void){
+    int temp; //allows us to swap motor encoders' speeds
+    if (motor1EncoderCounts > motor2EncoderCounts){
+        if (drivingForwardFlag == TRUE){
+            if (M1_FD == M2_FD){
+                M1_FD = M2_FD - 1;
+            }else{
+                temp = M1_FD;
+                M1_FD = M2_FD;
+                M2_FD = temp;
+            }
+        }
+        else if (drivingBackwardFlag == TRUE){
+            if (M1_BD == M2_BD){
+                M1_BD = M2_BD - 1;
+            }else{
+                temp = M1_BD;
+                M1_BD = M2_BD;
+                M2_BD = temp;
+            }
+        }else if (turningLeftFlag == TRUE){
+            if (M1_BD == M2_FD){
+                M1_BD = M2_FD - 1;
+            }else{
+                temp = M1_BD;
+                M1_BD = M2_FD;
+                M2_FD = temp;
+            }
+        }else if (turningRightFlag == TRUE){
+            if (M1_FD == M2_BD){
+                M1_FD = M2_BD - 1;
+            }else{
+                temp = M1_FD;
+                M1_FD = M2_BD;
+                M2_BD = temp;
+            }
+        }
+    }else if (motor2EncoderCounts > motor1EncoderCounts){
+        if (drivingForwardFlag == TRUE){
+            if (M1_FD == M2_FD){
+                M2_FD = M1_FD - 1 ;
+            }else{
+                temp = M1_FD;
+                M1_FD = M2_FD;
+                M2_FD = temp;
+            }
+        }
+        else if (drivingBackwardFlag == TRUE){
+            if (M1_BD == M2_BD){
+                M2_BD = M1_BD - 1;
+            }else{
+                temp = M1_BD;
+                M1_BD = M2_BD;
+                M2_BD = temp;
+            }
+        }else if (turningLeftFlag == TRUE){
+            if (M1_BD == M2_FD){
+                M1_BD = M2_FD - 1;
+            }else{
+                temp = M1_BD;
+                M1_BD = M2_FD;
+                M2_FD = temp;
+            }
+        }else if (turningRightFlag == TRUE){
+            if (M1_FD == M2_BD){
+                M1_FD = M2_BD - 1;
+            }else{
+                temp = M1_FD;
+                M1_FD = M2_BD;
+                M2_BD = temp;
+            }
+        }
+    }
+    motorDutyCycleUpdate(M1_FD,M1_BD,M2_FD,M2_BD);
+    Drift_Check_Timer_Start(); 
+}
+
+//Takes two integers count1 and count2, and sets the counters up so that they will start counting
+//at zero and interrupt when their counts equal the count values specified
+void counterInitialise(int count1, int count2){
+    Motor_1_Encoder_Counts_WriteCounter(0); //Start the counters from 0
+    Motor_2_Encoder_Counts_WriteCounter(0); //Start the counters from 0
+    Motor_1_Encoder_Counts_WritePeriod(count1);
+    Motor_2_Encoder_Counts_WritePeriod(count2);
+}
+
+//Takes a distance to move in cm and moves. Blocking (sadly)
+void moveForward(float amount){
+    int counts = amount/CM_PER_COUNT;
     motor1Enable = TRUE;
     motor2Enable = TRUE;
-    Motor_1_Encoder_Counts_WritePeriod(requiredCount);
-    Motor_2_Encoder_Counts_WritePeriod(requiredCount);
+    drivingForwardFlag = TRUE;
+    motor1EncoderCounts = 0;
+    motor2EncoderCounts = 0;
+    counterInitialise(counts,counts); //Sets up counters to interrupt at right time
+    M1_FD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    M1_BD = 0;
+    M2_FD =  DCMOTOR_IDEAL_DUTY_CYCLE;
+    M2_BD = 0;
     Motor_1_Encoder_Counts_Start();
     Motor_2_Encoder_Counts_Start();
-    Motor_1_driver_Start();
-    Motor_2_driver_Start();
+    Drift_Check_Timer_Start();
+    motorDutyCycleUpdate(M1_FD,M1_BD,M2_FD,M2_BD);//This gets the motors going
+    //The below line just traps execution here until the motion is completed
+    while ((motor1Enable == TRUE)||(motor2Enable == TRUE)){
     
-}
-
-*/
-
-/*
-//stopMotion stops the motors (by disabling PWM), then stops the counters, then resets 
-//the counters. This way, next time we need to use motion, we have to restart it all and go
-void stopMotion(void){
-    Motor_1_driver_Stop();
-    Motor_2_driver_Stop();
-    Motor_1_Encoder_Counts_Stop();
-    Motor_2_Encoder_Counts_Stop();
-}
-
-*/
-
-/*
-//We also need to figure out how we are going to store the location of the black block
-
-//Note that we are taking a short as our input here. If the resolution is less than one, 
-//we will need to change this data type, because it will now always call with zero
-void moveForward(short amount){
-    short requiredCount = amount/0.0175; //This assumes that amount is specified in cm
-    //Also, the above variable is specified as a short int because the counter can only count up 
-    //to 2^16 anyway (FF implementation). This means that we can only have 2^16*0.0175 cm 
-    //available as our maximum (We need to do some arithmetic checking here - int/float = 
-    //what?
-    
-    motor_driver_compare_update(MOTOR_DUTY_CYCLE,0,MOTOR_DUTY_CYCLE,0);
-    startMotion(requiredCount);
-    
-    while (motor1Enable||motor2Enable){
-        if (motor1Enable == FALSE){
-            Motor_1_driver_Stop();
-        }
-        if (motor2Enable == FALSE){
-            Motor_2_driver_Stop();
-        }
-    }
-    stopMotion();
-    //The below while statement is intended to keep us in the function until both 
-    //motors are stopped by the ISRs. 
-}
-
-void moveBackward(short amount){
-    short requiredCount = amount/0.0175; //This assumes that amount is specified in cm
-    //Also, the above variable is specified as a short int because the counter can only count up 
-    //to 2^16 anyway (FF implementation). This means that we can only have 2^16*0.0175 cm 
-    //available as our maximum (We need to do some arithmetic checking here - int/float = 
-    //what?
-    
-    motor_driver_compare_update(0,MOTOR_DUTY_CYCLE,0,MOTOR_DUTY_CYCLE);
-    startMotion(requiredCount);
-    //The below while statement is intended to keep us in the function until both 
-    //motors are stopped by the ISRs. 
-    while (motor1Enable||motor2Enable){
-        if (motor1Enable == FALSE){
-            Motor_1_driver_Stop();
-        }
-        if (motor2Enable == FALSE){
-            Motor_2_driver_Stop();
-        }
-    }
-    stopMotion();
-    //The below while statement is inte
-}
-
-void turnLeft(void){
-    short requiredCount = 449; //This comes from a calc involving dist from the centre
-    
-    motor_driver_compare_update(0,MOTOR_DUTY_CYCLE,MOTOR_DUTY_CYCLE,0);
-    startMotion(requiredCount);
-    
-    while (motor1Enable||motor2Enable){
-        if (motor1Enable == FALSE){
-            Motor_1_driver_Stop();
-        }
-        if (motor2Enable == FALSE){
-            Motor_2_driver_Stop();
-        }
-    }
-    //Below stopMotion call ensures that BOTH drivers stop (not just one) and that 
-    //we reset the encoders 
-    stopMotion();
-    currentOrientation = (currentOrientation+1)%4;
-}
-
-void turnRight(void){
-    short requiredCount = 449; //This comes from a calc involving dist from the centre
-    motor_driver_compare_update(MOTOR_DUTY_CYCLE,0,0,MOTOR_DUTY_CYCLE);
-    startMotion(requiredCount);
-    
-    while (motor1Enable||motor2Enable){
-        if (motor1Enable == FALSE){
-            Motor_1_driver_Stop();
-        }
-        if (motor2Enable == FALSE){
-            Motor_2_driver_Stop();
-        }
-    }
-    stopMotion();
-    currentOrientation = (currentOrientation-1)%4;
-}
-
-void updatePosition(short * currentPosition, short currentOrientation){
-    float sensorList[5] = {0,0,0,0,0};
-    //Poll the five sensors and store in sensorList
-    if (currentOrientation == NORTH){
-        currentPosition[2] = (sensorList[0]+sensorList[1])/2;
-        currentPosition[1] = sensorList[2];
-    }else if (currentOrientation == WEST){
-        currentPosition[1] = (sensorList[0]+sensorList[1])/2;
-        currentPosition[2] = sensorList[4];
-    }else if (currentOrientation == EAST){
-        currentPosition[1] = (sensorList[0]+sensorList[1])/2;
-        currentPosition[2] = sensorList[2];
-    }else{
-    
-    } 
-}
-*/
-
-/*
-short desiredPosition[2] = {1,2};
-
-void moveClosedLoop(short desiredPosition[2]){
-    short xToMove = desiredPosition[0]-currentPosition[0];
-    short yToMove = desiredPosition[1]-currentPosition[1];
-    const float resolution = 1; //We can move to 1 cm accuracy (can be adjusted 
-    //depending on how good ultrasonics are and motor 
-    while((yToMove > resolution/2) || (-resolution/2 < yToMove)){ //If within half of res, then good enough
-        if ((yToMove > 0) && (forwardMoveEnable == TRUE)){
-            moveForward(resolution);
-        }else if ((yToMove < 0) && (backwardMoveEnable == TRUE)){
-            moveBackward(resolution);
-        }
-        //Read ultrasonic sensors, update currentPosition,update xToMove and yToMove
-        xToMove = desiredPosition[1]-currentPosition[0]; //Based on orientation, this 
-        //should change
-        yToMove = desiredPosition[2]-currentPosition[1];
-    }
-    
-    short temp = 0;
-    if (-resolution/2 < xToMove < resolution/2){
-        return;
-    }else if (xToMove < -resolution/2){
-        turnLeft();
-        temp = -1*xToMove;
-        xToMove = yToMove;
-        yToMove = temp;
-    }else if (xToMove > resolution/2){
-        turnRight();
-        temp = xToMove;
-        xToMove = yToMove;
-        yToMove = temp;
-    }
-    
-    while((yToMove > resolution/2) || (-resolution/2 < yToMove)){ //If within half of res, then good enough
-        if ((yToMove > 0) && (forwardMoveEnable == TRUE)){
-            moveForward(resolution); 
-            
-            //Read ultrasonic sensors, update currentPosition,update xToMove and yToMove
-        }else if ((yToMove < 0) && (backwardMoveEnable == TRUE)){
-            moveBackward(resolution);
-            
-            //Read ultrasonic sensors, update currentPosition,update xToMove and yToMove
-        }
-    }
-    
-    
-}
- */
-
-void moveForwardABit(){
-    Motor_1_driver_Wakeup();
-    Motor_2_driver_Wakeup();
-    Motor_1_driver_WriteCompare1(MOTOR_1_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100 + ADDED_EXTRA_COMPARE_VALUE);
-    Motor_1_driver_WriteCompare2(0);
-    Motor_2_driver_WriteCompare1(MOTOR_2_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    Motor_2_driver_WriteCompare2(0);
-    CyDelay(TIME);
-    Motor_1_driver_Sleep();
-    Motor_2_driver_Sleep();
-}
-
-void moveBackwardABit(){
-    Motor_1_driver_Wakeup();
-    Motor_2_driver_Wakeup();
-    Motor_1_driver_WriteCompare1(0);
-    Motor_1_driver_WriteCompare2(MOTOR_1_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    Motor_2_driver_WriteCompare1(0);
-    Motor_2_driver_WriteCompare2(MOTOR_2_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100 + ADDED_EXTRA_COMPARE_VALUE);
-    CyDelay(TIME);
-    Motor_1_driver_Sleep();
-    Motor_2_driver_Sleep();    
-}
-
-//This was originally turnRightABit, but had to be changed to turnLeftABit
-void turnLeftABit(){
-    Motor_1_driver_Wakeup();
-    Motor_1_driver_WriteCompare1(0);
-    Motor_1_driver_WriteCompare2(MOTOR_1_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    Motor_2_driver_Wakeup();
-    Motor_2_driver_WriteCompare1(MOTOR_2_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    Motor_2_driver_WriteCompare2(0);
-    CyDelay(TURNING_TIME_LEFT);
-    Motor_1_driver_Sleep();
-    Motor_2_driver_Sleep();    
-}
-
-//This was originally turnLeftABit, but had to be changed to turnRightABit
-void turnRightABit(){
-    Motor_1_driver_Wakeup();
-    Motor_1_driver_WriteCompare1(MOTOR_1_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    Motor_1_driver_WriteCompare2(0);
-    Motor_2_driver_Wakeup();
-    Motor_2_driver_WriteCompare1(0);
-    Motor_2_driver_WriteCompare2(MOTOR_2_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    CyDelay(TURNING_TIME_RIGHT);
-    Motor_1_driver_Sleep();
-    Motor_2_driver_Sleep();
-}
-
-void moveForward(short amount){
-    //AMOUNT_TO_LOOPS_CONVERTER depends on the TIME constant in dcmotor.c file: each 
-    //moveForwardABit() function call will move by an integer number of cm 
-    //(lets try and make this accurate) then AMOUNT_TO_LOOPS_CONVERTER = amount of cm moved
-    //under one call of moveForward
-    
-    const int AMOUNT_TO_LOOPS_CONVERTER = 1; 
-    short requiredLoops = amount/AMOUNT_TO_LOOPS_CONVERTER;
-    int i = 0;
-    while (i < (requiredLoops)){
-        moveForwardABit();
-        i++;
     }
 }
 
-void moveBackward(short amount){
-    const int AMOUNT_TO_LOOPS_CONVERTER = 1;
-    short requiredLoops = amount/AMOUNT_TO_LOOPS_CONVERTER;
-    int i = 0;
-    while (i < (requiredLoops)){
-        moveBackwardABit();
-        i++;
+//Non-blocking move function. It will be called and will cause the robot to move forward until 
+//interrupted out by ultrasonics
+void moveForwardIndefinitely(void){
+    int counts = ENCODER_COUNTS_MAX;
+    motor1Enable = TRUE;
+    motor2Enable = TRUE;
+    drivingForwardFlag = TRUE;
+    motor1EncoderCounts = 0;
+    motor2EncoderCounts = 0;
+    counterInitialise(counts,counts); //Sets up counters to interrupt at right time
+    M1_FD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    M1_BD = 0;
+    M2_FD =  DCMOTOR_IDEAL_DUTY_CYCLE;
+    M2_BD = 0;
+    Motor_1_Encoder_Counts_Start();
+    Motor_2_Encoder_Counts_Start();
+    Drift_Check_Timer_Start();
+    motorDutyCycleUpdate(M1_FD,M1_BD,M2_FD,M2_BD);//This gets the motors going
+    //The below line just traps execution here until the motion is completed
+}
+//Takes a distance to move in cm and moves. Blocking (sadly)
+void moveBackward(float amount){
+    int counts = amount/CM_PER_COUNT;
+    motor1Enable = TRUE;
+    motor2Enable = TRUE;
+    drivingBackwardFlag = TRUE;
+    motor1EncoderCounts = 0;
+    motor2EncoderCounts = 0;
+    counterInitialise(counts,counts); //Sets up counters to interrupt at right time
+    M1_FD = 0;
+    M1_BD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    M2_FD =  0;
+    M2_BD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    Motor_1_Encoder_Counts_Start();
+    Motor_2_Encoder_Counts_Start();
+    Drift_Check_Timer_Start();
+    motorDutyCycleUpdate(M1_FD,M1_BD,M2_FD,M2_BD);//This gets the motors going
+    //The below line just traps execution here until the motion is completed
+    while ((motor1Enable == TRUE)||(motor2Enable == TRUE)){
+    
     }
 }
 
-//This was originally turnRight, but now has to be changed to turnLeft
-void turnRight(short amount){
-    //Again will depend on TIME. We need to write so that each turnLeftABit goes up 
-    //by like 5 deg or something. Then requiredLoops = amount/5 (so AMOUNT_TO_LOOPS_CONVERTER
-    // = degrees turned by one turnRightABit call
-    const int AMOUNT_TO_LOOPS_CONVERTER = 1;
-    short requiredLoops = amount/AMOUNT_TO_LOOPS_CONVERTER;
-    int i = 0;
-    while (i < (requiredLoops)){
-        turnRightABit();
-        i++;
+//Allows the robot to move backward indefinitely until interrupted out by ultrasonics
+void moveBackwardIndefinitely(void){
+    int counts = ENCODER_COUNTS_MAX;
+    motor1Enable = TRUE;
+    motor2Enable = TRUE;
+    drivingBackwardFlag = TRUE;
+    motor1EncoderCounts = 0;
+    motor2EncoderCounts = 0;
+    counterInitialise(counts,counts); //Sets up counters to interrupt at right time
+    M1_FD = 0;
+    M1_BD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    M2_FD =  0;
+    M2_BD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    Motor_1_Encoder_Counts_Start();
+    Motor_2_Encoder_Counts_Start();
+    Drift_Check_Timer_Start();
+    motorDutyCycleUpdate(M1_FD,M1_BD,M2_FD,M2_BD);//This gets the motors going
+}
+
+//Takes an angle to turn in degrees and turns left that much
+void turnLeft(float amount){
+    //We need to make sure that the timers are disabled when we are doing turning motions
+    //Otherwise they will try and correct the turning
+    int counts = round(amount/DEGREES_PER_COUNT);
+    motor1Enable = TRUE;
+    motor2Enable = TRUE;
+    turningLeftFlag = TRUE;
+    motor1EncoderCounts = 0;
+    motor2EncoderCounts = 0;
+    counterInitialise(counts,counts); //Sets up counters to interrupt at right time
+    M1_FD = 0;
+    M1_BD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    M2_FD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    M2_BD = 0;
+    Motor_1_Encoder_Counts_Start();
+    Motor_2_Encoder_Counts_Start();
+    Drift_Check_Timer_Start();
+    motorDutyCycleUpdate(M1_FD,M1_BD,M2_FD,M2_BD);//This gets the motors going
+    //The below line just traps execution here until the motion is completed
+    while ((motor1Enable == TRUE)||(motor2Enable == TRUE)){
+    
     }
 }
 
-//This was originally turnRight, but now has to be changed to turnLeft (turnLeft 
-//can only accept multiples of 5 deg as arguments. So telling it to turn left by 12 degrees
-//will end up only turning 10.
-void turnLeft(short amount){
-      
-    const int AMOUNT_TO_LOOPS_CONVERTER = 1;
-    short requiredLoops = amount/AMOUNT_TO_LOOPS_CONVERTER;
-    int i = 0;
-    while (i < (requiredLoops)){
-        turnLeftABit();
-        i++;
+void turnRight(float amount){
+    int counts = round(amount/DEGREES_PER_COUNT);
+    motor1Enable = TRUE;
+    motor2Enable = TRUE;
+    turningRightFlag = TRUE;
+    motor1EncoderCounts = 0;
+    motor2EncoderCounts = 0;
+    counterInitialise(counts,counts); //Sets up counters to interrupt at right time
+    M1_FD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    M1_BD = 0;
+    M2_FD = 0;
+    M2_BD = DCMOTOR_IDEAL_DUTY_CYCLE;
+    Motor_1_Encoder_Counts_Start();
+    Motor_2_Encoder_Counts_Start();
+    Drift_Check_Timer_Start();
+    motorDutyCycleUpdate(M1_FD,M1_BD,M2_FD,M2_BD);//This gets the motors going
+    //The below line just traps execution here until the motion is completed
+    while ((motor1Enable == TRUE)||(motor2Enable == TRUE)){
+    
     }
-
 }
 
-//Make sure degrees is less than 90. Something like 20 would be ideal
+//The displaceLeft and displaceRight functions should let us slide left and right. 
+//We should ensure that these are only called when we are not close enough to the walls
+//to create issues otherwise we could get stuck in these functions permanently
 void displaceLeft(int amount,int degrees){
     turnRight(degrees);
+    float temp = amount/sin((M_PI/180)*degrees);
     moveBackward(amount/sin((M_PI/180)*degrees));
     turnLeft(degrees);
+    temp = amount/tan((M_PI/180)*degrees);
     moveForward(amount/tan((M_PI/180)*degrees));
 }
 
+//The displaceLeft and displaceRight functions should let us slide left and right. 
+//We should ensure that these are only called when we are not close enough to the walls
+//to create issues otherwise we could get stuck in these functions permanently
 void displaceRight(int amount,int degrees){
     turnLeft(degrees);
     float temp = amount/sin((M_PI/180)*degrees);
@@ -396,45 +378,46 @@ void displaceRight(int amount,int degrees){
     moveForward(amount/tan((M_PI/180)*degrees));
 }
 
-void moveForwardIndefinitely(){
-     
-    int i = 0;
-    const int SENSE_TO_DRIVE_RATIO = 1;
-    
-  
-    Motor_1_driver_Wakeup();
-    Motor_2_driver_Wakeup();
-    Motor_1_driver_WriteCompare1(MOTOR_1_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100 + ADDED_EXTRA_COMPARE_VALUE);
-    Motor_1_driver_WriteCompare2(0);
-    Motor_2_driver_WriteCompare1(MOTOR_2_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    Motor_2_driver_WriteCompare2(0);
-        
-    while (driveStraightEnable){
-        
-        distanceCheck();
-        CyDelay(FULL_SENSOR_DELAY_MS);
+//Looks at the current position, desired position and the location of the block, 
+//and plans a route, executing the next motion in that route if the main program 
+//permits (via having the moveNow flag set to TRUE)
+void nextMotion(int * desiredPosition){
+    //Check that we have already acquired the block's location (by checking we aren't in 
+    //the scanning for block state)
+    //Check what motions are available to us from the flags
+    //Check what motions are available to us from our location compared to obstacle
+    if (block_location[0] < currentPosition[0] < block_location[1]){
+        float xToMove = desiredPosition[0] - currentPosition[0];
+        if ((xToMove <0) && (moveLeftAllowed == TRUE)){
+            if (currentOrientation != 180){
+                turnLeft(180 - currentOrientation);
+            }
+        }
     }
-
 }
 
-void moveBackwardIndefinitely(){
-     
-    int i = 0;
-    const int SENSE_TO_DRIVE_RATIO = 1;
-    
-  
-    Motor_1_driver_Wakeup();
-    Motor_2_driver_Wakeup();
+void stopMotor1AndUpdate(void){
     Motor_1_driver_WriteCompare1(0);
-    Motor_1_driver_WriteCompare2(MOTOR_1_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100);
-    Motor_2_driver_WriteCompare1(0);
-    Motor_2_driver_WriteCompare2(MOTOR_2_DUTY_CYCLE*MOTOR_DRIVER_PERIOD/100 + ADDED_EXTRA_COMPARE_VALUE);
-        
-    while (driveStraightEnable){
-        
-        distanceCheck();
-        CyDelay(FULL_SENSOR_DELAY_MS);
-    }
-
+    Motor_1_driver_WriteCompare2(0);
+    Motor_1_Encoder_Counts_Stop();
+    M1_FD = 0;
+    M1_BD = 0;
+    UART_1_PutString("Counter 1 interrupt \n");
+    motor1Enable = FALSE;
+    stopMotion();
+    Motor_1_Encoder_Counts_ReadStatusRegister(); //Clears the interrupt
 }
+
+void stopMotor2AndUpdate(void){
+    Motor_2_driver_WriteCompare1(0);
+    Motor_2_driver_WriteCompare2(0);
+    Motor_2_Encoder_Counts_Stop();
+    M2_FD = 0;
+    M2_BD = 0;
+    UART_1_PutString("Counter 2 interrupt \n");
+    motor2Enable = FALSE;   
+    stopMotion();
+    Motor_2_Encoder_Counts_ReadStatusRegister(); //Clears the interrupt
+}
+
 /* [] END OF FILE */
