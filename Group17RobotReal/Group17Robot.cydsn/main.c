@@ -195,15 +195,21 @@ int main(void)
         
 
         while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed 
+            
+            
+            ColourIntialiseViaHardware();
+            
+            
+            
+            /*
             if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
             else {moveForwardIndefinitely();}        
             
-            ColourSensingViaHardware();
-            // ColourOutput();
-            // CyDelay(100);
+            puckRackColours[currentPuckRackScanningIndex] = ColourSensingOutput();
+
             
             if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK;}
-                     
+            */       
         }
 
     	if (state == STATE_LOCATE_BLOCK){

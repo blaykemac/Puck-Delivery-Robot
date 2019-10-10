@@ -213,7 +213,7 @@ void driftCorrect(void){
     Drift_Check_Timer_Start(); 
 }
 
-//Takes two integers count1 and count2, and sets the counters up so that they will start counting
+//Takes two integers count1 and count2, and sets the counters up so that they will start counting 
 //at zero and interrupt when their counts equal the count values specified
 void counterInitialise(int count1, int count2){
     Motor_1_Encoder_Counts_WriteCounter(0); //Start the counters from 0

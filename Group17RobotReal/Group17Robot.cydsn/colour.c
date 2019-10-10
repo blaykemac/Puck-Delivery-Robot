@@ -29,7 +29,7 @@ const float trans = 120000;    // 20k ogms
 // Colour Sensing: 
 float pd_voltage;
 float input_current;
-float stored[9];
+float stored[9];            
 float sum = 0;
 char output[32];
 float ambient_current;      // used to remove the ambient light from the photo diode measurements 
@@ -45,7 +45,7 @@ float test_red;
 float test_green;
 float test_blue;
 
-extern int colour_flag;
+extern int colour_flag;     // determines which flag needs to be outputted 
 
 int puck_all[4] = {0,0,0,0};          
                             // no puck detection = puck_all[0]
@@ -59,12 +59,113 @@ float colour_output;
 // RED DECTECTION:
 //int red_flag = 0;       // starts off as no red detected
 
+
+// LOGICAL STEPS OF COLOUR SENSING: 
+/*
+1. Initialise against the black wall, or white ground.
+2. perhaps initialise both sensors initially. 
+
+
+3. Need some failsafe to determine if the colours have been initialised correctly? 
+4. Can we determine somehow that the colour sensing isn't working as intended? 
+
+
+Writing these values to control_led_Write(x):
+    x = 0: BLANK
+    x = 1: RED
+    x = 2: GREEN
+    x = 3: BLUE
+
+
+
+*/
+
+
+
+void ColourIntialiseViaHardware (void)
+{
+    control_photodiode_Write(colour_flag);       // Drives photodiode 2
+    PWM_colour_Wakeup();                    // Wakes PWM up from sleep
+    PWM_colour_WriteCompare(255);           // ensures the PWM is driving a continuous pulse
+    
+    
+    // TO ENSURE THE PINS ARE IN THE CORRECT ORDER: 
+    // Will flash RED -> GREEN -> BLUE for one second each
+    control_led_Write(1);   CyDelay(1000);
+    control_led_Write(2);   CyDelay(1000);
+    control_led_Write(3);   CyDelay(1000);  
+    
+    float test[4] = {0, 0, 0, 0};           // resets the test array to 0
+   
+    for (int i = 0; i < 4; i++) 
+    {
+        CyDelay(10);
+        control_led_Write(i);
+        test[i] = ADC_Read32();             // Grabs the value and places it in the test array
+        CyDelay(10);
+        control_led_Write(0);            // Turns the LED off
+        CyDelay(20);
+    }
+    ambient_white = test[0];
+    ambient_red = test[1];
+    ambient_green = test[2];
+    ambient_blue = test[3];   
+    
+    PWM_colour_WriteCompare(10);            // sets back to initial pulse
+    PWM_colour_Sleep();                     // Sets PWM back to sleep
+
+}
+
+
+void ColourSensingViaHardware(void)
+{
+    float test[4] = {0, 0, 0, 0};           // resets the test array to 0
+    
+    PWM_colour_Wakeup();
+    PWM_colour_WriteCompare(255);           // ensures the PWM is driving a continuous pulse
+    
+    for (int i = 0; i < 4; i++) 
+    {
+        CyDelay(10);
+        control_led_Write(i);
+        test[i] = ADC_Read32();             // Grabs the value and places it in the test array
+        CyDelay(10);
+        control_led_Write(0);            // Turns the LED off
+        CyDelay(20);
+    }
+    test_white = test[0];   
+    test_red = test[1];     
+    test_green = test[2];   
+    test_blue = test[3];    
+    
+    PWM_colour_WriteCompare(10);            // sets back to initial pulse
+    PWM_colour_Sleep();                     // Sets PWM back to sleep
+    
+}
+
+
+int ColourSensingOutput(void)
+{
+    int value = 0;
+    
+    
+    
+    
+    
+    
+    
+    return value;
+}
+
+
+
+
 void RGB1Initialise(void)
 {
     
     control_photodiode_Write(0);       // Drives photodiode 1
     
-    // Red Light: 
+     
     LED_Red_Write(1);
     CyDelay(10);
     ambient_red = ADC_Read32();
@@ -259,60 +360,6 @@ void ColourSensingRGB2(void)
     
 }
 
-
-void ColourIntialiseViaHardware (void)
-{
-    control_photodiode_Write(colour_flag);       // Drives photodiode 2
-    PWM_colour_Wakeup();                    // Wakes PWM up from sleep
-    PWM_colour_WriteCompare(255);           // ensures the PWM is driving a continuous pulse
-    
-    float test[4] = {0, 0, 0, 0};           // resets the test array to 0
-   
-    for (int i = 0; i < 4; i++) 
-    {
-        CyDelay(10);
-        control_led_Write(i);
-        test[i] = ADC_Read32();             // Grabs the value and places it in the test array
-        CyDelay(10);
-        control_led_Write(0);            // Turns the LED off
-        CyDelay(20);
-    }
-    ambient_white = test[0];
-    ambient_red = test[1];
-    ambient_green = test[2];
-    ambient_blue = test[3];   
-    
-    PWM_colour_WriteCompare(10);            // sets back to initial pulse
-    PWM_colour_Sleep();                     // Sets PWM back to sleep
-
-}
-
-
-void ColourSensingViaHardware(void)
-{
-    float test[4] = {0, 0, 0, 0};           // resets the test array to 0
-    
-    PWM_colour_Wakeup();
-    PWM_colour_WriteCompare(255);           // ensures the PWM is driving a continuous pulse
-    
-    for (int i = 0; i < 4; i++) 
-    {
-        CyDelay(10);
-        control_led_Write(i);
-        test[i] = ADC_Read32();             // Grabs the value and places it in the test array
-        CyDelay(10);
-        control_led_Write(0);            // Turns the LED off
-        CyDelay(20);
-    }
-    test_white = test[0];   
-    test_red = test[1];     
-    test_green = test[2];   
-    test_blue = test[3];    
-    
-    PWM_colour_WriteCompare(10);            // sets back to initial pulse
-    PWM_colour_Sleep();                     // Sets PWM back to sleep
-    
-}
 
 void ColourOutput(void)
 {
@@ -645,7 +692,6 @@ void ColourSensingCalibrationRGB2(void)
     
     
 }
-
 
 int redDetection(void)
 {
