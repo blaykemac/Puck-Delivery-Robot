@@ -137,12 +137,13 @@ int main(void)
     IDAC8_1_SetRange(IDAC8_1_RANGE_32uA);       // Sets the range between 0 and 32uA
     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
     
-    // Colour Sensing Initialisation:
-    PWM_colour_Start();                         // Starts the PWM
-    PWM_colour_Sleep();                         // Puts it to sleep until we need it
-    //RGB1Initialise();                         // Initialise 2nd RGB
-    //RGB2Initialise();                         // Initialise 2nd RGB
-    ColourIntialiseViaHardware();               // Initialises via hardware 
+     // Colour Sensing Initialisation & Debugging:
+    int calibrate = FALSE;                    // Do we want to calibrate the sensor? 
+    char output[32];   
+    int ColourSensingAlgorithm = 0;                 // Determines which colour sensing algorithm to use:
+                                                    // 0: Wall algorithm
+                                                    // 1: Claw algorithm
+                                                    // 2: old algorithm
     
     // Ultrasonic Initialisation: 
     
@@ -196,12 +197,39 @@ int main(void)
         
         */
         
+        
+            control_led_Write(1);   CyDelay(1000);  // Ensures all the RGBs are working
+            control_led_Write(2);   CyDelay(1000);
+            control_led_Write(3);   CyDelay(1000);
+            control_led_Write(0);   CyDelay(500);
+        
+        
 
-        while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed 
+        while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed
             
+            ColourSensingInitialise();                  // Initialises the colour sensor
             
-            ColourIntialiseViaHardware();
+            if (calibrate)
+            {
+                int lock = FALSE;
+                do 
+                    {   
+                        if (lock == FALSE) 
+                        {
+                            UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
+                            for (int i = 0; i < 50; i++)
+                            {
+                            sprintf(output, "%d \t", i);
+                            UART_1_PutString(output);
+                            ColourSensingCalibration(); 
+                            UART_1_PutString("\n");
+                            }         
+                        lock = TRUE;    
+                        }
+                } while (lock == TRUE);    
+            }
             
+
             if (initialisation){moveBackwardIndefinitely();}
             else {moveForwardIndefinitely();}        
             

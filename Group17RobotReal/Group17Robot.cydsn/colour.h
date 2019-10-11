@@ -20,23 +20,10 @@
 
 // * INSTANTIATING FUNCTIONS * //
 
-void RGB1Initialise(void);
-void ColourSensingCalibrationRGB1();
-void ColourSensingCalibrationRGB2();
-void RGB1Initialise();
-void RGB2Initialise();
-void ColourSensingRGB1();
-void ColourSensingRGB2();
-void ColourOutput();
-void ColourDebug();
-
-
-void ColourIntialiseViaHardware();
-void ColourSensingViaHardware();
+void ColourSensingIntitialise();
+void ColourSensingCalibration();
+void ColourSensingDebug();
 int ColourSensingOutput();
-
-int redDetection(void);
-
 
 
 /* [] END OF FILE */
