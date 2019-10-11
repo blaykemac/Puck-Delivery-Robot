@@ -386,7 +386,7 @@ void nextMotion(int * desiredPosition){
     //the scanning for block state)
     //Check what motions are available to us from the flags
     //Check what motions are available to us from our location compared to obstacle
-    if (block_location[0] < currentPosition[0] < block_location[1]){
+    if (block_location[0] < currentPosition[0] && currentPosition[0] < block_location[1]){
         float xToMove = desiredPosition[0] - currentPosition[0];
         if ((xToMove <0) && (moveLeftAllowed == TRUE)){
             if (currentOrientation != 180){
@@ -418,6 +418,25 @@ void stopMotor2AndUpdate(void){
     motor2Enable = FALSE;   
     stopMotion();
     Motor_2_Encoder_Counts_ReadStatusRegister(); //Clears the interrupt
+}
+
+void moveAndAngle(int horizontal, int vertical, int angle){
+    // TO COMPLETE NIDHIN
+    UART_1_PutString("Move and Angle called");
+    return;    
+}
+
+void correctAngle(){
+    moveAndAngle(HOME_MIDPOINT, 20, WEST_ANGLE); // Choose west angle because nothing will be blocking the wall
+    distanceCheck();
+    // rotate by micro steps until front two sensors are equal within tolerance
+    
+    int error = abs(ultrasonic_distances[LEFT_FRONT] - ultrasonic_distances[RIGHT_FRONT]);
+    while (error > ANGLE_TOLERANCE){
+        // microTurn();
+        error = abs(ultrasonic_distances[LEFT_FRONT] - ultrasonic_distances[RIGHT_FRONT]);
+    }
+    
 }
 
 /* [] END OF FILE */
