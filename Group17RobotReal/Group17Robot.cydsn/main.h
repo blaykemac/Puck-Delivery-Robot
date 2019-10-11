@@ -28,13 +28,13 @@
 #define COLLISION_THRESHOLD 5 //Distance in cm from any obstacle that we should stop
 
 // Main states for overall navigation and motor control
-#define STATE_FIND_PUCKS 1
-#define STATE_SCAN_PLAN 2
-#define STATE_LOCATE_BLOCK 3
-#define STATE_GO_TO_PUCKS 4
-#define STATE_FIND_REQUIRED_PUCK 5
-#define STATE_DEPOSIT_PUCK 6
-#define STATE_PARK_HOME 7
+
+#define STATE_SCAN_PLAN 1
+#define STATE_LOCATE_BLOCK_AND_PUCKS 2
+#define STATE_GO_TO_PUCKS 3
+#define STATE_FIND_REQUIRED_PUCK 4
+#define STATE_DEPOSIT_PUCK 5
+#define STATE_PARK_HOME 6
 
 // Hard-coded distances from the west for where each puck may sit in the construction plan.
 #define PUCK_RACK_0_WEST_DISTANCE 72

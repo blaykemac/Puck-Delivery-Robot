@@ -180,6 +180,7 @@ int main(void)
     Gripper_Servo_PWM_Start();
     
 
+    // Main Loop for States
         
     for(;;)
     {   
@@ -204,11 +205,11 @@ int main(void)
             // ColourOutput();
             // CyDelay(100);
             
-            if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK;}
+            if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK_AND_PUCKS;}
                      
         }
 
-    	if (state == STATE_LOCATE_BLOCK){
+    	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
             // Finding where the boundaries of the block are
     		// Sweep across WEST to EAST until discrepancy
@@ -231,17 +232,10 @@ int main(void)
             // Calculate puck position here too, then make a decision as to whether
             // pathToPucks = ... ;
 
+            state = STATE_GO_TO_PUCKS;
 	}
         
-        // Now we need to locate the pucks
- 
-        if (state == STATE_FIND_PUCKS) {
-            // We are at the EAST wall facing the EAST wall
-            turnRight(180); // Now facing WEST at EAST wall
-            moveForwardIndefinitely();
-        }
         
-        state = STATE_GO_TO_PUCKS;
 
         if (state == STATE_GO_TO_PUCKS){
             if (pathPastBlock == WEST){
@@ -256,10 +250,12 @@ int main(void)
                 }
                 else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NE corner
             }
-        
+            
+            // We are now in front of the pucks
+            state = STATE_FIND_REQUIRED_PUCK;
         }
         
-        state = STATE_FIND_REQUIRED_PUCK;
+        
         
         if (state == STATE_FIND_REQUIRED_PUCK){
                

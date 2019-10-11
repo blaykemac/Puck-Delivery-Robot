@@ -31,6 +31,8 @@ int distance_measured = 0;
 float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0};
 uint8 ultrasonic_mux_control = 0;
 int block_start = 0;
+int puck_start = 0;
+int initialisation = 1;
 
 
 //The four flags below let the rest of the program know if the robot is trying to drive 
@@ -58,33 +60,42 @@ void ultrasonicInterruptHandler(){
     
     //This bit has been added by Nidhin. It will stop the robot moving if it has gotten too close to 
     //any obstacle (we may have to modify this to not stop motion when we are trying to pick up a puck)
-    if (((ultrasonic_distances[1] < COLLISION_THRESHOLD)||(ultrasonic_distances[2] < COLLISION_THRESHOLD))&&(drivingForwardFlag == TRUE)){
+    if (((ultrasonic_distances[LEFT_FRONT] < COLLISION_THRESHOLD)||(ultrasonic_distances[RIGHT_FRONT] < COLLISION_THRESHOLD))&&(drivingForwardFlag == TRUE)){
         stopMotor1AndUpdate();
         stopMotor2AndUpdate();
     } //We need to add further clauses like this - the above only checks for the front wall being too close
     //when moving forward.
     
-    // In this state 
+    // In this state we are scanning each puck on the rack
     if (state == STATE_SCAN_PLAN){
         
         float front_average = averageSensor(ultrasonic_distances[LEFT_FRONT], ultrasonic_distances[RIGHT_FRONT]);
         
-        if (currentPuckRackScanningIndex == 0){
-            if ( front_average > puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT){
-                puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
-                currentPuckRackScanningIndex++;
+        if (initialisation){
+            
+            if ( front_average > puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT + 15) { // Reverse until colour sensor is past left most puck on rack
+                stopMotor1AndUpdate();
+                stopMotor2AndUpdate();   
+            
+                // Take colour measurement against black wall for reference initialisation
+                
+                // Also take colour measurement of the white ground for the front claw colour sensor reference
+                
+                initialisation = 0; // initialisation done on black wall so now we check the 5 puck rack slots
             }
         }
-        else {
-            if (front_average < puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT){
-                puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
-                currentPuckRackScanningIndex++;
-            }
+        
+        else if ( front_average < puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT) {
+            stopMotor1AndUpdate();
+            stopMotor2AndUpdate(); 
+            
+            puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
+            currentPuckRackScanningIndex++;
         }
-   
+
     }
 
-    if (state == STATE_LOCATE_BLOCK){
+    if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
         
         
         // Only care about detecting block when we have turned around and are ready to do a full sweep of the arena
@@ -97,17 +108,17 @@ void ultrasonicInterruptHandler(){
     			block_start = 0; // We have found the east edge of the block
     			block_edge_location[EAST] = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
     			sweeping = 0;
-    			state = STATE_FIND_PUCKS;
-	
-    	    }
+            }
+            
+            if ( (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE) && (ultrasonic_distances[LEFT_SIDE] > ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE) ){ // Then we have discrepancy
+    			puckPileLocation = ultrasonic_distances[BACK] + SIDE_SENSOR_OFFSET_FROM_BACK;
+    	    } 
+            
     	}
+        
+        
 	}
-    
-    if (state == STATE_FIND_PUCKS){
-        if ( (ultrasonic_distances[LEFT_SIDE] < ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE) && (ultrasonic_distances[LEFT_SIDE] > ARENA_LENGTH - ultrasonic_distances[RIGHT_SIDE] - SIDE_SENSORS_WIDTH - PUCK_TOLERANCE) ){ // Then we have discrepancy
-    			//puckPileLocation = _
-    	    }   
-    }
+
     
      /* THIS IS A SAMPLE OF THE PRELIM CODE, KEEPING IT TO REFERENCE THE MOTOR SLEEP FUNCTIONS
     
