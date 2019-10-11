@@ -20,10 +20,10 @@
 
 // * INSTANTIATING FUNCTIONS * //
 
-void ColourSensingIntitialise();
+void ColourSensingInitialise();
 void ColourSensingCalibration();
 void ColourSensingDebug();
-int ColourSensingOutput();
+int takeColourMeasurement(void);
 
 
 /* [] END OF FILE */

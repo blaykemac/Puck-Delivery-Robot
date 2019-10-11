@@ -142,7 +142,7 @@ void ColourSensingDebug(void)
 }
 
 
-int ColourSensingOutput(void)
+int takeColourMeasurement(void)
 {
     int value = 0;
     

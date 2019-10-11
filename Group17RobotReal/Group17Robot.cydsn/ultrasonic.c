@@ -44,7 +44,7 @@ extern int turningLeftFlag;
 extern int turningRightFlag;
 
 //int distance;
-char output[40];
+extern char output[32];
 
 void ultrasonicInterruptHandler(){
     //UART_1_PutString("Interrupt \n");
@@ -136,11 +136,6 @@ void ultrasonicInterruptHandler(){
     
 }
 
-int takeColourMeasurement(void){ // Return an integer from 0-3 indicating the guess of colour - Null, Red, Green, Blue
-    // Complete
-    int prediction = 0; // Edit this with correct integer
-    return prediction;
-}
 
 void printSensorToUART(int sensorNumber, float distanceMeasured){
      

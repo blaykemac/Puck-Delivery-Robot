@@ -119,3 +119,8 @@ extern int initialisation;
 
 extern void lowerAndOpen(int puck_stack_position);
 extern void closeAndRaise(int puck_stack_position);
+
+char output[32];
+
+
+

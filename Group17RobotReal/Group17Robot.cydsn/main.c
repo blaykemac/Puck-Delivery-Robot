@@ -81,7 +81,17 @@ CY_ISR(Drift_Check_IH){
 
 // * VARIABLES * //
 int idac_value = 0;
+
+
+
 int colour_flag = 1;                    // sets which photodiode to use 
+int ColourSensingAlgorithm = 0;      // Determines which colour sensing algorithm to use:
+                                                // 0: Wall algorithm
+                                                // 1: Claw algorithm
+                                                // 2: old algorithm
+
+
+
 extern float ultrasonic_distances[5];
 int beginNavigation = 0;
 
@@ -139,11 +149,9 @@ int main(void)
     
      // Colour Sensing Initialisation & Debugging:
     int calibrate = FALSE;                    // Do we want to calibrate the sensor? 
-    char output[32];   
-    int ColourSensingAlgorithm = 0;                 // Determines which colour sensing algorithm to use:
-                                                    // 0: Wall algorithm
-                                                    // 1: Claw algorithm
-                                                    // 2: old algorithm
+    extern char output[32];   
+    
+
     
     // Ultrasonic Initialisation: 
     
@@ -202,12 +210,12 @@ int main(void)
             control_led_Write(2);   CyDelay(1000);
             control_led_Write(3);   CyDelay(1000);
             control_led_Write(0);   CyDelay(500);
-        
+            ColourSensingInitialise();                  // Initialises the colour sensor
         
 
         while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed
             
-            ColourSensingInitialise();                  // Initialises the colour sensor
+            
             
             if (calibrate)
             {
@@ -229,14 +237,18 @@ int main(void)
                 } while (lock == TRUE);    
             }
             
-
+            
+            //ColourSensingDebug();
+            
+            
+            /*
             if (initialisation){moveBackwardIndefinitely();}
             else {moveForwardIndefinitely();}        
             
             //puckRackColours[currentPuckRackScanningIndex] = ColourSensingOutput();
             currentPuckRackScanningIndex++;
             if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK_AND_PUCKS;}
-
+            */
 
         }
 

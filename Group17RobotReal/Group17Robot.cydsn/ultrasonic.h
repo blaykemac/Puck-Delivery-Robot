@@ -22,7 +22,6 @@ void distanceSensor(int currentSensorIndex);
 void printSensorToUART(int sensorNumber, float distanceMeasured);
 float distanceFromCount(int timerCount);
 void ultrasonicInterruptHandler(void);
-int takeColourMeasurement(void);
 
 
 // External variables (ie. globals)
