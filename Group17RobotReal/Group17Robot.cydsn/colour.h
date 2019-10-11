@@ -33,6 +33,7 @@ void ColourDebug();
 
 void ColourIntialiseViaHardware();
 void ColourSensingViaHardware();
+int ColourSensingOutput();
 
 int redDetection(void);
 
