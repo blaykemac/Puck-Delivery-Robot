@@ -115,3 +115,7 @@ int puckRackOffsetsFromWest[5];
 int sweeping;
 float block_edge_location[4];
 float puckPileLocation;
+extern int initialisation;
+
+extern void lowerAndOpen(int puck_stack_position);
+extern void closeAndRaise(int puck_stack_position);

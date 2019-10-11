@@ -12,6 +12,7 @@
 
 #include "servo.h"
 #include "project.h"
+#include "main.h"
 
 // * C LIBRARIES * // 
 #include <stdio.h>

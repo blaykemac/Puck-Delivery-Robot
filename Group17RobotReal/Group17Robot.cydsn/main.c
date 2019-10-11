@@ -202,22 +202,14 @@ int main(void)
             
             ColourIntialiseViaHardware();
             
-            
-            
-            /*
-            if (currentPuckRackScanningIndex == 0){moveBackwardIndefinitely();}
+            if (initialisation){moveBackwardIndefinitely();}
             else {moveForwardIndefinitely();}        
             
-            puckRackColours[currentPuckRackScanningIndex] = ColourSensingOutput();
-
-            
-<<<<<<< HEAD
+            //puckRackColours[currentPuckRackScanningIndex] = ColourSensingOutput();
+            currentPuckRackScanningIndex++;
             if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK_AND_PUCKS;}
-                     
-=======
-            if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK;}
-            */       
->>>>>>> 60976fcb722885ad2cf323a70ec6bfcddab7ecc1
+
+
         }
 
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){

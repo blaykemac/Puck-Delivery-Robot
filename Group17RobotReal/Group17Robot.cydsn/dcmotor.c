@@ -17,6 +17,7 @@
 #include <math.h>
 #include "ultrasonic.h"
 #include "main.h"
+#include "dcmotor.h"
 
 //global variable currentPosition and currentOrientation (in main). Declare as externs in 
 //dcmotor, I guess

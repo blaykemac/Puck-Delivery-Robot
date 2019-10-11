@@ -34,3 +34,5 @@ extern int puckRackOffsetsFromWest[5];
 extern int sweeping;
 extern float block_edge_location[4];
 
+int initialisation;
+

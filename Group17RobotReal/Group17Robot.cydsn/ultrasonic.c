@@ -88,9 +88,7 @@ void ultrasonicInterruptHandler(){
         else if ( front_average < puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT) {
             stopMotor1AndUpdate();
             stopMotor2AndUpdate(); 
-            
-            puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
-            currentPuckRackScanningIndex++;
+
         }
 
     }
