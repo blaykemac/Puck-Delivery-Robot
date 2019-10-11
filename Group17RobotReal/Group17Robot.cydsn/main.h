@@ -43,6 +43,8 @@
 #define PUCK_RACK_3_WEST_DISTANCE 54
 #define PUCK_RACK_4_WEST_DISTANCE 48
 
+#define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
+
 
 // Cardinal Directions. North faces the pucks from the home base
 #define NORTH 0

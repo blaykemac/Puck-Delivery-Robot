@@ -75,7 +75,8 @@ void ultrasonicInterruptHandler(){
             
             if ( front_average > puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT + 15) { // Reverse until colour sensor is past left most puck on rack
                 stopMotor1AndUpdate();
-                stopMotor2AndUpdate();   
+                stopMotor2AndUpdate();
+                moving = 0;
             
                 // Take colour measurement against black wall for reference initialisation
                 
@@ -88,6 +89,10 @@ void ultrasonicInterruptHandler(){
         else if ( front_average < puckRackOffsetsFromWest[currentPuckRackScanningIndex] - OFFSET_COLOUR_SENSOR_FROM_FRONT) {
             stopMotor1AndUpdate();
             stopMotor2AndUpdate(); 
+            moving = 0;
+            
+            currentPuckRackScanningIndex++;
+            if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK_AND_PUCKS;}
 
         }
 

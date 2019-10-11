@@ -104,6 +104,10 @@ int sweeping = 0;
 int pathToPucks;
 int pathPastBlock;
 
+int moving = 0; // Temp to stop while loop from repeated runs of scanning plan code
+
+const int PLAN_SCAN_VERTICAL = 10; // Set to ultrasonic distance at the home base 
+
 float block_edge_location[4] = {0,0,0,0}; // N E S W
 
 int currentPuckStackSize = 0;
@@ -202,8 +206,8 @@ int main(void)
             CyDelay(1000); // Check distance once a second.
                 
         }
-        
         */
+        
         
         
             control_led_Write(1);   CyDelay(1000);  // Ensures all the RGBs are working
@@ -213,7 +217,8 @@ int main(void)
             ColourSensingInitialise();                  // Initialises the colour sensor
         
 
-        while (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed
+            
+        if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
             
             
@@ -237,19 +242,22 @@ int main(void)
                 } while (lock == TRUE);    
             }
             
-            
             //ColourSensingDebug();
             
-            
             /*
-            if (initialisation){moveBackwardIndefinitely();}
+            if (!moving){
+                moving = 1;
+            if (initialisation){moveBackwardIndefinitely(); initialisation = 0;}
             else {moveForwardIndefinitely();}        
             
-            //puckRackColours[currentPuckRackScanningIndex] = ColourSensingOutput();
-            currentPuckRackScanningIndex++;
-            if (currentPuckRackScanningIndex == 4) {state = STATE_LOCATE_BLOCK_AND_PUCKS;}
             */
-
+                     
+            moveAndAngle(SCAN_INITIALISE_HORIZONTAL,PLAN_SCAN_VERTICAL,WEST_ANGLE); // Move beyond the puck rack to scan the black empty wall
+            
+            for (currentPuckRackScanningIndex = 0; currentPuckRackScanningIndex <= 4; currentPuckRackScanningIndex++){
+                moveAndAngle(puckRackOffsetsFromWest[currentPuckRackScanningIndex],PLAN_SCAN_VERTICAL,WEST_ANGLE); // Choose the plan vertical to be whatever Y value we start at
+                puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
+            }
         }
 
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
@@ -258,11 +266,13 @@ int main(void)
     		// Sweep across WEST to EAST until discrepancy
             // But first sense the construction plan and then drive to wall and turn around to prepare for full width scan
             
-            
+            /*
     		moveForwardIndefinitely();
     		turnRight(180); // Now facing EAST wall
     		moveForwardIndefinitely(); // Do this until we get to EAST wall
+            */
             
+            moveAndAngle(20,20,EAST_ANGLE); // Move to a position near construction base in an EAST orientation to be ready to scan for the pucks and block
             
             // Will now know the boundaries of the block.
             // Figure out direction we want to travel
