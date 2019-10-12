@@ -1,30 +1,31 @@
+
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
 
-#include "servo.h"
+// * PSOC LIBRARY * //
 #include "project.h"
-#include "main.h"
 
 // * C LIBRARIES * // 
 #include <stdio.h>
 #include <math.h>
 
+// * OUR LIBRARIES * //
+#include "main.h"
+#include "colour.h"
+#include "ultrasonic.h" 
+#include "dcmotor.h"
+#include "servo.h"
+#include "customMath.h"
 
-//These are the values that correspond to open, closed, up and down positions of the 
-//arm. These were found by experiment, so if need to recalibrate, you know where to go
-#define LOW_POS_ARM_CMP 2400 
-#define HIGH_POS_ARM_CMP 1000
-#define OPEN_POS_GRIPPER_CMP 1120 //1170
-#define CLOSED_POS_GRIPPER_CMP 1250
 
 void armOpen(){
     Gripper_Servo_Disable_Write(0);

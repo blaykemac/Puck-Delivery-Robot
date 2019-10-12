@@ -1,16 +1,17 @@
 
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
 
+// * PSOC LIBRARY * //
 #include "project.h"
 
 // * C LIBRARIES * // 
@@ -23,27 +24,37 @@
 #include "ultrasonic.h" 
 #include "dcmotor.h"
 #include "servo.h"
+#include "customMath.h"
 
 
+// * STATE VARIABLES * //
+int state = STATE_SCAN_PLAN;
+int running = 1;
+int sweeping = 0;
+float block_edge_location[4] = {0,0,0,0}; // N E S W edge positions respectively
 
-//global variable currentPosition and currentOrientation (in main). Declare as externs in 
-//dcmotor, I guess
+// * PUCK CONSTRUCTION VARIABLES * //
+int currentPuckStackSize = 0; // How many pucks are currently on the construction plate
+int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
+int currentPuckRackScanningIndex = 0;
+int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
+                                PUCK_RACK_1_WEST_DISTANCE,
+                                PUCK_RACK_2_WEST_DISTANCE,
+                                PUCK_RACK_3_WEST_DISTANCE,
+                                PUCK_RACK_4_WEST_DISTANCE };
+
+// * NAVIGATION AND POSITION VARIABLES * //
+
+int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
+
+int pathToPucks; // This will give us a corridor that we should initially take when trying to go to the pucks
+int pathPastBlock;
+
 float currentPosition[2] = {0,0};
 float desiredPosition[2];
 int currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start facing north
 int desiredOrientation;
-int M1_FD; //The four values shown here will be the duty cycles of the motors
-int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-int M2_BD; //known variable
-short int motor1Enable = 0; //These two will be on if the motors are on
-short int motor2Enable = 0;
-int M1_FD; //The four values shown here will be the duty cycles of the motors
-int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-int M2_BD; //known variable
-int motor1EncoderCounts; //These two variables will allow the entire program to keep 
-int motor2EncoderCounts; //track of how many turns the motors have spun 
+
 short int moveNow = 1; //This is a flag that lets the main program tell the moving functions
 //whether we want the robot to be moving or not. For example, when we need to operate servos
 //the main program would set moveNow to FALSE.
@@ -62,6 +73,41 @@ short int moveRightAllowed;
 short int moveForwardAllowed;
 short int moveBackwardAllowed;
 
+
+
+// * COLOUR VARIABLES * //
+
+int calibrate = FALSE;                    // Do we want to calibrate the sensor? 
+int idac_value = 0;  
+int colour_flag = 1;                    // sets which photodiode to use 
+int ColourSensingAlgorithm = 0;      // Determines which colour sensing algorithm to use:
+                                                // 0: Wall algorithm
+                                            // 1: Claw algorithm
+                                                // 2: old algorithm
+
+
+
+
+
+int moving = 0; // Temp to stop while loop from repeated runs of scanning plan code
+
+const int PLAN_SCAN_VERTICAL = 10; // Set to ultrasonic distance at the home base 
+
+
+// * INTERRUPT HANDLING * // 
+CY_ISR(TIH)                             // Ultrasonic ISR Definition
+{
+    ultrasonicInterruptHandler();
+}
+
+CY_ISR(StartIH)                             // Ultrasonic ISR Definition
+{
+    CyDelay(100);
+    
+    beginNavigation = 1;
+    colour_flag = 0; 
+}
+ 
 //Interrupt service routines for dcmotor function
 CY_ISR(Encoder_Counts_1_IH){
     stopMotor1AndUpdate();
@@ -79,63 +125,7 @@ CY_ISR(Drift_Check_IH){
     driftCorrect(); //Does checking
 }
 
-// * VARIABLES * //
-int idac_value = 0;
 
-
-
-int colour_flag = 1;                    // sets which photodiode to use 
-int ColourSensingAlgorithm = 0;      // Determines which colour sensing algorithm to use:
-                                                // 0: Wall algorithm
-                                                // 1: Claw algorithm
-                                                // 2: old algorithm
-
-
-
-extern float ultrasonic_distances[5];
-int beginNavigation = 0;
-
-int state = STATE_SCAN_PLAN;
-
-int running = 1;
-
-int sweeping = 0;
-
-int pathToPucks;
-int pathPastBlock;
-
-int moving = 0; // Temp to stop while loop from repeated runs of scanning plan code
-
-const int PLAN_SCAN_VERTICAL = 10; // Set to ultrasonic distance at the home base 
-
-float block_edge_location[4] = {0,0,0,0}; // N E S W
-
-int currentPuckStackSize = 0;
-
-// Puck Construction Scanning
-int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
-int currentPuckRackScanningIndex = 0;
-int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
-                                PUCK_RACK_1_WEST_DISTANCE,
-                                PUCK_RACK_2_WEST_DISTANCE,
-                                PUCK_RACK_3_WEST_DISTANCE,
-                                PUCK_RACK_4_WEST_DISTANCE };
-
-
-// * INTERRUPT HANDLING * // 
-CY_ISR(TIH)                             // Ultrasonic ISR Definition
-{
-    ultrasonicInterruptHandler();
-}
-
-CY_ISR(StartIH)                             // Ultrasonic ISR Definition
-{
-    CyDelay(100);
-    
-    beginNavigation = 1;
-    colour_flag = 0; 
-}
-                    
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
@@ -152,10 +142,7 @@ int main(void)
     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
     
      // Colour Sensing Initialisation & Debugging:
-    int calibrate = FALSE;                    // Do we want to calibrate the sensor? 
-    extern char output[32];   
-    
-
+      
     
     // Ultrasonic Initialisation: 
     
@@ -166,7 +153,6 @@ int main(void)
     Sonic_StartEx(TIH);
     Start_StartEx(StartIH);
     beginNavigation = 0;
-    int tmp = 0;
     
     //Initialising DC motors
     Motor_1_driver_Start();
@@ -256,7 +242,7 @@ int main(void)
             
             for (currentPuckRackScanningIndex = 0; currentPuckRackScanningIndex <= 4; currentPuckRackScanningIndex++){
                 moveAndAngle(puckRackOffsetsFromWest[currentPuckRackScanningIndex],PLAN_SCAN_VERTICAL,WEST_ANGLE); // Choose the plan vertical to be whatever Y value we start at
-                puckRackColours[currentPuckRackScanningIndex] = takeColourMeasurement();
+                puckRackColours[currentPuckRackScanningIndex] = colourSensingOutput();
             }
         }
 
@@ -334,5 +320,4 @@ int main(void)
         
     }
 }
-
 

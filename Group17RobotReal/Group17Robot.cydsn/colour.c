@@ -1,21 +1,30 @@
+
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
 
-#include "colour.h"
+// * PSOC LIBRARY * //
 #include "project.h"
 
 // * C LIBRARIES * // 
 #include <stdio.h>
 #include <math.h>
+
+// * OUR LIBRARIES * //
+#include "main.h"
+#include "colour.h"
+#include "ultrasonic.h" 
+#include "dcmotor.h"
+#include "servo.h"
+#include "customMath.h"
 
 
 
@@ -31,7 +40,7 @@ float pd_voltage;
 float input_current;
 float stored[9];            
 float sum = 0;
-extern char output[32];
+
 float ambient_current;      // used to remove the ambient light from the photo diode measurements 
 
 
@@ -45,8 +54,7 @@ float test_red;
 float test_green;
 float test_blue;
 
-extern int colour_flag;                 // determines which PHOTODIODE is being used 
-extern int ColourSensingAlgorithm;      // determines which coloursensing algorithm to use 
+
 
 int puck_all[4] = {0,0,0,0};          
                             // no puck detection = puck_all[0]
@@ -142,7 +150,7 @@ void ColourSensingDebug(void)
 }
 
 
-int takeColourMeasurement(void)
+int colourSensingOutput(void)
 {
     int value = 0;
     

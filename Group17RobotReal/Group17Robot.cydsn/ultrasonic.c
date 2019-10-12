@@ -1,26 +1,31 @@
+
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
 
-// * Custom Libraries * //
-#include "main.h"
-#include "ultrasonic.h"
+// * PSOC LIBRARY * //
 #include "project.h"
-#include "dcmotor.h"
-#include "customMath.h"
 
 // * C LIBRARIES * // 
-#include "stdlib.h"
 #include <stdio.h>
 #include <math.h>
+#include "stdlib.h"
+
+// * OUR LIBRARIES * //
+#include "main.h"
+#include "colour.h"
+#include "ultrasonic.h" 
+#include "dcmotor.h"
+#include "servo.h"
+#include "customMath.h"
 
 
 /* Declare global variables */
@@ -35,16 +40,7 @@ int puck_start = 0;
 int initialisation = 1;
 
 
-//The four flags below let the rest of the program know if the robot is trying to drive 
-//forward or back, turn left or right. At the start of every motion, turn these flags on
-//at the end turn them off.
-extern int drivingForwardFlag;
-extern int drivingBackwardFlag;
-extern int turningLeftFlag;
-extern int turningRightFlag;
 
-//int distance;
-extern char output[32];
 
 void ultrasonicInterruptHandler(){
     //UART_1_PutString("Interrupt \n");

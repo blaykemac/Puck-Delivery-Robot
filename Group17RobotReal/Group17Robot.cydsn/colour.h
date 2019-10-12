@@ -1,14 +1,16 @@
+
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
+
 //#ifndef _COLOUR_H
 //#define _COLOUR_H
 
@@ -23,7 +25,11 @@
 void ColourSensingInitialise();
 void ColourSensingCalibration();
 void ColourSensingDebug();
-int takeColourMeasurement(void);
+int colourSensingOutput(void);
+
+extern int colour_flag;                 // determines which PHOTODIODE is being used 
+extern int ColourSensingAlgorithm;      // determines which coloursensing algorithm to use 
+extern char output[32];
 
 
 /* [] END OF FILE */

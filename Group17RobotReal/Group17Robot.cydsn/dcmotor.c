@@ -1,60 +1,33 @@
+
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
 
-//Standard C libraries
+// * PSOC LIBRARY * //
 #include "project.h"
+
+// * C LIBRARIES * // 
 #include <stdio.h>
-#include <string.h>
 #include <math.h>
-#include "ultrasonic.h"
+#include <string.h>
+
+// * OUR LIBRARIES * //
 #include "main.h"
+#include "colour.h"
+#include "ultrasonic.h" 
 #include "dcmotor.h"
+#include "servo.h"
+#include "customMath.h"
 
-//global variable currentPosition and currentOrientation (in main). Declare as externs in 
-//dcmotor, I guess
-extern float currentPosition[2];
-extern float desiredPosition[2];
-extern int currentOrientation; //in degrees (convert to radians when needed)
-extern int desiredOrientation;
-extern short int motor1Enable; //These two will be on if the motors are on
-extern short int motor2Enable;
-extern int M1_FD; //The four values shown here will be the duty cycles of the motors
-extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-extern int M2_BD; //known variable
-extern int motor1EncoderCounts; //These two variables will allow the entire program to keep 
-extern int motor2EncoderCounts; //track of how many turns the motors have spun 
-extern short int moveNow; //This is a flag that lets the main program tell the moving functions
-//whether we want the robot to be moving or not. For example, when we need to operate servos
-//the main program would set moveNow to FALSE.
-extern float block_location[4]; //This will hold the co-ordinates for the obstacle block. 0,1 will be xmin
-//and xmax, 2,3 will be ymin, ymax.
-extern int state; //The state of the robot as defined in main 
 
-//The four flags below let the rest of the program know if the robot is trying to drive 
-//forward or back, turn left or right. At the start of every motion, turn these flags on
-//at the end turn them off.
-extern int drivingForwardFlag;
-extern int drivingBackwardFlag;
-extern int turningLeftFlag;
-extern int turningRightFlag;
-
-//These flags will be used by the main program to allow the robot to move in certain directions
-extern short int moveLeftAllowed;
-extern short int moveRightAllowed;
-extern short int moveForwardAllowed;
-extern short int moveBackwardAllowed;
-
-extern char output[32]; //for the UART
 
 //This function takes a number of counts from the encoder and, assuming that the number of 
 //counts has been moved in the currentOrientation direction, updates the current position. 

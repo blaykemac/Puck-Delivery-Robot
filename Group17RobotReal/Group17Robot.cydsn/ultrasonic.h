@@ -1,11 +1,12 @@
+
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
@@ -33,6 +34,11 @@ extern int puckRackOffsetsFromWest[5];
 extern int sweeping;
 extern float block_edge_location[4];
 extern int moving;
+extern short int drivingForwardFlag;
+extern short int drivingBackwardFlag;
+extern short int turningLeftFlag;
+extern short int turningRightFlag;
+extern char output[32];
 
 int initialisation;
 

@@ -1,14 +1,16 @@
+
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
+ * Copyright Group 17, 2019
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
 */
+
 // In case we change the number of ultrasonic sensors used
 #define TOTAL_SONIC_SENSORS 5
 
@@ -117,6 +119,12 @@ int puckRackOffsetsFromWest[5];
 int sweeping;
 float block_edge_location[4];
 float puckPileLocation;
+
+short int drivingForwardFlag;
+short int drivingBackwardFlag;
+short int turningLeftFlag;
+short int turningRightFlag;
+
 extern int initialisation;
 
 extern void lowerAndOpen(int puck_stack_position);
@@ -124,5 +132,19 @@ extern void closeAndRaise(int puck_stack_position);
 
 char output[32];
 
+extern float ultrasonic_distances[5];
 
+extern int M1_FD; //The four values shown here will be the duty cycles of the motors
+extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
+extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
+extern int M2_BD; //known variable
+extern short int motor1Enable; //These two will be on if the motors are on
+extern short int motor2Enable;
+extern int M1_FD; //The four values shown here will be the duty cycles of the motors
+extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
+extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
+extern int M2_BD; //known variable
+extern int motor1EncoderCounts; //These two variables will allow the entire program to keep 
+extern int motor2EncoderCounts; //track of how many turns the motors have spun 
+extern char output[32];
 
