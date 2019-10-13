@@ -35,7 +35,8 @@ float block_edge_location[4] = {0,0,0,0}; // N E S W edge positions respectively
 
 // * PUCK CONSTRUCTION VARIABLES * //
 int currentPuckStackSize = 0; // How many pucks are currently on the construction plate
-int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
+int puckRackColours[5] = {BLANK,BLANK,BLANK,BLANK,BLANK}; // 5 slots in puck rack.
+int puckConstructionPlan[3] = {BLANK,BLANK,BLANK};
 int currentPuckRackScanningIndex = 0;
 int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
                                 PUCK_RACK_1_WEST_DISTANCE,
@@ -244,6 +245,18 @@ int main(void)
                 moveAndAngle(puckRackOffsetsFromWest[currentPuckRackScanningIndex],PLAN_SCAN_VERTICAL,WEST_ANGLE); // Choose the plan vertical to be whatever Y value we start at
                 puckRackColours[currentPuckRackScanningIndex] = colourSensingOutput();
             }
+            
+            
+            int puckConstructionPlanIndex = 0; // Will be used to iterate through the 3 puck colours in construction plan
+            
+            // Iterate over all 5 rack slots and place the 3 colours into puckConstructionPlan.
+            for (int puckRackIndex = 0; puckRackIndex < 5; puckRackIndex++){
+                if (puckRackColours[puckRackIndex] != BLANK && puckConstructionPlanIndex != 3){
+                    puckConstructionPlan[puckConstructionPlanIndex] = puckRackColours[puckRackIndex];
+                    puckConstructionPlanIndex++;
+                }
+            }
+            
         }
 
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
@@ -263,14 +276,10 @@ int main(void)
             // Will now know the boundaries of the block.
             // Figure out direction we want to travel
             
-            if (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN){
-                pathPastBlock = WEST;
-            }
-            else {pathPastBlock = EAST;}
-            
-            // Calculate puck position here too, then make a decision as to whether
-            // pathToPucks = ... ;
 
+            pathPastBlock = (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN ? WEST:EAST);
+            pathToPucks = (puckPileLocation < ARENA_WIDTH / 2 ? WEST:EAST);
+            
             state = STATE_GO_TO_PUCKS;
 	}
         
@@ -297,12 +306,19 @@ int main(void)
         
         
         if (state == STATE_FIND_REQUIRED_PUCK){
-               
+            int requiredColour = puckConstructionPlan[currentPuckStackSize];
+            int puckFound = 0;
+            
+            while(!puckFound){
+                   
+            }
+            
         }
         
         if (state == STATE_DEPOSIT_PUCK){
-            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
+            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL + 10, SOUTH_ANGLE); // Take us to the drop off point NEAR construction zone
             lowerAndOpen(currentPuckStackSize);
+            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
             changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack
             
             currentPuckStackSize++;
