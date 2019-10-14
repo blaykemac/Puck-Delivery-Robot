@@ -11,3 +11,6 @@
 */
 
 float averageSensor(float num1, float num2);
+int roundDirection();
+
+extern int currentOrientation;

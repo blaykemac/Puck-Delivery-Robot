@@ -11,7 +11,18 @@
 */
 
 #include "customMath.h"
+#include "main.h"
 
 float averageSensor(float num1, float num2){
     return (num1 + num2) / 2;
+}
+// Round the current direction into cardinal directions
+int roundDirection(){
+    if (currentOrientation < 45 && currentOrientation > 315){
+    return NORTH;}
+    else if (currentOrientation >= 45 && currentOrientation < 135){
+    return EAST;}
+    else if (currentOrientation >= 135 && currentOrientation < 225){
+    return SOUTH;}
+    else {return WEST;}
 }

@@ -44,6 +44,8 @@ int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
                                 PUCK_RACK_3_WEST_DISTANCE,
                                 PUCK_RACK_4_WEST_DISTANCE };
 
+float horizontalPuckGrid = 0;
+
 // * NAVIGATION AND POSITION VARIABLES * //
 
 int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
@@ -241,6 +243,8 @@ int main(void)
                      
             moveAndAngle(SCAN_INITIALISE_HORIZONTAL,PLAN_SCAN_VERTICAL,WEST_ANGLE); // Move beyond the puck rack to scan the black empty wall
             
+            // Read the black wall
+            
             for (currentPuckRackScanningIndex = 0; currentPuckRackScanningIndex <= 4; currentPuckRackScanningIndex++){
                 moveAndAngle(puckRackOffsetsFromWest[currentPuckRackScanningIndex],PLAN_SCAN_VERTICAL,WEST_ANGLE); // Choose the plan vertical to be whatever Y value we start at
                 puckRackColours[currentPuckRackScanningIndex] = colourSensingOutput();
@@ -272,6 +276,7 @@ int main(void)
             */
             
             moveAndAngle(20,20,EAST_ANGLE); // Move to a position near construction base in an EAST orientation to be ready to scan for the pucks and block
+            moveForwardIndefinitely(); // Scan until we reach EAST wall.
             
             // Will now know the boundaries of the block.
             // Figure out direction we want to travel
@@ -299,6 +304,8 @@ int main(void)
                 else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NE corner
             }
             
+            // Now depending on if the pucks are in the corner or not, 
+            
             // We are now in front of the pucks
             state = STATE_FIND_REQUIRED_PUCK;
         }
@@ -309,10 +316,92 @@ int main(void)
             int requiredColour = puckConstructionPlan[currentPuckStackSize];
             int puckFound = 0;
             
-            while(!puckFound){
-                   
+            
+            // Let's assume that we get to the east or west of the puck pile and we are as close to the SW/SE puck as possible.
+            if (roundDirection() == NORTH){
+
+            }
+            else if (roundDirection() == EAST){
+                // Poll ultrasonics, displaceRight until no longer see the pucks
+                // Drive up to the middle puck
+                // We know that we used moveAndAngle() to get to the exact vertical position of the south-most puck. Therefore we will drive forward until we are close to the puck
+                moveForwardIndefinitely();
+                
+                // May need to displaceRight a bit to ensure that we are perfectly centered with the south-most puck
+                // Now we need to inch forward with the claw lifted
+                // Also store the horizontal location of the pucks based off our current position. This allows us to return for the other 2 pucks easily.
+                
+                horizontalPuckGrid = currentPosition[0]; // Take our horizontal position as a reference so we can use moveAndAngle(horizontalPuck,..,..) to return to the same column we took the first puck from.
+                
+                changeHeightToPuck(1); // Lift up enough so we dont hit the pucks when scanning the colour.
+                moveForward(DISTANCE_STOPPED_FROM_PUCK); // Move forward until colour sensor above the unknown coloured puck in question.
+               
+                if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+                    // This is the puck we need
+                    moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for lowering the claw
+                    lowerAndOpen(0); // We are grabbing the pucks from the ground.
+                    moveForward(DISTANCE_STOPPED_FROM_PUCK);
+                    closeAndRaise(1); // Lift above the height of the ground pucks
+
+                }
+                
+                // If the colour isn't what we need, we could pick it up and drop it somewhere out of the way (for round 2) or else we just ignore it.
+                else {
+                    moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Need to check the next puck
+                    displaceLeft(5,22);
+                    changeHeightToPuck(1); // Lift up enough so we dont hit the pucks when scanning the colour.
+                    moveForward(DISTANCE_STOPPED_FROM_PUCK); // Move forward until colour sensor above the unknown coloured puck in question.
+                    
+                    // Scan the next puck
+                    if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+                        // This is the puck we need
+                        moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for lowering the claw
+                        lowerAndOpen(0); // We are grabbing the pucks from the ground.
+                        moveForward(DISTANCE_STOPPED_FROM_PUCK);
+                        closeAndRaise(1); // Lift above the height of the ground pucks
+
+                    }
+                    
+                    else {
+                        moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Need to check the next puck
+                        displaceLeft(5,22);
+                        changeHeightToPuck(1); // Lift up enough so we dont hit the pucks when scanning the colour.
+                        moveForward(DISTANCE_STOPPED_FROM_PUCK); // Move forward until colour sensor above the unknown coloured puck in question.
+                        
+                        if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+                            // This is the puck we need
+                            moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for lowering the claw
+                            lowerAndOpen(0); // We are grabbing the pucks from the ground.
+                            moveForward(DISTANCE_STOPPED_FROM_PUCK);
+                            closeAndRaise(1); // Lift above the height of the ground pucks
+
+                        }
+                    
+                }
+                
+                if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+                    // This is the puck we need
+                    moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for lowering the claw
+                    lowerAndOpen(0); // We are grabbing the pucks from the ground.
+                    moveForward(DISTANCE_STOPPED_FROM_PUCK);
+                    closeAndRaise(1); // Lift above the height of the ground pucks
+
+                }
+                
             }
             
+            else if (roundDirection() == WEST){
+                // Poll ultrasonics, displaceRight until no longer see the pucks
+                // Drive up to the middle puck
+                // We know that we used moveAndAngle() to get to the exact vertical position of the south-most puck. Therefore we will drive forward until we are close to the puck
+                moveForwardIndefinitely();
+            }
+            
+            /*
+            while(!puckFound){
+                  
+            }
+            */
         }
         
         if (state == STATE_DEPOSIT_PUCK){

@@ -109,6 +109,7 @@
 #define FRONT_CLAW_DISTANCE_FROM_CENTRE
 #define PUCK_TOLERANCE 15 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 
+#define DISTANCE_STOPPED_FROM_PUCK 5 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
 
 // Variables to be shared / imported
 extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
