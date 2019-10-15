@@ -20,14 +20,14 @@
 #define EAST_DIRECTION 0 //This is just to remind us that we have our east as zero and
 //angle increases counterclockwise (so toward the north of the arena will be 90)
 #define CM_PER_COUNT 0.0187 //0.0175*1.06849 cm per encoder count
-#define DEGREES_PER_COUNT 0.105 //11.465 cm per deg*0.0187 cm per count (equal to CM_PER_COUNT)
+#define DEGREES_PER_COUNT 0.1045 //11.465 cm per deg*0.0187 cm per count (equal to CM_PER_COUNT)
 #define DRIFT_CORRECT_FREQ 10
 #define DCMOTOR_PWM_PERIOD 300
 #define DCMOTOR_IDEAL_DUTY_CYCLE 80
 #define NUM_TO_PERCENT_CONVERTER 100
 #define DRIFT_ADJUST_THRESHOLD 5 //If the timer counts discrepancy between the timers is greater than this, we adjust
 #define ENCODER_COUNTS_MAX 65500 //The maximum number of counts the encoder can have
-#define COLLISION_THRESHOLD 5 //Distance in cm from any obstacle that we should stop
+#define COLLISION_THRESHOLD 10 //Distance in cm from any obstacle that we should stop
 
 // Main states for overall navigation and motor control
 
@@ -121,11 +121,6 @@ int sweeping;
 float block_edge_location[4];
 float puckPileLocation;
 
-short int drivingForwardFlag;
-short int drivingBackwardFlag;
-short int turningLeftFlag;
-short int turningRightFlag;
-
 extern int initialisation;
 
 extern void lowerAndOpen(int puck_stack_position);
@@ -133,18 +128,8 @@ extern void closeAndRaise(int puck_stack_position);
 
 char output[32];
 
-extern float ultrasonic_distances[5];
-
-extern int M1_FD; //The four values shown here will be the duty cycles of the motors
-extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-extern int M2_BD; //known variable
 extern short int motor1Enable; //These two will be on if the motors are on
 extern short int motor2Enable;
-extern int M1_FD; //The four values shown here will be the duty cycles of the motors
-extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-extern int M2_BD; //known variable
 extern int motor1EncoderCounts; //These two variables will allow the entire program to keep 
 extern int motor2EncoderCounts; //track of how many turns the motors have spun 
 extern char output[32];

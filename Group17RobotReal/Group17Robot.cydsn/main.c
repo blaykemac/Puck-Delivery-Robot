@@ -57,20 +57,15 @@ int pathPastBlock;
 
 float currentPosition[2] = {0,0};
 float desiredPosition[2];
-int currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start facing north
-int desiredOrientation;
+float currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start facing north
+float desiredOrientation;
 
 short int moveNow = 1; //This is a flag that lets the main program tell the moving functions
 //whethe we want the robot to be moving or not. For example, when we need to operate servos
 //the main program would set moveNow to FALSE.
 
-//The four flags below let the rest of the program know if the robot is trying to drive 
-//forward or back, turn left or right. At the start of every motion, turn these flags on
-//at the end turn them off.
-short int drivingForwardFlag = 0;
-short int drivingBackwardFlag = 0;
-short int turningLeftFlag = 0;
-short int turningRightFlag = 0;
+float sensorDistance;
+int sensorToCheck;
 
 //These flags will be used by the main program to allow the robot to move in certain directions
 short int moveLeftAllowed;
@@ -98,7 +93,8 @@ int current_stage = 1;      // There are 3 stages, we start at 1
 // * INTERRUPT HANDLING * // 
 CY_ISR(TIH)                             // Ultrasonic ISR Definition
 {
-    ultrasonicInterruptHandler();
+    ultrasonicInterruptHandler(&sensorDistance);
+    UART_1_PutString("IH complete");
 }
 
 CY_ISR(StartIH)                             // Ultrasonic ISR Definition
@@ -111,19 +107,19 @@ CY_ISR(StartIH)                             // Ultrasonic ISR Definition
  
 //Interrupt service routines for dcmotor function
 CY_ISR(Encoder_Counts_1_IH){
-    stopMotor1AndUpdate();
+    encoderCounts1InterruptHandler();
+    UART_1_PutString("Encoder 1 Interrupt");
 }
 
 CY_ISR(Encoder_Counts_2_IH){
-    stopMotor2AndUpdate();
+    encoderCounts2InterruptHandler();
+    UART_1_PutString("Encoder 2 Interrupt");
 }
 
 CY_ISR(Drift_Check_IH){    
-    Drift_Check_Timer_ReadStatusRegister(); //Clears the interrupt
-    Drift_Check_Timer_Stop(); //Stops the timer
-    motor1EncoderCounts = Motor_1_Encoder_Counts_ReadCounter();
-    motor2EncoderCounts = Motor_2_Encoder_Counts_ReadCounter();
-    driftCorrect(); //Does checking
+    distanceCheck(&sensorToCheck);
+    Drift_Check_Timer_ReadStatusRegister();
+    UART_1_PutString("All completed");
 }
 
 
@@ -179,17 +175,8 @@ int main(void)
     Start_StartEx(StartIH);
     beginNavigation = 0;
     
-    //Initialising DC motors
-    Motor_1_driver_Start();
-    Motor_2_driver_Start();
-    motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
-    
-    //Initialising counters
-    Motor_1_Encoder_Counts_Start();
-    Motor_2_Encoder_Counts_Start();
-    
     //Initialising timers
-    Drift_Check_Timer_Start();
+    //Drift_Check_Timer_Start();
     
     //Starts and enables the interrupts for the motor encoder counts
     Encoder_Counts_1_Interrupt_StartEx(Encoder_Counts_1_IH); 

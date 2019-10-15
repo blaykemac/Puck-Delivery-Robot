@@ -18,11 +18,11 @@
 #define SENSOR_PULSE_DELAY_MS 50
 
 
-void distanceCheck();  
+void distanceCheck(int * sensorNumberPointer);  
 void distanceSensor(int currentSensorIndex);
 void printSensorToUART(int sensorNumber, float distanceMeasured);
 float distanceFromCount(int timerCount);
-void ultrasonicInterruptHandler(void);
+void ultrasonicInterruptHandler(float * distance);
 
 
 // External variables (ie. globals)
@@ -39,6 +39,9 @@ extern short int drivingBackwardFlag;
 extern short int turningLeftFlag;
 extern short int turningRightFlag;
 extern char output[32];
+extern float currentPosition[2];
+extern float currentOrientation;
 
 int initialisation;
+
 
