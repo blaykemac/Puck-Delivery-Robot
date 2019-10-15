@@ -1,6 +1,6 @@
 // ======================================================================
 // Group17Robot.v generated from TopDesign.cysch
-// 10/11/2019 at 12:54
+// 10/15/2019 at 14:00
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -856,6 +856,19 @@ module PWM_v3_30_6 (
 
 endmodule
 
+// Component: cy_constant_v1_0
+`ifdef CY_BLK_DIR
+`undef CY_BLK_DIR
+`endif
+
+`ifdef WARP
+`define CY_BLK_DIR "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0"
+`include "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0\cy_constant_v1_0.v"
+`else
+`define CY_BLK_DIR "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0"
+`include "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0\cy_constant_v1_0.v"
+`endif
+
 // Component: cy_analog_virtualmux_v1_0
 `ifdef CY_BLK_DIR
 `undef CY_BLK_DIR
@@ -1305,19 +1318,6 @@ module Counter_v3_0_10 (
 
 endmodule
 
-// Component: cy_constant_v1_0
-`ifdef CY_BLK_DIR
-`undef CY_BLK_DIR
-`endif
-
-`ifdef WARP
-`define CY_BLK_DIR "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0"
-`include "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0\cy_constant_v1_0.v"
-`else
-`define CY_BLK_DIR "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0"
-`include "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_constant_v1_0\cy_constant_v1_0.v"
-`endif
-
 // Timer_v2_80(CaptureAlternatingFall=false, CaptureAlternatingRise=false, CaptureCount=2, CaptureCounterEnabled=false, CaptureInputEnabled=false, CaptureMode=0, CONTROL3=1, ControlRegRemoved=0, CtlModeReplacementString=SyncCtl, CyGetRegReplacementString=CY_GET_REG16, CySetRegReplacementString=CY_SET_REG16, DeviceFamily=PSoC5, EnableMode=0, FF16=true, FF8=false, FixedFunction=true, FixedFunctionUsed=1, HWCaptureCounterEnabled=false, InterruptOnCapture=false, InterruptOnFIFOFull=false, InterruptOnTC=true, IntOnCapture=0, IntOnFIFOFull=0, IntOnTC=1, NumberOfCaptures=1, param45=1, Period=19, RegDefReplacementString=reg16, RegSizeReplacementString=uint16, Resolution=16, RstStatusReplacementString=rstSts, RunMode=1, SiliconRevision=0, SoftwareCaptureModeEnabled=false, SoftwareTriggerModeEnabled=false, TriggerInputEnabled=false, TriggerMode=0, UDB16=false, UDB24=false, UDB32=false, UDB8=false, UDBControlReg=false, UsesHWEnable=0, VerilogSectionReplacementString=sT16, CY_API_CALLBACK_HEADER_INCLUDE=#include "cyapicallbacks.h", CY_COMMENT=, CY_COMPONENT_NAME=Timer_v2_80, CY_CONFIG_TITLE=Drift_Check_Timer, CY_CONST_CONFIG=true, CY_CONTROL_FILE=<:default:>, CY_DATASHEET_FILE=<:default:>, CY_FITTER_NAME=Drift_Check_Timer, CY_INSTANCE_SHORT_NAME=Drift_Check_Timer, CY_MAJOR_VERSION=2, CY_MINOR_VERSION=80, CY_PDL_DRIVER_NAME=, CY_PDL_DRIVER_REQ_VERSION=, CY_PDL_DRIVER_SUBGROUP=, CY_PDL_DRIVER_VARIANT=, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=PSoC Creator  4.2, INSTANCE_NAME=Drift_Check_Timer, )
 module Timer_v2_80_11 (
     reset,
@@ -1386,6 +1386,15 @@ endmodule
 // top
 module top ;
 
+    electrical  Net_2107;
+    electrical  Net_2106;
+    electrical  Net_2105;
+    electrical  Net_2104;
+    electrical  Net_2103;
+    electrical  Net_2102;
+    electrical  Net_2101;
+    electrical  Net_2100;
+    electrical  Net_2099;
           wire  Net_2033;
           wire  Net_2032;
           wire  Net_2031;
@@ -1424,31 +1433,31 @@ module top ;
           wire  Net_586;
           wire  Net_585;
           wire  Net_584;
-          wire  Net_472;
-          wire  Net_471;
-          wire  Net_469;
-          wire  Net_468;
-          wire  Net_467;
-          wire  Net_465;
-          wire  Net_464;
-          wire  Net_463;
-          wire  Net_462;
-          wire  Net_461;
-          wire  Net_459;
+          wire  Net_2708;
+          wire  Net_2707;
+          wire  Net_2706;
+          wire  Net_2705;
+          wire  Net_2704;
+          wire  Net_2403;
+          wire  Net_2703;
+          wire  Net_2702;
+          wire  Net_2701;
+          wire  Net_2700;
+          wire  Net_2699;
+          wire  Net_2698;
           wire  Net_405;
-          wire  Net_444;
-          wire  Net_443;
-          wire  Net_442;
-          wire  Net_441;
-          wire  Net_440;
-          wire  Net_439;
-          wire  Net_438;
-          wire  Net_437;
-          wire  Net_436;
-          wire  Net_435;
-          wire  Net_434;
-          wire  Net_433;
-          wire  Net_432;
+          wire  Net_2296;
+          wire  Net_2295;
+          wire  Net_2294;
+          wire  Net_2293;
+          wire  Net_2292;
+          wire  Net_2291;
+          wire  Net_2290;
+          wire  Net_2289;
+          wire  Net_2288;
+          wire  Net_2287;
+          wire  Net_2286;
+          wire  Net_2285;
           wire  Net_1916;
           wire  Net_168;
           wire  Net_167;
@@ -1507,11 +1516,11 @@ module top ;
           wire  Net_591;
           wire [7:0] Net_590;
           wire  Net_589;
-          wire  Net_593;
-          wire  Net_594;
-          wire  Net_595;
-          wire  Net_596;
-          wire  Net_597;
+          wire  Net_2056;
+          wire  Net_2091;
+          wire  Net_2093;
+          wire  Net_2542;
+          wire  Net_2095;
     electrical  Net_598;
     electrical  Net_572;
           wire  Net_1996;
@@ -1544,7 +1553,7 @@ module top ;
           wire  Net_643;
           wire  Net_642;
           wire  Net_2035;
-          wire  Net_616;
+          wire  Net_2046;
           wire  Net_629;
           wire  Net_628;
           wire  Net_627;
@@ -1555,9 +1564,18 @@ module top ;
           wire  Net_622;
           wire  Net_621;
           wire  Net_620;
-          wire  Net_391;
+          wire  Net_10;
+          wire  Net_442;
+          wire  Net_2565;
           wire  Net_470;
-          wire  Net_466;
+          wire  Net_2094;
+          wire  Net_2086;
+          wire  Net_2092;
+          wire  Net_2082;
+          wire  Net_2090;
+    electrical  Net_55;
+    electrical  Net_39;
+          wire  Net_391;
           wire  Net_582;
           wire  Net_12;
           wire  Net_2027;
@@ -1568,17 +1586,12 @@ module top ;
           wire  Net_2022;
           wire  Net_1983;
           wire  Net_608;
-          wire  Net_630;
           wire  Net_617;
-          wire  Net_631;
-          wire  Net_618;
-          wire  Net_632;
+          wire  Net_2063;
           wire  Net_619;
           wire [1:0] Net_526;
           wire  Net_105;
     electrical  Net_118;
-    electrical  Net_55;
-    electrical  Net_39;
     electrical  Net_2;
           wire  Net_236;
           wire  Net_235;
@@ -1588,7 +1601,6 @@ module top ;
           wire [2:0] Net_155;
           wire  Net_124;
           wire  Net_126;
-          wire  Net_10;
           wire  Net_122;
 
     CyControlReg_v1_80 control_led (
@@ -1656,9 +1668,9 @@ module top ;
                 end
             endcase
         end
-        assign Net_616 = tmp__demux_1_0_reg;
+        assign Net_2046 = tmp__demux_1_0_reg;
         assign Net_617 = tmp__demux_1_1_reg;
-        assign Net_618 = tmp__demux_1_2_reg;
+        assign Net_2063 = tmp__demux_1_2_reg;
         assign Net_619 = tmp__demux_1_3_reg;
     end
     // -- De Mux end --
@@ -1963,7 +1975,7 @@ module top ;
 		  .input_buffer_sel(2'b00))
 		RGB_Blue
 		 (.oe(tmpOE__RGB_Blue_net),
-		  .y({Net_597}),
+		  .y({Net_2095}),
 		  .fb({tmpFB_0__RGB_Blue_net[0:0]}),
 		  .io({tmpIO_0__RGB_Blue_net[0:0]}),
 		  .siovref(tmpSIOVREF__RGB_Blue_net),
@@ -2114,7 +2126,7 @@ module top ;
 		  .input_buffer_sel(2'b00))
 		RGB_Red
 		 (.oe(tmpOE__RGB_Red_net),
-		  .y({Net_596}),
+		  .y({Net_2542}),
 		  .fb({tmpFB_0__RGB_Red_net[0:0]}),
 		  .io({tmpIO_0__RGB_Red_net[0:0]}),
 		  .siovref(tmpSIOVREF__RGB_Red_net),
@@ -2189,7 +2201,7 @@ module top ;
 		  .input_buffer_sel(2'b00))
 		RGB_Green
 		 (.oe(tmpOE__RGB_Green_net),
-		  .y({Net_595}),
+		  .y({Net_2093}),
 		  .fb({tmpFB_0__RGB_Green_net[0:0]}),
 		  .io({tmpIO_0__RGB_Green_net[0:0]}),
 		  .siovref(tmpSIOVREF__RGB_Green_net),
@@ -2264,7 +2276,7 @@ module top ;
 		  .input_buffer_sel(2'b00))
 		LED_Red
 		 (.oe(tmpOE__LED_Red_net),
-		  .y({Net_594}),
+		  .y({Net_2091}),
 		  .fb({tmpFB_0__LED_Red_net[0:0]}),
 		  .io({tmpIO_0__LED_Red_net[0:0]}),
 		  .siovref(tmpSIOVREF__LED_Red_net),
@@ -2339,7 +2351,7 @@ module top ;
 		  .input_buffer_sel(2'b00))
 		LED_Green
 		 (.oe(tmpOE__LED_Green_net),
-		  .y({Net_593}),
+		  .y({Net_2056}),
 		  .fb({tmpFB_0__LED_Green_net[0:0]}),
 		  .io({tmpIO_0__LED_Green_net[0:0]}),
 		  .siovref(tmpSIOVREF__LED_Green_net),
@@ -3583,18 +3595,18 @@ module top ;
     PWM_v3_30_5 Gripper_Servo_PWM (
         .reset(1'b0),
         .clock(Net_391),
-        .tc(Net_433),
-        .pwm1(Net_434),
-        .pwm2(Net_435),
-        .interrupt(Net_436),
+        .tc(Net_2286),
+        .pwm1(Net_2287),
+        .pwm2(Net_2288),
+        .interrupt(Net_2289),
         .capture(1'b0),
-        .kill(Net_438),
+        .kill(Net_2291),
         .enable(1'b1),
         .trigger(1'b0),
         .cmp_sel(1'b0),
         .pwm(Net_442),
-        .ph1(Net_443),
-        .ph2(Net_444));
+        .ph1(Net_2295),
+        .ph2(Net_2296));
     defparam Gripper_Servo_PWM.Resolution = 16;
 
 
@@ -3612,18 +3624,18 @@ module top ;
     PWM_v3_30_6 Rack_Servo_PWM (
         .reset(1'b0),
         .clock(Net_391),
-        .tc(Net_461),
-        .pwm1(Net_462),
-        .pwm2(Net_463),
-        .interrupt(Net_464),
+        .tc(Net_2699),
+        .pwm1(Net_2700),
+        .pwm2(Net_2701),
+        .interrupt(Net_2702),
         .capture(1'b0),
-        .kill(Net_466),
+        .kill(Net_2403),
         .enable(1'b1),
         .trigger(1'b0),
         .cmp_sel(1'b0),
         .pwm(Net_470),
-        .ph1(Net_471),
-        .ph2(Net_472));
+        .ph1(Net_2707),
+        .ph2(Net_2708));
     defparam Rack_Servo_PWM.Resolution = 16;
 
 	wire [0:0] tmpOE__Gripper_Servo_net;
@@ -3776,153 +3788,9 @@ module top ;
 
 	assign tmpOE__Rack_Servo_net = (`CYDEV_CHIP_MEMBER_USED == `CYDEV_CHIP_MEMBER_3A && `CYDEV_CHIP_REVISION_USED < `CYDEV_CHIP_REVISION_3A_ES3) ? ~{1'b1} : {1'b1};
 
-	wire [0:0] tmpOE__Gripper_Servo_Disable_net;
-	wire [0:0] tmpIO_0__Gripper_Servo_Disable_net;
-	wire [0:0] tmpINTERRUPT_0__Gripper_Servo_Disable_net;
-	electrical [0:0] tmpSIOVREF__Gripper_Servo_Disable_net;
+    assign Net_2403 = 1'h0;
 
-	cy_psoc3_pins_v1_10
-		#(.id("aa1272a2-36bc-4168-a647-65d4c98a8b52"),
-		  .drive_mode(3'b001),
-		  .ibuf_enabled(1'b1),
-		  .init_dr_st(1'b0),
-		  .input_clk_en(0),
-		  .input_sync(1'b0),
-		  .input_sync_mode(1'b0),
-		  .intr_mode(2'b00),
-		  .invert_in_clock(0),
-		  .invert_in_clock_en(0),
-		  .invert_in_reset(0),
-		  .invert_out_clock(0),
-		  .invert_out_clock_en(0),
-		  .invert_out_reset(0),
-		  .io_voltage(""),
-		  .layout_mode("CONTIGUOUS"),
-		  .oe_conn(1'b0),
-		  .oe_reset(0),
-		  .oe_sync(1'b0),
-		  .output_clk_en(0),
-		  .output_clock_mode(1'b0),
-		  .output_conn(1'b0),
-		  .output_mode(1'b0),
-		  .output_reset(0),
-		  .output_sync(1'b0),
-		  .pa_in_clock(-1),
-		  .pa_in_clock_en(-1),
-		  .pa_in_reset(-1),
-		  .pa_out_clock(-1),
-		  .pa_out_clock_en(-1),
-		  .pa_out_reset(-1),
-		  .pin_aliases(""),
-		  .pin_mode("I"),
-		  .por_state(4),
-		  .sio_group_cnt(0),
-		  .sio_hyst(1'b1),
-		  .sio_ibuf(""),
-		  .sio_info(2'b00),
-		  .sio_obuf(""),
-		  .sio_refsel(""),
-		  .sio_vtrip(""),
-		  .sio_hifreq(""),
-		  .sio_vohsel(""),
-		  .slew_rate(1'b0),
-		  .spanning(0),
-		  .use_annotation(1'b0),
-		  .vtrip(2'b00),
-		  .width(1),
-		  .ovt_hyst_trim(1'b0),
-		  .ovt_needed(1'b0),
-		  .ovt_slew_control(2'b00),
-		  .input_buffer_sel(2'b00))
-		Gripper_Servo_Disable
-		 (.oe(tmpOE__Gripper_Servo_Disable_net),
-		  .y({1'b0}),
-		  .fb({Net_438}),
-		  .io({tmpIO_0__Gripper_Servo_Disable_net[0:0]}),
-		  .siovref(tmpSIOVREF__Gripper_Servo_Disable_net),
-		  .interrupt({tmpINTERRUPT_0__Gripper_Servo_Disable_net[0:0]}),
-		  .in_clock({1'b0}),
-		  .in_clock_en({1'b1}),
-		  .in_reset({1'b0}),
-		  .out_clock({1'b0}),
-		  .out_clock_en({1'b1}),
-		  .out_reset({1'b0}));
-
-	assign tmpOE__Gripper_Servo_Disable_net = (`CYDEV_CHIP_MEMBER_USED == `CYDEV_CHIP_MEMBER_3A && `CYDEV_CHIP_REVISION_USED < `CYDEV_CHIP_REVISION_3A_ES3) ? ~{1'b1} : {1'b1};
-
-	wire [0:0] tmpOE__Rack_Servo_Disable_net;
-	wire [0:0] tmpIO_0__Rack_Servo_Disable_net;
-	wire [0:0] tmpINTERRUPT_0__Rack_Servo_Disable_net;
-	electrical [0:0] tmpSIOVREF__Rack_Servo_Disable_net;
-
-	cy_psoc3_pins_v1_10
-		#(.id("b3d55c22-b3f4-403a-a804-94965a2827fd"),
-		  .drive_mode(3'b001),
-		  .ibuf_enabled(1'b1),
-		  .init_dr_st(1'b0),
-		  .input_clk_en(0),
-		  .input_sync(1'b0),
-		  .input_sync_mode(1'b0),
-		  .intr_mode(2'b00),
-		  .invert_in_clock(0),
-		  .invert_in_clock_en(0),
-		  .invert_in_reset(0),
-		  .invert_out_clock(0),
-		  .invert_out_clock_en(0),
-		  .invert_out_reset(0),
-		  .io_voltage(""),
-		  .layout_mode("CONTIGUOUS"),
-		  .oe_conn(1'b0),
-		  .oe_reset(0),
-		  .oe_sync(1'b0),
-		  .output_clk_en(0),
-		  .output_clock_mode(1'b0),
-		  .output_conn(1'b0),
-		  .output_mode(1'b0),
-		  .output_reset(0),
-		  .output_sync(1'b0),
-		  .pa_in_clock(-1),
-		  .pa_in_clock_en(-1),
-		  .pa_in_reset(-1),
-		  .pa_out_clock(-1),
-		  .pa_out_clock_en(-1),
-		  .pa_out_reset(-1),
-		  .pin_aliases(""),
-		  .pin_mode("I"),
-		  .por_state(4),
-		  .sio_group_cnt(0),
-		  .sio_hyst(1'b1),
-		  .sio_ibuf(""),
-		  .sio_info(2'b00),
-		  .sio_obuf(""),
-		  .sio_refsel(""),
-		  .sio_vtrip(""),
-		  .sio_hifreq(""),
-		  .sio_vohsel(""),
-		  .slew_rate(1'b0),
-		  .spanning(0),
-		  .use_annotation(1'b0),
-		  .vtrip(2'b00),
-		  .width(1),
-		  .ovt_hyst_trim(1'b0),
-		  .ovt_needed(1'b0),
-		  .ovt_slew_control(2'b00),
-		  .input_buffer_sel(2'b00))
-		Rack_Servo_Disable
-		 (.oe(tmpOE__Rack_Servo_Disable_net),
-		  .y({1'b0}),
-		  .fb({Net_466}),
-		  .io({tmpIO_0__Rack_Servo_Disable_net[0:0]}),
-		  .siovref(tmpSIOVREF__Rack_Servo_Disable_net),
-		  .interrupt({tmpINTERRUPT_0__Rack_Servo_Disable_net[0:0]}),
-		  .in_clock({1'b0}),
-		  .in_clock_en({1'b1}),
-		  .in_reset({1'b0}),
-		  .out_clock({1'b0}),
-		  .out_clock_en({1'b1}),
-		  .out_reset({1'b0}));
-
-	assign tmpOE__Rack_Servo_Disable_net = (`CYDEV_CHIP_MEMBER_USED == `CYDEV_CHIP_MEMBER_3A && `CYDEV_CHIP_REVISION_USED < `CYDEV_CHIP_REVISION_3A_ES3) ? ~{1'b1} : {1'b1};
+    assign Net_2291 = 1'h0;
 
     ADC_DelSig_v3_30_7 ADC (
         .vplus(Net_39),
@@ -4164,13 +4032,13 @@ module top ;
 	assign tmpOE__Pin_Start_net = (`CYDEV_CHIP_MEMBER_USED == `CYDEV_CHIP_MEMBER_3A && `CYDEV_CHIP_REVISION_USED < `CYDEV_CHIP_REVISION_3A_ES3) ? ~{1'b1} : {1'b1};
 
 
-    assign Net_630 = ~Net_617;
+    assign Net_571 = ~Net_2086;
 
 
-    assign Net_631 = ~Net_618;
+    assign Net_2093 = ~Net_2092;
 
 
-    assign Net_632 = ~Net_619;
+    assign Net_2056 = ~Net_2082;
 
     CyControlReg_v1_80 control_photodiode (
         .control_1(Net_633),
@@ -4201,23 +4069,23 @@ module top ;
     begin : demux_2
         reg  tmp__demux_2_0_reg;
         reg  tmp__demux_2_1_reg;
-        always @(Net_632 or Net_608)
+        always @(Net_619 or Net_608)
         begin
             case (Net_608)
                 1'b0:
                 begin
-                    tmp__demux_2_0_reg = Net_632;
+                    tmp__demux_2_0_reg = Net_619;
                     tmp__demux_2_1_reg = 1'b0;
                 end
                 1'b1:
                 begin
                     tmp__demux_2_0_reg = 1'b0;
-                    tmp__demux_2_1_reg = Net_632;
+                    tmp__demux_2_1_reg = Net_619;
                 end
             endcase
         end
-        assign Net_571 = tmp__demux_2_0_reg;
-        assign Net_597 = tmp__demux_2_1_reg;
+        assign Net_2086 = tmp__demux_2_0_reg;
+        assign Net_2094 = tmp__demux_2_1_reg;
     end
     // -- De Mux end --
 
@@ -4226,23 +4094,23 @@ module top ;
     begin : demux_3
         reg  tmp__demux_3_0_reg;
         reg  tmp__demux_3_1_reg;
-        always @(Net_631 or Net_608)
+        always @(Net_2063 or Net_608)
         begin
             case (Net_608)
                 1'b0:
                 begin
-                    tmp__demux_3_0_reg = Net_631;
+                    tmp__demux_3_0_reg = Net_2063;
                     tmp__demux_3_1_reg = 1'b0;
                 end
                 1'b1:
                 begin
                     tmp__demux_3_0_reg = 1'b0;
-                    tmp__demux_3_1_reg = Net_631;
+                    tmp__demux_3_1_reg = Net_2063;
                 end
             endcase
         end
-        assign Net_593 = tmp__demux_3_0_reg;
-        assign Net_595 = tmp__demux_3_1_reg;
+        assign Net_2082 = tmp__demux_3_0_reg;
+        assign Net_2092 = tmp__demux_3_1_reg;
     end
     // -- De Mux end --
 
@@ -4251,23 +4119,23 @@ module top ;
     begin : demux_4
         reg  tmp__demux_4_0_reg;
         reg  tmp__demux_4_1_reg;
-        always @(Net_630 or Net_608)
+        always @(Net_617 or Net_608)
         begin
             case (Net_608)
                 1'b0:
                 begin
-                    tmp__demux_4_0_reg = Net_630;
+                    tmp__demux_4_0_reg = Net_617;
                     tmp__demux_4_1_reg = 1'b0;
                 end
                 1'b1:
                 begin
                     tmp__demux_4_0_reg = 1'b0;
-                    tmp__demux_4_1_reg = Net_630;
+                    tmp__demux_4_1_reg = Net_617;
                 end
             endcase
         end
-        assign Net_594 = tmp__demux_4_0_reg;
-        assign Net_596 = tmp__demux_4_1_reg;
+        assign Net_2090 = tmp__demux_4_0_reg;
+        assign Net_2565 = tmp__demux_4_1_reg;
     end
     // -- De Mux end --
 
@@ -4539,6 +4407,48 @@ module top ;
 
 
     assign Net_2035 = 1'h1;
+
+
+    assign Net_2095 = ~Net_2094;
+
+
+    assign Net_2091 = ~Net_2090;
+
+
+    assign Net_2542 = ~Net_2565;
+
+    cy_annotation_universal_v1_0 Q_1 (
+        .connect({
+            Net_2100,
+            Net_2101,
+            Net_2099
+        })
+    );
+    defparam Q_1.comp_name = "PNP_v1_0";
+    defparam Q_1.port_names = "B, C, E";
+    defparam Q_1.width = 3;
+
+    cy_annotation_universal_v1_0 Q_2 (
+        .connect({
+            Net_2103,
+            Net_2104,
+            Net_2102
+        })
+    );
+    defparam Q_2.comp_name = "PNP_v1_0";
+    defparam Q_2.port_names = "B, C, E";
+    defparam Q_2.width = 3;
+
+    cy_annotation_universal_v1_0 Q_3 (
+        .connect({
+            Net_2106,
+            Net_2107,
+            Net_2105
+        })
+    );
+    defparam Q_3.comp_name = "PNP_v1_0";
+    defparam Q_3.port_names = "B, C, E";
+    defparam Q_3.width = 3;
 
 
 

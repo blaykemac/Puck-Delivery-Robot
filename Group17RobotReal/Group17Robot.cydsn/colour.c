@@ -54,7 +54,12 @@ float test_red;
 float test_green;
 float test_blue;
 
+<<<<<<< Updated upstream
 
+=======
+extern int ColourSensingAlgorithm;      // determines which coloursensing algorithm to use 
+extern int colour_flag;
+>>>>>>> Stashed changes
 
 int puck_all[4] = {0,0,0,0};          
                             // no puck detection = puck_all[0]
@@ -192,6 +197,22 @@ int colourSensingOutput(void)
             }   
             break;
         case 1:
+            if (test_red > 40000)
+            {
+                value = BLANK;      // No puck detected, not detecting no pucks, so will never be valid
+            }
+            else if (test_red > test_green && test_red > test_blue)
+            {
+                value = RED;      // Red puck detected 
+            }
+             else if (test_green > test_blue && test_green > test_red)
+            {
+                value = GREEN;      // Green puck detected 
+            }
+             else                   // have no detection paramters 
+            {
+                value = BLUE;      // Blue puck detected
+            }      
             break;
         case 2:
             break;    

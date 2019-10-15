@@ -77,12 +77,16 @@ short int moveForwardAllowed;
 short int moveBackwardAllowed;
 
 
+<<<<<<< Updated upstream
 
 // * COLOUR VARIABLES * //
 
 int calibrate = FALSE;                    // Do we want to calibrate the sensor? 
 int idac_value = 0;  
 int colour_flag = 1;                    // sets which photodiode to use 
+=======
+int colour_flag = 1;
+>>>>>>> Stashed changes
 int ColourSensingAlgorithm = 0;      // Determines which colour sensing algorithm to use:
                                                 // 0: Wall algorithm
                                             // 1: Claw algorithm
@@ -96,6 +100,22 @@ int moving = 0; // Temp to stop while loop from repeated runs of scanning plan c
 
 const int PLAN_SCAN_VERTICAL = 10; // Set to ultrasonic distance at the home base 
 
+<<<<<<< Updated upstream
+=======
+float block_edge_location[4] = {0,0,0,0}; // N E S W
+
+int current_stage = 1;      // There are 3 stages, we start at 1
+
+// Puck Construction Scanning
+int puckRackColours[5] = {0,0,0,0,0}; // 5 slots in puck rack.
+int currentPuckRackScanningIndex = 0;
+int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
+                                PUCK_RACK_1_WEST_DISTANCE,
+                                PUCK_RACK_2_WEST_DISTANCE,
+                                PUCK_RACK_3_WEST_DISTANCE,
+                                PUCK_RACK_4_WEST_DISTANCE };
+
+>>>>>>> Stashed changes
 
 // * INTERRUPT HANDLING * // 
 CY_ISR(TIH)                             // Ultrasonic ISR Definition
@@ -145,7 +165,17 @@ int main(void)
     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
     
      // Colour Sensing Initialisation & Debugging:
+<<<<<<< Updated upstream
       
+=======
+    int colour_calibration = TRUE;                    // Do we want to calibrate the sensor? 
+    extern char output[32];   
+      
+    // ServoDebugging
+    int servo_testing = FALSE;
+    
+    
+>>>>>>> Stashed changes
     
     // Ultrasonic Initialisation: 
     
@@ -175,12 +205,17 @@ int main(void)
     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
     
     //Servos for the arm initialisation
-    //Gripper_Servo_PWM_WriteCompare(1250); //This is the closed gripper pos
-    //Rack_Servo_PWM_WriteCompare(1000); //This is the up arm pos
+    
    
     Rack_Servo_PWM_Start();
-    Gripper_Servo_PWM_Start();
+    Rack_Servo_PWM_WriteCompare(1000); //This is the up arm pos
+    CyDelay(500);
+    Rack_Servo_PWM_Sleep();
     
+    Gripper_Servo_PWM_Start();
+    Gripper_Servo_PWM_WriteCompare(1250); //This is the closed gripper pos
+    CyDelay(500);
+    Gripper_Servo_PWM_Sleep();
 
     // Main Loop for States
         
@@ -198,7 +233,9 @@ int main(void)
         */
         
         
-        
+            control_photodiode_Write(1);            // controls which photodiode is being used: 
+                                                            // 0: wall
+                                                            // 1: claw
             control_led_Write(1);   CyDelay(1000);  // Ensures all the RGBs are working
             control_led_Write(2);   CyDelay(1000);
             control_led_Write(3);   CyDelay(1000);
@@ -206,18 +243,19 @@ int main(void)
             ColourSensingInitialise();                  // Initialises the colour sensor
         
 
-            
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
-            
-            
-            if (calibrate)
+            // Colour Calibration: 
+            if (colour_calibration)
             {
                 int lock = FALSE;
                 do 
                     {   
                         if (lock == FALSE) 
                         {
+                            
+                            changeHeightToPuck(1);
+
                             UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
                             for (int i = 0; i < 50; i++)
                             {
@@ -226,21 +264,56 @@ int main(void)
                             ColourSensingCalibration(); 
                             UART_1_PutString("\n");
                             }         
-                        lock = TRUE;    
+                            lock = TRUE;    
                         }
                 } while (lock == TRUE);    
             }
             
-            //ColourSensingDebug();
+            // Servo Testing: 
+            
+            if (servo_testing) 
+            {
+                int lock = FALSE;
+                do 
+                    {   
+                        if (lock == FALSE) 
+                        {
+                            UART_1_PutString("Servo Testing: ");
+                            
+                            armMoving();
+                            
+                            
+                            for(int i = 0; i < 4; i++)
+                            {
+                                changeHeightToPuck(i);
+                                CyDelay(1000);
+                            }
+
+                            lock = TRUE;    
+                        }
+                } while (lock == TRUE);    
+            }    
+                
+                
+            }
+            
+            
+            while(1)
+            {
+            ColourSensingDebug();
+            }
+            
+            
+            
+            
             
             /*
             if (!moving){
                 moving = 1;
             if (initialisation){moveBackwardIndefinitely(); initialisation = 0;}
             else {moveForwardIndefinitely();}        
+           
             
-            */
-                     
             moveAndAngle(SCAN_INITIALISE_HORIZONTAL,PLAN_SCAN_VERTICAL,WEST_ANGLE); // Move beyond the puck rack to scan the black empty wall
             
             // Read the black wall
@@ -249,6 +322,7 @@ int main(void)
                 moveAndAngle(puckRackOffsetsFromWest[currentPuckRackScanningIndex],PLAN_SCAN_VERTICAL,WEST_ANGLE); // Choose the plan vertical to be whatever Y value we start at
                 puckRackColours[currentPuckRackScanningIndex] = colourSensingOutput();
             }
+<<<<<<< Updated upstream
             
             
             int puckConstructionPlanIndex = 0; // Will be used to iterate through the 3 puck colours in construction plan
@@ -261,7 +335,12 @@ int main(void)
                 }
             }
             
+=======
+            */
+>>>>>>> Stashed changes
         }
+        
+        
 
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
@@ -405,14 +484,21 @@ int main(void)
         }
         
         if (state == STATE_DEPOSIT_PUCK){
+<<<<<<< Updated upstream
             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL + 10, SOUTH_ANGLE); // Take us to the drop off point NEAR construction zone
             lowerAndOpen(currentPuckStackSize);
             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
             changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack
+=======
+            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
+>>>>>>> Stashed changes
             
-            currentPuckStackSize++;
+            lowerAndOpen(current_stage);
+            changeHeightToPuck(current_stage + 1); // Lift claw above stack to avoid hitting the stack
             
-            if (currentPuckStackSize == 3){state = STATE_PARK_HOME;}
+            current_stage++;
+            
+            if (current_stage == 3){state = STATE_PARK_HOME;}        // Returns to home 
             
         }
         
@@ -423,6 +509,65 @@ int main(void)
         }
         
         
-    }
 }
 
+void armMoving(void){
+    
+    int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
+    int puck_scan;
+    
+    puckRackColours[1] = RED;
+    
+// States
+    // moving
+    changeHeightToPuck(3);  // Arm has to be lifted to highest position
+        // THIS WILL be ensured by always returning the claw to the highest position after completing any action
+        
+    // Scanning puck:
+    while (puck_correct == FALSE) 
+    {
+                                // robot moves forward towards puck
+        changeHeightToPuck(1);  // arm lowers onto robot
+        puck_scan = colourSensingOutput();  // colour sensor takes a scan
+        changeHeightToPuck(3);  // arm returns to high position
+                                // robot moves backwards
+        if (puck_scan == puckRackColours[current_stage]) {puck_correct = TRUE;}
+                                // if colour == true:
+                                    // enter picking up puck from 
+        else 
+        {
+                                // if colour == false
+                                    // robot translates to side to see next puck, and performs scanning puck again
+        }
+    }
+    
+    /*
+    
+    // Picking Up puck from pile:
+    changeHeightToPuck(0);      // arm lowers to ground
+                                // robot moves forward
+    armClose();                 // claw closes on puck
+    changeHeightToPuck(3);      // arm lifts up to highest position
+                                // robot moves back away from puck area   
+      
+    
+    // Deposition puck in construction zone:
+                                // arm will be in highest position from moving
+        changeHeightToPuck(current_stage-1);    // arm moves to position of stacking pucks          
+                                                // stage 1st = ground/0
+                                                // stage 2nd = 1
+                                                // stage 3rd = 2
+        armOpen();              // gripper releases puck
+        changeHeightToPuck(3);  // arm moves back to highest position availabe
+                                // robot moves away 
+    */
+    
+}
+
+<<<<<<< Updated upstream
+=======
+
+
+
+
+>>>>>>> Stashed changes

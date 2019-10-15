@@ -10,11 +10,21 @@
  *
  * ========================================
 */
+<<<<<<< Updated upstream
 
 void armUp(void);
 void armClose(void);
+=======
+void armUp(int arm_position);
+void armDown(int arm_position);
+void armTranslate(int new_position);
+
+void servoDebugging(void);
+
+>>>>>>> Stashed changes
 void armOpen(void);
-void armDown(void);
+void armClose(void);
+
 void armMoveUpDown(int desiredPosition);
 void gripperAngle(int amount);
 void rackAngle(int amount);
