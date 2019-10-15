@@ -26,13 +26,10 @@ void ColourSensingInitialise();
 void ColourSensingCalibration();
 void ColourSensingDebug();
 int colourSensingOutput(void);
-<<<<<<< Updated upstream
 
 extern int colour_flag;                 // determines which PHOTODIODE is being used 
 extern int ColourSensingAlgorithm;      // determines which coloursensing algorithm to use 
 extern char output[32];
-=======
->>>>>>> Stashed changes
 
 
 /* [] END OF FILE */

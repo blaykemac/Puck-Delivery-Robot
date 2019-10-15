@@ -6,13 +6,8 @@
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
  * CONFIDENTIAL AND PROPRIETARY INFORMATION
-<<<<<<< Updated upstream
  * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
-=======
- * WHICH IS THE PROPERTY OF your company.
- * 
->>>>>>> Stashed changes
  * ========================================
 */
 
@@ -138,7 +133,6 @@ extern void closeAndRaise(int puck_stack_position);
 
 char output[32];
 
-<<<<<<< Updated upstream
 extern float ultrasonic_distances[5];
 
 extern int M1_FD; //The four values shown here will be the duty cycles of the motors
@@ -154,7 +148,7 @@ extern int M2_BD; //known variable
 extern int motor1EncoderCounts; //These two variables will allow the entire program to keep 
 extern int motor2EncoderCounts; //track of how many turns the motors have spun 
 extern char output[32];
-=======
+
 void armMoving(void);
->>>>>>> Stashed changes
+
 

@@ -10,27 +10,13 @@
  *
  * ========================================
 */
-<<<<<<< Updated upstream
 
-void armUp(void);
-void armClose(void);
-=======
-void armUp(int arm_position);
-void armDown(int arm_position);
 void armTranslate(int new_position);
-
-void servoDebugging(void);
-
->>>>>>> Stashed changes
+void changeHeightToPuck(int puckHeightIndex); // 0 is ground, 2 will be maximum
 void armOpen(void);
 void armClose(void);
 
 void armMoveUpDown(int desiredPosition);
-void gripperAngle(int amount);
-void rackAngle(int amount);
-void changeHeightToPuck(int puckHeightIndex); // 0 is ground, 2 will be maximum
-void lowerAndOpen(int puck_stack_position);
-void closeAndRaise(int puck_stack_position);
 
 //These are the values that correspond to open, closed, up and down positions of the 
 //arm. These were found by experiment, so if need to recalibrate, you know where to go
@@ -38,3 +24,4 @@ void closeAndRaise(int puck_stack_position);
 #define HIGH_POS_ARM_CMP 1000
 #define OPEN_POS_GRIPPER_CMP 1120 //1170
 #define CLOSED_POS_GRIPPER_CMP 1250
+

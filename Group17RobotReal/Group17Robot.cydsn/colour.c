@@ -43,7 +43,6 @@ float sum = 0;
 
 float ambient_current;      // used to remove the ambient light from the photo diode measurements 
 
-
 float ambient_white;        // ambient values when white LED on (no puck)
 float ambient_red;          // ambient values when red LED on   (no puck)
 float ambient_green;        // ambient values when green LED on (no puck)
@@ -54,12 +53,8 @@ float test_red;
 float test_green;
 float test_blue;
 
-<<<<<<< Updated upstream
-
-=======
-extern int ColourSensingAlgorithm;      // determines which coloursensing algorithm to use 
+extern int colour_sensing_algorithm;      // determines which coloursensing algorithm to use 
 extern int colour_flag;
->>>>>>> Stashed changes
 
 int puck_all[4] = {0,0,0,0};          
                             // no puck detection = puck_all[0]
@@ -86,7 +81,6 @@ Writing these values to control_led_Write(x):
     x = 3: BLUE
 
 */
-
 
 void ColourSensingInitialise (void)
 {
@@ -176,7 +170,7 @@ int colourSensingOutput(void)
     test_blue = test[3];    
     
     
-    switch(ColourSensingAlgorithm) 
+    switch(colour_sensing_algorithm) 
     {
         case 0:                         // WALL ALGORITHM
             if (test_red < (ambient_red + 2000) && test_green < (ambient_green + 2000) && test_blue < (ambient_blue + 2000))

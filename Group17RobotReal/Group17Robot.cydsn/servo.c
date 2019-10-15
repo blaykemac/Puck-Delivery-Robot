@@ -26,8 +26,7 @@
 #include "servo.h"
 #include "customMath.h"
 
-<<<<<<< Updated upstream
-=======
+
 //These are the values that correspond to open, closed, up and down positions of the 
 //arm. These were found by experiment, so if need to recalibrate, you know where to go\
 
@@ -49,15 +48,13 @@
 #define HIGH_POS_ARM_CMP 1000
 
 # define ARM_POS_GROUND 2400    // Arm positioned at the ground
-# define ARM_POS_1              // Arm positioned 1 pucks length above the ground (plus some tolerance)
-# define ARM_POS_2              // Arm positioned 2...
+# define ARM_POS_1 1700              // Arm positioned 1 pucks length above the ground (plus some tolerance)
+# define ARM_POS_2 1250           // Arm positioned 2...
 # define ARM_POS_3
-
-
 
 #define GRIPPER_OPEN 1120 //1170
 #define GRIPPER_CLOSED 1250
->>>>>>> Stashed changes
+
 
 void armOpen(){
     Gripper_Servo_PWM_Wakeup();                    // Brings the servo back from sleep
@@ -132,17 +129,6 @@ void changeHeightToPuck(int puckHeightIndex){
         armTranslate(2400);    break;
         break;
     }
-    
-    
-    
-    
-}
-
-
-
-void servoDebugging(void)
-{
-    
 }
 
 
@@ -156,39 +142,6 @@ void servoDebugging(void)
 
 
 // OLD CODE:
-
-//This is just for the prelim comp - final comp will have a more comprehensive function 
-//that opens to 3 or 4 discrete heights for each of the pucks
-void armUp(int arm_position){
-    Gripper_Servo_Disable_Write(0);
-    int i = Rack_Servo_PWM_ReadCompare();       
-    
-    // The following code ensures that the ripper brings it up smoothly 
-    
-    while (i > arm_position){
-        Rack_Servo_PWM_WriteCompare(i);
-        i -= (LOW_POS_ARM_CMP-arm_position)/10; //Step in 1/10th of the amount 
-        CyDelay(10);
-    }
-        
-    Rack_Servo_PWM_WriteCompare(arm_position); //1000 was a nice max height value
-    CyDelay(500);
-    Gripper_Servo_Disable_Write(1);
-}
-
-void armDown(int arm_position){
-    Gripper_Servo_Disable_Write(0);
-    int i = Rack_Servo_PWM_ReadCompare();
-    while (i < LOW_POS_ARM_CMP){
-        Rack_Servo_PWM_WriteCompare(i);
-        i += (LOW_POS_ARM_CMP-arm_position)/10; //Step in 1/10th the amount
-        CyDelay(10);
-    }
-    Rack_Servo_PWM_WriteCompare(LOW_POS_ARM_CMP); //2300 was a nice low height value
-    CyDelay(500);
-    Gripper_Servo_Disable_Write(1);
-}
-
 
 
 //This takes input in cm
@@ -204,40 +157,6 @@ void armMoveUpDown(int desiredPosition){
     Rack_Servo_PWM_WriteCompare(1000+compare_val); //This needs to be modified a lot
     CyDelay(500);
 }
-
-void gripperAngle(int amount){
-    if (0 < amount && amount < 180)
-    {
-        Gripper_Servo_PWM_WriteCompare(1000+amount*5.5);
-    }
-    Gripper_Servo_PWM_Start();
-    CyDelay(500);
-}
-        
-void rackAngle(int amount)
-{
-    Rack_Servo_PWM_WriteCompare(1000+amount*5.5);
-    Rack_Servo_PWM_Start();
-    CyDelay(500);
-}
-
-
-void lowerAndOpen(int puck_stack_position){
-    changeHeightToPuck(puck_stack_position);
-    armOpen();
-}
-
-void closeAndRaise(int puck_stack_position){
-    armClose();
-    changeHeightToPuck(puck_stack_position);
-}
-
-
-
-
-
-
-
 
 
 /* [] END OF FILE */
