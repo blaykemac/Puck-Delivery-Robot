@@ -40,14 +40,14 @@ extern float currentPosition[2];
 extern float desiredPosition[2];
 extern int currentOrientation; //in degrees (convert to radians when needed)
 extern int desiredOrientation;
-extern short int motor1Enable; //These two will be on if the motors are on
-extern short int motor2Enable;
-extern int M1_FD; //The four values shown here will be the duty cycles of the motors
-extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-extern int M2_BD; //known variable
-extern int motor1EncoderCounts; //These two variables will allow the entire program to keep 
-extern int motor2EncoderCounts; //track of how many turns the motors have spun 
+short int motor1Enable; //These two will be on if the motors are on
+short int motor2Enable;
+int M1_FD; //The four values shown here will be the duty cycles of the motors
+int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
+int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
+int M2_BD; //known variable
+int motor1EncoderCounts; //These two variables will allow the entire program to keep 
+int motor2EncoderCounts; //track of how many turns the motors have spun 
 extern short int moveNow; //This is a flag that lets the main program tell the moving functions
 //whether we want the robot to be moving or not. For example, when we need to operate servos
 //the main program would set moveNow to FALSE.

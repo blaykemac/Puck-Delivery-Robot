@@ -179,6 +179,7 @@ Common symbol       size              file
 test_white          0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
 moveRightAllowed    0x2               .\CortexM3\ARM_GCC_541\Debug\main.o
 errno               0x4               c:/program files (x86)/cypress/psoc creator/4.2/psoc creator/import/gnu/arm/5.4.1/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m\libg_nano.a(lib_a-reent.o)
+M2_BD               0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 output              0x20              .\CortexM3\ARM_GCC_541\Debug\main.o
 desiredOrientation  0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 moveForwardAllowed  0x2               .\CortexM3\ARM_GCC_541\Debug\main.o
@@ -189,21 +190,30 @@ pathPastBlock       0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 driveStraightEnable
                     0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 colour_output       0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
+motor1Enable        0x2               .\CortexM3\ARM_GCC_541\Debug\main.o
 ambient_green       0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
 ambient_white       0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
 moveBackwardAllowed
                     0x2               .\CortexM3\ARM_GCC_541\Debug\main.o
 ADC_CountsPerVolt   0x4               .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC.o)
 ambient_red         0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
+M1_BD               0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 pathToPucks         0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 test_blue           0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
+M1_FD               0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 puckPileLocation    0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 ambient_blue        0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
 pd_voltage          0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
+motor2Enable        0x2               .\CortexM3\ARM_GCC_541\Debug\main.o
 stored              0x24              .\CortexM3\ARM_GCC_541\Debug\colour.o
+motor1EncoderCounts
+                    0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 moveLeftAllowed     0x2               .\CortexM3\ARM_GCC_541\Debug\main.o
+motor2EncoderCounts
+                    0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 dieTemperature      0x2               .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyFlash.o)
 desiredPosition     0x8               .\CortexM3\ARM_GCC_541\Debug\main.o
+M2_FD               0x4               .\CortexM3\ARM_GCC_541\Debug\main.o
 test_green          0x4               .\CortexM3\ARM_GCC_541\Debug\colour.o
 
 Discarded input sections
@@ -2141,7 +2151,7 @@ END GROUP
                 0x00006bf0        0x4 LONG 0x6c00 __cy_region_init_ram
                 0x00006bf4        0x4 LONG 0x1fff80c8 __cy_region_start_data
                 0x00006bf8        0x4 LONG 0xe8 __cy_region_init_size_ram
-                0x00006bfc        0x4 LONG 0x188 __cy_region_zero_size_ram
+                0x00006bfc        0x4 LONG 0x1a0 __cy_region_zero_size_ram
                 0x00006c00                __cy_regions_end = .
                 0x00006c00                . = ALIGN (0x8)
                 0x00006c00                _etext = .
@@ -2202,7 +2212,7 @@ END GROUP
 .igot.plt       0x1fff81b0        0x0 load address 0x00006ce8
  .igot.plt      0x1fff81b0        0x0 c:/program files (x86)/cypress/psoc creator/4.2/psoc creator/import/gnu/arm/5.4.1/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/crtbegin.o
 
-.bss            0x1fff81b0      0x188 load address 0x00006ce8
+.bss            0x1fff81b0      0x1a0 load address 0x00006ce8
                 0x1fff81b0                PROVIDE (__bss_start__, .)
  *(.shbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
@@ -2273,52 +2283,59 @@ END GROUP
                 0x1fff8288        0x4 c:/program files (x86)/cypress/psoc creator/4.2/psoc creator/import/gnu/arm/5.4.1/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m\libg_nano.a(lib_a-nano-mallocr.o)
                 0x1fff8288                __malloc_free_list
  *(COMMON)
- COMMON         0x1fff828c       0x4c .\CortexM3\ARM_GCC_541\Debug\main.o
+ COMMON         0x1fff828c       0x68 .\CortexM3\ARM_GCC_541\Debug\main.o
                 0x1fff828c                moveRightAllowed
-                0x1fff8290                output
-                0x1fff82b0                desiredOrientation
-                0x1fff82b4                moveForwardAllowed
-                0x1fff82b8                pathPastBlock
-                0x1fff82bc                driveStraightEnable
-                0x1fff82c0                moveBackwardAllowed
-                0x1fff82c4                pathToPucks
-                0x1fff82c8                puckPileLocation
-                0x1fff82cc                moveLeftAllowed
-                0x1fff82d0                desiredPosition
- COMMON         0x1fff82d8       0x54 .\CortexM3\ARM_GCC_541\Debug\colour.o
-                0x1fff82d8                test_white
-                0x1fff82dc                test_red
-                0x1fff82e0                ambient_current
-                0x1fff82e4                input_current
-                0x1fff82e8                colour_output
-                0x1fff82ec                ambient_green
-                0x1fff82f0                ambient_white
-                0x1fff82f4                ambient_red
-                0x1fff82f8                test_blue
-                0x1fff82fc                ambient_blue
-                0x1fff8300                pd_voltage
-                0x1fff8304                stored
-                0x1fff8328                test_green
- COMMON         0x1fff832c        0x4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC.o)
-                0x1fff832c                ADC_CountsPerVolt
- COMMON         0x1fff8330        0x4 c:/program files (x86)/cypress/psoc creator/4.2/psoc creator/import/gnu/arm/5.4.1/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m\libg_nano.a(lib_a-reent.o)
-                0x1fff8330                errno
-                0x1fff8338                . = ALIGN (0x8)
- *fill*         0x1fff8334        0x4 
+                0x1fff8290                M2_BD
+                0x1fff8294                output
+                0x1fff82b4                desiredOrientation
+                0x1fff82b8                moveForwardAllowed
+                0x1fff82bc                pathPastBlock
+                0x1fff82c0                driveStraightEnable
+                0x1fff82c4                motor1Enable
+                0x1fff82c6                moveBackwardAllowed
+                0x1fff82c8                M1_BD
+                0x1fff82cc                pathToPucks
+                0x1fff82d0                M1_FD
+                0x1fff82d4                puckPileLocation
+                0x1fff82d8                motor2Enable
+                0x1fff82dc                motor1EncoderCounts
+                0x1fff82e0                moveLeftAllowed
+                0x1fff82e4                motor2EncoderCounts
+                0x1fff82e8                desiredPosition
+                0x1fff82f0                M2_FD
+ COMMON         0x1fff82f4       0x54 .\CortexM3\ARM_GCC_541\Debug\colour.o
+                0x1fff82f4                test_white
+                0x1fff82f8                test_red
+                0x1fff82fc                ambient_current
+                0x1fff8300                input_current
+                0x1fff8304                colour_output
+                0x1fff8308                ambient_green
+                0x1fff830c                ambient_white
+                0x1fff8310                ambient_red
+                0x1fff8314                test_blue
+                0x1fff8318                ambient_blue
+                0x1fff831c                pd_voltage
+                0x1fff8320                stored
+                0x1fff8344                test_green
+ COMMON         0x1fff8348        0x4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC.o)
+                0x1fff8348                ADC_CountsPerVolt
+ COMMON         0x1fff834c        0x4 c:/program files (x86)/cypress/psoc creator/4.2/psoc creator/import/gnu/arm/5.4.1/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m\libg_nano.a(lib_a-reent.o)
+                0x1fff834c                errno
+                0x1fff8350                . = ALIGN (0x8)
  *(.ram.b)
-                0x1fff8338                _end = .
-                0x1fff8338                __end = .
-                0x1fff8338                PROVIDE (end, .)
-                0x1fff8338                PROVIDE (__bss_end__, .)
+                0x1fff8350                _end = .
+                0x1fff8350                __end = .
+                0x1fff8350                PROVIDE (end, .)
+                0x1fff8350                PROVIDE (__bss_end__, .)
                 0x00006c00                __cy_region_init_ram = LOADADDR (.data)
                 0x000000e8                __cy_region_init_size_ram = (_edata - ADDR (.data))
-                0x00000188                __cy_region_zero_size_ram = (_end - _edata)
+                0x000001a0                __cy_region_zero_size_ram = (_end - _edata)
 
-.heap           0x1fff8338      0x200 load address 0x00006ce8
-                0x1fff8338                . = _end
-                0x1fff8538                . = (. + 0x200)
- *fill*         0x1fff8338      0x200 
-                0x1fff8538                __cy_heap_limit = .
+.heap           0x1fff8350      0x200 load address 0x00006ce8
+                0x1fff8350                . = _end
+                0x1fff8550                . = (. + 0x200)
+ *fill*         0x1fff8350      0x200 
+                0x1fff8550                __cy_heap_limit = .
 
 .stack          0x20007800      0x800
                 0x20007800                __cy_stack_limit = .
@@ -2482,101 +2499,101 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0xab7c
+.debug_info     0x00000000     0xadb6
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000      0x8ee .\CortexM3\ARM_GCC_541\Debug\main.o
- .debug_info    0x000008ee      0x61a .\CortexM3\ARM_GCC_541\Debug\colour.o
- .debug_info    0x00000f08      0x5b7 .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o
- .debug_info    0x000014bf      0xc12 .\CortexM3\ARM_GCC_541\Debug\dcmotor.o
- .debug_info    0x000020d1      0x47a .\CortexM3\ARM_GCC_541\Debug\servo.o
- .debug_info    0x0000254b      0x19d .\CortexM3\ARM_GCC_541\Debug\customMath.o
- .debug_info    0x000026e8      0x640 .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o
- .debug_info    0x00002d28      0x139 .\CortexM3\ARM_GCC_541\Debug\cymetadata.o
- .debug_info    0x00002e61      0x3bb .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o
- .debug_info    0x0000321c      0x1d6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(TIA_1.o)
- .debug_info    0x000033f2     0x1374 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyLib.o)
- .debug_info    0x00004766      0xa2a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(cyPm.o)
- .debug_info    0x00005190      0x60c .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1.o)
- .debug_info    0x0000579c      0x283 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1_IntClock.o)
- .debug_info    0x00005a1f      0xb94 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC.o)
- .debug_info    0x000065b3       0xd3 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_INT.o)
- .debug_info    0x00006686      0x283 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_Ext_CP_Clk.o)
- .debug_info    0x00006909      0x2c4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_theACLK.o)
- .debug_info    0x00006bcd      0x20a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(IDAC8_1.o)
- .debug_info    0x00006dd7      0x328 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Timer_1.o)
- .debug_info    0x000070ff      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_1.o)
- .debug_info    0x0000721e      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_2.o)
- .debug_info    0x0000733d      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_3.o)
- .debug_info    0x0000745c      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_4.o)
- .debug_info    0x0000757b      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_5.o)
- .debug_info    0x0000769a       0xd6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Ultrasonic_Mux_Control.o)
- .debug_info    0x00007770      0x3a0 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_driver.o)
- .debug_info    0x00007b10      0x3a0 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_driver.o)
- .debug_info    0x00007eb0      0x344 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_Encoder_Counts.o)
- .debug_info    0x000081f4      0x344 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_Encoder_Counts.o)
- .debug_info    0x00008538      0x281 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM.o)
- .debug_info    0x000087b9      0x153 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM_PM.o)
- .debug_info    0x0000890c      0x281 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM.o)
- .debug_info    0x00008b8d      0x153 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM_PM.o)
- .debug_info    0x00008ce0       0xd6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_led.o)
- .debug_info    0x00008db6       0xd6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_photodiode.o)
- .debug_info    0x00008e8c      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Start.o)
- .debug_info    0x0000915e      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Sonic.o)
- .debug_info    0x00009430      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_1_Interrupt.o)
- .debug_info    0x00009702      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_2_Interrupt.o)
- .debug_info    0x000099d4      0x291 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Timer.o)
- .debug_info    0x00009c65      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Interrupt.o)
- .debug_info    0x00009f37       0xa8 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyBootAsmGnu.o)
- .debug_info    0x00009fdf      0x64d .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyFlash.o)
- .debug_info    0x0000a62c      0x550 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CySpc.o)
+ .debug_info    0x00000000      0x960 .\CortexM3\ARM_GCC_541\Debug\main.o
+ .debug_info    0x00000960      0x6a2 .\CortexM3\ARM_GCC_541\Debug\colour.o
+ .debug_info    0x00001002      0x63f .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o
+ .debug_info    0x00001641      0xc42 .\CortexM3\ARM_GCC_541\Debug\dcmotor.o
+ .debug_info    0x00002283      0x502 .\CortexM3\ARM_GCC_541\Debug\servo.o
+ .debug_info    0x00002785      0x19d .\CortexM3\ARM_GCC_541\Debug\customMath.o
+ .debug_info    0x00002922      0x640 .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o
+ .debug_info    0x00002f62      0x139 .\CortexM3\ARM_GCC_541\Debug\cymetadata.o
+ .debug_info    0x0000309b      0x3bb .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o
+ .debug_info    0x00003456      0x1d6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(TIA_1.o)
+ .debug_info    0x0000362c     0x1374 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyLib.o)
+ .debug_info    0x000049a0      0xa2a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(cyPm.o)
+ .debug_info    0x000053ca      0x60c .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1.o)
+ .debug_info    0x000059d6      0x283 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1_IntClock.o)
+ .debug_info    0x00005c59      0xb94 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC.o)
+ .debug_info    0x000067ed       0xd3 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_INT.o)
+ .debug_info    0x000068c0      0x283 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_Ext_CP_Clk.o)
+ .debug_info    0x00006b43      0x2c4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_theACLK.o)
+ .debug_info    0x00006e07      0x20a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(IDAC8_1.o)
+ .debug_info    0x00007011      0x328 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Timer_1.o)
+ .debug_info    0x00007339      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_1.o)
+ .debug_info    0x00007458      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_2.o)
+ .debug_info    0x00007577      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_3.o)
+ .debug_info    0x00007696      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_4.o)
+ .debug_info    0x000077b5      0x11f .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_5.o)
+ .debug_info    0x000078d4       0xd6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Ultrasonic_Mux_Control.o)
+ .debug_info    0x000079aa      0x3a0 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_driver.o)
+ .debug_info    0x00007d4a      0x3a0 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_driver.o)
+ .debug_info    0x000080ea      0x344 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_Encoder_Counts.o)
+ .debug_info    0x0000842e      0x344 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_Encoder_Counts.o)
+ .debug_info    0x00008772      0x281 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM.o)
+ .debug_info    0x000089f3      0x153 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM_PM.o)
+ .debug_info    0x00008b46      0x281 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM.o)
+ .debug_info    0x00008dc7      0x153 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM_PM.o)
+ .debug_info    0x00008f1a       0xd6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_led.o)
+ .debug_info    0x00008ff0       0xd6 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_photodiode.o)
+ .debug_info    0x000090c6      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Start.o)
+ .debug_info    0x00009398      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Sonic.o)
+ .debug_info    0x0000966a      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_1_Interrupt.o)
+ .debug_info    0x0000993c      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_2_Interrupt.o)
+ .debug_info    0x00009c0e      0x291 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Timer.o)
+ .debug_info    0x00009e9f      0x2d2 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Interrupt.o)
+ .debug_info    0x0000a171       0xa8 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyBootAsmGnu.o)
+ .debug_info    0x0000a219      0x64d .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyFlash.o)
+ .debug_info    0x0000a866      0x550 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CySpc.o)
 
-.debug_abbrev   0x00000000     0x3302
+.debug_abbrev   0x00000000     0x32f1
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x155 .\CortexM3\ARM_GCC_541\Debug\main.o
- .debug_abbrev  0x00000155      0x15a .\CortexM3\ARM_GCC_541\Debug\colour.o
- .debug_abbrev  0x000002af      0x156 .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o
- .debug_abbrev  0x00000405      0x1e9 .\CortexM3\ARM_GCC_541\Debug\dcmotor.o
- .debug_abbrev  0x000005ee      0x12b .\CortexM3\ARM_GCC_541\Debug\servo.o
- .debug_abbrev  0x00000719       0xa1 .\CortexM3\ARM_GCC_541\Debug\customMath.o
- .debug_abbrev  0x000007ba      0x20d .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o
- .debug_abbrev  0x000009c7       0x77 .\CortexM3\ARM_GCC_541\Debug\cymetadata.o
- .debug_abbrev  0x00000a3e      0x1e8 .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o
- .debug_abbrev  0x00000c26       0xf7 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(TIA_1.o)
- .debug_abbrev  0x00000d1d      0x254 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyLib.o)
- .debug_abbrev  0x00000f71      0x1ab .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(cyPm.o)
- .debug_abbrev  0x0000111c      0x175 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1.o)
- .debug_abbrev  0x00001291      0x139 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1_IntClock.o)
- .debug_abbrev  0x000013ca      0x1eb .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC.o)
- .debug_abbrev  0x000015b5       0x42 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_INT.o)
- .debug_abbrev  0x000015f7      0x139 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_Ext_CP_Clk.o)
- .debug_abbrev  0x00001730      0x121 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_theACLK.o)
- .debug_abbrev  0x00001851      0x106 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(IDAC8_1.o)
- .debug_abbrev  0x00001957      0x13a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Timer_1.o)
- .debug_abbrev  0x00001a91       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_1.o)
- .debug_abbrev  0x00001b21       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_2.o)
- .debug_abbrev  0x00001bb1       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_3.o)
- .debug_abbrev  0x00001c41       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_4.o)
- .debug_abbrev  0x00001cd1       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_5.o)
- .debug_abbrev  0x00001d61       0x81 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Ultrasonic_Mux_Control.o)
- .debug_abbrev  0x00001de2      0x133 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_driver.o)
- .debug_abbrev  0x00001f15      0x133 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_driver.o)
- .debug_abbrev  0x00002048      0x117 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_Encoder_Counts.o)
- .debug_abbrev  0x0000215f      0x117 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_Encoder_Counts.o)
- .debug_abbrev  0x00002276      0x12d .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM.o)
- .debug_abbrev  0x000023a3       0xc4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM_PM.o)
- .debug_abbrev  0x00002467      0x12d .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM.o)
- .debug_abbrev  0x00002594       0xc4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM_PM.o)
- .debug_abbrev  0x00002658       0x81 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_led.o)
- .debug_abbrev  0x000026d9       0x81 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_photodiode.o)
- .debug_abbrev  0x0000275a      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Start.o)
- .debug_abbrev  0x000028cd      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Sonic.o)
- .debug_abbrev  0x00002a40      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_1_Interrupt.o)
- .debug_abbrev  0x00002bb3      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_2_Interrupt.o)
- .debug_abbrev  0x00002d26      0x11a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Timer.o)
- .debug_abbrev  0x00002e40      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Interrupt.o)
- .debug_abbrev  0x00002fb3       0x14 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyBootAsmGnu.o)
- .debug_abbrev  0x00002fc7      0x1a7 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyFlash.o)
- .debug_abbrev  0x0000316e      0x194 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CySpc.o)
+ .debug_abbrev  0x00000000      0x144 .\CortexM3\ARM_GCC_541\Debug\main.o
+ .debug_abbrev  0x00000144      0x15a .\CortexM3\ARM_GCC_541\Debug\colour.o
+ .debug_abbrev  0x0000029e      0x156 .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o
+ .debug_abbrev  0x000003f4      0x1e9 .\CortexM3\ARM_GCC_541\Debug\dcmotor.o
+ .debug_abbrev  0x000005dd      0x12b .\CortexM3\ARM_GCC_541\Debug\servo.o
+ .debug_abbrev  0x00000708       0xa1 .\CortexM3\ARM_GCC_541\Debug\customMath.o
+ .debug_abbrev  0x000007a9      0x20d .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o
+ .debug_abbrev  0x000009b6       0x77 .\CortexM3\ARM_GCC_541\Debug\cymetadata.o
+ .debug_abbrev  0x00000a2d      0x1e8 .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o
+ .debug_abbrev  0x00000c15       0xf7 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(TIA_1.o)
+ .debug_abbrev  0x00000d0c      0x254 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyLib.o)
+ .debug_abbrev  0x00000f60      0x1ab .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(cyPm.o)
+ .debug_abbrev  0x0000110b      0x175 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1.o)
+ .debug_abbrev  0x00001280      0x139 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(UART_1_IntClock.o)
+ .debug_abbrev  0x000013b9      0x1eb .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC.o)
+ .debug_abbrev  0x000015a4       0x42 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_INT.o)
+ .debug_abbrev  0x000015e6      0x139 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_Ext_CP_Clk.o)
+ .debug_abbrev  0x0000171f      0x121 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(ADC_theACLK.o)
+ .debug_abbrev  0x00001840      0x106 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(IDAC8_1.o)
+ .debug_abbrev  0x00001946      0x13a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Timer_1.o)
+ .debug_abbrev  0x00001a80       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_1.o)
+ .debug_abbrev  0x00001b10       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_2.o)
+ .debug_abbrev  0x00001ba0       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_3.o)
+ .debug_abbrev  0x00001c30       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_4.o)
+ .debug_abbrev  0x00001cc0       0x90 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Trigger_5.o)
+ .debug_abbrev  0x00001d50       0x81 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Ultrasonic_Mux_Control.o)
+ .debug_abbrev  0x00001dd1      0x133 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_driver.o)
+ .debug_abbrev  0x00001f04      0x133 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_driver.o)
+ .debug_abbrev  0x00002037      0x117 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_2_Encoder_Counts.o)
+ .debug_abbrev  0x0000214e      0x117 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Motor_1_Encoder_Counts.o)
+ .debug_abbrev  0x00002265      0x12d .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM.o)
+ .debug_abbrev  0x00002392       0xc4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Gripper_Servo_PWM_PM.o)
+ .debug_abbrev  0x00002456      0x12d .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM.o)
+ .debug_abbrev  0x00002583       0xc4 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Rack_Servo_PWM_PM.o)
+ .debug_abbrev  0x00002647       0x81 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_led.o)
+ .debug_abbrev  0x000026c8       0x81 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(control_photodiode.o)
+ .debug_abbrev  0x00002749      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Start.o)
+ .debug_abbrev  0x000028bc      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Sonic.o)
+ .debug_abbrev  0x00002a2f      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_1_Interrupt.o)
+ .debug_abbrev  0x00002ba2      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Encoder_Counts_2_Interrupt.o)
+ .debug_abbrev  0x00002d15      0x11a .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Timer.o)
+ .debug_abbrev  0x00002e2f      0x173 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(Drift_Check_Interrupt.o)
+ .debug_abbrev  0x00002fa2       0x14 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyBootAsmGnu.o)
+ .debug_abbrev  0x00002fb6      0x1a7 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CyFlash.o)
+ .debug_abbrev  0x0000315d      0x194 .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a(CySpc.o)
 
 .debug_line     0x00000000     0x4d8b
  *(.debug_line)
@@ -2712,16 +2729,16 @@ END GROUP
 
 .debug_str      0x00000000     0x446a
  *(.debug_str)
- .debug_str     0x00000000      0x7d7 .\CortexM3\ARM_GCC_541\Debug\main.o
-                                0x826 (size before relaxing)
- .debug_str     0x000007d7      0x12b .\CortexM3\ARM_GCC_541\Debug\colour.o
-                                0x438 (size before relaxing)
- .debug_str     0x00000902      0x182 .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o
-                                0x4b3 (size before relaxing)
- .debug_str     0x00000a84      0x338 .\CortexM3\ARM_GCC_541\Debug\dcmotor.o
+ .debug_str     0x00000000      0x809 .\CortexM3\ARM_GCC_541\Debug\main.o
+                                0x858 (size before relaxing)
+ .debug_str     0x00000809      0x12b .\CortexM3\ARM_GCC_541\Debug\colour.o
+                                0x492 (size before relaxing)
+ .debug_str     0x00000934      0x182 .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o
+                                0x50d (size before relaxing)
+ .debug_str     0x00000ab6      0x306 .\CortexM3\ARM_GCC_541\Debug\dcmotor.o
                                 0x75b (size before relaxing)
  .debug_str     0x00000dbc       0xd5 .\CortexM3\ARM_GCC_541\Debug\servo.o
-                                0x405 (size before relaxing)
+                                0x45f (size before relaxing)
  .debug_str     0x00000e91       0x26 .\CortexM3\ARM_GCC_541\Debug\customMath.o
                                 0x223 (size before relaxing)
  .debug_str     0x00000eb7      0x1aa .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o
