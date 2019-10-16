@@ -1,0 +1,5121 @@
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.TIH,"ax",%progbits
+  20              		.align	2
+  21              		.global	TIH
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	TIH, %function
+  25              	TIH:
+  26              	.LFB64:
+  27              		.file 1 "main.c"
+   1:main.c        **** 
+   2:main.c        **** /* ========================================
+   3:main.c        ****  *
+   4:main.c        ****  * Copyright Group 17, 2019
+   5:main.c        ****  * All Rights Reserved
+   6:main.c        ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   7:main.c        ****  *
+   8:main.c        ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   9:main.c        ****  * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
+  10:main.c        ****  *
+  11:main.c        ****  * ========================================
+  12:main.c        **** */
+  13:main.c        **** 
+  14:main.c        **** // * PSOC LIBRARY * //
+  15:main.c        **** #include "project.h"
+  16:main.c        **** 
+  17:main.c        **** // * C LIBRARIES * // 
+  18:main.c        **** #include <stdio.h>
+  19:main.c        **** #include <math.h>
+  20:main.c        **** 
+  21:main.c        **** // * OUR LIBRARIES * //
+  22:main.c        **** #include "main.h"
+  23:main.c        **** #include "colour.h"
+  24:main.c        **** #include "ultrasonic.h" 
+  25:main.c        **** #include "dcmotor.h"
+  26:main.c        **** #include "servo.h"
+  27:main.c        **** #include "mishamotor.h"
+  28:main.c        **** #include "customMath.h"
+  29:main.c        **** 
+  30:main.c        **** 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 2
+
+
+  31:main.c        **** extern char output[32];   
+  32:main.c        **** 
+  33:main.c        **** // * STATE VARIABLES * //
+  34:main.c        **** int state = STATE_SCAN_PLAN;
+  35:main.c        **** int running = 1;
+  36:main.c        **** int sweeping = 0;
+  37:main.c        **** float block_edge_location[4] = {0,0,0,0}; // N E S W edge positions respectively
+  38:main.c        **** 
+  39:main.c        **** // * PUCK CONSTRUCTION VARIABLES * //
+  40:main.c        **** int currentPuckStackSize = 0; // How many pucks are currently on the construction plate
+  41:main.c        **** int puckRackColours[5] = {BLANK,BLANK,BLANK,BLANK,BLANK}; // 5 slots in puck rack.
+  42:main.c        **** int puckConstructionPlan[3] = {BLANK,BLANK,BLANK};
+  43:main.c        **** int currentPuckRackScanningIndex = 0;
+  44:main.c        **** int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
+  45:main.c        ****                                 PUCK_RACK_1_WEST_DISTANCE,
+  46:main.c        ****                                 PUCK_RACK_2_WEST_DISTANCE,
+  47:main.c        ****                                 PUCK_RACK_3_WEST_DISTANCE,
+  48:main.c        ****                                 PUCK_RACK_4_WEST_DISTANCE };
+  49:main.c        **** 
+  50:main.c        **** float horizontalPuckGrid = 0;
+  51:main.c        **** 
+  52:main.c        **** // * NAVIGATION AND POSITION VARIABLES * //
+  53:main.c        **** 
+  54:main.c        **** int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
+  55:main.c        **** 
+  56:main.c        **** int pathToPucks; // This will give us a corridor that we should initially take when trying to go to
+  57:main.c        **** int pathPastBlock;
+  58:main.c        **** 
+  59:main.c        **** float currentPosition[2] = {0,0};
+  60:main.c        **** float desiredPosition[2];
+  61:main.c        **** int currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start fa
+  62:main.c        **** int desiredOrientation;
+  63:main.c        **** 
+  64:main.c        **** short int moveNow = 1; //This is a flag that lets the main program tell the moving functions
+  65:main.c        **** //whethe we want the robot to be moving or not. For example, when we need to operate servos
+  66:main.c        **** //the main program would set moveNow to FALSE.
+  67:main.c        **** 
+  68:main.c        **** //The four flags below let the rest of the program know if the robot is trying to drive 
+  69:main.c        **** //forward or back, turn left or right. At the start of every motion, turn these flags on
+  70:main.c        **** //at the end turn them off.
+  71:main.c        **** short int drivingForwardFlag = 0;
+  72:main.c        **** short int drivingBackwardFlag = 0;
+  73:main.c        **** short int turningLeftFlag = 0;
+  74:main.c        **** short int turningRightFlag = 0;
+  75:main.c        **** 
+  76:main.c        **** //These flags will be used by the main program to allow the robot to move in certain directions
+  77:main.c        **** short int moveLeftAllowed;
+  78:main.c        **** short int moveRightAllowed;
+  79:main.c        **** short int moveForwardAllowed;
+  80:main.c        **** short int moveBackwardAllowed;
+  81:main.c        **** 
+  82:main.c        **** 
+  83:main.c        **** // * COLOUR VARIABLES * //
+  84:main.c        **** 
+  85:main.c        **** int idac_value = 0;  
+  86:main.c        **** int colour_flag = 1;                    // sets which photodiode to use 
+  87:main.c        **** int colour_sensing_algorithm = 0;      // Determines which colour sensing algorithm to use:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 3
+
+
+  88:main.c        ****                                                 // 0: Wall algorithm
+  89:main.c        ****                                             // 1: Claw algorithm
+  90:main.c        ****                                                 // 2: old algorithm
+  91:main.c        **** 
+  92:main.c        **** int moving = 0; // Temp to stop while loop from repeated runs of scanning plan code
+  93:main.c        **** 
+  94:main.c        **** const int PLAN_SCAN_VERTICAL = 10; // Set to ultrasonic distance at the home base 
+  95:main.c        **** 
+  96:main.c        **** int current_stage = 1;      // There are 3 stages, we start at 1
+  97:main.c        **** 
+  98:main.c        **** 
+  99:main.c        **** // * INTERRUPT HANDLING * // 
+ 100:main.c        **** CY_ISR(TIH)                             // Ultrasonic ISR Definition
+ 101:main.c        **** {
+  28              		.loc 1 101 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+ 102:main.c        ****     ultrasonicInterruptHandler();
+  36              		.loc 1 102 0
+  37 0002 FFF7FEFF 		bl	ultrasonicInterruptHandler
+  38              	.LVL0:
+  39 0006 08BD     		pop	{r3, pc}
+  40              		.cfi_endproc
+  41              	.LFE64:
+  42              		.size	TIH, .-TIH
+  43              		.section	.text.StartIH,"ax",%progbits
+  44              		.align	2
+  45              		.global	StartIH
+  46              		.thumb
+  47              		.thumb_func
+  48              		.type	StartIH, %function
+  49              	StartIH:
+  50              	.LFB65:
+ 103:main.c        **** }
+ 104:main.c        **** 
+ 105:main.c        **** CY_ISR(StartIH)                             // Ultrasonic ISR Definition
+ 106:main.c        **** {
+  51              		.loc 1 106 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55 0000 08B5     		push	{r3, lr}
+  56              		.cfi_def_cfa_offset 8
+  57              		.cfi_offset 3, -8
+  58              		.cfi_offset 14, -4
+ 107:main.c        ****     CyDelay(100);
+  59              		.loc 1 107 0
+  60 0002 6420     		movs	r0, #100
+  61 0004 FFF7FEFF 		bl	CyDelay
+  62              	.LVL1:
+ 108:main.c        ****     
+ 109:main.c        ****     beginNavigation = 1;
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 4
+
+
+  63              		.loc 1 109 0
+  64 0008 0122     		movs	r2, #1
+  65 000a 034B     		ldr	r3, .L5
+  66 000c 1A60     		str	r2, [r3]
+ 110:main.c        ****     colour_flag = 0; 
+  67              		.loc 1 110 0
+  68 000e 0022     		movs	r2, #0
+  69 0010 024B     		ldr	r3, .L5+4
+  70 0012 1A60     		str	r2, [r3]
+  71 0014 08BD     		pop	{r3, pc}
+  72              	.L6:
+  73 0016 00BF     		.align	2
+  74              	.L5:
+  75 0018 00000000 		.word	.LANCHOR0
+  76 001c 00000000 		.word	.LANCHOR1
+  77              		.cfi_endproc
+  78              	.LFE65:
+  79              		.size	StartIH, .-StartIH
+  80              		.section	.text.Encoder_Counts_1_IH,"ax",%progbits
+  81              		.align	2
+  82              		.global	Encoder_Counts_1_IH
+  83              		.thumb
+  84              		.thumb_func
+  85              		.type	Encoder_Counts_1_IH, %function
+  86              	Encoder_Counts_1_IH:
+  87              	.LFB66:
+ 111:main.c        **** }
+ 112:main.c        ****  
+ 113:main.c        **** //Interrupt service routines for dcmotor function
+ 114:main.c        **** CY_ISR(Encoder_Counts_1_IH){
+  88              		.loc 1 114 0
+  89              		.cfi_startproc
+  90              		@ args = 0, pretend = 0, frame = 0
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+  92 0000 08B5     		push	{r3, lr}
+  93              		.cfi_def_cfa_offset 8
+  94              		.cfi_offset 3, -8
+  95              		.cfi_offset 14, -4
+ 115:main.c        ****     stopMotor1AndUpdate();
+  96              		.loc 1 115 0
+  97 0002 FFF7FEFF 		bl	stopMotor1AndUpdate
+  98              	.LVL2:
+  99 0006 08BD     		pop	{r3, pc}
+ 100              		.cfi_endproc
+ 101              	.LFE66:
+ 102              		.size	Encoder_Counts_1_IH, .-Encoder_Counts_1_IH
+ 103              		.section	.text.Encoder_Counts_2_IH,"ax",%progbits
+ 104              		.align	2
+ 105              		.global	Encoder_Counts_2_IH
+ 106              		.thumb
+ 107              		.thumb_func
+ 108              		.type	Encoder_Counts_2_IH, %function
+ 109              	Encoder_Counts_2_IH:
+ 110              	.LFB67:
+ 116:main.c        **** }
+ 117:main.c        **** 
+ 118:main.c        **** CY_ISR(Encoder_Counts_2_IH){
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 5
+
+
+ 111              		.loc 1 118 0
+ 112              		.cfi_startproc
+ 113              		@ args = 0, pretend = 0, frame = 0
+ 114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115 0000 08B5     		push	{r3, lr}
+ 116              		.cfi_def_cfa_offset 8
+ 117              		.cfi_offset 3, -8
+ 118              		.cfi_offset 14, -4
+ 119:main.c        ****     stopMotor2AndUpdate();
+ 119              		.loc 1 119 0
+ 120 0002 FFF7FEFF 		bl	stopMotor2AndUpdate
+ 121              	.LVL3:
+ 122 0006 08BD     		pop	{r3, pc}
+ 123              		.cfi_endproc
+ 124              	.LFE67:
+ 125              		.size	Encoder_Counts_2_IH, .-Encoder_Counts_2_IH
+ 126              		.section	.text.Drift_Check_IH,"ax",%progbits
+ 127              		.align	2
+ 128              		.global	Drift_Check_IH
+ 129              		.thumb
+ 130              		.thumb_func
+ 131              		.type	Drift_Check_IH, %function
+ 132              	Drift_Check_IH:
+ 133              	.LFB68:
+ 120:main.c        **** }
+ 121:main.c        **** 
+ 122:main.c        **** CY_ISR(Drift_Check_IH){    
+ 134              		.loc 1 122 0
+ 135              		.cfi_startproc
+ 136              		@ args = 0, pretend = 0, frame = 0
+ 137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 138 0000 08B5     		push	{r3, lr}
+ 139              		.cfi_def_cfa_offset 8
+ 140              		.cfi_offset 3, -8
+ 141              		.cfi_offset 14, -4
+ 123:main.c        ****     Drift_Check_Timer_ReadStatusRegister(); //Clears the interrupt
+ 142              		.loc 1 123 0
+ 143 0002 FFF7FEFF 		bl	Drift_Check_Timer_ReadStatusRegister
+ 144              	.LVL4:
+ 124:main.c        ****     Drift_Check_Timer_Stop(); //Stops the timer
+ 145              		.loc 1 124 0
+ 146 0006 FFF7FEFF 		bl	Drift_Check_Timer_Stop
+ 147              	.LVL5:
+ 125:main.c        ****     motor1EncoderCounts = Motor_1_Encoder_Counts_ReadCounter();
+ 148              		.loc 1 125 0
+ 149 000a FFF7FEFF 		bl	Motor_1_Encoder_Counts_ReadCounter
+ 150              	.LVL6:
+ 151 000e 044B     		ldr	r3, .L13
+ 152 0010 1860     		str	r0, [r3]
+ 126:main.c        ****     motor2EncoderCounts = Motor_2_Encoder_Counts_ReadCounter();
+ 153              		.loc 1 126 0
+ 154 0012 FFF7FEFF 		bl	Motor_2_Encoder_Counts_ReadCounter
+ 155              	.LVL7:
+ 156 0016 034B     		ldr	r3, .L13+4
+ 157 0018 1860     		str	r0, [r3]
+ 127:main.c        ****     driftCorrect(); //Does checking
+ 158              		.loc 1 127 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 6
+
+
+ 159 001a FFF7FEFF 		bl	driftCorrect
+ 160              	.LVL8:
+ 161 001e 08BD     		pop	{r3, pc}
+ 162              	.L14:
+ 163              		.align	2
+ 164              	.L13:
+ 165 0020 00000000 		.word	motor1EncoderCounts
+ 166 0024 00000000 		.word	motor2EncoderCounts
+ 167              		.cfi_endproc
+ 168              	.LFE68:
+ 169              		.size	Drift_Check_IH, .-Drift_Check_IH
+ 170              		.section	.text.armMoving,"ax",%progbits
+ 171              		.align	2
+ 172              		.global	armMoving
+ 173              		.thumb
+ 174              		.thumb_func
+ 175              		.type	armMoving, %function
+ 176              	armMoving:
+ 177              	.LFB70:
+ 128:main.c        **** }
+ 129:main.c        **** 
+ 130:main.c        **** 
+ 131:main.c        **** int main(void)
+ 132:main.c        **** {
+ 133:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 134:main.c        **** 
+ 135:main.c        ****     
+ 136:main.c        ****     TIA_1_Start();
+ 137:main.c        ****     UART_1_Start();
+ 138:main.c        ****     UART_1_PutString("UART commencing... \n");
+ 139:main.c        ****     ADC_Start();
+ 140:main.c        ****     IDAC8_1_Start();
+ 141:main.c        ****     
+ 142:main.c        ****     // DEBUGGING:
+ 143:main.c        ****     int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
+ 144:main.c        ****     int servo_testing = FALSE;                  // Do the servos need to be tested?      
+ 145:main.c        ****     int motor_testing = FALSE;
+ 146:main.c        ****     int ultrasonic_testing = TRUE;  
+ 147:main.c        ****     
+ 148:main.c        ****     
+ 149:main.c        ****     // IDAC initialisation: 
+ 150:main.c        ****     IDAC8_1_SetRange(IDAC8_1_RANGE_32uA);       // Sets the range between 0 and 32uA
+ 151:main.c        ****     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
+ 152:main.c        ****     
+ 153:main.c        ****     // Colour Sensing Initialisation & Debugging:
+ 154:main.c        ****     colour_sensing_algorithm = 0;
+ 155:main.c        ****     control_photodiode_Write(colour_sensing_algorithm);            // controls which photodiode is 
+ 156:main.c        ****                                                 // 0: wall
+ 157:main.c        ****                                                 // 1: claw
+ 158:main.c        ****     control_led_Write(1);   CyDelay(500);  // Ensures all the RGBs are working
+ 159:main.c        ****     control_led_Write(2);   CyDelay(500);
+ 160:main.c        ****     control_led_Write(3);   CyDelay(500);
+ 161:main.c        ****     control_led_Write(0);   CyDelay(500);
+ 162:main.c        ****     colourSensingInitialise();                  // Initialises the colour sensor
+ 163:main.c        ****     
+ 164:main.c        **** 
+ 165:main.c        ****     //Servos for the arm instatination
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 7
+
+
+ 166:main.c        ****     Rack_Servo_PWM_Start();
+ 167:main.c        ****     Rack_Servo_PWM_WriteCompare(1000);          // BRINGs rack to highest position, so not to mess 
+ 168:main.c        ****     CyDelay(500);
+ 169:main.c        ****     Rack_Servo_PWM_Sleep();
+ 170:main.c        ****     
+ 171:main.c        ****     Gripper_Servo_PWM_Start();
+ 172:main.c        ****     Gripper_Servo_PWM_WriteCompare(1120);       //This is the open gripper position
+ 173:main.c        ****     CyDelay(500);
+ 174:main.c        ****     Gripper_Servo_PWM_Sleep();
+ 175:main.c        ****     
+ 176:main.c        ****     // Misha Motors Initialisation:
+ 177:main.c        ****     Motor_Left_Driver_Start();
+ 178:main.c        ****     Motor_Left_Driver_Sleep();                  // Puts motor to sleep
+ 179:main.c        ****     Motor_Right_Driver_Start();
+ 180:main.c        ****     Motor_Right_Driver_Sleep();                 // Puts motor to sleep
+ 181:main.c        ****     
+ 182:main.c        ****     Motor_Left_Decoder_Start();
+ 183:main.c        ****     Motor_Right_Decoder_Start();
+ 184:main.c        ****     
+ 185:main.c        ****     // Ultrasonic Initialisation: 
+ 186:main.c        ****     
+ 187:main.c        ****         
+ 188:main.c        ****     // Timer and ISR instantiation
+ 189:main.c        ****     Timer_1_Start();
+ 190:main.c        ****     Timer_1_ReadStatusRegister();
+ 191:main.c        ****     Sonic_StartEx(TIH);
+ 192:main.c        ****     Start_StartEx(StartIH);
+ 193:main.c        ****     beginNavigation = 0;
+ 194:main.c        ****     
+ 195:main.c        ****     //Initialising DC motors
+ 196:main.c        ****     Motor_1_driver_Start();
+ 197:main.c        ****     Motor_2_driver_Start();
+ 198:main.c        ****     motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
+ 199:main.c        ****     
+ 200:main.c        ****     
+ 201:main.c        ****     //Initialising counters
+ 202:main.c        ****     Motor_1_Encoder_Counts_Start();
+ 203:main.c        ****     Motor_2_Encoder_Counts_Start();
+ 204:main.c        ****     
+ 205:main.c        ****     //Initialising timers
+ 206:main.c        ****     Drift_Check_Timer_Start();
+ 207:main.c        ****     
+ 208:main.c        ****     //Starts and enables the interrupts for the motor encoder counts
+ 209:main.c        ****     Encoder_Counts_1_Interrupt_StartEx(Encoder_Counts_1_IH); 
+ 210:main.c        ****     Encoder_Counts_2_Interrupt_StartEx(Encoder_Counts_2_IH);
+ 211:main.c        ****     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
+ 212:main.c        **** 
+ 213:main.c        ****     // Main Loop for States
+ 214:main.c        ****         
+ 215:main.c        ****     for(;;)
+ 216:main.c        ****     {   
+ 217:main.c        ****         // Start button is pressed so quit sensing
+ 218:main.c        **** 
+ 219:main.c        ****         /*
+ 220:main.c        ****         while (beginNavigation == 0) {
+ 221:main.c        ****             distanceCheck();           
+ 222:main.c        ****             UART_1_PutString("\n");
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 8
+
+
+ 223:main.c        ****             CyDelay(1000); // Check distance once a second.
+ 224:main.c        ****                 
+ 225:main.c        ****         }
+ 226:main.c        ****         */
+ 227:main.c        ****         
+ 228:main.c        ****         
+ 229:main.c        ****         // Enter picking up puck state for the moment FOR TESTING
+ 230:main.c        ****         //colour_sensing_algorithm = 1;
+ 231:main.c        ****         //control_photodiode_Write(1);
+ 232:main.c        ****         //state = STATE_FIND_REQUIRED_PUCK;
+ 233:main.c        **** 
+ 234:main.c        ****         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been p
+ 235:main.c        ****             
+ 236:main.c        ****             // Colour Calibration: 
+ 237:main.c        ****             if (colour_calibration)
+ 238:main.c        ****             {
+ 239:main.c        ****                 int lock = FALSE;   
+ 240:main.c        ****                 do 
+ 241:main.c        ****                     {   
+ 242:main.c        ****                         if (lock == FALSE) 
+ 243:main.c        ****                         {
+ 244:main.c        ****                             
+ 245:main.c        ****                             control_photodiode_Write(1);    // Claw
+ 246:main.c        ****                             changeHeightToPuck(0);
+ 247:main.c        **** 
+ 248:main.c        ****                             UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
+ 249:main.c        ****                             for (int i = 0; i < 50; i++)
+ 250:main.c        ****                             {
+ 251:main.c        ****                             sprintf(output, "%d \t", i);
+ 252:main.c        ****                             UART_1_PutString(output);
+ 253:main.c        ****                             colourSensingCalibration(); 
+ 254:main.c        ****                             UART_1_PutString("\n");
+ 255:main.c        ****                             }         
+ 256:main.c        ****                             lock = TRUE;    
+ 257:main.c        ****                         }
+ 258:main.c        ****                 } while (lock == TRUE);    
+ 259:main.c        ****             }
+ 260:main.c        ****             
+ 261:main.c        ****             // Servo Testing:
+ 262:main.c        ****             if (servo_testing) 
+ 263:main.c        ****             {
+ 264:main.c        ****                 int lock = FALSE;
+ 265:main.c        ****                 do 
+ 266:main.c        ****                     {   
+ 267:main.c        ****                         if (lock == FALSE) 
+ 268:main.c        ****                         {
+ 269:main.c        ****                             UART_1_PutString("Servo Testing: ");
+ 270:main.c        ****                             
+ 271:main.c        ****                             armMoving();
+ 272:main.c        ****                             
+ 273:main.c        ****                             
+ 274:main.c        ****                             for(int i = 0; i < 4; i++)
+ 275:main.c        ****                             {
+ 276:main.c        ****                                 changeHeightToPuck(i);
+ 277:main.c        ****                                 CyDelay(1000);
+ 278:main.c        ****                             }
+ 279:main.c        **** 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 9
+
+
+ 280:main.c        ****                             lock = TRUE;    
+ 281:main.c        ****                         }
+ 282:main.c        ****                 } while (lock == TRUE);    
+ 283:main.c        ****             }    
+ 284:main.c        ****                 
+ 285:main.c        ****             // Motor Testing: 
+ 286:main.c        ****             if (motor_testing)
+ 287:main.c        ****             {
+ 288:main.c        ****                 int lock = FALSE;
+ 289:main.c        ****                 do 
+ 290:main.c        ****                     {   
+ 291:main.c        ****                         if (lock == FALSE) 
+ 292:main.c        ****                         {
+ 293:main.c        ****                             UART_1_PutString("Motor Testing: \n");
+ 294:main.c        **** 
+ 295:main.c        ****                             //mishaMoveForward();
+ 296:main.c        ****                             //mishaMoveBackward();
+ 297:main.c        ****                             //mishaMoveDynamic(-300);
+ 298:main.c        ****                             
+ 299:main.c        ****                             mishaSwivel(180);
+ 300:main.c        ****                             
+ 301:main.c        ****                             lock = TRUE;    
+ 302:main.c        ****                         }
+ 303:main.c        ****                 } while (lock == TRUE);    
+ 304:main.c        ****             }    
+ 305:main.c        ****             
+ 306:main.c        ****             // Ultrasonic Testing:
+ 307:main.c        ****             
+ 308:main.c        ****             if (ultrasonic_testing) 
+ 309:main.c        ****             {
+ 310:main.c        ****                 int lock = FALSE;
+ 311:main.c        ****                 do 
+ 312:main.c        ****                     {   
+ 313:main.c        ****                         if (lock == FALSE) 
+ 314:main.c        ****                         {
+ 315:main.c        ****                             UART_1_PutString("Ultrasonic Testing: ");
+ 316:main.c        ****                             
+ 317:main.c        ****                             //armMoving();
+ 318:main.c        ****                             straightAdjust();
+ 319:main.c        ****                             
+ 320:main.c        ****                             
+ 321:main.c        ****                             for(int i = 0; i < 4; i++)
+ 322:main.c        ****                             {
+ 323:main.c        ****                                 changeHeightToPuck(i);
+ 324:main.c        ****                                 CyDelay(1000);
+ 325:main.c        ****                             }
+ 326:main.c        **** 
+ 327:main.c        ****                             lock = TRUE;    
+ 328:main.c        ****                         }
+ 329:main.c        ****                 } while (lock == TRUE);    
+ 330:main.c        ****             }    
+ 331:main.c        ****             
+ 332:main.c        ****                        
+ 333:main.c        ****             // MOVEMENT TESTING:
+ 334:main.c        ****             
+ 335:main.c        ****             //mishaMoveDynamic(850);
+ 336:main.c        ****             //mishaMoveDynamic(-850);
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 10
+
+
+ 337:main.c        ****             
+ 338:main.c        ****             mishaMoveDynamic(230);
+ 339:main.c        ****             while(1) {};
+ 340:main.c        ****             
+ 341:main.c        **** 
+ 342:main.c        ****             
+ 343:main.c        ****             mishaMoveDynamic(-300);
+ 344:main.c        ****             CyDelay(500);
+ 345:main.c        ****             colourSensingInitialise();      
+ 346:main.c        ****             CyDelay(500);
+ 347:main.c        ****             mishaMoveDynamic(120);
+ 348:main.c        ****             CyDelay(500);
+ 349:main.c        ****             
+ 350:main.c        ****             for (int i = 0; i < 5; i++) {
+ 351:main.c        ****                 puckRackColours[i] = colourSensingOutput();
+ 352:main.c        ****                 CyDelay(500);
+ 353:main.c        ****                 mishaMoveDynamic(61);
+ 354:main.c        ****                 CyDelay(500);
+ 355:main.c        ****             }
+ 356:main.c        ****                        
+ 357:main.c        ****             UART_1_PutString("Found Colours: \n");
+ 358:main.c        ****             for (int i = 0; i < 5; i++) 
+ 359:main.c        ****             {
+ 360:main.c        ****                 sprintf(output, "%i \n", puckRackColours[i]);       
+ 361:main.c        ****                 UART_1_PutString(output);
+ 362:main.c        ****             }
+ 363:main.c        ****             
+ 364:main.c        ****             
+ 365:main.c        ****             control_photodiode_Write(1);    // changes to claw photodiode
+ 366:main.c        ****             colour_sensing_algorithm = 1;   // changes it to claw algorithm
+ 367:main.c        ****                        
+ 368:main.c        ****             //while(1) {}
+ 369:main.c        ****             
+ 370:main.c        ****             // THEN WE FILTER THE NO PUCK VALUES:
+ 371:main.c        ****             
+ 372:main.c        ****             
+ 373:main.c        ****             
+ 374:main.c        ****             for (int i = 0; i < 5; i++){
+ 375:main.c        ****                 if (puckRackColours[i] != BLANK && i != 3){
+ 376:main.c        ****                     puckConstructionPlan[i] = puckRackColours[i];
+ 377:main.c        ****                     i++;
+ 378:main.c        ****                 }
+ 379:main.c        ****             }
+ 380:main.c        ****                     
+ 381:main.c        ****             // MOVE into the next state: 
+ 382:main.c        ****             state = STATE_LOCATE_BLOCK_AND_PUCKS;
+ 383:main.c        ****             
+ 384:main.c        ****             /*
+ 385:main.c        ****             if (!moving){
+ 386:main.c        ****                 moving = 1;
+ 387:main.c        ****             if (initialisation){moveBackwardIndefinitely(); initialisation = 0;}
+ 388:main.c        ****             else {moveForwardIndefinitely();}        
+ 389:main.c        ****            
+ 390:main.c        ****             
+ 391:main.c        ****             moveAndAngle(SCAN_INITIALISE_HORIZONTAL,PLAN_SCAN_VERTICAL,WEST_ANGLE); // Move beyond 
+ 392:main.c        ****             
+ 393:main.c        ****             // Read the black wall
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 11
+
+
+ 394:main.c        ****             
+ 395:main.c        ****             for (currentPuckRackScanningIndex = 0; currentPuckRackScanningIndex <= 4; currentPuckRa
+ 396:main.c        ****                 moveAndAngle(puckRackOffsetsFromWest[currentPuckRackScanningIndex],PLAN_SCAN_VERTIC
+ 397:main.c        ****                 puckRackColours[currentPuckRackScanningIndex] = colourSensingOutput();
+ 398:main.c        ****             }
+ 399:main.c        **** 
+ 400:main.c        ****             
+ 401:main.c        ****             
+ 402:main.c        ****             int puckConstructionPlanIndex = 0; // Will be used to iterate through the 3 puck colour
+ 403:main.c        ****             
+ 404:main.c        ****             // Iterate over all 5 rack slots and place the 3 colours into puckConstructionPlan.
+ 405:main.c        ****             for (int puckRackIndex = 0; puckRackIndex < 5; puckRackIndex++){
+ 406:main.c        ****                 if (puckRackColours[puckRackIndex] != BLANK && puckConstructionPlanIndex != 3){
+ 407:main.c        ****                     puckConstructionPlan[puckConstructionPlanIndex] = puckRackColours[puckRackIndex
+ 408:main.c        ****                     puckConstructionPlanIndex++;
+ 409:main.c        ****                 }
+ 410:main.c        ****             }
+ 411:main.c        ****             
+ 412:main.c        **** 
+ 413:main.c        ****             */
+ 414:main.c        ****         }
+ 415:main.c        ****         
+ 416:main.c        ****         
+ 417:main.c        **** 
+ 418:main.c        ****     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
+ 419:main.c        ****             
+ 420:main.c        ****             mishaSwivel(-45);  
+ 421:main.c        ****             mishaMoveDynamic(-150);
+ 422:main.c        ****             mishaSwivel(45);
+ 423:main.c        ****             mishaMoveDynamic(200);
+ 424:main.c        ****             mishaSwivel(90);
+ 425:main.c        ****             mishaMoveDynamic(500);
+ 426:main.c        ****             
+ 427:main.c        ****             
+ 428:main.c        ****             
+ 429:main.c        ****             
+ 430:main.c        ****             
+ 431:main.c        ****             
+ 432:main.c        ****             // Finding where the boundaries of the block are
+ 433:main.c        ****     		// Sweep across WEST to EAST until discrepancy
+ 434:main.c        ****             // But first sense the construction plan and then drive to wall and turn around to prep
+ 435:main.c        ****             
+ 436:main.c        ****             /*
+ 437:main.c        ****     		moveForwardIndefinitely();
+ 438:main.c        ****     		turnRight(180); // Now facing EAST wall
+ 439:main.c        ****     		moveForwardIndefinitely(); // Do this until we get to EAST wall
+ 440:main.c        ****             */
+ 441:main.c        ****             
+ 442:main.c        ****             //moveAndAngle(20,20,EAST_ANGLE); // Move to a position near construction base in an EA
+ 443:main.c        ****             //moveForwardIndefinitely(); // Scan until we reach EAST wall.
+ 444:main.c        ****             
+ 445:main.c        ****             // Will now know the boundaries of the block.
+ 446:main.c        ****             // Figure out direction we want to travel
+ 447:main.c        ****             
+ 448:main.c        **** 
+ 449:main.c        ****             //pathPastBlock = (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN 
+ 450:main.c        ****             //pathToPucks = (puckPileLocation < ARENA_WIDTH / 2 ? WEST:EAST);
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 12
+
+
+ 451:main.c        ****             
+ 452:main.c        ****             state = STATE_GO_TO_PUCKS;
+ 453:main.c        **** 	    }
+ 454:main.c        ****         
+ 455:main.c        ****         
+ 456:main.c        **** 
+ 457:main.c        ****         if (state == STATE_GO_TO_PUCKS){
+ 458:main.c        ****             if (pathPastBlock == WEST){
+ 459:main.c        ****                 if (pathToPucks != WEST) {
+ 460:main.c        ****                     moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRO
+ 461:main.c        ****                 }
+ 462:main.c        ****                 else {moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - F
+ 463:main.c        ****             }
+ 464:main.c        ****             else {
+ 465:main.c        ****                 if (pathToPucks != EAST) {
+ 466:main.c        ****                     moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, AREN
+ 467:main.c        ****                 }
+ 468:main.c        ****                 else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, AR
+ 469:main.c        ****             }
+ 470:main.c        ****             
+ 471:main.c        ****             // Now depending on if the pucks are in the corner or not, 
+ 472:main.c        ****             
+ 473:main.c        ****             // We are now in front of the pucks
+ 474:main.c        ****             state = STATE_FIND_REQUIRED_PUCK;
+ 475:main.c        ****         }
+ 476:main.c        ****         
+ 477:main.c        ****         
+ 478:main.c        ****         
+ 479:main.c        ****         if (state == STATE_FIND_REQUIRED_PUCK)
+ 480:main.c        ****         {
+ 481:main.c        ****             
+ 482:main.c        ****             
+ 483:main.c        ****         SPEED = 70;    
+ 484:main.c        ****         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
+ 485:main.c        ****         int puck_scan;
+ 486:main.c        ****         
+ 487:main.c        ****     
+ 488:main.c        ****         puckConstructionPlan[1] = RED;
+ 489:main.c        ****     
+ 490:main.c        ****         // Scanning puck:
+ 491:main.c        **** 
+ 492:main.c        ****         while (puck_correct == FALSE) 
+ 493:main.c        ****         {
+ 494:main.c        ****             mishaMoveDynamic(50);  // robot moves forward towards puck
+ 495:main.c        ****                                     // could replace this with the distance gathered from the ultra
+ 496:main.c        ****             changeHeightToPuck(1);  // arm lowers onto robot
+ 497:main.c        ****             puck_scan = colourSensingOutput();  // colour sensor takes a scan
+ 498:main.c        ****             changeHeightToPuck(3);  // arm returns to high position
+ 499:main.c        ****             mishaMoveDynamic(-50);   // robot moves backwards
+ 500:main.c        ****             if (puck_scan == puckConstructionPlan[1]) {puck_correct = TRUE;}
+ 501:main.c        ****                                     // if colour == true:
+ 502:main.c        ****                 
+ 503:main.c        ****             else 
+ 504:main.c        ****             {
+ 505:main.c        ****                                     // if colour == false
+ 506:main.c        ****                                         // robot translates to side to see next puck, and performs 
+ 507:main.c        ****             }
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 13
+
+
+ 508:main.c        ****         }
+ 509:main.c        ****                 
+ 510:main.c        ****         // Picking Up puck from pile:
+ 511:main.c        ****         changeHeightToPuck(0);      // arm lowers to ground
+ 512:main.c        ****         //changeHeightToPuck(1);
+ 513:main.c        ****         moveUntilPuck();
+ 514:main.c        ****         //mishaMoveDynamic(60);       // robot moves forward
+ 515:main.c        ****         armClose();                 // claw closes on puck
+ 516:main.c        ****         changeHeightToPuck(3);      // arm lifts up to highest position
+ 517:main.c        ****         mishaMoveDynamic(-60);       // robot moves back away from puck area 
+ 518:main.c        ****         
+ 519:main.c        ****             
+ 520:main.c        ****         while(1) {};           
+ 521:main.c        ****             
+ 522:main.c        ****             /*
+ 523:main.c        ****             int requiredColour = puckConstructionPlan[currentPuckStackSize];
+ 524:main.c        ****             int puckFound = 0;
+ 525:main.c        ****             
+ 526:main.c        ****             
+ 527:main.c        ****             // Let's assume that we get to the east or west of the puck pile and we are as close to
+ 528:main.c        ****             if (roundDirection() == NORTH){
+ 529:main.c        **** 
+ 530:main.c        ****             }
+ 531:main.c        ****             else if (roundDirection() == EAST){
+ 532:main.c        ****                 // Poll ultrasonics, displaceRight until no longer see the pucks
+ 533:main.c        ****                 // Drive up to the middle puck
+ 534:main.c        ****                 // We know that we used moveAndAngle() to get to the exact vertical position of the
+ 535:main.c        ****                 moveForwardIndefinitely();
+ 536:main.c        ****                 
+ 537:main.c        ****                 // May need to displaceRight a bit to ensure that we are perfectly centered with th
+ 538:main.c        ****                 // Now we need to inch forward with the claw lifted
+ 539:main.c        ****                 // Also store the horizontal location of the pucks based off our current position. 
+ 540:main.c        ****                 
+ 541:main.c        ****                 horizontalPuckGrid = currentPosition[0]; // Take our horizontal position as a refer
+ 542:main.c        ****                 
+ 543:main.c        ****                 changeHeightToPuck(1); // Lift up enough so we dont hit the pucks when scanning the
+ 544:main.c        ****                 moveForward(DISTANCE_STOPPED_FROM_PUCK); // Move forward until colour sensor above 
+ 545:main.c        ****                
+ 546:main.c        ****                 if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+ 547:main.c        ****                     // This is the puck we need
+ 548:main.c        ****                     moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for lowering 
+ 549:main.c        ****                     lowerAndOpen(0); // We are grabbing the pucks from the ground.
+ 550:main.c        ****                     moveForward(DISTANCE_STOPPED_FROM_PUCK);
+ 551:main.c        ****                     closeAndRaise(1); // Lift above the height of the ground pucks
+ 552:main.c        **** 
+ 553:main.c        ****                 }
+ 554:main.c        ****                 
+ 555:main.c        ****                 // If the colour isn't what we need, we could pick it up and drop it somewhere out 
+ 556:main.c        ****                 else {
+ 557:main.c        ****                     moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Need to check the next puck
+ 558:main.c        ****                     displaceLeft(5,22);
+ 559:main.c        ****                     changeHeightToPuck(1); // Lift up enough so we dont hit the pucks when scanning
+ 560:main.c        ****                     moveForward(DISTANCE_STOPPED_FROM_PUCK); // Move forward until colour sensor ab
+ 561:main.c        ****                     
+ 562:main.c        ****                     // Scan the next puck
+ 563:main.c        ****                     if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+ 564:main.c        ****                         // This is the puck we need
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 14
+
+
+ 565:main.c        ****                         moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for lower
+ 566:main.c        ****                         lowerAndOpen(0); // We are grabbing the pucks from the ground.
+ 567:main.c        ****                         moveForward(DISTANCE_STOPPED_FROM_PUCK);
+ 568:main.c        ****                         closeAndRaise(1); // Lift above the height of the ground pucks
+ 569:main.c        **** 
+ 570:main.c        ****                     }
+ 571:main.c        ****                     
+ 572:main.c        ****                     else {
+ 573:main.c        ****                         moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Need to check the next puck
+ 574:main.c        ****                         displaceLeft(5,22);
+ 575:main.c        ****                         changeHeightToPuck(1); // Lift up enough so we dont hit the pucks when scan
+ 576:main.c        ****                         moveForward(DISTANCE_STOPPED_FROM_PUCK); // Move forward until colour senso
+ 577:main.c        ****                         
+ 578:main.c        ****                         if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+ 579:main.c        ****                             // This is the puck we need
+ 580:main.c        ****                             moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for l
+ 581:main.c        ****                             lowerAndOpen(0); // We are grabbing the pucks from the ground.
+ 582:main.c        ****                             moveForward(DISTANCE_STOPPED_FROM_PUCK);
+ 583:main.c        ****                             closeAndRaise(1); // Lift above the height of the ground pucks
+ 584:main.c        **** 
+ 585:main.c        ****                         }
+ 586:main.c        ****                     
+ 587:main.c        ****                     }
+ 588:main.c        ****                 }
+ 589:main.c        ****                 
+ 590:main.c        ****                 if (colourSensingOutput() == puckConstructionPlan[currentPuckStackSize]){ 
+ 591:main.c        ****                     // This is the puck we need
+ 592:main.c        ****                     moveBackward(DISTANCE_STOPPED_FROM_PUCK); // Reverse to make room for lowering 
+ 593:main.c        ****                     lowerAndOpen(0); // We are grabbing the pucks from the ground.
+ 594:main.c        ****                     moveForward(DISTANCE_STOPPED_FROM_PUCK);
+ 595:main.c        ****                     closeAndRaise(1); // Lift above the height of the ground pucks
+ 596:main.c        **** 
+ 597:main.c        ****                 }
+ 598:main.c        ****                 
+ 599:main.c        ****             }
+ 600:main.c        ****             
+ 601:main.c        ****             else if (roundDirection() == WEST){
+ 602:main.c        ****                 // Poll ultrasonics, displaceRight until no longer see the pucks
+ 603:main.c        ****                 // Drive up to the middle puck
+ 604:main.c        ****                 // We know that we used moveAndAngle() to get to the exact vertical position of the
+ 605:main.c        ****                 moveForwardIndefinitely();
+ 606:main.c        ****             }
+ 607:main.c        ****             
+ 608:main.c        ****             */
+ 609:main.c        ****             
+ 610:main.c        ****             /*
+ 611:main.c        ****             while(!puckFound){
+ 612:main.c        ****                   
+ 613:main.c        ****             }
+ 614:main.c        ****             */
+ 615:main.c        ****             
+ 616:main.c        ****             
+ 617:main.c        ****         }
+ 618:main.c        ****         
+ 619:main.c        ****         if (state == STATE_DEPOSIT_PUCK){
+ 620:main.c        **** 
+ 621:main.c        ****             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL + 10, SOUTH_ANGLE); 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 15
+
+
+ 622:main.c        ****             lowerAndOpen(currentPuckStackSize);
+ 623:main.c        ****             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Ta
+ 624:main.c        ****             changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting
+ 625:main.c        ****             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Ta
+ 626:main.c        **** 
+ 627:main.c        ****             
+ 628:main.c        ****             lowerAndOpen(current_stage);
+ 629:main.c        ****             changeHeightToPuck(current_stage + 1); // Lift claw above stack to avoid hitting the st
+ 630:main.c        ****             
+ 631:main.c        ****             current_stage++;
+ 632:main.c        ****             
+ 633:main.c        ****             if (current_stage == 3){state = STATE_PARK_HOME;}        // Returns to home 
+ 634:main.c        ****             
+ 635:main.c        ****         }
+ 636:main.c        ****         
+ 637:main.c        ****         if (state == STATE_PARK_HOME){
+ 638:main.c        ****             moveAndAngle(HOME_MIDPOINT, HOME_PARKING_DISTANCE, NORTH_ANGLE); // Should reverse into
+ 639:main.c        ****             
+ 640:main.c        ****             // Run code to stop robot entirely.
+ 641:main.c        ****         }
+ 642:main.c        ****         
+ 643:main.c        ****         
+ 644:main.c        ****     }    
+ 645:main.c        **** }
+ 646:main.c        **** 
+ 647:main.c        **** void armMoving(void){
+ 178              		.loc 1 647 0
+ 179              		.cfi_startproc
+ 180              		@ args = 0, pretend = 0, frame = 0
+ 181              		@ frame_needed = 0, uses_anonymous_args = 0
+ 182 0000 38B5     		push	{r3, r4, r5, lr}
+ 183              		.cfi_def_cfa_offset 16
+ 184              		.cfi_offset 3, -16
+ 185              		.cfi_offset 4, -12
+ 186              		.cfi_offset 5, -8
+ 187              		.cfi_offset 14, -4
+ 188              	.LVL9:
+ 648:main.c        ****     
+ 649:main.c        ****     int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
+ 650:main.c        ****     int puck_scan;
+ 651:main.c        ****     
+ 652:main.c        ****     puckConstructionPlan[1] = RED;
+ 189              		.loc 1 652 0
+ 190 0002 0122     		movs	r2, #1
+ 191 0004 0D4B     		ldr	r3, .L21
+ 192 0006 9A60     		str	r2, [r3, #8]
+ 653:main.c        ****     
+ 654:main.c        **** // States
+ 655:main.c        ****     // moving
+ 656:main.c        ****     changeHeightToPuck(3);  // Arm has to be lifted to highest position
+ 193              		.loc 1 656 0
+ 194 0008 0320     		movs	r0, #3
+ 195 000a FFF7FEFF 		bl	changeHeightToPuck
+ 196              	.LVL10:
+ 649:main.c        ****     int puck_scan;
+ 197              		.loc 1 649 0
+ 198 000e 0025     		movs	r5, #0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 16
+
+
+ 657:main.c        ****         // THIS WILL be ensured by always returning the claw to the highest position after completi
+ 658:main.c        ****         
+ 659:main.c        ****     // Scanning puck:
+ 660:main.c        ****     while (puck_correct == FALSE) 
+ 199              		.loc 1 660 0
+ 200 0010 11E0     		b	.L16
+ 201              	.LVL11:
+ 202              	.L18:
+ 661:main.c        ****     {
+ 662:main.c        ****                                 // robot moves forward towards puck
+ 663:main.c        ****         changeHeightToPuck(1);  // arm lowers onto robot
+ 203              		.loc 1 663 0
+ 204 0012 0120     		movs	r0, #1
+ 205 0014 FFF7FEFF 		bl	changeHeightToPuck
+ 206              	.LVL12:
+ 664:main.c        ****         puck_scan = colourSensingOutput();  // colour sensor takes a scan
+ 207              		.loc 1 664 0
+ 208 0018 FFF7FEFF 		bl	colourSensingOutput
+ 209              	.LVL13:
+ 210 001c 0446     		mov	r4, r0
+ 211              	.LVL14:
+ 665:main.c        ****         changeHeightToPuck(3);  // arm returns to high position
+ 212              		.loc 1 665 0
+ 213 001e 0320     		movs	r0, #3
+ 214              	.LVL15:
+ 215 0020 FFF7FEFF 		bl	changeHeightToPuck
+ 216              	.LVL16:
+ 666:main.c        ****                                 // robot moves backwards
+ 667:main.c        ****         if (puck_scan == puckConstructionPlan[current_stage]) {puck_correct = TRUE;}
+ 217              		.loc 1 667 0
+ 218 0024 064B     		ldr	r3, .L21+4
+ 219 0026 5A68     		ldr	r2, [r3, #4]
+ 220 0028 044B     		ldr	r3, .L21
+ 221 002a 03EB8203 		add	r3, r3, r2, lsl #2
+ 222 002e 5B68     		ldr	r3, [r3, #4]
+ 223 0030 9C42     		cmp	r4, r3
+ 224 0032 00D1     		bne	.L16
+ 225 0034 0125     		movs	r5, #1
+ 226              	.LVL17:
+ 227              	.L16:
+ 660:main.c        ****     {
+ 228              		.loc 1 660 0
+ 229 0036 002D     		cmp	r5, #0
+ 230 0038 EBD0     		beq	.L18
+ 668:main.c        ****                                 // if colour == true:
+ 669:main.c        ****                                     // enter picking up puck from 
+ 670:main.c        ****         else 
+ 671:main.c        ****         {
+ 672:main.c        ****                                 // if colour == false
+ 673:main.c        ****                                     // robot translates to side to see next puck, and performs scan
+ 674:main.c        ****         }
+ 675:main.c        ****     }
+ 676:main.c        ****     
+ 677:main.c        ****     /*
+ 678:main.c        ****     
+ 679:main.c        ****     // Picking Up puck from pile:
+ 680:main.c        ****     changeHeightToPuck(0);      // arm lowers to ground
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 17
+
+
+ 681:main.c        ****                                 // robot moves forward
+ 682:main.c        ****     armClose();                 // claw closes on puck
+ 683:main.c        ****     changeHeightToPuck(3);      // arm lifts up to highest position
+ 684:main.c        ****                                 // robot moves back away from puck area   
+ 685:main.c        ****       
+ 686:main.c        ****     
+ 687:main.c        ****     // Deposition puck in construction zone:
+ 688:main.c        ****                                 // arm will be in highest position from moving
+ 689:main.c        ****         changeHeightToPuck(current_stage-1);    // arm moves to position of stacking pucks         
+ 690:main.c        ****                                                 // stage 1st = ground/0
+ 691:main.c        ****                                                 // stage 2nd = 1
+ 692:main.c        ****                                                 // stage 3rd = 2
+ 693:main.c        ****         armOpen();              // gripper releases puck
+ 694:main.c        ****         changeHeightToPuck(3);  // arm moves back to highest position availabe
+ 695:main.c        ****                                 // robot moves away 
+ 696:main.c        ****     */
+ 697:main.c        ****     
+ 698:main.c        **** }
+ 231              		.loc 1 698 0
+ 232 003a 38BD     		pop	{r3, r4, r5, pc}
+ 233              	.LVL18:
+ 234              	.L22:
+ 235              		.align	2
+ 236              	.L21:
+ 237 003c 00000000 		.word	.LANCHOR0
+ 238 0040 00000000 		.word	.LANCHOR1
+ 239              		.cfi_endproc
+ 240              	.LFE70:
+ 241              		.size	armMoving, .-armMoving
+ 242              		.section	.text.moveUntilPuck,"ax",%progbits
+ 243              		.align	2
+ 244              		.global	moveUntilPuck
+ 245              		.thumb
+ 246              		.thumb_func
+ 247              		.type	moveUntilPuck, %function
+ 248              	moveUntilPuck:
+ 249              	.LFB71:
+ 699:main.c        **** 
+ 700:main.c        **** void moveUntilPuck(void) {
+ 250              		.loc 1 700 0
+ 251              		.cfi_startproc
+ 252              		@ args = 0, pretend = 0, frame = 0
+ 253              		@ frame_needed = 0, uses_anonymous_args = 0
+ 254 0000 10B5     		push	{r4, lr}
+ 255              		.cfi_def_cfa_offset 8
+ 256              		.cfi_offset 4, -8
+ 257              		.cfi_offset 14, -4
+ 258              	.LVL19:
+ 701:main.c        ****     int puck_detect = 0;
+ 702:main.c        ****     Motor_Left_Control_Write(0);
+ 259              		.loc 1 702 0
+ 260 0002 0020     		movs	r0, #0
+ 261 0004 FFF7FEFF 		bl	Motor_Left_Control_Write
+ 262              	.LVL20:
+ 703:main.c        ****     Motor_Right_Control_Write(0);
+ 263              		.loc 1 703 0
+ 264 0008 0020     		movs	r0, #0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 18
+
+
+ 265 000a FFF7FEFF 		bl	Motor_Right_Control_Write
+ 266              	.LVL21:
+ 704:main.c        ****     
+ 705:main.c        ****     Motor_Left_Driver_Wakeup();
+ 267              		.loc 1 705 0
+ 268 000e FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
+ 269              	.LVL22:
+ 706:main.c        ****     Motor_Left_Driver_WriteCompare(SPEED);
+ 270              		.loc 1 706 0
+ 271 0012 124C     		ldr	r4, .L27
+ 272 0014 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 273 0016 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 274              	.LVL23:
+ 707:main.c        ****     Motor_Right_Driver_Wakeup();
+ 275              		.loc 1 707 0
+ 276 001a FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
+ 277              	.LVL24:
+ 708:main.c        ****     Motor_Right_Driver_WriteCompare(SPEED);
+ 278              		.loc 1 708 0
+ 279 001e 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 280 0020 FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 281              	.LVL25:
+ 709:main.c        ****     
+ 710:main.c        ****     colour_sensing_algorithm = 2;       
+ 282              		.loc 1 710 0
+ 283 0024 0222     		movs	r2, #2
+ 284 0026 0E4B     		ldr	r3, .L27+4
+ 285 0028 1A61     		str	r2, [r3, #16]
+ 701:main.c        ****     Motor_Left_Control_Write(0);
+ 286              		.loc 1 701 0
+ 287 002a 0024     		movs	r4, #0
+ 711:main.c        ****     
+ 712:main.c        ****     while (puck_detect == 0) 
+ 288              		.loc 1 712 0
+ 289 002c 05E0     		b	.L24
+ 290              	.LVL26:
+ 291              	.L25:
+ 713:main.c        ****     {
+ 714:main.c        ****         puck_detect = colourSensingOutput();
+ 292              		.loc 1 714 0
+ 293 002e FFF7FEFF 		bl	colourSensingOutput
+ 294              	.LVL27:
+ 295 0032 0446     		mov	r4, r0
+ 296              	.LVL28:
+ 715:main.c        ****         CyDelay(10);
+ 297              		.loc 1 715 0
+ 298 0034 0A20     		movs	r0, #10
+ 299              	.LVL29:
+ 300 0036 FFF7FEFF 		bl	CyDelay
+ 301              	.LVL30:
+ 302              	.L24:
+ 712:main.c        ****     {
+ 303              		.loc 1 712 0
+ 304 003a 002C     		cmp	r4, #0
+ 305 003c F7D0     		beq	.L25
+ 716:main.c        ****         //sprintf(output, "%i \t", puck_detect);       
+ 717:main.c        ****         //UART_1_PutString(output);
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 19
+
+
+ 718:main.c        ****     }
+ 719:main.c        ****        
+ 720:main.c        ****     Motor_Left_Decoder_SetCounter(0);
+ 306              		.loc 1 720 0
+ 307 003e 0020     		movs	r0, #0
+ 308 0040 FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
+ 309              	.LVL31:
+ 721:main.c        ****     Motor_Right_Decoder_SetCounter(0);
+ 310              		.loc 1 721 0
+ 311 0044 0020     		movs	r0, #0
+ 312 0046 FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
+ 313              	.LVL32:
+ 722:main.c        ****     
+ 723:main.c        ****     Motor_Left_Driver_Sleep();
+ 314              		.loc 1 723 0
+ 315 004a FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 316              	.LVL33:
+ 724:main.c        ****     Motor_Right_Driver_Sleep();
+ 317              		.loc 1 724 0
+ 318 004e FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 319              	.LVL34:
+ 725:main.c        ****     
+ 726:main.c        ****     mishaMoveDynamic(30);
+ 320              		.loc 1 726 0
+ 321 0052 1E20     		movs	r0, #30
+ 322 0054 FFF7FEFF 		bl	mishaMoveDynamic
+ 323              	.LVL35:
+ 324 0058 10BD     		pop	{r4, pc}
+ 325              	.LVL36:
+ 326              	.L28:
+ 327 005a 00BF     		.align	2
+ 328              	.L27:
+ 329 005c 00000000 		.word	SPEED
+ 330 0060 00000000 		.word	.LANCHOR0
+ 331              		.cfi_endproc
+ 332              	.LFE71:
+ 333              		.size	moveUntilPuck, .-moveUntilPuck
+ 334              		.section	.text.main,"ax",%progbits
+ 335              		.align	2
+ 336              		.global	main
+ 337              		.thumb
+ 338              		.thumb_func
+ 339              		.type	main, %function
+ 340              	main:
+ 341              	.LFB69:
+ 132:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 342              		.loc 1 132 0
+ 343              		.cfi_startproc
+ 344              		@ args = 0, pretend = 0, frame = 0
+ 345              		@ frame_needed = 0, uses_anonymous_args = 0
+ 346 0000 38B5     		push	{r3, r4, r5, lr}
+ 347              		.cfi_def_cfa_offset 16
+ 348              		.cfi_offset 3, -16
+ 349              		.cfi_offset 4, -12
+ 350              		.cfi_offset 5, -8
+ 351              		.cfi_offset 14, -4
+ 133:main.c        **** 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 20
+
+
+ 352              		.loc 1 133 0
+ 353              		.syntax unified
+ 354              	@ 133 "main.c" 1
+ 355 0002 62B6     		CPSIE   i
+ 356              	@ 0 "" 2
+ 136:main.c        ****     UART_1_Start();
+ 357              		.loc 1 136 0
+ 358              		.thumb
+ 359              		.syntax unified
+ 360 0004 FFF7FEFF 		bl	TIA_1_Start
+ 361              	.LVL37:
+ 137:main.c        ****     UART_1_PutString("UART commencing... \n");
+ 362              		.loc 1 137 0
+ 363 0008 FFF7FEFF 		bl	UART_1_Start
+ 364              	.LVL38:
+ 138:main.c        ****     ADC_Start();
+ 365              		.loc 1 138 0
+ 366 000c A148     		ldr	r0, .L52
+ 367 000e FFF7FEFF 		bl	UART_1_PutString
+ 368              	.LVL39:
+ 139:main.c        ****     IDAC8_1_Start();
+ 369              		.loc 1 139 0
+ 370 0012 FFF7FEFF 		bl	ADC_Start
+ 371              	.LVL40:
+ 140:main.c        ****     
+ 372              		.loc 1 140 0
+ 373 0016 FFF7FEFF 		bl	IDAC8_1_Start
+ 374              	.LVL41:
+ 150:main.c        ****     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
+ 375              		.loc 1 150 0
+ 376 001a 0020     		movs	r0, #0
+ 377 001c FFF7FEFF 		bl	IDAC8_1_SetRange
+ 378              	.LVL42:
+ 151:main.c        ****     
+ 379              		.loc 1 151 0
+ 380 0020 9D4D     		ldr	r5, .L52+4
+ 381 0022 287D     		ldrb	r0, [r5, #20]	@ zero_extendqisi2
+ 382 0024 FFF7FEFF 		bl	IDAC8_1_SetValue
+ 383              	.LVL43:
+ 154:main.c        ****     control_photodiode_Write(colour_sensing_algorithm);            // controls which photodiode is 
+ 384              		.loc 1 154 0
+ 385 0028 0024     		movs	r4, #0
+ 386 002a 2C61     		str	r4, [r5, #16]
+ 155:main.c        ****                                                 // 0: wall
+ 387              		.loc 1 155 0
+ 388 002c 2046     		mov	r0, r4
+ 389 002e FFF7FEFF 		bl	control_photodiode_Write
+ 390              	.LVL44:
+ 158:main.c        ****     control_led_Write(2);   CyDelay(500);
+ 391              		.loc 1 158 0
+ 392 0032 0120     		movs	r0, #1
+ 393 0034 FFF7FEFF 		bl	control_led_Write
+ 394              	.LVL45:
+ 395 0038 4FF4FA70 		mov	r0, #500
+ 396 003c FFF7FEFF 		bl	CyDelay
+ 397              	.LVL46:
+ 159:main.c        ****     control_led_Write(3);   CyDelay(500);
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 21
+
+
+ 398              		.loc 1 159 0
+ 399 0040 0220     		movs	r0, #2
+ 400 0042 FFF7FEFF 		bl	control_led_Write
+ 401              	.LVL47:
+ 402 0046 4FF4FA70 		mov	r0, #500
+ 403 004a FFF7FEFF 		bl	CyDelay
+ 404              	.LVL48:
+ 160:main.c        ****     control_led_Write(0);   CyDelay(500);
+ 405              		.loc 1 160 0
+ 406 004e 0320     		movs	r0, #3
+ 407 0050 FFF7FEFF 		bl	control_led_Write
+ 408              	.LVL49:
+ 409 0054 4FF4FA70 		mov	r0, #500
+ 410 0058 FFF7FEFF 		bl	CyDelay
+ 411              	.LVL50:
+ 161:main.c        ****     colourSensingInitialise();                  // Initialises the colour sensor
+ 412              		.loc 1 161 0
+ 413 005c 2046     		mov	r0, r4
+ 414 005e FFF7FEFF 		bl	control_led_Write
+ 415              	.LVL51:
+ 416 0062 4FF4FA70 		mov	r0, #500
+ 417 0066 FFF7FEFF 		bl	CyDelay
+ 418              	.LVL52:
+ 162:main.c        ****     
+ 419              		.loc 1 162 0
+ 420 006a FFF7FEFF 		bl	colourSensingInitialise
+ 421              	.LVL53:
+ 166:main.c        ****     Rack_Servo_PWM_WriteCompare(1000);          // BRINGs rack to highest position, so not to mess 
+ 422              		.loc 1 166 0
+ 423 006e FFF7FEFF 		bl	Rack_Servo_PWM_Start
+ 424              	.LVL54:
+ 167:main.c        ****     CyDelay(500);
+ 425              		.loc 1 167 0
+ 426 0072 4FF47A70 		mov	r0, #1000
+ 427 0076 FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
+ 428              	.LVL55:
+ 168:main.c        ****     Rack_Servo_PWM_Sleep();
+ 429              		.loc 1 168 0
+ 430 007a 4FF4FA70 		mov	r0, #500
+ 431 007e FFF7FEFF 		bl	CyDelay
+ 432              	.LVL56:
+ 169:main.c        ****     
+ 433              		.loc 1 169 0
+ 434 0082 FFF7FEFF 		bl	Rack_Servo_PWM_Sleep
+ 435              	.LVL57:
+ 171:main.c        ****     Gripper_Servo_PWM_WriteCompare(1120);       //This is the open gripper position
+ 436              		.loc 1 171 0
+ 437 0086 FFF7FEFF 		bl	Gripper_Servo_PWM_Start
+ 438              	.LVL58:
+ 172:main.c        ****     CyDelay(500);
+ 439              		.loc 1 172 0
+ 440 008a 4FF48C60 		mov	r0, #1120
+ 441 008e FFF7FEFF 		bl	Gripper_Servo_PWM_WriteCompare
+ 442              	.LVL59:
+ 173:main.c        ****     Gripper_Servo_PWM_Sleep();
+ 443              		.loc 1 173 0
+ 444 0092 4FF4FA70 		mov	r0, #500
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 22
+
+
+ 445 0096 FFF7FEFF 		bl	CyDelay
+ 446              	.LVL60:
+ 174:main.c        ****     
+ 447              		.loc 1 174 0
+ 448 009a FFF7FEFF 		bl	Gripper_Servo_PWM_Sleep
+ 449              	.LVL61:
+ 177:main.c        ****     Motor_Left_Driver_Sleep();                  // Puts motor to sleep
+ 450              		.loc 1 177 0
+ 451 009e FFF7FEFF 		bl	Motor_Left_Driver_Start
+ 452              	.LVL62:
+ 178:main.c        ****     Motor_Right_Driver_Start();
+ 453              		.loc 1 178 0
+ 454 00a2 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 455              	.LVL63:
+ 179:main.c        ****     Motor_Right_Driver_Sleep();                 // Puts motor to sleep
+ 456              		.loc 1 179 0
+ 457 00a6 FFF7FEFF 		bl	Motor_Right_Driver_Start
+ 458              	.LVL64:
+ 180:main.c        ****     
+ 459              		.loc 1 180 0
+ 460 00aa FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 461              	.LVL65:
+ 182:main.c        ****     Motor_Right_Decoder_Start();
+ 462              		.loc 1 182 0
+ 463 00ae FFF7FEFF 		bl	Motor_Left_Decoder_Start
+ 464              	.LVL66:
+ 183:main.c        ****     
+ 465              		.loc 1 183 0
+ 466 00b2 FFF7FEFF 		bl	Motor_Right_Decoder_Start
+ 467              	.LVL67:
+ 189:main.c        ****     Timer_1_ReadStatusRegister();
+ 468              		.loc 1 189 0
+ 469 00b6 FFF7FEFF 		bl	Timer_1_Start
+ 470              	.LVL68:
+ 190:main.c        ****     Sonic_StartEx(TIH);
+ 471              		.loc 1 190 0
+ 472 00ba FFF7FEFF 		bl	Timer_1_ReadStatusRegister
+ 473              	.LVL69:
+ 191:main.c        ****     Start_StartEx(StartIH);
+ 474              		.loc 1 191 0
+ 475 00be 7748     		ldr	r0, .L52+8
+ 476 00c0 FFF7FEFF 		bl	Sonic_StartEx
+ 477              	.LVL70:
+ 192:main.c        ****     beginNavigation = 0;
+ 478              		.loc 1 192 0
+ 479 00c4 7648     		ldr	r0, .L52+12
+ 480 00c6 FFF7FEFF 		bl	Start_StartEx
+ 481              	.LVL71:
+ 193:main.c        ****     
+ 482              		.loc 1 193 0
+ 483 00ca 2C60     		str	r4, [r5]
+ 196:main.c        ****     Motor_2_driver_Start();
+ 484              		.loc 1 196 0
+ 485 00cc FFF7FEFF 		bl	Motor_1_driver_Start
+ 486              	.LVL72:
+ 197:main.c        ****     motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
+ 487              		.loc 1 197 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 23
+
+
+ 488 00d0 FFF7FEFF 		bl	Motor_2_driver_Start
+ 489              	.LVL73:
+ 198:main.c        ****     
+ 490              		.loc 1 198 0
+ 491 00d4 0020     		movs	r0, #0
+ 492 00d6 0346     		mov	r3, r0
+ 493 00d8 0246     		mov	r2, r0
+ 494 00da 0146     		mov	r1, r0
+ 495 00dc FFF7FEFF 		bl	motorDutyCycleUpdate
+ 496              	.LVL74:
+ 202:main.c        ****     Motor_2_Encoder_Counts_Start();
+ 497              		.loc 1 202 0
+ 498 00e0 FFF7FEFF 		bl	Motor_1_Encoder_Counts_Start
+ 499              	.LVL75:
+ 203:main.c        ****     
+ 500              		.loc 1 203 0
+ 501 00e4 FFF7FEFF 		bl	Motor_2_Encoder_Counts_Start
+ 502              	.LVL76:
+ 206:main.c        ****     
+ 503              		.loc 1 206 0
+ 504 00e8 FFF7FEFF 		bl	Drift_Check_Timer_Start
+ 505              	.LVL77:
+ 209:main.c        ****     Encoder_Counts_2_Interrupt_StartEx(Encoder_Counts_2_IH);
+ 506              		.loc 1 209 0
+ 507 00ec 6D48     		ldr	r0, .L52+16
+ 508 00ee FFF7FEFF 		bl	Encoder_Counts_1_Interrupt_StartEx
+ 509              	.LVL78:
+ 210:main.c        ****     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
+ 510              		.loc 1 210 0
+ 511 00f2 6D48     		ldr	r0, .L52+20
+ 512 00f4 FFF7FEFF 		bl	Encoder_Counts_2_Interrupt_StartEx
+ 513              	.LVL79:
+ 211:main.c        **** 
+ 514              		.loc 1 211 0
+ 515 00f8 6C48     		ldr	r0, .L52+24
+ 516 00fa FFF7FEFF 		bl	Drift_Check_Interrupt_StartEx
+ 517              	.LVL80:
+ 518              	.L48:
+ 234:main.c        ****             
+ 519              		.loc 1 234 0
+ 520 00fe 6C4B     		ldr	r3, .L52+28
+ 521 0100 9B68     		ldr	r3, [r3, #8]
+ 522 0102 012B     		cmp	r3, #1
+ 523 0104 19D1     		bne	.L30
+ 524 0106 0023     		movs	r3, #0
+ 525              	.L34:
+ 526              	.LVL81:
+ 527              	.LBB2:
+ 313:main.c        ****                         {
+ 528              		.loc 1 313 0
+ 529 0108 8BB9     		cbnz	r3, .L31
+ 315:main.c        ****                             
+ 530              		.loc 1 315 0
+ 531 010a 6A48     		ldr	r0, .L52+32
+ 532 010c FFF7FEFF 		bl	UART_1_PutString
+ 533              	.LVL82:
+ 318:main.c        ****                             
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 24
+
+
+ 534              		.loc 1 318 0
+ 535 0110 FFF7FEFF 		bl	straightAdjust
+ 536              	.LVL83:
+ 537              	.LBB3:
+ 321:main.c        ****                             {
+ 538              		.loc 1 321 0
+ 539 0114 0024     		movs	r4, #0
+ 540 0116 07E0     		b	.L32
+ 541              	.LVL84:
+ 542              	.L33:
+ 323:main.c        ****                                 CyDelay(1000);
+ 543              		.loc 1 323 0 discriminator 3
+ 544 0118 2046     		mov	r0, r4
+ 545 011a FFF7FEFF 		bl	changeHeightToPuck
+ 546              	.LVL85:
+ 324:main.c        ****                             }
+ 547              		.loc 1 324 0 discriminator 3
+ 548 011e 4FF47A70 		mov	r0, #1000
+ 549 0122 FFF7FEFF 		bl	CyDelay
+ 550              	.LVL86:
+ 321:main.c        ****                             {
+ 551              		.loc 1 321 0 discriminator 3
+ 552 0126 0134     		adds	r4, r4, #1
+ 553              	.LVL87:
+ 554              	.L32:
+ 321:main.c        ****                             {
+ 555              		.loc 1 321 0 is_stmt 0 discriminator 1
+ 556 0128 032C     		cmp	r4, #3
+ 557 012a F5DD     		ble	.L33
+ 558              	.LBE3:
+ 327:main.c        ****                         }
+ 559              		.loc 1 327 0 is_stmt 1
+ 560 012c 0123     		movs	r3, #1
+ 561              	.LVL88:
+ 562              	.L31:
+ 329:main.c        ****             }    
+ 563              		.loc 1 329 0
+ 564 012e 002B     		cmp	r3, #0
+ 565 0130 EAD1     		bne	.L34
+ 566              	.LBE2:
+ 338:main.c        ****             while(1) {};
+ 567              		.loc 1 338 0
+ 568 0132 E620     		movs	r0, #230
+ 569 0134 FFF7FEFF 		bl	mishaMoveDynamic
+ 570              	.LVL89:
+ 571              	.L35:
+ 572 0138 FEE7     		b	.L35
+ 573              	.L30:
+ 418:main.c        ****             
+ 574              		.loc 1 418 0
+ 575 013a 022B     		cmp	r3, #2
+ 576 013c 17D1     		bne	.L36
+ 420:main.c        ****             mishaMoveDynamic(-150);
+ 577              		.loc 1 420 0
+ 578 013e 6FF02C00 		mvn	r0, #44
+ 579 0142 FFF7FEFF 		bl	mishaSwivel
+ 580              	.LVL90:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 25
+
+
+ 421:main.c        ****             mishaSwivel(45);
+ 581              		.loc 1 421 0
+ 582 0146 6FF09500 		mvn	r0, #149
+ 583 014a FFF7FEFF 		bl	mishaMoveDynamic
+ 584              	.LVL91:
+ 422:main.c        ****             mishaMoveDynamic(200);
+ 585              		.loc 1 422 0
+ 586 014e 2D20     		movs	r0, #45
+ 587 0150 FFF7FEFF 		bl	mishaSwivel
+ 588              	.LVL92:
+ 423:main.c        ****             mishaSwivel(90);
+ 589              		.loc 1 423 0
+ 590 0154 C820     		movs	r0, #200
+ 591 0156 FFF7FEFF 		bl	mishaMoveDynamic
+ 592              	.LVL93:
+ 424:main.c        ****             mishaMoveDynamic(500);
+ 593              		.loc 1 424 0
+ 594 015a 5A20     		movs	r0, #90
+ 595 015c FFF7FEFF 		bl	mishaSwivel
+ 596              	.LVL94:
+ 425:main.c        ****             
+ 597              		.loc 1 425 0
+ 598 0160 4FF4FA70 		mov	r0, #500
+ 599 0164 FFF7FEFF 		bl	mishaMoveDynamic
+ 600              	.LVL95:
+ 452:main.c        **** 	    }
+ 601              		.loc 1 452 0
+ 602 0168 0322     		movs	r2, #3
+ 603 016a 514B     		ldr	r3, .L52+28
+ 604 016c 9A60     		str	r2, [r3, #8]
+ 605              	.L36:
+ 457:main.c        ****             if (pathPastBlock == WEST){
+ 606              		.loc 1 457 0
+ 607 016e 504B     		ldr	r3, .L52+28
+ 608 0170 9B68     		ldr	r3, [r3, #8]
+ 609 0172 032B     		cmp	r3, #3
+ 610 0174 25D1     		bne	.L37
+ 458:main.c        ****                 if (pathToPucks != WEST) {
+ 611              		.loc 1 458 0
+ 612 0176 504B     		ldr	r3, .L52+36
+ 613 0178 1B68     		ldr	r3, [r3]
+ 614 017a 032B     		cmp	r3, #3
+ 615 017c 0FD1     		bne	.L38
+ 459:main.c        ****                     moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRO
+ 616              		.loc 1 459 0
+ 617 017e 4F4B     		ldr	r3, .L52+40
+ 618 0180 1B68     		ldr	r3, [r3]
+ 619 0182 032B     		cmp	r3, #3
+ 620 0184 05D0     		beq	.L39
+ 460:main.c        ****                 }
+ 621              		.loc 1 460 0
+ 622 0186 0022     		movs	r2, #0
+ 623 0188 8221     		movs	r1, #130
+ 624 018a 1020     		movs	r0, #16
+ 625 018c FFF7FEFF 		bl	moveAndAngle
+ 626              	.LVL96:
+ 627 0190 14E0     		b	.L40
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 26
+
+
+ 628              	.L39:
+ 462:main.c        ****             }
+ 629              		.loc 1 462 0
+ 630 0192 5A22     		movs	r2, #90
+ 631 0194 6621     		movs	r1, #102
+ 632 0196 1020     		movs	r0, #16
+ 633 0198 FFF7FEFF 		bl	moveAndAngle
+ 634              	.LVL97:
+ 635 019c 0EE0     		b	.L40
+ 636              	.L38:
+ 465:main.c        ****                     moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, AREN
+ 637              		.loc 1 465 0
+ 638 019e 474B     		ldr	r3, .L52+40
+ 639 01a0 1B68     		ldr	r3, [r3]
+ 640 01a2 012B     		cmp	r3, #1
+ 641 01a4 05D0     		beq	.L41
+ 466:main.c        ****                 }
+ 642              		.loc 1 466 0
+ 643 01a6 B422     		movs	r2, #180
+ 644 01a8 8221     		movs	r1, #130
+ 645 01aa 6820     		movs	r0, #104
+ 646 01ac FFF7FEFF 		bl	moveAndAngle
+ 647              	.LVL98:
+ 648 01b0 04E0     		b	.L40
+ 649              	.L41:
+ 468:main.c        ****             }
+ 650              		.loc 1 468 0
+ 651 01b2 5A22     		movs	r2, #90
+ 652 01b4 6621     		movs	r1, #102
+ 653 01b6 6820     		movs	r0, #104
+ 654 01b8 FFF7FEFF 		bl	moveAndAngle
+ 655              	.LVL99:
+ 656              	.L40:
+ 474:main.c        ****         }
+ 657              		.loc 1 474 0
+ 658 01bc 0422     		movs	r2, #4
+ 659 01be 3C4B     		ldr	r3, .L52+28
+ 660 01c0 9A60     		str	r2, [r3, #8]
+ 661              	.L37:
+ 479:main.c        ****         {
+ 662              		.loc 1 479 0
+ 663 01c2 3B4B     		ldr	r3, .L52+28
+ 664 01c4 9B68     		ldr	r3, [r3, #8]
+ 665 01c6 042B     		cmp	r3, #4
+ 666 01c8 2DD1     		bne	.L42
+ 667              	.LBB4:
+ 483:main.c        ****         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
+ 668              		.loc 1 483 0
+ 669 01ca 4622     		movs	r2, #70
+ 670 01cc 3C4B     		ldr	r3, .L52+44
+ 671 01ce 1A60     		str	r2, [r3]
+ 672              	.LVL100:
+ 488:main.c        ****     
+ 673              		.loc 1 488 0
+ 674 01d0 0122     		movs	r2, #1
+ 675 01d2 314B     		ldr	r3, .L52+4
+ 676 01d4 9A60     		str	r2, [r3, #8]
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 27
+
+
+ 484:main.c        ****         int puck_scan;
+ 677              		.loc 1 484 0
+ 678 01d6 0024     		movs	r4, #0
+ 492:main.c        ****         {
+ 679              		.loc 1 492 0
+ 680 01d8 14E0     		b	.L43
+ 681              	.LVL101:
+ 682              	.L45:
+ 494:main.c        ****                                     // could replace this with the distance gathered from the ultra
+ 683              		.loc 1 494 0
+ 684 01da 3220     		movs	r0, #50
+ 685 01dc FFF7FEFF 		bl	mishaMoveDynamic
+ 686              	.LVL102:
+ 496:main.c        ****             puck_scan = colourSensingOutput();  // colour sensor takes a scan
+ 687              		.loc 1 496 0
+ 688 01e0 0120     		movs	r0, #1
+ 689 01e2 FFF7FEFF 		bl	changeHeightToPuck
+ 690              	.LVL103:
+ 497:main.c        ****             changeHeightToPuck(3);  // arm returns to high position
+ 691              		.loc 1 497 0
+ 692 01e6 FFF7FEFF 		bl	colourSensingOutput
+ 693              	.LVL104:
+ 694 01ea 0546     		mov	r5, r0
+ 695              	.LVL105:
+ 498:main.c        ****             mishaMoveDynamic(-50);   // robot moves backwards
+ 696              		.loc 1 498 0
+ 697 01ec 0320     		movs	r0, #3
+ 698              	.LVL106:
+ 699 01ee FFF7FEFF 		bl	changeHeightToPuck
+ 700              	.LVL107:
+ 499:main.c        ****             if (puck_scan == puckConstructionPlan[1]) {puck_correct = TRUE;}
+ 701              		.loc 1 499 0
+ 702 01f2 6FF03100 		mvn	r0, #49
+ 703 01f6 FFF7FEFF 		bl	mishaMoveDynamic
+ 704              	.LVL108:
+ 500:main.c        ****                                     // if colour == true:
+ 705              		.loc 1 500 0
+ 706 01fa 274B     		ldr	r3, .L52+4
+ 707 01fc 9B68     		ldr	r3, [r3, #8]
+ 708 01fe 9D42     		cmp	r5, r3
+ 709 0200 00D1     		bne	.L43
+ 710 0202 0124     		movs	r4, #1
+ 711              	.LVL109:
+ 712              	.L43:
+ 492:main.c        ****         {
+ 713              		.loc 1 492 0
+ 714 0204 002C     		cmp	r4, #0
+ 715 0206 E8D0     		beq	.L45
+ 511:main.c        ****         //changeHeightToPuck(1);
+ 716              		.loc 1 511 0
+ 717 0208 0020     		movs	r0, #0
+ 718 020a FFF7FEFF 		bl	changeHeightToPuck
+ 719              	.LVL110:
+ 513:main.c        ****         //mishaMoveDynamic(60);       // robot moves forward
+ 720              		.loc 1 513 0
+ 721 020e FFF7FEFF 		bl	moveUntilPuck
+ 722              	.LVL111:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 28
+
+
+ 515:main.c        ****         changeHeightToPuck(3);      // arm lifts up to highest position
+ 723              		.loc 1 515 0
+ 724 0212 FFF7FEFF 		bl	armClose
+ 725              	.LVL112:
+ 516:main.c        ****         mishaMoveDynamic(-60);       // robot moves back away from puck area 
+ 726              		.loc 1 516 0
+ 727 0216 0320     		movs	r0, #3
+ 728 0218 FFF7FEFF 		bl	changeHeightToPuck
+ 729              	.LVL113:
+ 517:main.c        ****         
+ 730              		.loc 1 517 0
+ 731 021c 6FF03B00 		mvn	r0, #59
+ 732 0220 FFF7FEFF 		bl	mishaMoveDynamic
+ 733              	.LVL114:
+ 734              	.L46:
+ 735 0224 FEE7     		b	.L46
+ 736              	.LVL115:
+ 737              	.L42:
+ 738              	.LBE4:
+ 619:main.c        **** 
+ 739              		.loc 1 619 0
+ 740 0226 052B     		cmp	r3, #5
+ 741 0228 28D1     		bne	.L47
+ 621:main.c        ****             lowerAndOpen(currentPuckStackSize);
+ 742              		.loc 1 621 0
+ 743 022a 4FF48772 		mov	r2, #270
+ 744 022e 0F21     		movs	r1, #15
+ 745 0230 1E20     		movs	r0, #30
+ 746 0232 FFF7FEFF 		bl	moveAndAngle
+ 747              	.LVL116:
+ 622:main.c        ****             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Ta
+ 748              		.loc 1 622 0
+ 749 0236 184C     		ldr	r4, .L52+4
+ 750 0238 A069     		ldr	r0, [r4, #24]
+ 751 023a FFF7FEFF 		bl	lowerAndOpen
+ 752              	.LVL117:
+ 623:main.c        ****             changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting
+ 753              		.loc 1 623 0
+ 754 023e 4FF48772 		mov	r2, #270
+ 755 0242 0521     		movs	r1, #5
+ 756 0244 1E20     		movs	r0, #30
+ 757 0246 FFF7FEFF 		bl	moveAndAngle
+ 758              	.LVL118:
+ 624:main.c        ****             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Ta
+ 759              		.loc 1 624 0
+ 760 024a A069     		ldr	r0, [r4, #24]
+ 761 024c 0130     		adds	r0, r0, #1
+ 762 024e FFF7FEFF 		bl	changeHeightToPuck
+ 763              	.LVL119:
+ 625:main.c        **** 
+ 764              		.loc 1 625 0
+ 765 0252 4FF48772 		mov	r2, #270
+ 766 0256 0521     		movs	r1, #5
+ 767 0258 1E20     		movs	r0, #30
+ 768 025a FFF7FEFF 		bl	moveAndAngle
+ 769              	.LVL120:
+ 628:main.c        ****             changeHeightToPuck(current_stage + 1); // Lift claw above stack to avoid hitting the st
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 29
+
+
+ 770              		.loc 1 628 0
+ 771 025e 144C     		ldr	r4, .L52+28
+ 772 0260 6068     		ldr	r0, [r4, #4]
+ 773 0262 FFF7FEFF 		bl	lowerAndOpen
+ 774              	.LVL121:
+ 629:main.c        ****             
+ 775              		.loc 1 629 0
+ 776 0266 6068     		ldr	r0, [r4, #4]
+ 777 0268 0130     		adds	r0, r0, #1
+ 778 026a FFF7FEFF 		bl	changeHeightToPuck
+ 779              	.LVL122:
+ 631:main.c        ****             
+ 780              		.loc 1 631 0
+ 781 026e 6368     		ldr	r3, [r4, #4]
+ 782 0270 0133     		adds	r3, r3, #1
+ 783 0272 6360     		str	r3, [r4, #4]
+ 633:main.c        ****             
+ 784              		.loc 1 633 0
+ 785 0274 032B     		cmp	r3, #3
+ 786 0276 01D1     		bne	.L47
+ 633:main.c        ****             
+ 787              		.loc 1 633 0 is_stmt 0 discriminator 1
+ 788 0278 0622     		movs	r2, #6
+ 789 027a A260     		str	r2, [r4, #8]
+ 790              	.L47:
+ 637:main.c        ****             moveAndAngle(HOME_MIDPOINT, HOME_PARKING_DISTANCE, NORTH_ANGLE); // Should reverse into
+ 791              		.loc 1 637 0 is_stmt 1
+ 792 027c 0C4B     		ldr	r3, .L52+28
+ 793 027e 9B68     		ldr	r3, [r3, #8]
+ 794 0280 062B     		cmp	r3, #6
+ 795 0282 7FF43CAF 		bne	.L48
+ 638:main.c        ****             
+ 796              		.loc 1 638 0
+ 797 0286 5A22     		movs	r2, #90
+ 798 0288 0321     		movs	r1, #3
+ 799 028a 3C20     		movs	r0, #60
+ 800 028c FFF7FEFF 		bl	moveAndAngle
+ 801              	.LVL123:
+ 802 0290 35E7     		b	.L48
+ 803              	.L53:
+ 804 0292 00BF     		.align	2
+ 805              	.L52:
+ 806 0294 00000000 		.word	.LC0
+ 807 0298 00000000 		.word	.LANCHOR0
+ 808 029c 00000000 		.word	TIH
+ 809 02a0 00000000 		.word	StartIH
+ 810 02a4 00000000 		.word	Encoder_Counts_1_IH
+ 811 02a8 00000000 		.word	Encoder_Counts_2_IH
+ 812 02ac 00000000 		.word	Drift_Check_IH
+ 813 02b0 00000000 		.word	.LANCHOR1
+ 814 02b4 18000000 		.word	.LC1
+ 815 02b8 00000000 		.word	pathPastBlock
+ 816 02bc 00000000 		.word	pathToPucks
+ 817 02c0 00000000 		.word	SPEED
+ 818              		.cfi_endproc
+ 819              	.LFE69:
+ 820              		.size	main, .-main
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 30
+
+
+ 821              		.global	current_stage
+ 822              		.global	PLAN_SCAN_VERTICAL
+ 823              		.global	moving
+ 824              		.global	colour_sensing_algorithm
+ 825              		.global	colour_flag
+ 826              		.global	idac_value
+ 827              		.comm	moveBackwardAllowed,2,2
+ 828              		.comm	moveForwardAllowed,2,2
+ 829              		.comm	moveRightAllowed,2,2
+ 830              		.comm	moveLeftAllowed,2,2
+ 831              		.global	moveNow
+ 832              		.comm	desiredOrientation,4,4
+ 833              		.global	currentOrientation
+ 834              		.comm	desiredPosition,8,4
+ 835              		.global	currentPosition
+ 836              		.comm	pathPastBlock,4,4
+ 837              		.comm	pathToPucks,4,4
+ 838              		.global	beginNavigation
+ 839              		.global	horizontalPuckGrid
+ 840              		.global	puckConstructionPlan
+ 841              		.global	currentPuckStackSize
+ 842              		.global	running
+ 843              		.global	state
+ 844              		.comm	motor2EncoderCounts,4,4
+ 845              		.comm	motor1EncoderCounts,4,4
+ 846              		.comm	M2_BD,4,4
+ 847              		.comm	M2_FD,4,4
+ 848              		.comm	M1_BD,4,4
+ 849              		.comm	M1_FD,4,4
+ 850              		.comm	motor2Enable,2,2
+ 851              		.comm	motor1Enable,2,2
+ 852              		.comm	initialisation,4,4
+ 853              		.comm	output,32,4
+ 854              		.global	turningRightFlag
+ 855              		.global	turningLeftFlag
+ 856              		.global	drivingBackwardFlag
+ 857              		.global	drivingForwardFlag
+ 858              		.comm	puckPileLocation,4,4
+ 859              		.global	block_edge_location
+ 860              		.global	sweeping
+ 861              		.global	puckRackOffsetsFromWest
+ 862              		.global	puckRackColours
+ 863              		.global	currentPuckRackScanningIndex
+ 864              		.comm	driveStraightEnable,4,4
+ 865              		.section	.rodata
+ 866              		.align	2
+ 867              		.type	PLAN_SCAN_VERTICAL, %object
+ 868              		.size	PLAN_SCAN_VERTICAL, 4
+ 869              	PLAN_SCAN_VERTICAL:
+ 870 0000 0A000000 		.word	10
+ 871              		.data
+ 872              		.align	2
+ 873              		.set	.LANCHOR1,. + 0
+ 874              		.type	colour_flag, %object
+ 875              		.size	colour_flag, 4
+ 876              	colour_flag:
+ 877 0000 01000000 		.word	1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 31
+
+
+ 878              		.type	current_stage, %object
+ 879              		.size	current_stage, 4
+ 880              	current_stage:
+ 881 0004 01000000 		.word	1
+ 882              		.type	state, %object
+ 883              		.size	state, 4
+ 884              	state:
+ 885 0008 01000000 		.word	1
+ 886              		.type	moveNow, %object
+ 887              		.size	moveNow, 2
+ 888              	moveNow:
+ 889 000c 0100     		.short	1
+ 890 000e 0000     		.space	2
+ 891              		.type	currentOrientation, %object
+ 892              		.size	currentOrientation, 4
+ 893              	currentOrientation:
+ 894 0010 5A000000 		.word	90
+ 895              		.type	running, %object
+ 896              		.size	running, 4
+ 897              	running:
+ 898 0014 01000000 		.word	1
+ 899              		.type	puckRackOffsetsFromWest, %object
+ 900              		.size	puckRackOffsetsFromWest, 20
+ 901              	puckRackOffsetsFromWest:
+ 902 0018 48000000 		.word	72
+ 903 001c 42000000 		.word	66
+ 904 0020 3C000000 		.word	60
+ 905 0024 36000000 		.word	54
+ 906 0028 30000000 		.word	48
+ 907              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 908              		.align	2
+ 909              	.LC0:
+ 910 0000 55415254 		.ascii	"UART commencing... \012\000"
+ 910      20636F6D 
+ 910      6D656E63 
+ 910      696E672E 
+ 910      2E2E200A 
+ 911 0015 000000   		.space	3
+ 912              	.LC1:
+ 913 0018 556C7472 		.ascii	"Ultrasonic Testing: \000"
+ 913      61736F6E 
+ 913      69632054 
+ 913      65737469 
+ 913      6E673A20 
+ 914              		.bss
+ 915              		.align	2
+ 916              		.set	.LANCHOR0,. + 0
+ 917              		.type	beginNavigation, %object
+ 918              		.size	beginNavigation, 4
+ 919              	beginNavigation:
+ 920 0000 00000000 		.space	4
+ 921              		.type	puckConstructionPlan, %object
+ 922              		.size	puckConstructionPlan, 12
+ 923              	puckConstructionPlan:
+ 924 0004 00000000 		.space	12
+ 924      00000000 
+ 924      00000000 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 32
+
+
+ 925              		.type	colour_sensing_algorithm, %object
+ 926              		.size	colour_sensing_algorithm, 4
+ 927              	colour_sensing_algorithm:
+ 928 0010 00000000 		.space	4
+ 929              		.type	idac_value, %object
+ 930              		.size	idac_value, 4
+ 931              	idac_value:
+ 932 0014 00000000 		.space	4
+ 933              		.type	currentPuckStackSize, %object
+ 934              		.size	currentPuckStackSize, 4
+ 935              	currentPuckStackSize:
+ 936 0018 00000000 		.space	4
+ 937              		.type	moving, %object
+ 938              		.size	moving, 4
+ 939              	moving:
+ 940 001c 00000000 		.space	4
+ 941              		.type	currentPosition, %object
+ 942              		.size	currentPosition, 8
+ 943              	currentPosition:
+ 944 0020 00000000 		.space	8
+ 944      00000000 
+ 945              		.type	horizontalPuckGrid, %object
+ 946              		.size	horizontalPuckGrid, 4
+ 947              	horizontalPuckGrid:
+ 948 0028 00000000 		.space	4
+ 949              		.type	turningRightFlag, %object
+ 950              		.size	turningRightFlag, 2
+ 951              	turningRightFlag:
+ 952 002c 0000     		.space	2
+ 953              		.type	turningLeftFlag, %object
+ 954              		.size	turningLeftFlag, 2
+ 955              	turningLeftFlag:
+ 956 002e 0000     		.space	2
+ 957              		.type	drivingBackwardFlag, %object
+ 958              		.size	drivingBackwardFlag, 2
+ 959              	drivingBackwardFlag:
+ 960 0030 0000     		.space	2
+ 961              		.type	drivingForwardFlag, %object
+ 962              		.size	drivingForwardFlag, 2
+ 963              	drivingForwardFlag:
+ 964 0032 0000     		.space	2
+ 965              		.type	block_edge_location, %object
+ 966              		.size	block_edge_location, 16
+ 967              	block_edge_location:
+ 968 0034 00000000 		.space	16
+ 968      00000000 
+ 968      00000000 
+ 968      00000000 
+ 969              		.type	sweeping, %object
+ 970              		.size	sweeping, 4
+ 971              	sweeping:
+ 972 0044 00000000 		.space	4
+ 973              		.type	puckRackColours, %object
+ 974              		.size	puckRackColours, 20
+ 975              	puckRackColours:
+ 976 0048 00000000 		.space	20
+ 976      00000000 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 33
+
+
+ 976      00000000 
+ 976      00000000 
+ 976      00000000 
+ 977              		.type	currentPuckRackScanningIndex, %object
+ 978              		.size	currentPuckRackScanningIndex, 4
+ 979              	currentPuckRackScanningIndex:
+ 980 005c 00000000 		.space	4
+ 981              		.text
+ 982              	.Letext0:
+ 983              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 984              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 985              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 986              		.file 5 "ultrasonic.h"
+ 987              		.file 6 "main.h"
+ 988              		.file 7 "dcmotor.h"
+ 989              		.file 8 "Generated_Source\\PSoC5/CyLib.h"
+ 990              		.file 9 "Generated_Source\\PSoC5/Drift_Check_Timer.h"
+ 991              		.file 10 "Generated_Source\\PSoC5/Motor_1_Encoder_Counts.h"
+ 992              		.file 11 "Generated_Source\\PSoC5/Motor_2_Encoder_Counts.h"
+ 993              		.file 12 "servo.h"
+ 994              		.file 13 "colour.h"
+ 995              		.file 14 "Generated_Source\\PSoC5/Motor_Left_Control.h"
+ 996              		.file 15 "Generated_Source\\PSoC5/Motor_Right_Control.h"
+ 997              		.file 16 "Generated_Source\\PSoC5/Motor_Left_Driver.h"
+ 998              		.file 17 "Generated_Source\\PSoC5/Motor_Right_Driver.h"
+ 999              		.file 18 "Generated_Source\\PSoC5/Motor_Left_Decoder.h"
+ 1000              		.file 19 "Generated_Source\\PSoC5/Motor_Right_Decoder.h"
+ 1001              		.file 20 "mishamotor.h"
+ 1002              		.file 21 "Generated_Source\\PSoC5/UART_1.h"
+ 1003              		.file 22 "Generated_Source\\PSoC5/TIA_1.h"
+ 1004              		.file 23 "Generated_Source\\PSoC5/ADC.h"
+ 1005              		.file 24 "Generated_Source\\PSoC5/IDAC8_1.h"
+ 1006              		.file 25 "Generated_Source\\PSoC5/control_photodiode.h"
+ 1007              		.file 26 "Generated_Source\\PSoC5/control_led.h"
+ 1008              		.file 27 "Generated_Source\\PSoC5/Rack_Servo_PWM.h"
+ 1009              		.file 28 "Generated_Source\\PSoC5/Gripper_Servo_PWM.h"
+ 1010              		.file 29 "Generated_Source\\PSoC5/Timer_1.h"
+ 1011              		.file 30 "Generated_Source\\PSoC5/Sonic.h"
+ 1012              		.file 31 "Generated_Source\\PSoC5/Start.h"
+ 1013              		.file 32 "Generated_Source\\PSoC5/Motor_1_driver.h"
+ 1014              		.file 33 "Generated_Source\\PSoC5/Motor_2_driver.h"
+ 1015              		.file 34 "Generated_Source\\PSoC5/Encoder_Counts_1_Interrupt.h"
+ 1016              		.file 35 "Generated_Source\\PSoC5/Encoder_Counts_2_Interrupt.h"
+ 1017              		.file 36 "Generated_Source\\PSoC5/Drift_Check_Interrupt.h"
+ 1018              		.section	.debug_info,"",%progbits
+ 1019              	.Ldebug_info0:
+ 1020 0000 5C0E0000 		.4byte	0xe5c
+ 1021 0004 0400     		.2byte	0x4
+ 1022 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1023 000a 04       		.byte	0x4
+ 1024 000b 01       		.uleb128 0x1
+ 1025 000c EA020000 		.4byte	.LASF136
+ 1026 0010 0C       		.byte	0xc
+ 1027 0011 27000000 		.4byte	.LASF137
+ 1028 0015 40080000 		.4byte	.LASF138
+ 1029 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 1030 001d 00000000 		.4byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 34
+
+
+ 1031 0021 00000000 		.4byte	.Ldebug_line0
+ 1032 0025 02       		.uleb128 0x2
+ 1033 0026 01       		.byte	0x1
+ 1034 0027 06       		.byte	0x6
+ 1035 0028 B8090000 		.4byte	.LASF0
+ 1036 002c 02       		.uleb128 0x2
+ 1037 002d 01       		.byte	0x1
+ 1038 002e 08       		.byte	0x8
+ 1039 002f BA080000 		.4byte	.LASF1
+ 1040 0033 02       		.uleb128 0x2
+ 1041 0034 02       		.byte	0x2
+ 1042 0035 05       		.byte	0x5
+ 1043 0036 BC060000 		.4byte	.LASF2
+ 1044 003a 02       		.uleb128 0x2
+ 1045 003b 02       		.byte	0x2
+ 1046 003c 07       		.byte	0x7
+ 1047 003d CD090000 		.4byte	.LASF3
+ 1048 0041 03       		.uleb128 0x3
+ 1049 0042 9D000000 		.4byte	.LASF9
+ 1050 0046 02       		.byte	0x2
+ 1051 0047 3F       		.byte	0x3f
+ 1052 0048 4C000000 		.4byte	0x4c
+ 1053 004c 02       		.uleb128 0x2
+ 1054 004d 04       		.byte	0x4
+ 1055 004e 05       		.byte	0x5
+ 1056 004f ED060000 		.4byte	.LASF4
+ 1057 0053 02       		.uleb128 0x2
+ 1058 0054 04       		.byte	0x4
+ 1059 0055 07       		.byte	0x7
+ 1060 0056 20080000 		.4byte	.LASF5
+ 1061 005a 02       		.uleb128 0x2
+ 1062 005b 08       		.byte	0x8
+ 1063 005c 05       		.byte	0x5
+ 1064 005d 44050000 		.4byte	.LASF6
+ 1065 0061 02       		.uleb128 0x2
+ 1066 0062 08       		.byte	0x8
+ 1067 0063 07       		.byte	0x7
+ 1068 0064 23020000 		.4byte	.LASF7
+ 1069 0068 04       		.uleb128 0x4
+ 1070 0069 04       		.byte	0x4
+ 1071 006a 05       		.byte	0x5
+ 1072 006b 696E7400 		.ascii	"int\000"
+ 1073 006f 02       		.uleb128 0x2
+ 1074 0070 04       		.byte	0x4
+ 1075 0071 07       		.byte	0x7
+ 1076 0072 64000000 		.4byte	.LASF8
+ 1077 0076 03       		.uleb128 0x3
+ 1078 0077 290A0000 		.4byte	.LASF10
+ 1079 007b 03       		.byte	0x3
+ 1080 007c 2C       		.byte	0x2c
+ 1081 007d 41000000 		.4byte	0x41
+ 1082 0081 02       		.uleb128 0x2
+ 1083 0082 04       		.byte	0x4
+ 1084 0083 04       		.byte	0x4
+ 1085 0084 BF010000 		.4byte	.LASF11
+ 1086 0088 02       		.uleb128 0x2
+ 1087 0089 08       		.byte	0x8
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 35
+
+
+ 1088 008a 04       		.byte	0x4
+ 1089 008b 050A0000 		.4byte	.LASF12
+ 1090 008f 02       		.uleb128 0x2
+ 1091 0090 01       		.byte	0x1
+ 1092 0091 08       		.byte	0x8
+ 1093 0092 9E040000 		.4byte	.LASF13
+ 1094 0096 02       		.uleb128 0x2
+ 1095 0097 08       		.byte	0x8
+ 1096 0098 04       		.byte	0x4
+ 1097 0099 57060000 		.4byte	.LASF14
+ 1098 009d 02       		.uleb128 0x2
+ 1099 009e 04       		.byte	0x4
+ 1100 009f 07       		.byte	0x7
+ 1101 00a0 E6070000 		.4byte	.LASF15
+ 1102 00a4 05       		.uleb128 0x5
+ 1103 00a5 54494800 		.ascii	"TIH\000"
+ 1104 00a9 01       		.byte	0x1
+ 1105 00aa 64       		.byte	0x64
+ 1106 00ab 00000000 		.4byte	.LFB64
+ 1107 00af 08000000 		.4byte	.LFE64-.LFB64
+ 1108 00b3 01       		.uleb128 0x1
+ 1109 00b4 9C       		.byte	0x9c
+ 1110 00b5 C3000000 		.4byte	0xc3
+ 1111 00b9 06       		.uleb128 0x6
+ 1112 00ba 06000000 		.4byte	.LVL0
+ 1113 00be CB0B0000 		.4byte	0xbcb
+ 1114 00c2 00       		.byte	0
+ 1115 00c3 07       		.uleb128 0x7
+ 1116 00c4 D0070000 		.4byte	.LASF16
+ 1117 00c8 01       		.byte	0x1
+ 1118 00c9 69       		.byte	0x69
+ 1119 00ca 00000000 		.4byte	.LFB65
+ 1120 00ce 20000000 		.4byte	.LFE65-.LFB65
+ 1121 00d2 01       		.uleb128 0x1
+ 1122 00d3 9C       		.byte	0x9c
+ 1123 00d4 E9000000 		.4byte	0xe9
+ 1124 00d8 08       		.uleb128 0x8
+ 1125 00d9 08000000 		.4byte	.LVL1
+ 1126 00dd D60B0000 		.4byte	0xbd6
+ 1127 00e1 09       		.uleb128 0x9
+ 1128 00e2 01       		.uleb128 0x1
+ 1129 00e3 50       		.byte	0x50
+ 1130 00e4 02       		.uleb128 0x2
+ 1131 00e5 08       		.byte	0x8
+ 1132 00e6 64       		.byte	0x64
+ 1133 00e7 00       		.byte	0
+ 1134 00e8 00       		.byte	0
+ 1135 00e9 07       		.uleb128 0x7
+ 1136 00ea F5000000 		.4byte	.LASF17
+ 1137 00ee 01       		.byte	0x1
+ 1138 00ef 72       		.byte	0x72
+ 1139 00f0 00000000 		.4byte	.LFB66
+ 1140 00f4 08000000 		.4byte	.LFE66-.LFB66
+ 1141 00f8 01       		.uleb128 0x1
+ 1142 00f9 9C       		.byte	0x9c
+ 1143 00fa 08010000 		.4byte	0x108
+ 1144 00fe 06       		.uleb128 0x6
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 36
+
+
+ 1145 00ff 06000000 		.4byte	.LVL2
+ 1146 0103 E10B0000 		.4byte	0xbe1
+ 1147 0107 00       		.byte	0
+ 1148 0108 07       		.uleb128 0x7
+ 1149 0109 F6060000 		.4byte	.LASF18
+ 1150 010d 01       		.byte	0x1
+ 1151 010e 76       		.byte	0x76
+ 1152 010f 00000000 		.4byte	.LFB67
+ 1153 0113 08000000 		.4byte	.LFE67-.LFB67
+ 1154 0117 01       		.uleb128 0x1
+ 1155 0118 9C       		.byte	0x9c
+ 1156 0119 27010000 		.4byte	0x127
+ 1157 011d 06       		.uleb128 0x6
+ 1158 011e 06000000 		.4byte	.LVL3
+ 1159 0122 EC0B0000 		.4byte	0xbec
+ 1160 0126 00       		.byte	0
+ 1161 0127 07       		.uleb128 0x7
+ 1162 0128 CA050000 		.4byte	.LASF19
+ 1163 012c 01       		.byte	0x1
+ 1164 012d 7A       		.byte	0x7a
+ 1165 012e 00000000 		.4byte	.LFB68
+ 1166 0132 28000000 		.4byte	.LFE68-.LFB68
+ 1167 0136 01       		.uleb128 0x1
+ 1168 0137 9C       		.byte	0x9c
+ 1169 0138 6A010000 		.4byte	0x16a
+ 1170 013c 06       		.uleb128 0x6
+ 1171 013d 06000000 		.4byte	.LVL4
+ 1172 0141 F70B0000 		.4byte	0xbf7
+ 1173 0145 06       		.uleb128 0x6
+ 1174 0146 0A000000 		.4byte	.LVL5
+ 1175 014a 020C0000 		.4byte	0xc02
+ 1176 014e 06       		.uleb128 0x6
+ 1177 014f 0E000000 		.4byte	.LVL6
+ 1178 0153 0D0C0000 		.4byte	0xc0d
+ 1179 0157 06       		.uleb128 0x6
+ 1180 0158 16000000 		.4byte	.LVL7
+ 1181 015c 180C0000 		.4byte	0xc18
+ 1182 0160 06       		.uleb128 0x6
+ 1183 0161 1E000000 		.4byte	.LVL8
+ 1184 0165 230C0000 		.4byte	0xc23
+ 1185 0169 00       		.byte	0
+ 1186 016a 0A       		.uleb128 0xa
+ 1187 016b 08000000 		.4byte	.LASF20
+ 1188 016f 01       		.byte	0x1
+ 1189 0170 8702     		.2byte	0x287
+ 1190 0172 00000000 		.4byte	.LFB70
+ 1191 0176 44000000 		.4byte	.LFE70-.LFB70
+ 1192 017a 01       		.uleb128 0x1
+ 1193 017b 9C       		.byte	0x9c
+ 1194 017c DF010000 		.4byte	0x1df
+ 1195 0180 0B       		.uleb128 0xb
+ 1196 0181 F8090000 		.4byte	.LASF21
+ 1197 0185 01       		.byte	0x1
+ 1198 0186 8902     		.2byte	0x289
+ 1199 0188 68000000 		.4byte	0x68
+ 1200 018c 00000000 		.4byte	.LLST0
+ 1201 0190 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 37
+
+
+ 1202 0191 2A010000 		.4byte	.LASF22
+ 1203 0195 01       		.byte	0x1
+ 1204 0196 8A02     		.2byte	0x28a
+ 1205 0198 68000000 		.4byte	0x68
+ 1206 019c 1F000000 		.4byte	.LLST1
+ 1207 01a0 0C       		.uleb128 0xc
+ 1208 01a1 0E000000 		.4byte	.LVL10
+ 1209 01a5 2E0C0000 		.4byte	0xc2e
+ 1210 01a9 B3010000 		.4byte	0x1b3
+ 1211 01ad 09       		.uleb128 0x9
+ 1212 01ae 01       		.uleb128 0x1
+ 1213 01af 50       		.byte	0x50
+ 1214 01b0 01       		.uleb128 0x1
+ 1215 01b1 33       		.byte	0x33
+ 1216 01b2 00       		.byte	0
+ 1217 01b3 0C       		.uleb128 0xc
+ 1218 01b4 18000000 		.4byte	.LVL12
+ 1219 01b8 2E0C0000 		.4byte	0xc2e
+ 1220 01bc C6010000 		.4byte	0x1c6
+ 1221 01c0 09       		.uleb128 0x9
+ 1222 01c1 01       		.uleb128 0x1
+ 1223 01c2 50       		.byte	0x50
+ 1224 01c3 01       		.uleb128 0x1
+ 1225 01c4 31       		.byte	0x31
+ 1226 01c5 00       		.byte	0
+ 1227 01c6 06       		.uleb128 0x6
+ 1228 01c7 1C000000 		.4byte	.LVL13
+ 1229 01cb 390C0000 		.4byte	0xc39
+ 1230 01cf 08       		.uleb128 0x8
+ 1231 01d0 24000000 		.4byte	.LVL16
+ 1232 01d4 2E0C0000 		.4byte	0xc2e
+ 1233 01d8 09       		.uleb128 0x9
+ 1234 01d9 01       		.uleb128 0x1
+ 1235 01da 50       		.byte	0x50
+ 1236 01db 01       		.uleb128 0x1
+ 1237 01dc 33       		.byte	0x33
+ 1238 01dd 00       		.byte	0
+ 1239 01de 00       		.byte	0
+ 1240 01df 0A       		.uleb128 0xa
+ 1241 01e0 32080000 		.4byte	.LASF23
+ 1242 01e4 01       		.byte	0x1
+ 1243 01e5 BC02     		.2byte	0x2bc
+ 1244 01e7 00000000 		.4byte	.LFB71
+ 1245 01eb 64000000 		.4byte	.LFE71-.LFB71
+ 1246 01ef 01       		.uleb128 0x1
+ 1247 01f0 9C       		.byte	0x9c
+ 1248 01f1 B3020000 		.4byte	0x2b3
+ 1249 01f5 0B       		.uleb128 0xb
+ 1250 01f6 78030000 		.4byte	.LASF24
+ 1251 01fa 01       		.byte	0x1
+ 1252 01fb BD02     		.2byte	0x2bd
+ 1253 01fd 68000000 		.4byte	0x68
+ 1254 0201 3D000000 		.4byte	.LLST2
+ 1255 0205 0C       		.uleb128 0xc
+ 1256 0206 08000000 		.4byte	.LVL20
+ 1257 020a 440C0000 		.4byte	0xc44
+ 1258 020e 18020000 		.4byte	0x218
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 38
+
+
+ 1259 0212 09       		.uleb128 0x9
+ 1260 0213 01       		.uleb128 0x1
+ 1261 0214 50       		.byte	0x50
+ 1262 0215 01       		.uleb128 0x1
+ 1263 0216 30       		.byte	0x30
+ 1264 0217 00       		.byte	0
+ 1265 0218 0C       		.uleb128 0xc
+ 1266 0219 0E000000 		.4byte	.LVL21
+ 1267 021d 4F0C0000 		.4byte	0xc4f
+ 1268 0221 2B020000 		.4byte	0x22b
+ 1269 0225 09       		.uleb128 0x9
+ 1270 0226 01       		.uleb128 0x1
+ 1271 0227 50       		.byte	0x50
+ 1272 0228 01       		.uleb128 0x1
+ 1273 0229 30       		.byte	0x30
+ 1274 022a 00       		.byte	0
+ 1275 022b 06       		.uleb128 0x6
+ 1276 022c 12000000 		.4byte	.LVL22
+ 1277 0230 5A0C0000 		.4byte	0xc5a
+ 1278 0234 06       		.uleb128 0x6
+ 1279 0235 1A000000 		.4byte	.LVL23
+ 1280 0239 650C0000 		.4byte	0xc65
+ 1281 023d 06       		.uleb128 0x6
+ 1282 023e 1E000000 		.4byte	.LVL24
+ 1283 0242 700C0000 		.4byte	0xc70
+ 1284 0246 06       		.uleb128 0x6
+ 1285 0247 24000000 		.4byte	.LVL25
+ 1286 024b 7B0C0000 		.4byte	0xc7b
+ 1287 024f 06       		.uleb128 0x6
+ 1288 0250 32000000 		.4byte	.LVL27
+ 1289 0254 390C0000 		.4byte	0xc39
+ 1290 0258 0C       		.uleb128 0xc
+ 1291 0259 3A000000 		.4byte	.LVL30
+ 1292 025d D60B0000 		.4byte	0xbd6
+ 1293 0261 6B020000 		.4byte	0x26b
+ 1294 0265 09       		.uleb128 0x9
+ 1295 0266 01       		.uleb128 0x1
+ 1296 0267 50       		.byte	0x50
+ 1297 0268 01       		.uleb128 0x1
+ 1298 0269 3A       		.byte	0x3a
+ 1299 026a 00       		.byte	0
+ 1300 026b 0C       		.uleb128 0xc
+ 1301 026c 44000000 		.4byte	.LVL31
+ 1302 0270 860C0000 		.4byte	0xc86
+ 1303 0274 7E020000 		.4byte	0x27e
+ 1304 0278 09       		.uleb128 0x9
+ 1305 0279 01       		.uleb128 0x1
+ 1306 027a 50       		.byte	0x50
+ 1307 027b 01       		.uleb128 0x1
+ 1308 027c 30       		.byte	0x30
+ 1309 027d 00       		.byte	0
+ 1310 027e 0C       		.uleb128 0xc
+ 1311 027f 4A000000 		.4byte	.LVL32
+ 1312 0283 910C0000 		.4byte	0xc91
+ 1313 0287 91020000 		.4byte	0x291
+ 1314 028b 09       		.uleb128 0x9
+ 1315 028c 01       		.uleb128 0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 39
+
+
+ 1316 028d 50       		.byte	0x50
+ 1317 028e 01       		.uleb128 0x1
+ 1318 028f 30       		.byte	0x30
+ 1319 0290 00       		.byte	0
+ 1320 0291 06       		.uleb128 0x6
+ 1321 0292 4E000000 		.4byte	.LVL33
+ 1322 0296 9C0C0000 		.4byte	0xc9c
+ 1323 029a 06       		.uleb128 0x6
+ 1324 029b 52000000 		.4byte	.LVL34
+ 1325 029f A70C0000 		.4byte	0xca7
+ 1326 02a3 08       		.uleb128 0x8
+ 1327 02a4 58000000 		.4byte	.LVL35
+ 1328 02a8 B20C0000 		.4byte	0xcb2
+ 1329 02ac 09       		.uleb128 0x9
+ 1330 02ad 01       		.uleb128 0x1
+ 1331 02ae 50       		.byte	0x50
+ 1332 02af 01       		.uleb128 0x1
+ 1333 02b0 4E       		.byte	0x4e
+ 1334 02b1 00       		.byte	0
+ 1335 02b2 00       		.byte	0
+ 1336 02b3 0D       		.uleb128 0xd
+ 1337 02b4 E0090000 		.4byte	.LASF139
+ 1338 02b8 01       		.byte	0x1
+ 1339 02b9 83       		.byte	0x83
+ 1340 02ba 68000000 		.4byte	0x68
+ 1341 02be 00000000 		.4byte	.LFB69
+ 1342 02c2 C4020000 		.4byte	.LFE69-.LFB69
+ 1343 02c6 01       		.uleb128 0x1
+ 1344 02c7 9C       		.byte	0x9c
+ 1345 02c8 6E080000 		.4byte	0x86e
+ 1346 02cc 0E       		.uleb128 0xe
+ 1347 02cd E5090000 		.4byte	.LASF25
+ 1348 02d1 01       		.byte	0x1
+ 1349 02d2 8F       		.byte	0x8f
+ 1350 02d3 68000000 		.4byte	0x68
+ 1351 02d7 00       		.byte	0
+ 1352 02d8 0E       		.uleb128 0xe
+ 1353 02d9 D8070000 		.4byte	.LASF26
+ 1354 02dd 01       		.byte	0x1
+ 1355 02de 90       		.byte	0x90
+ 1356 02df 68000000 		.4byte	0x68
+ 1357 02e3 00       		.byte	0
+ 1358 02e4 0E       		.uleb128 0xe
+ 1359 02e5 99010000 		.4byte	.LASF27
+ 1360 02e9 01       		.byte	0x1
+ 1361 02ea 91       		.byte	0x91
+ 1362 02eb 68000000 		.4byte	0x68
+ 1363 02ef 00       		.byte	0
+ 1364 02f0 0E       		.uleb128 0xe
+ 1365 02f1 AF030000 		.4byte	.LASF28
+ 1366 02f5 01       		.byte	0x1
+ 1367 02f6 92       		.byte	0x92
+ 1368 02f7 68000000 		.4byte	0x68
+ 1369 02fb 01       		.byte	0x1
+ 1370 02fc 0F       		.uleb128 0xf
+ 1371 02fd 08010000 		.4byte	.LBB2
+ 1372 0301 2A000000 		.4byte	.LBE2-.LBB2
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 40
+
+
+ 1373 0305 7B030000 		.4byte	0x37b
+ 1374 0309 0B       		.uleb128 0xb
+ 1375 030a 52050000 		.4byte	.LASF29
+ 1376 030e 01       		.byte	0x1
+ 1377 030f 3601     		.2byte	0x136
+ 1378 0311 68000000 		.4byte	0x68
+ 1379 0315 72000000 		.4byte	.LLST3
+ 1380 0319 0F       		.uleb128 0xf
+ 1381 031a 14010000 		.4byte	.LBB3
+ 1382 031e 18000000 		.4byte	.LBE3-.LBB3
+ 1383 0322 5A030000 		.4byte	0x35a
+ 1384 0326 10       		.uleb128 0x10
+ 1385 0327 6900     		.ascii	"i\000"
+ 1386 0329 01       		.byte	0x1
+ 1387 032a 4101     		.2byte	0x141
+ 1388 032c 68000000 		.4byte	0x68
+ 1389 0330 90000000 		.4byte	.LLST4
+ 1390 0334 0C       		.uleb128 0xc
+ 1391 0335 1E010000 		.4byte	.LVL85
+ 1392 0339 2E0C0000 		.4byte	0xc2e
+ 1393 033d 48030000 		.4byte	0x348
+ 1394 0341 09       		.uleb128 0x9
+ 1395 0342 01       		.uleb128 0x1
+ 1396 0343 50       		.byte	0x50
+ 1397 0344 02       		.uleb128 0x2
+ 1398 0345 74       		.byte	0x74
+ 1399 0346 00       		.sleb128 0
+ 1400 0347 00       		.byte	0
+ 1401 0348 08       		.uleb128 0x8
+ 1402 0349 26010000 		.4byte	.LVL86
+ 1403 034d D60B0000 		.4byte	0xbd6
+ 1404 0351 09       		.uleb128 0x9
+ 1405 0352 01       		.uleb128 0x1
+ 1406 0353 50       		.byte	0x50
+ 1407 0354 03       		.uleb128 0x3
+ 1408 0355 0A       		.byte	0xa
+ 1409 0356 E803     		.2byte	0x3e8
+ 1410 0358 00       		.byte	0
+ 1411 0359 00       		.byte	0
+ 1412 035a 0C       		.uleb128 0xc
+ 1413 035b 10010000 		.4byte	.LVL82
+ 1414 035f BD0C0000 		.4byte	0xcbd
+ 1415 0363 71030000 		.4byte	0x371
+ 1416 0367 09       		.uleb128 0x9
+ 1417 0368 01       		.uleb128 0x1
+ 1418 0369 50       		.byte	0x50
+ 1419 036a 05       		.uleb128 0x5
+ 1420 036b 03       		.byte	0x3
+ 1421 036c 18000000 		.4byte	.LC1
+ 1422 0370 00       		.byte	0
+ 1423 0371 06       		.uleb128 0x6
+ 1424 0372 14010000 		.4byte	.LVL83
+ 1425 0376 C80C0000 		.4byte	0xcc8
+ 1426 037a 00       		.byte	0
+ 1427 037b 0F       		.uleb128 0xf
+ 1428 037c CA010000 		.4byte	.LBB4
+ 1429 0380 5C000000 		.4byte	.LBE4-.LBB4
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 41
+
+
+ 1430 0384 48040000 		.4byte	0x448
+ 1431 0388 0B       		.uleb128 0xb
+ 1432 0389 F8090000 		.4byte	.LASF21
+ 1433 038d 01       		.byte	0x1
+ 1434 038e E401     		.2byte	0x1e4
+ 1435 0390 68000000 		.4byte	0x68
+ 1436 0394 AF000000 		.4byte	.LLST5
+ 1437 0398 0B       		.uleb128 0xb
+ 1438 0399 2A010000 		.4byte	.LASF22
+ 1439 039d 01       		.byte	0x1
+ 1440 039e E501     		.2byte	0x1e5
+ 1441 03a0 68000000 		.4byte	0x68
+ 1442 03a4 CE000000 		.4byte	.LLST6
+ 1443 03a8 0C       		.uleb128 0xc
+ 1444 03a9 E0010000 		.4byte	.LVL102
+ 1445 03ad B20C0000 		.4byte	0xcb2
+ 1446 03b1 BC030000 		.4byte	0x3bc
+ 1447 03b5 09       		.uleb128 0x9
+ 1448 03b6 01       		.uleb128 0x1
+ 1449 03b7 50       		.byte	0x50
+ 1450 03b8 02       		.uleb128 0x2
+ 1451 03b9 08       		.byte	0x8
+ 1452 03ba 32       		.byte	0x32
+ 1453 03bb 00       		.byte	0
+ 1454 03bc 0C       		.uleb128 0xc
+ 1455 03bd E6010000 		.4byte	.LVL103
+ 1456 03c1 2E0C0000 		.4byte	0xc2e
+ 1457 03c5 CF030000 		.4byte	0x3cf
+ 1458 03c9 09       		.uleb128 0x9
+ 1459 03ca 01       		.uleb128 0x1
+ 1460 03cb 50       		.byte	0x50
+ 1461 03cc 01       		.uleb128 0x1
+ 1462 03cd 31       		.byte	0x31
+ 1463 03ce 00       		.byte	0
+ 1464 03cf 06       		.uleb128 0x6
+ 1465 03d0 EA010000 		.4byte	.LVL104
+ 1466 03d4 390C0000 		.4byte	0xc39
+ 1467 03d8 0C       		.uleb128 0xc
+ 1468 03d9 F2010000 		.4byte	.LVL107
+ 1469 03dd 2E0C0000 		.4byte	0xc2e
+ 1470 03e1 EB030000 		.4byte	0x3eb
+ 1471 03e5 09       		.uleb128 0x9
+ 1472 03e6 01       		.uleb128 0x1
+ 1473 03e7 50       		.byte	0x50
+ 1474 03e8 01       		.uleb128 0x1
+ 1475 03e9 33       		.byte	0x33
+ 1476 03ea 00       		.byte	0
+ 1477 03eb 0C       		.uleb128 0xc
+ 1478 03ec FA010000 		.4byte	.LVL108
+ 1479 03f0 B20C0000 		.4byte	0xcb2
+ 1480 03f4 FF030000 		.4byte	0x3ff
+ 1481 03f8 09       		.uleb128 0x9
+ 1482 03f9 01       		.uleb128 0x1
+ 1483 03fa 50       		.byte	0x50
+ 1484 03fb 02       		.uleb128 0x2
+ 1485 03fc 09       		.byte	0x9
+ 1486 03fd CE       		.byte	0xce
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 42
+
+
+ 1487 03fe 00       		.byte	0
+ 1488 03ff 0C       		.uleb128 0xc
+ 1489 0400 0E020000 		.4byte	.LVL110
+ 1490 0404 2E0C0000 		.4byte	0xc2e
+ 1491 0408 12040000 		.4byte	0x412
+ 1492 040c 09       		.uleb128 0x9
+ 1493 040d 01       		.uleb128 0x1
+ 1494 040e 50       		.byte	0x50
+ 1495 040f 01       		.uleb128 0x1
+ 1496 0410 30       		.byte	0x30
+ 1497 0411 00       		.byte	0
+ 1498 0412 06       		.uleb128 0x6
+ 1499 0413 12020000 		.4byte	.LVL111
+ 1500 0417 DF010000 		.4byte	0x1df
+ 1501 041b 06       		.uleb128 0x6
+ 1502 041c 16020000 		.4byte	.LVL112
+ 1503 0420 D30C0000 		.4byte	0xcd3
+ 1504 0424 0C       		.uleb128 0xc
+ 1505 0425 1C020000 		.4byte	.LVL113
+ 1506 0429 2E0C0000 		.4byte	0xc2e
+ 1507 042d 37040000 		.4byte	0x437
+ 1508 0431 09       		.uleb128 0x9
+ 1509 0432 01       		.uleb128 0x1
+ 1510 0433 50       		.byte	0x50
+ 1511 0434 01       		.uleb128 0x1
+ 1512 0435 33       		.byte	0x33
+ 1513 0436 00       		.byte	0
+ 1514 0437 08       		.uleb128 0x8
+ 1515 0438 24020000 		.4byte	.LVL114
+ 1516 043c B20C0000 		.4byte	0xcb2
+ 1517 0440 09       		.uleb128 0x9
+ 1518 0441 01       		.uleb128 0x1
+ 1519 0442 50       		.byte	0x50
+ 1520 0443 02       		.uleb128 0x2
+ 1521 0444 09       		.byte	0x9
+ 1522 0445 C4       		.byte	0xc4
+ 1523 0446 00       		.byte	0
+ 1524 0447 00       		.byte	0
+ 1525 0448 06       		.uleb128 0x6
+ 1526 0449 08000000 		.4byte	.LVL37
+ 1527 044d DE0C0000 		.4byte	0xcde
+ 1528 0451 06       		.uleb128 0x6
+ 1529 0452 0C000000 		.4byte	.LVL38
+ 1530 0456 E90C0000 		.4byte	0xce9
+ 1531 045a 0C       		.uleb128 0xc
+ 1532 045b 12000000 		.4byte	.LVL39
+ 1533 045f BD0C0000 		.4byte	0xcbd
+ 1534 0463 71040000 		.4byte	0x471
+ 1535 0467 09       		.uleb128 0x9
+ 1536 0468 01       		.uleb128 0x1
+ 1537 0469 50       		.byte	0x50
+ 1538 046a 05       		.uleb128 0x5
+ 1539 046b 03       		.byte	0x3
+ 1540 046c 00000000 		.4byte	.LC0
+ 1541 0470 00       		.byte	0
+ 1542 0471 06       		.uleb128 0x6
+ 1543 0472 16000000 		.4byte	.LVL40
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 43
+
+
+ 1544 0476 F40C0000 		.4byte	0xcf4
+ 1545 047a 06       		.uleb128 0x6
+ 1546 047b 1A000000 		.4byte	.LVL41
+ 1547 047f FF0C0000 		.4byte	0xcff
+ 1548 0483 0C       		.uleb128 0xc
+ 1549 0484 20000000 		.4byte	.LVL42
+ 1550 0488 0A0D0000 		.4byte	0xd0a
+ 1551 048c 96040000 		.4byte	0x496
+ 1552 0490 09       		.uleb128 0x9
+ 1553 0491 01       		.uleb128 0x1
+ 1554 0492 50       		.byte	0x50
+ 1555 0493 01       		.uleb128 0x1
+ 1556 0494 30       		.byte	0x30
+ 1557 0495 00       		.byte	0
+ 1558 0496 06       		.uleb128 0x6
+ 1559 0497 28000000 		.4byte	.LVL43
+ 1560 049b 150D0000 		.4byte	0xd15
+ 1561 049f 0C       		.uleb128 0xc
+ 1562 04a0 32000000 		.4byte	.LVL44
+ 1563 04a4 200D0000 		.4byte	0xd20
+ 1564 04a8 B3040000 		.4byte	0x4b3
+ 1565 04ac 09       		.uleb128 0x9
+ 1566 04ad 01       		.uleb128 0x1
+ 1567 04ae 50       		.byte	0x50
+ 1568 04af 02       		.uleb128 0x2
+ 1569 04b0 74       		.byte	0x74
+ 1570 04b1 00       		.sleb128 0
+ 1571 04b2 00       		.byte	0
+ 1572 04b3 0C       		.uleb128 0xc
+ 1573 04b4 38000000 		.4byte	.LVL45
+ 1574 04b8 2B0D0000 		.4byte	0xd2b
+ 1575 04bc C6040000 		.4byte	0x4c6
+ 1576 04c0 09       		.uleb128 0x9
+ 1577 04c1 01       		.uleb128 0x1
+ 1578 04c2 50       		.byte	0x50
+ 1579 04c3 01       		.uleb128 0x1
+ 1580 04c4 31       		.byte	0x31
+ 1581 04c5 00       		.byte	0
+ 1582 04c6 0C       		.uleb128 0xc
+ 1583 04c7 40000000 		.4byte	.LVL46
+ 1584 04cb D60B0000 		.4byte	0xbd6
+ 1585 04cf DB040000 		.4byte	0x4db
+ 1586 04d3 09       		.uleb128 0x9
+ 1587 04d4 01       		.uleb128 0x1
+ 1588 04d5 50       		.byte	0x50
+ 1589 04d6 03       		.uleb128 0x3
+ 1590 04d7 0A       		.byte	0xa
+ 1591 04d8 F401     		.2byte	0x1f4
+ 1592 04da 00       		.byte	0
+ 1593 04db 0C       		.uleb128 0xc
+ 1594 04dc 46000000 		.4byte	.LVL47
+ 1595 04e0 2B0D0000 		.4byte	0xd2b
+ 1596 04e4 EE040000 		.4byte	0x4ee
+ 1597 04e8 09       		.uleb128 0x9
+ 1598 04e9 01       		.uleb128 0x1
+ 1599 04ea 50       		.byte	0x50
+ 1600 04eb 01       		.uleb128 0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 44
+
+
+ 1601 04ec 32       		.byte	0x32
+ 1602 04ed 00       		.byte	0
+ 1603 04ee 0C       		.uleb128 0xc
+ 1604 04ef 4E000000 		.4byte	.LVL48
+ 1605 04f3 D60B0000 		.4byte	0xbd6
+ 1606 04f7 03050000 		.4byte	0x503
+ 1607 04fb 09       		.uleb128 0x9
+ 1608 04fc 01       		.uleb128 0x1
+ 1609 04fd 50       		.byte	0x50
+ 1610 04fe 03       		.uleb128 0x3
+ 1611 04ff 0A       		.byte	0xa
+ 1612 0500 F401     		.2byte	0x1f4
+ 1613 0502 00       		.byte	0
+ 1614 0503 0C       		.uleb128 0xc
+ 1615 0504 54000000 		.4byte	.LVL49
+ 1616 0508 2B0D0000 		.4byte	0xd2b
+ 1617 050c 16050000 		.4byte	0x516
+ 1618 0510 09       		.uleb128 0x9
+ 1619 0511 01       		.uleb128 0x1
+ 1620 0512 50       		.byte	0x50
+ 1621 0513 01       		.uleb128 0x1
+ 1622 0514 33       		.byte	0x33
+ 1623 0515 00       		.byte	0
+ 1624 0516 0C       		.uleb128 0xc
+ 1625 0517 5C000000 		.4byte	.LVL50
+ 1626 051b D60B0000 		.4byte	0xbd6
+ 1627 051f 2B050000 		.4byte	0x52b
+ 1628 0523 09       		.uleb128 0x9
+ 1629 0524 01       		.uleb128 0x1
+ 1630 0525 50       		.byte	0x50
+ 1631 0526 03       		.uleb128 0x3
+ 1632 0527 0A       		.byte	0xa
+ 1633 0528 F401     		.2byte	0x1f4
+ 1634 052a 00       		.byte	0
+ 1635 052b 0C       		.uleb128 0xc
+ 1636 052c 62000000 		.4byte	.LVL51
+ 1637 0530 2B0D0000 		.4byte	0xd2b
+ 1638 0534 3F050000 		.4byte	0x53f
+ 1639 0538 09       		.uleb128 0x9
+ 1640 0539 01       		.uleb128 0x1
+ 1641 053a 50       		.byte	0x50
+ 1642 053b 02       		.uleb128 0x2
+ 1643 053c 74       		.byte	0x74
+ 1644 053d 00       		.sleb128 0
+ 1645 053e 00       		.byte	0
+ 1646 053f 0C       		.uleb128 0xc
+ 1647 0540 6A000000 		.4byte	.LVL52
+ 1648 0544 D60B0000 		.4byte	0xbd6
+ 1649 0548 54050000 		.4byte	0x554
+ 1650 054c 09       		.uleb128 0x9
+ 1651 054d 01       		.uleb128 0x1
+ 1652 054e 50       		.byte	0x50
+ 1653 054f 03       		.uleb128 0x3
+ 1654 0550 0A       		.byte	0xa
+ 1655 0551 F401     		.2byte	0x1f4
+ 1656 0553 00       		.byte	0
+ 1657 0554 06       		.uleb128 0x6
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 45
+
+
+ 1658 0555 6E000000 		.4byte	.LVL53
+ 1659 0559 360D0000 		.4byte	0xd36
+ 1660 055d 06       		.uleb128 0x6
+ 1661 055e 72000000 		.4byte	.LVL54
+ 1662 0562 410D0000 		.4byte	0xd41
+ 1663 0566 0C       		.uleb128 0xc
+ 1664 0567 7A000000 		.4byte	.LVL55
+ 1665 056b 4C0D0000 		.4byte	0xd4c
+ 1666 056f 7B050000 		.4byte	0x57b
+ 1667 0573 09       		.uleb128 0x9
+ 1668 0574 01       		.uleb128 0x1
+ 1669 0575 50       		.byte	0x50
+ 1670 0576 03       		.uleb128 0x3
+ 1671 0577 0A       		.byte	0xa
+ 1672 0578 E803     		.2byte	0x3e8
+ 1673 057a 00       		.byte	0
+ 1674 057b 0C       		.uleb128 0xc
+ 1675 057c 82000000 		.4byte	.LVL56
+ 1676 0580 D60B0000 		.4byte	0xbd6
+ 1677 0584 90050000 		.4byte	0x590
+ 1678 0588 09       		.uleb128 0x9
+ 1679 0589 01       		.uleb128 0x1
+ 1680 058a 50       		.byte	0x50
+ 1681 058b 03       		.uleb128 0x3
+ 1682 058c 0A       		.byte	0xa
+ 1683 058d F401     		.2byte	0x1f4
+ 1684 058f 00       		.byte	0
+ 1685 0590 06       		.uleb128 0x6
+ 1686 0591 86000000 		.4byte	.LVL57
+ 1687 0595 570D0000 		.4byte	0xd57
+ 1688 0599 06       		.uleb128 0x6
+ 1689 059a 8A000000 		.4byte	.LVL58
+ 1690 059e 620D0000 		.4byte	0xd62
+ 1691 05a2 0C       		.uleb128 0xc
+ 1692 05a3 92000000 		.4byte	.LVL59
+ 1693 05a7 6D0D0000 		.4byte	0xd6d
+ 1694 05ab B7050000 		.4byte	0x5b7
+ 1695 05af 09       		.uleb128 0x9
+ 1696 05b0 01       		.uleb128 0x1
+ 1697 05b1 50       		.byte	0x50
+ 1698 05b2 03       		.uleb128 0x3
+ 1699 05b3 0A       		.byte	0xa
+ 1700 05b4 6004     		.2byte	0x460
+ 1701 05b6 00       		.byte	0
+ 1702 05b7 0C       		.uleb128 0xc
+ 1703 05b8 9A000000 		.4byte	.LVL60
+ 1704 05bc D60B0000 		.4byte	0xbd6
+ 1705 05c0 CC050000 		.4byte	0x5cc
+ 1706 05c4 09       		.uleb128 0x9
+ 1707 05c5 01       		.uleb128 0x1
+ 1708 05c6 50       		.byte	0x50
+ 1709 05c7 03       		.uleb128 0x3
+ 1710 05c8 0A       		.byte	0xa
+ 1711 05c9 F401     		.2byte	0x1f4
+ 1712 05cb 00       		.byte	0
+ 1713 05cc 06       		.uleb128 0x6
+ 1714 05cd 9E000000 		.4byte	.LVL61
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 46
+
+
+ 1715 05d1 780D0000 		.4byte	0xd78
+ 1716 05d5 06       		.uleb128 0x6
+ 1717 05d6 A2000000 		.4byte	.LVL62
+ 1718 05da 830D0000 		.4byte	0xd83
+ 1719 05de 06       		.uleb128 0x6
+ 1720 05df A6000000 		.4byte	.LVL63
+ 1721 05e3 9C0C0000 		.4byte	0xc9c
+ 1722 05e7 06       		.uleb128 0x6
+ 1723 05e8 AA000000 		.4byte	.LVL64
+ 1724 05ec 8E0D0000 		.4byte	0xd8e
+ 1725 05f0 06       		.uleb128 0x6
+ 1726 05f1 AE000000 		.4byte	.LVL65
+ 1727 05f5 A70C0000 		.4byte	0xca7
+ 1728 05f9 06       		.uleb128 0x6
+ 1729 05fa B2000000 		.4byte	.LVL66
+ 1730 05fe 990D0000 		.4byte	0xd99
+ 1731 0602 06       		.uleb128 0x6
+ 1732 0603 B6000000 		.4byte	.LVL67
+ 1733 0607 A40D0000 		.4byte	0xda4
+ 1734 060b 06       		.uleb128 0x6
+ 1735 060c BA000000 		.4byte	.LVL68
+ 1736 0610 AF0D0000 		.4byte	0xdaf
+ 1737 0614 06       		.uleb128 0x6
+ 1738 0615 BE000000 		.4byte	.LVL69
+ 1739 0619 BA0D0000 		.4byte	0xdba
+ 1740 061d 0C       		.uleb128 0xc
+ 1741 061e C4000000 		.4byte	.LVL70
+ 1742 0622 C50D0000 		.4byte	0xdc5
+ 1743 0626 34060000 		.4byte	0x634
+ 1744 062a 09       		.uleb128 0x9
+ 1745 062b 01       		.uleb128 0x1
+ 1746 062c 50       		.byte	0x50
+ 1747 062d 05       		.uleb128 0x5
+ 1748 062e 03       		.byte	0x3
+ 1749 062f 00000000 		.4byte	TIH
+ 1750 0633 00       		.byte	0
+ 1751 0634 0C       		.uleb128 0xc
+ 1752 0635 CA000000 		.4byte	.LVL71
+ 1753 0639 D00D0000 		.4byte	0xdd0
+ 1754 063d 4B060000 		.4byte	0x64b
+ 1755 0641 09       		.uleb128 0x9
+ 1756 0642 01       		.uleb128 0x1
+ 1757 0643 50       		.byte	0x50
+ 1758 0644 05       		.uleb128 0x5
+ 1759 0645 03       		.byte	0x3
+ 1760 0646 00000000 		.4byte	StartIH
+ 1761 064a 00       		.byte	0
+ 1762 064b 06       		.uleb128 0x6
+ 1763 064c D0000000 		.4byte	.LVL72
+ 1764 0650 DB0D0000 		.4byte	0xddb
+ 1765 0654 06       		.uleb128 0x6
+ 1766 0655 D4000000 		.4byte	.LVL73
+ 1767 0659 E60D0000 		.4byte	0xde6
+ 1768 065d 06       		.uleb128 0x6
+ 1769 065e E0000000 		.4byte	.LVL74
+ 1770 0662 F10D0000 		.4byte	0xdf1
+ 1771 0666 06       		.uleb128 0x6
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 47
+
+
+ 1772 0667 E4000000 		.4byte	.LVL75
+ 1773 066b FC0D0000 		.4byte	0xdfc
+ 1774 066f 06       		.uleb128 0x6
+ 1775 0670 E8000000 		.4byte	.LVL76
+ 1776 0674 070E0000 		.4byte	0xe07
+ 1777 0678 06       		.uleb128 0x6
+ 1778 0679 EC000000 		.4byte	.LVL77
+ 1779 067d 120E0000 		.4byte	0xe12
+ 1780 0681 0C       		.uleb128 0xc
+ 1781 0682 F2000000 		.4byte	.LVL78
+ 1782 0686 1D0E0000 		.4byte	0xe1d
+ 1783 068a 98060000 		.4byte	0x698
+ 1784 068e 09       		.uleb128 0x9
+ 1785 068f 01       		.uleb128 0x1
+ 1786 0690 50       		.byte	0x50
+ 1787 0691 05       		.uleb128 0x5
+ 1788 0692 03       		.byte	0x3
+ 1789 0693 00000000 		.4byte	Encoder_Counts_1_IH
+ 1790 0697 00       		.byte	0
+ 1791 0698 0C       		.uleb128 0xc
+ 1792 0699 F8000000 		.4byte	.LVL79
+ 1793 069d 280E0000 		.4byte	0xe28
+ 1794 06a1 AF060000 		.4byte	0x6af
+ 1795 06a5 09       		.uleb128 0x9
+ 1796 06a6 01       		.uleb128 0x1
+ 1797 06a7 50       		.byte	0x50
+ 1798 06a8 05       		.uleb128 0x5
+ 1799 06a9 03       		.byte	0x3
+ 1800 06aa 00000000 		.4byte	Encoder_Counts_2_IH
+ 1801 06ae 00       		.byte	0
+ 1802 06af 0C       		.uleb128 0xc
+ 1803 06b0 FE000000 		.4byte	.LVL80
+ 1804 06b4 330E0000 		.4byte	0xe33
+ 1805 06b8 C6060000 		.4byte	0x6c6
+ 1806 06bc 09       		.uleb128 0x9
+ 1807 06bd 01       		.uleb128 0x1
+ 1808 06be 50       		.byte	0x50
+ 1809 06bf 05       		.uleb128 0x5
+ 1810 06c0 03       		.byte	0x3
+ 1811 06c1 00000000 		.4byte	Drift_Check_IH
+ 1812 06c5 00       		.byte	0
+ 1813 06c6 0C       		.uleb128 0xc
+ 1814 06c7 38010000 		.4byte	.LVL89
+ 1815 06cb B20C0000 		.4byte	0xcb2
+ 1816 06cf DA060000 		.4byte	0x6da
+ 1817 06d3 09       		.uleb128 0x9
+ 1818 06d4 01       		.uleb128 0x1
+ 1819 06d5 50       		.byte	0x50
+ 1820 06d6 02       		.uleb128 0x2
+ 1821 06d7 08       		.byte	0x8
+ 1822 06d8 E6       		.byte	0xe6
+ 1823 06d9 00       		.byte	0
+ 1824 06da 0C       		.uleb128 0xc
+ 1825 06db 46010000 		.4byte	.LVL90
+ 1826 06df 3E0E0000 		.4byte	0xe3e
+ 1827 06e3 EE060000 		.4byte	0x6ee
+ 1828 06e7 09       		.uleb128 0x9
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 48
+
+
+ 1829 06e8 01       		.uleb128 0x1
+ 1830 06e9 50       		.byte	0x50
+ 1831 06ea 02       		.uleb128 0x2
+ 1832 06eb 09       		.byte	0x9
+ 1833 06ec D3       		.byte	0xd3
+ 1834 06ed 00       		.byte	0
+ 1835 06ee 0C       		.uleb128 0xc
+ 1836 06ef 4E010000 		.4byte	.LVL91
+ 1837 06f3 B20C0000 		.4byte	0xcb2
+ 1838 06f7 03070000 		.4byte	0x703
+ 1839 06fb 09       		.uleb128 0x9
+ 1840 06fc 01       		.uleb128 0x1
+ 1841 06fd 50       		.byte	0x50
+ 1842 06fe 03       		.uleb128 0x3
+ 1843 06ff 0B       		.byte	0xb
+ 1844 0700 6AFF     		.2byte	0xff6a
+ 1845 0702 00       		.byte	0
+ 1846 0703 0C       		.uleb128 0xc
+ 1847 0704 54010000 		.4byte	.LVL92
+ 1848 0708 3E0E0000 		.4byte	0xe3e
+ 1849 070c 17070000 		.4byte	0x717
+ 1850 0710 09       		.uleb128 0x9
+ 1851 0711 01       		.uleb128 0x1
+ 1852 0712 50       		.byte	0x50
+ 1853 0713 02       		.uleb128 0x2
+ 1854 0714 08       		.byte	0x8
+ 1855 0715 2D       		.byte	0x2d
+ 1856 0716 00       		.byte	0
+ 1857 0717 0C       		.uleb128 0xc
+ 1858 0718 5A010000 		.4byte	.LVL93
+ 1859 071c B20C0000 		.4byte	0xcb2
+ 1860 0720 2B070000 		.4byte	0x72b
+ 1861 0724 09       		.uleb128 0x9
+ 1862 0725 01       		.uleb128 0x1
+ 1863 0726 50       		.byte	0x50
+ 1864 0727 02       		.uleb128 0x2
+ 1865 0728 08       		.byte	0x8
+ 1866 0729 C8       		.byte	0xc8
+ 1867 072a 00       		.byte	0
+ 1868 072b 0C       		.uleb128 0xc
+ 1869 072c 60010000 		.4byte	.LVL94
+ 1870 0730 3E0E0000 		.4byte	0xe3e
+ 1871 0734 3F070000 		.4byte	0x73f
+ 1872 0738 09       		.uleb128 0x9
+ 1873 0739 01       		.uleb128 0x1
+ 1874 073a 50       		.byte	0x50
+ 1875 073b 02       		.uleb128 0x2
+ 1876 073c 08       		.byte	0x8
+ 1877 073d 5A       		.byte	0x5a
+ 1878 073e 00       		.byte	0
+ 1879 073f 0C       		.uleb128 0xc
+ 1880 0740 68010000 		.4byte	.LVL95
+ 1881 0744 B20C0000 		.4byte	0xcb2
+ 1882 0748 54070000 		.4byte	0x754
+ 1883 074c 09       		.uleb128 0x9
+ 1884 074d 01       		.uleb128 0x1
+ 1885 074e 50       		.byte	0x50
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 49
+
+
+ 1886 074f 03       		.uleb128 0x3
+ 1887 0750 0A       		.byte	0xa
+ 1888 0751 F401     		.2byte	0x1f4
+ 1889 0753 00       		.byte	0
+ 1890 0754 0C       		.uleb128 0xc
+ 1891 0755 90010000 		.4byte	.LVL96
+ 1892 0759 490E0000 		.4byte	0xe49
+ 1893 075d 72070000 		.4byte	0x772
+ 1894 0761 09       		.uleb128 0x9
+ 1895 0762 01       		.uleb128 0x1
+ 1896 0763 50       		.byte	0x50
+ 1897 0764 01       		.uleb128 0x1
+ 1898 0765 40       		.byte	0x40
+ 1899 0766 09       		.uleb128 0x9
+ 1900 0767 01       		.uleb128 0x1
+ 1901 0768 51       		.byte	0x51
+ 1902 0769 02       		.uleb128 0x2
+ 1903 076a 08       		.byte	0x8
+ 1904 076b 82       		.byte	0x82
+ 1905 076c 09       		.uleb128 0x9
+ 1906 076d 01       		.uleb128 0x1
+ 1907 076e 52       		.byte	0x52
+ 1908 076f 01       		.uleb128 0x1
+ 1909 0770 30       		.byte	0x30
+ 1910 0771 00       		.byte	0
+ 1911 0772 0C       		.uleb128 0xc
+ 1912 0773 9C010000 		.4byte	.LVL97
+ 1913 0777 490E0000 		.4byte	0xe49
+ 1914 077b 91070000 		.4byte	0x791
+ 1915 077f 09       		.uleb128 0x9
+ 1916 0780 01       		.uleb128 0x1
+ 1917 0781 50       		.byte	0x50
+ 1918 0782 01       		.uleb128 0x1
+ 1919 0783 40       		.byte	0x40
+ 1920 0784 09       		.uleb128 0x9
+ 1921 0785 01       		.uleb128 0x1
+ 1922 0786 51       		.byte	0x51
+ 1923 0787 02       		.uleb128 0x2
+ 1924 0788 08       		.byte	0x8
+ 1925 0789 66       		.byte	0x66
+ 1926 078a 09       		.uleb128 0x9
+ 1927 078b 01       		.uleb128 0x1
+ 1928 078c 52       		.byte	0x52
+ 1929 078d 02       		.uleb128 0x2
+ 1930 078e 08       		.byte	0x8
+ 1931 078f 5A       		.byte	0x5a
+ 1932 0790 00       		.byte	0
+ 1933 0791 0C       		.uleb128 0xc
+ 1934 0792 B0010000 		.4byte	.LVL98
+ 1935 0796 490E0000 		.4byte	0xe49
+ 1936 079a B1070000 		.4byte	0x7b1
+ 1937 079e 09       		.uleb128 0x9
+ 1938 079f 01       		.uleb128 0x1
+ 1939 07a0 50       		.byte	0x50
+ 1940 07a1 02       		.uleb128 0x2
+ 1941 07a2 08       		.byte	0x8
+ 1942 07a3 68       		.byte	0x68
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 50
+
+
+ 1943 07a4 09       		.uleb128 0x9
+ 1944 07a5 01       		.uleb128 0x1
+ 1945 07a6 51       		.byte	0x51
+ 1946 07a7 02       		.uleb128 0x2
+ 1947 07a8 08       		.byte	0x8
+ 1948 07a9 82       		.byte	0x82
+ 1949 07aa 09       		.uleb128 0x9
+ 1950 07ab 01       		.uleb128 0x1
+ 1951 07ac 52       		.byte	0x52
+ 1952 07ad 02       		.uleb128 0x2
+ 1953 07ae 08       		.byte	0x8
+ 1954 07af B4       		.byte	0xb4
+ 1955 07b0 00       		.byte	0
+ 1956 07b1 0C       		.uleb128 0xc
+ 1957 07b2 BC010000 		.4byte	.LVL99
+ 1958 07b6 490E0000 		.4byte	0xe49
+ 1959 07ba D1070000 		.4byte	0x7d1
+ 1960 07be 09       		.uleb128 0x9
+ 1961 07bf 01       		.uleb128 0x1
+ 1962 07c0 50       		.byte	0x50
+ 1963 07c1 02       		.uleb128 0x2
+ 1964 07c2 08       		.byte	0x8
+ 1965 07c3 68       		.byte	0x68
+ 1966 07c4 09       		.uleb128 0x9
+ 1967 07c5 01       		.uleb128 0x1
+ 1968 07c6 51       		.byte	0x51
+ 1969 07c7 02       		.uleb128 0x2
+ 1970 07c8 08       		.byte	0x8
+ 1971 07c9 66       		.byte	0x66
+ 1972 07ca 09       		.uleb128 0x9
+ 1973 07cb 01       		.uleb128 0x1
+ 1974 07cc 52       		.byte	0x52
+ 1975 07cd 02       		.uleb128 0x2
+ 1976 07ce 08       		.byte	0x8
+ 1977 07cf 5A       		.byte	0x5a
+ 1978 07d0 00       		.byte	0
+ 1979 07d1 0C       		.uleb128 0xc
+ 1980 07d2 36020000 		.4byte	.LVL116
+ 1981 07d6 490E0000 		.4byte	0xe49
+ 1982 07da F0070000 		.4byte	0x7f0
+ 1983 07de 09       		.uleb128 0x9
+ 1984 07df 01       		.uleb128 0x1
+ 1985 07e0 50       		.byte	0x50
+ 1986 07e1 01       		.uleb128 0x1
+ 1987 07e2 4E       		.byte	0x4e
+ 1988 07e3 09       		.uleb128 0x9
+ 1989 07e4 01       		.uleb128 0x1
+ 1990 07e5 51       		.byte	0x51
+ 1991 07e6 01       		.uleb128 0x1
+ 1992 07e7 3F       		.byte	0x3f
+ 1993 07e8 09       		.uleb128 0x9
+ 1994 07e9 01       		.uleb128 0x1
+ 1995 07ea 52       		.byte	0x52
+ 1996 07eb 03       		.uleb128 0x3
+ 1997 07ec 0A       		.byte	0xa
+ 1998 07ed 0E01     		.2byte	0x10e
+ 1999 07ef 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 51
+
+
+ 2000 07f0 06       		.uleb128 0x6
+ 2001 07f1 3E020000 		.4byte	.LVL117
+ 2002 07f5 540E0000 		.4byte	0xe54
+ 2003 07f9 0C       		.uleb128 0xc
+ 2004 07fa 4A020000 		.4byte	.LVL118
+ 2005 07fe 490E0000 		.4byte	0xe49
+ 2006 0802 18080000 		.4byte	0x818
+ 2007 0806 09       		.uleb128 0x9
+ 2008 0807 01       		.uleb128 0x1
+ 2009 0808 50       		.byte	0x50
+ 2010 0809 01       		.uleb128 0x1
+ 2011 080a 4E       		.byte	0x4e
+ 2012 080b 09       		.uleb128 0x9
+ 2013 080c 01       		.uleb128 0x1
+ 2014 080d 51       		.byte	0x51
+ 2015 080e 01       		.uleb128 0x1
+ 2016 080f 35       		.byte	0x35
+ 2017 0810 09       		.uleb128 0x9
+ 2018 0811 01       		.uleb128 0x1
+ 2019 0812 52       		.byte	0x52
+ 2020 0813 03       		.uleb128 0x3
+ 2021 0814 0A       		.byte	0xa
+ 2022 0815 0E01     		.2byte	0x10e
+ 2023 0817 00       		.byte	0
+ 2024 0818 06       		.uleb128 0x6
+ 2025 0819 52020000 		.4byte	.LVL119
+ 2026 081d 2E0C0000 		.4byte	0xc2e
+ 2027 0821 0C       		.uleb128 0xc
+ 2028 0822 5E020000 		.4byte	.LVL120
+ 2029 0826 490E0000 		.4byte	0xe49
+ 2030 082a 40080000 		.4byte	0x840
+ 2031 082e 09       		.uleb128 0x9
+ 2032 082f 01       		.uleb128 0x1
+ 2033 0830 50       		.byte	0x50
+ 2034 0831 01       		.uleb128 0x1
+ 2035 0832 4E       		.byte	0x4e
+ 2036 0833 09       		.uleb128 0x9
+ 2037 0834 01       		.uleb128 0x1
+ 2038 0835 51       		.byte	0x51
+ 2039 0836 01       		.uleb128 0x1
+ 2040 0837 35       		.byte	0x35
+ 2041 0838 09       		.uleb128 0x9
+ 2042 0839 01       		.uleb128 0x1
+ 2043 083a 52       		.byte	0x52
+ 2044 083b 03       		.uleb128 0x3
+ 2045 083c 0A       		.byte	0xa
+ 2046 083d 0E01     		.2byte	0x10e
+ 2047 083f 00       		.byte	0
+ 2048 0840 06       		.uleb128 0x6
+ 2049 0841 66020000 		.4byte	.LVL121
+ 2050 0845 540E0000 		.4byte	0xe54
+ 2051 0849 06       		.uleb128 0x6
+ 2052 084a 6E020000 		.4byte	.LVL122
+ 2053 084e 2E0C0000 		.4byte	0xc2e
+ 2054 0852 08       		.uleb128 0x8
+ 2055 0853 90020000 		.4byte	.LVL123
+ 2056 0857 490E0000 		.4byte	0xe49
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 52
+
+
+ 2057 085b 09       		.uleb128 0x9
+ 2058 085c 01       		.uleb128 0x1
+ 2059 085d 50       		.byte	0x50
+ 2060 085e 02       		.uleb128 0x2
+ 2061 085f 08       		.byte	0x8
+ 2062 0860 3C       		.byte	0x3c
+ 2063 0861 09       		.uleb128 0x9
+ 2064 0862 01       		.uleb128 0x1
+ 2065 0863 51       		.byte	0x51
+ 2066 0864 01       		.uleb128 0x1
+ 2067 0865 33       		.byte	0x33
+ 2068 0866 09       		.uleb128 0x9
+ 2069 0867 01       		.uleb128 0x1
+ 2070 0868 52       		.byte	0x52
+ 2071 0869 02       		.uleb128 0x2
+ 2072 086a 08       		.byte	0x8
+ 2073 086b 5A       		.byte	0x5a
+ 2074 086c 00       		.byte	0
+ 2075 086d 00       		.byte	0
+ 2076 086e 11       		.uleb128 0x11
+ 2077 086f 0A070000 		.4byte	.LASF30
+ 2078 0873 04       		.byte	0x4
+ 2079 0874 1207     		.2byte	0x712
+ 2080 0876 7A080000 		.4byte	0x87a
+ 2081 087a 12       		.uleb128 0x12
+ 2082 087b 76000000 		.4byte	0x76
+ 2083 087f 13       		.uleb128 0x13
+ 2084 0880 6E020000 		.4byte	.LASF31
+ 2085 0884 05       		.byte	0x5
+ 2086 0885 1F       		.byte	0x1f
+ 2087 0886 68000000 		.4byte	0x68
+ 2088 088a 05       		.uleb128 0x5
+ 2089 088b 03       		.byte	0x3
+ 2090 088c 00000000 		.4byte	driveStraightEnable
+ 2091 0890 13       		.uleb128 0x13
+ 2092 0891 D9050000 		.4byte	.LASF32
+ 2093 0895 01       		.byte	0x1
+ 2094 0896 2B       		.byte	0x2b
+ 2095 0897 68000000 		.4byte	0x68
+ 2096 089b 05       		.uleb128 0x5
+ 2097 089c 03       		.byte	0x3
+ 2098 089d 00000000 		.4byte	currentPuckRackScanningIndex
+ 2099 08a1 14       		.uleb128 0x14
+ 2100 08a2 68000000 		.4byte	0x68
+ 2101 08a6 B1080000 		.4byte	0x8b1
+ 2102 08aa 15       		.uleb128 0x15
+ 2103 08ab 9D000000 		.4byte	0x9d
+ 2104 08af 04       		.byte	0x4
+ 2105 08b0 00       		.byte	0
+ 2106 08b1 13       		.uleb128 0x13
+ 2107 08b2 30090000 		.4byte	.LASF33
+ 2108 08b6 01       		.byte	0x1
+ 2109 08b7 29       		.byte	0x29
+ 2110 08b8 A1080000 		.4byte	0x8a1
+ 2111 08bc 05       		.uleb128 0x5
+ 2112 08bd 03       		.byte	0x3
+ 2113 08be 00000000 		.4byte	puckRackColours
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 53
+
+
+ 2114 08c2 13       		.uleb128 0x13
+ 2115 08c3 40090000 		.4byte	.LASF34
+ 2116 08c7 01       		.byte	0x1
+ 2117 08c8 2C       		.byte	0x2c
+ 2118 08c9 A1080000 		.4byte	0x8a1
+ 2119 08cd 05       		.uleb128 0x5
+ 2120 08ce 03       		.byte	0x3
+ 2121 08cf 00000000 		.4byte	puckRackOffsetsFromWest
+ 2122 08d3 13       		.uleb128 0x13
+ 2123 08d4 21010000 		.4byte	.LASF35
+ 2124 08d8 01       		.byte	0x1
+ 2125 08d9 24       		.byte	0x24
+ 2126 08da 68000000 		.4byte	0x68
+ 2127 08de 05       		.uleb128 0x5
+ 2128 08df 03       		.byte	0x3
+ 2129 08e0 00000000 		.4byte	sweeping
+ 2130 08e4 14       		.uleb128 0x14
+ 2131 08e5 81000000 		.4byte	0x81
+ 2132 08e9 F4080000 		.4byte	0x8f4
+ 2133 08ed 15       		.uleb128 0x15
+ 2134 08ee 9D000000 		.4byte	0x9d
+ 2135 08f2 03       		.byte	0x3
+ 2136 08f3 00       		.byte	0
+ 2137 08f4 13       		.uleb128 0x13
+ 2138 08f5 AE070000 		.4byte	.LASF36
+ 2139 08f9 01       		.byte	0x1
+ 2140 08fa 25       		.byte	0x25
+ 2141 08fb E4080000 		.4byte	0x8e4
+ 2142 08ff 05       		.uleb128 0x5
+ 2143 0900 03       		.byte	0x3
+ 2144 0901 00000000 		.4byte	block_edge_location
+ 2145 0905 13       		.uleb128 0x13
+ 2146 0906 53000000 		.4byte	.LASF37
+ 2147 090a 06       		.byte	0x6
+ 2148 090b 7A       		.byte	0x7a
+ 2149 090c 81000000 		.4byte	0x81
+ 2150 0910 05       		.uleb128 0x5
+ 2151 0911 03       		.byte	0x3
+ 2152 0912 00000000 		.4byte	puckPileLocation
+ 2153 0916 13       		.uleb128 0x13
+ 2154 0917 63060000 		.4byte	.LASF38
+ 2155 091b 01       		.byte	0x1
+ 2156 091c 47       		.byte	0x47
+ 2157 091d 33000000 		.4byte	0x33
+ 2158 0921 05       		.uleb128 0x5
+ 2159 0922 03       		.byte	0x3
+ 2160 0923 00000000 		.4byte	drivingForwardFlag
+ 2161 0927 13       		.uleb128 0x13
+ 2162 0928 8A030000 		.4byte	.LASF39
+ 2163 092c 01       		.byte	0x1
+ 2164 092d 48       		.byte	0x48
+ 2165 092e 33000000 		.4byte	0x33
+ 2166 0932 05       		.uleb128 0x5
+ 2167 0933 03       		.byte	0x3
+ 2168 0934 00000000 		.4byte	drivingBackwardFlag
+ 2169 0938 13       		.uleb128 0x13
+ 2170 0939 DA040000 		.4byte	.LASF40
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 54
+
+
+ 2171 093d 01       		.byte	0x1
+ 2172 093e 49       		.byte	0x49
+ 2173 093f 33000000 		.4byte	0x33
+ 2174 0943 05       		.uleb128 0x5
+ 2175 0944 03       		.byte	0x3
+ 2176 0945 00000000 		.4byte	turningLeftFlag
+ 2177 0949 13       		.uleb128 0x13
+ 2178 094a 71070000 		.4byte	.LASF41
+ 2179 094e 01       		.byte	0x1
+ 2180 094f 4A       		.byte	0x4a
+ 2181 0950 33000000 		.4byte	0x33
+ 2182 0954 05       		.uleb128 0x5
+ 2183 0955 03       		.byte	0x3
+ 2184 0956 00000000 		.4byte	turningRightFlag
+ 2185 095a 13       		.uleb128 0x13
+ 2186 095b AB080000 		.4byte	.LASF42
+ 2187 095f 05       		.byte	0x5
+ 2188 0960 2D       		.byte	0x2d
+ 2189 0961 68000000 		.4byte	0x68
+ 2190 0965 05       		.uleb128 0x5
+ 2191 0966 03       		.byte	0x3
+ 2192 0967 00000000 		.4byte	initialisation
+ 2193 096b 14       		.uleb128 0x14
+ 2194 096c 8F000000 		.4byte	0x8f
+ 2195 0970 7B090000 		.4byte	0x97b
+ 2196 0974 15       		.uleb128 0x15
+ 2197 0975 9D000000 		.4byte	0x9d
+ 2198 0979 1F       		.byte	0x1f
+ 2199 097a 00       		.byte	0
+ 2200 097b 13       		.uleb128 0x13
+ 2201 097c 2E000000 		.4byte	.LASF43
+ 2202 0980 01       		.byte	0x1
+ 2203 0981 1F       		.byte	0x1f
+ 2204 0982 6B090000 		.4byte	0x96b
+ 2205 0986 05       		.uleb128 0x5
+ 2206 0987 03       		.byte	0x3
+ 2207 0988 00000000 		.4byte	output
+ 2208 098c 13       		.uleb128 0x13
+ 2209 098d 5B070000 		.4byte	.LASF44
+ 2210 0991 07       		.byte	0x7
+ 2211 0992 2D       		.byte	0x2d
+ 2212 0993 68000000 		.4byte	0x68
+ 2213 0997 05       		.uleb128 0x5
+ 2214 0998 03       		.byte	0x3
+ 2215 0999 00000000 		.4byte	M1_FD
+ 2216 099d 13       		.uleb128 0x13
+ 2217 099e 30050000 		.4byte	.LASF45
+ 2218 09a2 07       		.byte	0x7
+ 2219 09a3 2E       		.byte	0x2e
+ 2220 09a4 68000000 		.4byte	0x68
+ 2221 09a8 05       		.uleb128 0x5
+ 2222 09a9 03       		.byte	0x3
+ 2223 09aa 00000000 		.4byte	M1_BD
+ 2224 09ae 13       		.uleb128 0x13
+ 2225 09af 84030000 		.4byte	.LASF46
+ 2226 09b3 07       		.byte	0x7
+ 2227 09b4 2F       		.byte	0x2f
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 55
+
+
+ 2228 09b5 68000000 		.4byte	0x68
+ 2229 09b9 05       		.uleb128 0x5
+ 2230 09ba 03       		.byte	0x3
+ 2231 09bb 00000000 		.4byte	M2_FD
+ 2232 09bf 13       		.uleb128 0x13
+ 2233 09c0 40000000 		.4byte	.LASF47
+ 2234 09c4 07       		.byte	0x7
+ 2235 09c5 30       		.byte	0x30
+ 2236 09c6 68000000 		.4byte	0x68
+ 2237 09ca 05       		.uleb128 0x5
+ 2238 09cb 03       		.byte	0x3
+ 2239 09cc 00000000 		.4byte	M2_BD
+ 2240 09d0 13       		.uleb128 0x13
+ 2241 09d1 C6060000 		.4byte	.LASF48
+ 2242 09d5 07       		.byte	0x7
+ 2243 09d6 2B       		.byte	0x2b
+ 2244 09d7 33000000 		.4byte	0x33
+ 2245 09db 05       		.uleb128 0x5
+ 2246 09dc 03       		.byte	0x3
+ 2247 09dd 00000000 		.4byte	motor1Enable
+ 2248 09e1 13       		.uleb128 0x13
+ 2249 09e2 F6010000 		.4byte	.LASF49
+ 2250 09e6 07       		.byte	0x7
+ 2251 09e7 2C       		.byte	0x2c
+ 2252 09e8 33000000 		.4byte	0x33
+ 2253 09ec 05       		.uleb128 0x5
+ 2254 09ed 03       		.byte	0x3
+ 2255 09ee 00000000 		.4byte	motor2Enable
+ 2256 09f2 13       		.uleb128 0x13
+ 2257 09f3 34010000 		.4byte	.LASF50
+ 2258 09f7 07       		.byte	0x7
+ 2259 09f8 31       		.byte	0x31
+ 2260 09f9 68000000 		.4byte	0x68
+ 2261 09fd 05       		.uleb128 0x5
+ 2262 09fe 03       		.byte	0x3
+ 2263 09ff 00000000 		.4byte	motor1EncoderCounts
+ 2264 0a03 13       		.uleb128 0x13
+ 2265 0a04 E1000000 		.4byte	.LASF51
+ 2266 0a08 07       		.byte	0x7
+ 2267 0a09 32       		.byte	0x32
+ 2268 0a0a 68000000 		.4byte	0x68
+ 2269 0a0e 05       		.uleb128 0x5
+ 2270 0a0f 03       		.byte	0x3
+ 2271 0a10 00000000 		.4byte	motor2EncoderCounts
+ 2272 0a14 16       		.uleb128 0x16
+ 2273 0a15 48010000 		.4byte	.LASF52
+ 2274 0a19 06       		.byte	0x6
+ 2275 0a1a 99       		.byte	0x99
+ 2276 0a1b 68000000 		.4byte	0x68
+ 2277 0a1f 13       		.uleb128 0x13
+ 2278 0a20 98050000 		.4byte	.LASF53
+ 2279 0a24 01       		.byte	0x1
+ 2280 0a25 56       		.byte	0x56
+ 2281 0a26 68000000 		.4byte	0x68
+ 2282 0a2a 05       		.uleb128 0x5
+ 2283 0a2b 03       		.byte	0x3
+ 2284 0a2c 00000000 		.4byte	colour_flag
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 56
+
+
+ 2285 0a30 13       		.uleb128 0x13
+ 2286 0a31 58090000 		.4byte	.LASF54
+ 2287 0a35 01       		.byte	0x1
+ 2288 0a36 22       		.byte	0x22
+ 2289 0a37 68000000 		.4byte	0x68
+ 2290 0a3b 05       		.uleb128 0x5
+ 2291 0a3c 03       		.byte	0x3
+ 2292 0a3d 00000000 		.4byte	state
+ 2293 0a41 13       		.uleb128 0x13
+ 2294 0a42 03020000 		.4byte	.LASF55
+ 2295 0a46 01       		.byte	0x1
+ 2296 0a47 5C       		.byte	0x5c
+ 2297 0a48 68000000 		.4byte	0x68
+ 2298 0a4c 05       		.uleb128 0x5
+ 2299 0a4d 03       		.byte	0x3
+ 2300 0a4e 00000000 		.4byte	moving
+ 2301 0a52 14       		.uleb128 0x14
+ 2302 0a53 81000000 		.4byte	0x81
+ 2303 0a57 620A0000 		.4byte	0xa62
+ 2304 0a5b 15       		.uleb128 0x15
+ 2305 0a5c 9D000000 		.4byte	0x9d
+ 2306 0a60 01       		.byte	0x1
+ 2307 0a61 00       		.byte	0
+ 2308 0a62 13       		.uleb128 0x13
+ 2309 0a63 D3010000 		.4byte	.LASF56
+ 2310 0a67 01       		.byte	0x1
+ 2311 0a68 3B       		.byte	0x3b
+ 2312 0a69 520A0000 		.4byte	0xa52
+ 2313 0a6d 05       		.uleb128 0x5
+ 2314 0a6e 03       		.byte	0x3
+ 2315 0a6f 00000000 		.4byte	currentPosition
+ 2316 0a73 13       		.uleb128 0x13
+ 2317 0a74 61070000 		.4byte	.LASF57
+ 2318 0a78 01       		.byte	0x1
+ 2319 0a79 3C       		.byte	0x3c
+ 2320 0a7a 520A0000 		.4byte	0xa52
+ 2321 0a7e 05       		.uleb128 0x5
+ 2322 0a7f 03       		.byte	0x3
+ 2323 0a80 00000000 		.4byte	desiredPosition
+ 2324 0a84 13       		.uleb128 0x13
+ 2325 0a85 59040000 		.4byte	.LASF58
+ 2326 0a89 01       		.byte	0x1
+ 2327 0a8a 3D       		.byte	0x3d
+ 2328 0a8b 68000000 		.4byte	0x68
+ 2329 0a8f 05       		.uleb128 0x5
+ 2330 0a90 03       		.byte	0x3
+ 2331 0a91 00000000 		.4byte	currentOrientation
+ 2332 0a95 13       		.uleb128 0x13
+ 2333 0a96 A9060000 		.4byte	.LASF59
+ 2334 0a9a 01       		.byte	0x1
+ 2335 0a9b 3E       		.byte	0x3e
+ 2336 0a9c 68000000 		.4byte	0x68
+ 2337 0aa0 05       		.uleb128 0x5
+ 2338 0aa1 03       		.byte	0x3
+ 2339 0aa2 00000000 		.4byte	desiredOrientation
+ 2340 0aa6 13       		.uleb128 0x13
+ 2341 0aa7 94090000 		.4byte	.LASF60
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 57
+
+
+ 2342 0aab 01       		.byte	0x1
+ 2343 0aac 40       		.byte	0x40
+ 2344 0aad 33000000 		.4byte	0x33
+ 2345 0ab1 05       		.uleb128 0x5
+ 2346 0ab2 03       		.byte	0x3
+ 2347 0ab3 00000000 		.4byte	moveNow
+ 2348 0ab7 13       		.uleb128 0x13
+ 2349 0ab8 20050000 		.4byte	.LASF61
+ 2350 0abc 01       		.byte	0x1
+ 2351 0abd 4D       		.byte	0x4d
+ 2352 0abe 33000000 		.4byte	0x33
+ 2353 0ac2 05       		.uleb128 0x5
+ 2354 0ac3 03       		.byte	0x3
+ 2355 0ac4 00000000 		.4byte	moveLeftAllowed
+ 2356 0ac8 13       		.uleb128 0x13
+ 2357 0ac9 5D020000 		.4byte	.LASF62
+ 2358 0acd 01       		.byte	0x1
+ 2359 0ace 4E       		.byte	0x4e
+ 2360 0acf 33000000 		.4byte	0x33
+ 2361 0ad3 05       		.uleb128 0x5
+ 2362 0ad4 03       		.byte	0x3
+ 2363 0ad5 00000000 		.4byte	moveRightAllowed
+ 2364 0ad9 13       		.uleb128 0x13
+ 2365 0ada 0D050000 		.4byte	.LASF63
+ 2366 0ade 01       		.byte	0x1
+ 2367 0adf 4F       		.byte	0x4f
+ 2368 0ae0 33000000 		.4byte	0x33
+ 2369 0ae4 05       		.uleb128 0x5
+ 2370 0ae5 03       		.byte	0x3
+ 2371 0ae6 00000000 		.4byte	moveForwardAllowed
+ 2372 0aea 13       		.uleb128 0x13
+ 2373 0aeb DC030000 		.4byte	.LASF64
+ 2374 0aef 01       		.byte	0x1
+ 2375 0af0 50       		.byte	0x50
+ 2376 0af1 33000000 		.4byte	0x33
+ 2377 0af5 05       		.uleb128 0x5
+ 2378 0af6 03       		.byte	0x3
+ 2379 0af7 00000000 		.4byte	moveBackwardAllowed
+ 2380 0afb 13       		.uleb128 0x13
+ 2381 0afc 0C0A0000 		.4byte	.LASF65
+ 2382 0b00 01       		.byte	0x1
+ 2383 0b01 23       		.byte	0x23
+ 2384 0b02 68000000 		.4byte	0x68
+ 2385 0b06 05       		.uleb128 0x5
+ 2386 0b07 03       		.byte	0x3
+ 2387 0b08 00000000 		.4byte	running
+ 2388 0b0c 13       		.uleb128 0x13
+ 2389 0b0d 3A020000 		.4byte	.LASF66
+ 2390 0b11 01       		.byte	0x1
+ 2391 0b12 28       		.byte	0x28
+ 2392 0b13 68000000 		.4byte	0x68
+ 2393 0b17 05       		.uleb128 0x5
+ 2394 0b18 03       		.byte	0x3
+ 2395 0b19 00000000 		.4byte	currentPuckStackSize
+ 2396 0b1d 14       		.uleb128 0x14
+ 2397 0b1e 68000000 		.4byte	0x68
+ 2398 0b22 2D0B0000 		.4byte	0xb2d
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 58
+
+
+ 2399 0b26 15       		.uleb128 0x15
+ 2400 0b27 9D000000 		.4byte	0x9d
+ 2401 0b2b 02       		.byte	0x2
+ 2402 0b2c 00       		.byte	0
+ 2403 0b2d 13       		.uleb128 0x13
+ 2404 0b2e A4050000 		.4byte	.LASF67
+ 2405 0b32 01       		.byte	0x1
+ 2406 0b33 2A       		.byte	0x2a
+ 2407 0b34 1D0B0000 		.4byte	0xb1d
+ 2408 0b38 05       		.uleb128 0x5
+ 2409 0b39 03       		.byte	0x3
+ 2410 0b3a 00000000 		.4byte	puckConstructionPlan
+ 2411 0b3e 13       		.uleb128 0x13
+ 2412 0b3f 1F060000 		.4byte	.LASF68
+ 2413 0b43 01       		.byte	0x1
+ 2414 0b44 32       		.byte	0x32
+ 2415 0b45 81000000 		.4byte	0x81
+ 2416 0b49 05       		.uleb128 0x5
+ 2417 0b4a 03       		.byte	0x3
+ 2418 0b4b 00000000 		.4byte	horizontalPuckGrid
+ 2419 0b4f 13       		.uleb128 0x13
+ 2420 0b50 6F050000 		.4byte	.LASF69
+ 2421 0b54 01       		.byte	0x1
+ 2422 0b55 36       		.byte	0x36
+ 2423 0b56 68000000 		.4byte	0x68
+ 2424 0b5a 05       		.uleb128 0x5
+ 2425 0b5b 03       		.byte	0x3
+ 2426 0b5c 00000000 		.4byte	beginNavigation
+ 2427 0b60 13       		.uleb128 0x13
+ 2428 0b61 8C050000 		.4byte	.LASF70
+ 2429 0b65 01       		.byte	0x1
+ 2430 0b66 38       		.byte	0x38
+ 2431 0b67 68000000 		.4byte	0x68
+ 2432 0b6b 05       		.uleb128 0x5
+ 2433 0b6c 03       		.byte	0x3
+ 2434 0b6d 00000000 		.4byte	pathToPucks
+ 2435 0b71 13       		.uleb128 0x13
+ 2436 0b72 C2070000 		.4byte	.LASF71
+ 2437 0b76 01       		.byte	0x1
+ 2438 0b77 39       		.byte	0x39
+ 2439 0b78 68000000 		.4byte	0x68
+ 2440 0b7c 05       		.uleb128 0x5
+ 2441 0b7d 03       		.byte	0x3
+ 2442 0b7e 00000000 		.4byte	pathPastBlock
+ 2443 0b82 13       		.uleb128 0x13
+ 2444 0b83 35000000 		.4byte	.LASF72
+ 2445 0b87 01       		.byte	0x1
+ 2446 0b88 55       		.byte	0x55
+ 2447 0b89 68000000 		.4byte	0x68
+ 2448 0b8d 05       		.uleb128 0x5
+ 2449 0b8e 03       		.byte	0x3
+ 2450 0b8f 00000000 		.4byte	idac_value
+ 2451 0b93 13       		.uleb128 0x13
+ 2452 0b94 3E060000 		.4byte	.LASF73
+ 2453 0b98 01       		.byte	0x1
+ 2454 0b99 57       		.byte	0x57
+ 2455 0b9a 68000000 		.4byte	0x68
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 59
+
+
+ 2456 0b9e 05       		.uleb128 0x5
+ 2457 0b9f 03       		.byte	0x3
+ 2458 0ba0 00000000 		.4byte	colour_sensing_algorithm
+ 2459 0ba4 13       		.uleb128 0x13
+ 2460 0ba5 F0030000 		.4byte	.LASF74
+ 2461 0ba9 01       		.byte	0x1
+ 2462 0baa 5E       		.byte	0x5e
+ 2463 0bab B50B0000 		.4byte	0xbb5
+ 2464 0baf 05       		.uleb128 0x5
+ 2465 0bb0 03       		.byte	0x3
+ 2466 0bb1 00000000 		.4byte	PLAN_SCAN_VERTICAL
+ 2467 0bb5 17       		.uleb128 0x17
+ 2468 0bb6 68000000 		.4byte	0x68
+ 2469 0bba 13       		.uleb128 0x13
+ 2470 0bbb 9C090000 		.4byte	.LASF75
+ 2471 0bbf 01       		.byte	0x1
+ 2472 0bc0 60       		.byte	0x60
+ 2473 0bc1 68000000 		.4byte	0x68
+ 2474 0bc5 05       		.uleb128 0x5
+ 2475 0bc6 03       		.byte	0x3
+ 2476 0bc7 00000000 		.4byte	current_stage
+ 2477 0bcb 18       		.uleb128 0x18
+ 2478 0bcc C6000000 		.4byte	.LASF76
+ 2479 0bd0 C6000000 		.4byte	.LASF76
+ 2480 0bd4 05       		.byte	0x5
+ 2481 0bd5 19       		.byte	0x19
+ 2482 0bd6 18       		.uleb128 0x18
+ 2483 0bd7 00000000 		.4byte	.LASF77
+ 2484 0bdb 00000000 		.4byte	.LASF77
+ 2485 0bdf 08       		.byte	0x8
+ 2486 0be0 76       		.byte	0x76
+ 2487 0be1 18       		.uleb128 0x18
+ 2488 0be2 0B060000 		.4byte	.LASF78
+ 2489 0be6 0B060000 		.4byte	.LASF78
+ 2490 0bea 07       		.byte	0x7
+ 2491 0beb 1F       		.byte	0x1f
+ 2492 0bec 18       		.uleb128 0x18
+ 2493 0bed C8080000 		.4byte	.LASF79
+ 2494 0bf1 C8080000 		.4byte	.LASF79
+ 2495 0bf5 07       		.byte	0x7
+ 2496 0bf6 20       		.byte	0x20
+ 2497 0bf7 18       		.uleb128 0x18
+ 2498 0bf8 1C040000 		.4byte	.LASF80
+ 2499 0bfc 1C040000 		.4byte	.LASF80
+ 2500 0c00 09       		.byte	0x9
+ 2501 0c01 5E       		.byte	0x5e
+ 2502 0c02 18       		.uleb128 0x18
+ 2503 0c03 82020000 		.4byte	.LASF81
+ 2504 0c07 82020000 		.4byte	.LASF81
+ 2505 0c0b 09       		.byte	0x9
+ 2506 0c0c 5B       		.byte	0x5b
+ 2507 0c0d 18       		.uleb128 0x18
+ 2508 0c0e EA040000 		.4byte	.LASF82
+ 2509 0c12 EA040000 		.4byte	.LASF82
+ 2510 0c16 0A       		.byte	0xa
+ 2511 0c17 5D       		.byte	0x5d
+ 2512 0c18 18       		.uleb128 0x18
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 60
+
+
+ 2513 0c19 23070000 		.4byte	.LASF83
+ 2514 0c1d 23070000 		.4byte	.LASF83
+ 2515 0c21 0B       		.byte	0xb
+ 2516 0c22 5D       		.byte	0x5d
+ 2517 0c23 18       		.uleb128 0x18
+ 2518 0c24 46000000 		.4byte	.LASF84
+ 2519 0c28 46000000 		.4byte	.LASF84
+ 2520 0c2c 07       		.byte	0x7
+ 2521 0c2d 14       		.byte	0x14
+ 2522 0c2e 18       		.uleb128 0x18
+ 2523 0c2f E3010000 		.4byte	.LASF85
+ 2524 0c33 E3010000 		.4byte	.LASF85
+ 2525 0c37 0C       		.byte	0xc
+ 2526 0c38 0F       		.byte	0xf
+ 2527 0c39 18       		.uleb128 0x18
+ 2528 0c3a 4E010000 		.4byte	.LASF86
+ 2529 0c3e 4E010000 		.4byte	.LASF86
+ 2530 0c42 0D       		.byte	0xd
+ 2531 0c43 1C       		.byte	0x1c
+ 2532 0c44 18       		.uleb128 0x18
+ 2533 0c45 0A020000 		.4byte	.LASF87
+ 2534 0c49 0A020000 		.4byte	.LASF87
+ 2535 0c4d 0E       		.byte	0xe
+ 2536 0c4e 2F       		.byte	0x2f
+ 2537 0c4f 18       		.uleb128 0x18
+ 2538 0c50 D3060000 		.4byte	.LASF88
+ 2539 0c54 D3060000 		.4byte	.LASF88
+ 2540 0c58 0F       		.byte	0xf
+ 2541 0c59 2F       		.byte	0x2f
+ 2542 0c5a 18       		.uleb128 0x18
+ 2543 0c5b 03040000 		.4byte	.LASF89
+ 2544 0c5f 03040000 		.4byte	.LASF89
+ 2545 0c63 10       		.byte	0x10
+ 2546 0c64 DD       		.byte	0xdd
+ 2547 0c65 18       		.uleb128 0x18
+ 2548 0c66 71000000 		.4byte	.LASF90
+ 2549 0c6a 71000000 		.4byte	.LASF90
+ 2550 0c6e 10       		.byte	0x10
+ 2551 0c6f C3       		.byte	0xc3
+ 2552 0c70 18       		.uleb128 0x18
+ 2553 0c71 C2030000 		.4byte	.LASF91
+ 2554 0c75 C2030000 		.4byte	.LASF91
+ 2555 0c79 11       		.byte	0x11
+ 2556 0c7a DD       		.byte	0xdd
+ 2557 0c7b 18       		.uleb128 0x18
+ 2558 0c7c 10090000 		.4byte	.LASF92
+ 2559 0c80 10090000 		.4byte	.LASF92
+ 2560 0c84 11       		.byte	0x11
+ 2561 0c85 C3       		.byte	0xc3
+ 2562 0c86 18       		.uleb128 0x18
+ 2563 0c87 62010000 		.4byte	.LASF93
+ 2564 0c8b 62010000 		.4byte	.LASF93
+ 2565 0c8f 12       		.byte	0x12
+ 2566 0c90 4F       		.byte	0x4f
+ 2567 0c91 18       		.uleb128 0x18
+ 2568 0c92 A7000000 		.4byte	.LASF94
+ 2569 0c96 A7000000 		.4byte	.LASF94
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 61
+
+
+ 2570 0c9a 13       		.byte	0x13
+ 2571 0c9b 4F       		.byte	0x4f
+ 2572 0c9c 18       		.uleb128 0x18
+ 2573 0c9d A7010000 		.4byte	.LASF95
+ 2574 0ca1 A7010000 		.4byte	.LASF95
+ 2575 0ca5 10       		.byte	0x10
+ 2576 0ca6 DC       		.byte	0xdc
+ 2577 0ca7 18       		.uleb128 0x18
+ 2578 0ca8 D1020000 		.4byte	.LASF96
+ 2579 0cac D1020000 		.4byte	.LASF96
+ 2580 0cb0 11       		.byte	0x11
+ 2581 0cb1 DC       		.byte	0xdc
+ 2582 0cb2 18       		.uleb128 0x18
+ 2583 0cb3 9A080000 		.4byte	.LASF97
+ 2584 0cb7 9A080000 		.4byte	.LASF97
+ 2585 0cbb 14       		.byte	0x14
+ 2586 0cbc 10       		.byte	0x10
+ 2587 0cbd 18       		.uleb128 0x18
+ 2588 0cbe 9E030000 		.4byte	.LASF98
+ 2589 0cc2 9E030000 		.4byte	.LASF98
+ 2590 0cc6 15       		.byte	0x15
+ 2591 0cc7 8B       		.byte	0x8b
+ 2592 0cc8 18       		.uleb128 0x18
+ 2593 0cc9 8F040000 		.4byte	.LASF99
+ 2594 0ccd 8F040000 		.4byte	.LASF99
+ 2595 0cd1 05       		.byte	0x5
+ 2596 0cd2 1B       		.byte	0x1b
+ 2597 0cd3 18       		.uleb128 0x18
+ 2598 0cd4 C4090000 		.4byte	.LASF100
+ 2599 0cd8 C4090000 		.4byte	.LASF100
+ 2600 0cdc 0C       		.byte	0xc
+ 2601 0cdd 11       		.byte	0x11
+ 2602 0cde 18       		.uleb128 0x18
+ 2603 0cdf 17070000 		.4byte	.LASF101
+ 2604 0ce3 17070000 		.4byte	.LASF101
+ 2605 0ce7 16       		.byte	0x16
+ 2606 0ce8 3D       		.byte	0x3d
+ 2607 0ce9 18       		.uleb128 0x18
+ 2608 0cea A1070000 		.4byte	.LASF102
+ 2609 0cee A1070000 		.4byte	.LASF102
+ 2610 0cf2 15       		.byte	0x15
+ 2611 0cf3 54       		.byte	0x54
+ 2612 0cf4 18       		.uleb128 0x18
+ 2613 0cf5 B5020000 		.4byte	.LASF103
+ 2614 0cf9 B5020000 		.4byte	.LASF103
+ 2615 0cfd 17       		.byte	0x17
+ 2616 0cfe 3A       		.byte	0x3a
+ 2617 0cff 18       		.uleb128 0x18
+ 2618 0d00 36050000 		.4byte	.LASF104
+ 2619 0d04 36050000 		.4byte	.LASF104
+ 2620 0d08 18       		.byte	0x18
+ 2621 0d09 3C       		.byte	0x3c
+ 2622 0d0a 18       		.uleb128 0x18
+ 2623 0d0b FF080000 		.4byte	.LASF105
+ 2624 0d0f FF080000 		.4byte	.LASF105
+ 2625 0d13 18       		.byte	0x18
+ 2626 0d14 40       		.byte	0x40
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 62
+
+
+ 2627 0d15 18       		.uleb128 0x18
+ 2628 0d16 B9050000 		.4byte	.LASF106
+ 2629 0d1a B9050000 		.4byte	.LASF106
+ 2630 0d1e 18       		.byte	0x18
+ 2631 0d1f 41       		.byte	0x41
+ 2632 0d20 18       		.uleb128 0x18
+ 2633 0d21 07080000 		.4byte	.LASF107
+ 2634 0d25 07080000 		.4byte	.LASF107
+ 2635 0d29 19       		.byte	0x19
+ 2636 0d2a 2F       		.byte	0x2f
+ 2637 0d2b 18       		.uleb128 0x18
+ 2638 0d2c BF020000 		.4byte	.LASF108
+ 2639 0d30 BF020000 		.4byte	.LASF108
+ 2640 0d34 1A       		.byte	0x1a
+ 2641 0d35 2F       		.byte	0x2f
+ 2642 0d36 18       		.uleb128 0x18
+ 2643 0d37 76060000 		.4byte	.LASF109
+ 2644 0d3b 76060000 		.4byte	.LASF109
+ 2645 0d3f 0D       		.byte	0xd
+ 2646 0d40 19       		.byte	0x19
+ 2647 0d41 18       		.uleb128 0x18
+ 2648 0d42 F6050000 		.4byte	.LASF110
+ 2649 0d46 F6050000 		.4byte	.LASF110
+ 2650 0d4a 1B       		.byte	0x1b
+ 2651 0d4b 92       		.byte	0x92
+ 2652 0d4c 18       		.uleb128 0x18
+ 2653 0d4d 99020000 		.4byte	.LASF111
+ 2654 0d51 99020000 		.4byte	.LASF111
+ 2655 0d55 1B       		.byte	0x1b
+ 2656 0d56 C3       		.byte	0xc3
+ 2657 0d57 18       		.uleb128 0x18
+ 2658 0d58 46070000 		.4byte	.LASF112
+ 2659 0d5c 46070000 		.4byte	.LASF112
+ 2660 0d60 1B       		.byte	0x1b
+ 2661 0d61 DC       		.byte	0xdc
+ 2662 0d62 18       		.uleb128 0x18
+ 2663 0d63 41040000 		.4byte	.LASF113
+ 2664 0d67 41040000 		.4byte	.LASF113
+ 2665 0d6b 1C       		.byte	0x1c
+ 2666 0d6c 92       		.byte	0x92
+ 2667 0d6d 18       		.uleb128 0x18
+ 2668 0d6e 82070000 		.4byte	.LASF114
+ 2669 0d72 82070000 		.4byte	.LASF114
+ 2670 0d76 1C       		.byte	0x1c
+ 2671 0d77 C3       		.byte	0xc3
+ 2672 0d78 18       		.uleb128 0x18
+ 2673 0d79 57050000 		.4byte	.LASF115
+ 2674 0d7d 57050000 		.4byte	.LASF115
+ 2675 0d81 1C       		.byte	0x1c
+ 2676 0d82 DC       		.byte	0xdc
+ 2677 0d83 18       		.uleb128 0x18
+ 2678 0d84 09010000 		.4byte	.LASF116
+ 2679 0d88 09010000 		.4byte	.LASF116
+ 2680 0d8c 10       		.byte	0x10
+ 2681 0d8d 92       		.byte	0x92
+ 2682 0d8e 18       		.uleb128 0x18
+ 2683 0d8f 80010000 		.4byte	.LASF117
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 63
+
+
+ 2684 0d93 80010000 		.4byte	.LASF117
+ 2685 0d97 11       		.byte	0x11
+ 2686 0d98 92       		.byte	0x92
+ 2687 0d99 18       		.uleb128 0x18
+ 2688 0d9a 5E090000 		.4byte	.LASF118
+ 2689 0d9e 5E090000 		.4byte	.LASF118
+ 2690 0da2 12       		.byte	0x12
+ 2691 0da3 48       		.byte	0x48
+ 2692 0da4 18       		.uleb128 0x18
+ 2693 0da5 C0040000 		.4byte	.LASF119
+ 2694 0da9 C0040000 		.4byte	.LASF119
+ 2695 0dad 13       		.byte	0x13
+ 2696 0dae 48       		.byte	0x48
+ 2697 0daf 18       		.uleb128 0x18
+ 2698 0db0 AA090000 		.4byte	.LASF120
+ 2699 0db4 AA090000 		.4byte	.LASF120
+ 2700 0db8 1D       		.byte	0x1d
+ 2701 0db9 5A       		.byte	0x5a
+ 2702 0dba 18       		.uleb128 0x18
+ 2703 0dbb 8E060000 		.4byte	.LASF121
+ 2704 0dbf 8E060000 		.4byte	.LASF121
+ 2705 0dc3 1D       		.byte	0x1d
+ 2706 0dc4 5E       		.byte	0x5e
+ 2707 0dc5 18       		.uleb128 0x18
+ 2708 0dc6 C5010000 		.4byte	.LASF122
+ 2709 0dca C5010000 		.4byte	.LASF122
+ 2710 0dce 1E       		.byte	0x1e
+ 2711 0dcf 18       		.byte	0x18
+ 2712 0dd0 18       		.uleb128 0x18
+ 2713 0dd1 4F020000 		.4byte	.LASF123
+ 2714 0dd5 4F020000 		.4byte	.LASF123
+ 2715 0dd9 1F       		.byte	0x1f
+ 2716 0dda 18       		.byte	0x18
+ 2717 0ddb 18       		.uleb128 0x18
+ 2718 0ddc 140A0000 		.4byte	.LASF124
+ 2719 0de0 140A0000 		.4byte	.LASF124
+ 2720 0de4 20       		.byte	0x20
+ 2721 0de5 92       		.byte	0x92
+ 2722 0de6 18       		.uleb128 0x18
+ 2723 0de7 12000000 		.4byte	.LASF125
+ 2724 0deb 12000000 		.4byte	.LASF125
+ 2725 0def 21       		.byte	0x21
+ 2726 0df0 92       		.byte	0x92
+ 2727 0df1 18       		.uleb128 0x18
+ 2728 0df2 310A0000 		.4byte	.LASF126
+ 2729 0df6 310A0000 		.4byte	.LASF126
+ 2730 0dfa 07       		.byte	0x7
+ 2731 0dfb 13       		.byte	0x13
+ 2732 0dfc 18       		.uleb128 0x18
+ 2733 0dfd 77090000 		.4byte	.LASF127
+ 2734 0e01 77090000 		.4byte	.LASF127
+ 2735 0e05 0A       		.byte	0xa
+ 2736 0e06 4F       		.byte	0x4f
+ 2737 0e07 18       		.uleb128 0x18
+ 2738 0e08 A3040000 		.4byte	.LASF128
+ 2739 0e0c A3040000 		.4byte	.LASF128
+ 2740 0e10 0B       		.byte	0xb
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 64
+
+
+ 2741 0e11 4F       		.byte	0x4f
+ 2742 0e12 18       		.uleb128 0x18
+ 2743 0e13 EF070000 		.4byte	.LASF129
+ 2744 0e17 EF070000 		.4byte	.LASF129
+ 2745 0e1b 09       		.byte	0x9
+ 2746 0e1c 5A       		.byte	0x5a
+ 2747 0e1d 18       		.uleb128 0x18
+ 2748 0e1e DC080000 		.4byte	.LASF130
+ 2749 0e22 DC080000 		.4byte	.LASF130
+ 2750 0e26 22       		.byte	0x22
+ 2751 0e27 18       		.byte	0x18
+ 2752 0e28 18       		.uleb128 0x18
+ 2753 0e29 6C040000 		.4byte	.LASF131
+ 2754 0e2d 6C040000 		.4byte	.LASF131
+ 2755 0e31 23       		.byte	0x23
+ 2756 0e32 18       		.byte	0x18
+ 2757 0e33 18       		.uleb128 0x18
+ 2758 0e34 460A0000 		.4byte	.LASF132
+ 2759 0e38 460A0000 		.4byte	.LASF132
+ 2760 0e3c 24       		.byte	0x24
+ 2761 0e3d 18       		.byte	0x18
+ 2762 0e3e 18       		.uleb128 0x18
+ 2763 0e3f 32060000 		.4byte	.LASF133
+ 2764 0e43 32060000 		.4byte	.LASF133
+ 2765 0e47 14       		.byte	0x14
+ 2766 0e48 11       		.byte	0x11
+ 2767 0e49 18       		.uleb128 0x18
+ 2768 0e4a 7F050000 		.4byte	.LASF134
+ 2769 0e4e 7F050000 		.4byte	.LASF134
+ 2770 0e52 07       		.byte	0x7
+ 2771 0e53 21       		.byte	0x21
+ 2772 0e54 18       		.uleb128 0x18
+ 2773 0e55 90000000 		.4byte	.LASF135
+ 2774 0e59 90000000 		.4byte	.LASF135
+ 2775 0e5d 0C       		.byte	0xc
+ 2776 0e5e 16       		.byte	0x16
+ 2777 0e5f 00       		.byte	0
+ 2778              		.section	.debug_abbrev,"",%progbits
+ 2779              	.Ldebug_abbrev0:
+ 2780 0000 01       		.uleb128 0x1
+ 2781 0001 11       		.uleb128 0x11
+ 2782 0002 01       		.byte	0x1
+ 2783 0003 25       		.uleb128 0x25
+ 2784 0004 0E       		.uleb128 0xe
+ 2785 0005 13       		.uleb128 0x13
+ 2786 0006 0B       		.uleb128 0xb
+ 2787 0007 03       		.uleb128 0x3
+ 2788 0008 0E       		.uleb128 0xe
+ 2789 0009 1B       		.uleb128 0x1b
+ 2790 000a 0E       		.uleb128 0xe
+ 2791 000b 55       		.uleb128 0x55
+ 2792 000c 17       		.uleb128 0x17
+ 2793 000d 11       		.uleb128 0x11
+ 2794 000e 01       		.uleb128 0x1
+ 2795 000f 10       		.uleb128 0x10
+ 2796 0010 17       		.uleb128 0x17
+ 2797 0011 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 65
+
+
+ 2798 0012 00       		.byte	0
+ 2799 0013 02       		.uleb128 0x2
+ 2800 0014 24       		.uleb128 0x24
+ 2801 0015 00       		.byte	0
+ 2802 0016 0B       		.uleb128 0xb
+ 2803 0017 0B       		.uleb128 0xb
+ 2804 0018 3E       		.uleb128 0x3e
+ 2805 0019 0B       		.uleb128 0xb
+ 2806 001a 03       		.uleb128 0x3
+ 2807 001b 0E       		.uleb128 0xe
+ 2808 001c 00       		.byte	0
+ 2809 001d 00       		.byte	0
+ 2810 001e 03       		.uleb128 0x3
+ 2811 001f 16       		.uleb128 0x16
+ 2812 0020 00       		.byte	0
+ 2813 0021 03       		.uleb128 0x3
+ 2814 0022 0E       		.uleb128 0xe
+ 2815 0023 3A       		.uleb128 0x3a
+ 2816 0024 0B       		.uleb128 0xb
+ 2817 0025 3B       		.uleb128 0x3b
+ 2818 0026 0B       		.uleb128 0xb
+ 2819 0027 49       		.uleb128 0x49
+ 2820 0028 13       		.uleb128 0x13
+ 2821 0029 00       		.byte	0
+ 2822 002a 00       		.byte	0
+ 2823 002b 04       		.uleb128 0x4
+ 2824 002c 24       		.uleb128 0x24
+ 2825 002d 00       		.byte	0
+ 2826 002e 0B       		.uleb128 0xb
+ 2827 002f 0B       		.uleb128 0xb
+ 2828 0030 3E       		.uleb128 0x3e
+ 2829 0031 0B       		.uleb128 0xb
+ 2830 0032 03       		.uleb128 0x3
+ 2831 0033 08       		.uleb128 0x8
+ 2832 0034 00       		.byte	0
+ 2833 0035 00       		.byte	0
+ 2834 0036 05       		.uleb128 0x5
+ 2835 0037 2E       		.uleb128 0x2e
+ 2836 0038 01       		.byte	0x1
+ 2837 0039 3F       		.uleb128 0x3f
+ 2838 003a 19       		.uleb128 0x19
+ 2839 003b 03       		.uleb128 0x3
+ 2840 003c 08       		.uleb128 0x8
+ 2841 003d 3A       		.uleb128 0x3a
+ 2842 003e 0B       		.uleb128 0xb
+ 2843 003f 3B       		.uleb128 0x3b
+ 2844 0040 0B       		.uleb128 0xb
+ 2845 0041 27       		.uleb128 0x27
+ 2846 0042 19       		.uleb128 0x19
+ 2847 0043 11       		.uleb128 0x11
+ 2848 0044 01       		.uleb128 0x1
+ 2849 0045 12       		.uleb128 0x12
+ 2850 0046 06       		.uleb128 0x6
+ 2851 0047 40       		.uleb128 0x40
+ 2852 0048 18       		.uleb128 0x18
+ 2853 0049 9742     		.uleb128 0x2117
+ 2854 004b 19       		.uleb128 0x19
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 66
+
+
+ 2855 004c 01       		.uleb128 0x1
+ 2856 004d 13       		.uleb128 0x13
+ 2857 004e 00       		.byte	0
+ 2858 004f 00       		.byte	0
+ 2859 0050 06       		.uleb128 0x6
+ 2860 0051 898201   		.uleb128 0x4109
+ 2861 0054 00       		.byte	0
+ 2862 0055 11       		.uleb128 0x11
+ 2863 0056 01       		.uleb128 0x1
+ 2864 0057 31       		.uleb128 0x31
+ 2865 0058 13       		.uleb128 0x13
+ 2866 0059 00       		.byte	0
+ 2867 005a 00       		.byte	0
+ 2868 005b 07       		.uleb128 0x7
+ 2869 005c 2E       		.uleb128 0x2e
+ 2870 005d 01       		.byte	0x1
+ 2871 005e 3F       		.uleb128 0x3f
+ 2872 005f 19       		.uleb128 0x19
+ 2873 0060 03       		.uleb128 0x3
+ 2874 0061 0E       		.uleb128 0xe
+ 2875 0062 3A       		.uleb128 0x3a
+ 2876 0063 0B       		.uleb128 0xb
+ 2877 0064 3B       		.uleb128 0x3b
+ 2878 0065 0B       		.uleb128 0xb
+ 2879 0066 27       		.uleb128 0x27
+ 2880 0067 19       		.uleb128 0x19
+ 2881 0068 11       		.uleb128 0x11
+ 2882 0069 01       		.uleb128 0x1
+ 2883 006a 12       		.uleb128 0x12
+ 2884 006b 06       		.uleb128 0x6
+ 2885 006c 40       		.uleb128 0x40
+ 2886 006d 18       		.uleb128 0x18
+ 2887 006e 9742     		.uleb128 0x2117
+ 2888 0070 19       		.uleb128 0x19
+ 2889 0071 01       		.uleb128 0x1
+ 2890 0072 13       		.uleb128 0x13
+ 2891 0073 00       		.byte	0
+ 2892 0074 00       		.byte	0
+ 2893 0075 08       		.uleb128 0x8
+ 2894 0076 898201   		.uleb128 0x4109
+ 2895 0079 01       		.byte	0x1
+ 2896 007a 11       		.uleb128 0x11
+ 2897 007b 01       		.uleb128 0x1
+ 2898 007c 31       		.uleb128 0x31
+ 2899 007d 13       		.uleb128 0x13
+ 2900 007e 00       		.byte	0
+ 2901 007f 00       		.byte	0
+ 2902 0080 09       		.uleb128 0x9
+ 2903 0081 8A8201   		.uleb128 0x410a
+ 2904 0084 00       		.byte	0
+ 2905 0085 02       		.uleb128 0x2
+ 2906 0086 18       		.uleb128 0x18
+ 2907 0087 9142     		.uleb128 0x2111
+ 2908 0089 18       		.uleb128 0x18
+ 2909 008a 00       		.byte	0
+ 2910 008b 00       		.byte	0
+ 2911 008c 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 67
+
+
+ 2912 008d 2E       		.uleb128 0x2e
+ 2913 008e 01       		.byte	0x1
+ 2914 008f 3F       		.uleb128 0x3f
+ 2915 0090 19       		.uleb128 0x19
+ 2916 0091 03       		.uleb128 0x3
+ 2917 0092 0E       		.uleb128 0xe
+ 2918 0093 3A       		.uleb128 0x3a
+ 2919 0094 0B       		.uleb128 0xb
+ 2920 0095 3B       		.uleb128 0x3b
+ 2921 0096 05       		.uleb128 0x5
+ 2922 0097 27       		.uleb128 0x27
+ 2923 0098 19       		.uleb128 0x19
+ 2924 0099 11       		.uleb128 0x11
+ 2925 009a 01       		.uleb128 0x1
+ 2926 009b 12       		.uleb128 0x12
+ 2927 009c 06       		.uleb128 0x6
+ 2928 009d 40       		.uleb128 0x40
+ 2929 009e 18       		.uleb128 0x18
+ 2930 009f 9742     		.uleb128 0x2117
+ 2931 00a1 19       		.uleb128 0x19
+ 2932 00a2 01       		.uleb128 0x1
+ 2933 00a3 13       		.uleb128 0x13
+ 2934 00a4 00       		.byte	0
+ 2935 00a5 00       		.byte	0
+ 2936 00a6 0B       		.uleb128 0xb
+ 2937 00a7 34       		.uleb128 0x34
+ 2938 00a8 00       		.byte	0
+ 2939 00a9 03       		.uleb128 0x3
+ 2940 00aa 0E       		.uleb128 0xe
+ 2941 00ab 3A       		.uleb128 0x3a
+ 2942 00ac 0B       		.uleb128 0xb
+ 2943 00ad 3B       		.uleb128 0x3b
+ 2944 00ae 05       		.uleb128 0x5
+ 2945 00af 49       		.uleb128 0x49
+ 2946 00b0 13       		.uleb128 0x13
+ 2947 00b1 02       		.uleb128 0x2
+ 2948 00b2 17       		.uleb128 0x17
+ 2949 00b3 00       		.byte	0
+ 2950 00b4 00       		.byte	0
+ 2951 00b5 0C       		.uleb128 0xc
+ 2952 00b6 898201   		.uleb128 0x4109
+ 2953 00b9 01       		.byte	0x1
+ 2954 00ba 11       		.uleb128 0x11
+ 2955 00bb 01       		.uleb128 0x1
+ 2956 00bc 31       		.uleb128 0x31
+ 2957 00bd 13       		.uleb128 0x13
+ 2958 00be 01       		.uleb128 0x1
+ 2959 00bf 13       		.uleb128 0x13
+ 2960 00c0 00       		.byte	0
+ 2961 00c1 00       		.byte	0
+ 2962 00c2 0D       		.uleb128 0xd
+ 2963 00c3 2E       		.uleb128 0x2e
+ 2964 00c4 01       		.byte	0x1
+ 2965 00c5 3F       		.uleb128 0x3f
+ 2966 00c6 19       		.uleb128 0x19
+ 2967 00c7 03       		.uleb128 0x3
+ 2968 00c8 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 68
+
+
+ 2969 00c9 3A       		.uleb128 0x3a
+ 2970 00ca 0B       		.uleb128 0xb
+ 2971 00cb 3B       		.uleb128 0x3b
+ 2972 00cc 0B       		.uleb128 0xb
+ 2973 00cd 27       		.uleb128 0x27
+ 2974 00ce 19       		.uleb128 0x19
+ 2975 00cf 49       		.uleb128 0x49
+ 2976 00d0 13       		.uleb128 0x13
+ 2977 00d1 8701     		.uleb128 0x87
+ 2978 00d3 19       		.uleb128 0x19
+ 2979 00d4 11       		.uleb128 0x11
+ 2980 00d5 01       		.uleb128 0x1
+ 2981 00d6 12       		.uleb128 0x12
+ 2982 00d7 06       		.uleb128 0x6
+ 2983 00d8 40       		.uleb128 0x40
+ 2984 00d9 18       		.uleb128 0x18
+ 2985 00da 9742     		.uleb128 0x2117
+ 2986 00dc 19       		.uleb128 0x19
+ 2987 00dd 01       		.uleb128 0x1
+ 2988 00de 13       		.uleb128 0x13
+ 2989 00df 00       		.byte	0
+ 2990 00e0 00       		.byte	0
+ 2991 00e1 0E       		.uleb128 0xe
+ 2992 00e2 34       		.uleb128 0x34
+ 2993 00e3 00       		.byte	0
+ 2994 00e4 03       		.uleb128 0x3
+ 2995 00e5 0E       		.uleb128 0xe
+ 2996 00e6 3A       		.uleb128 0x3a
+ 2997 00e7 0B       		.uleb128 0xb
+ 2998 00e8 3B       		.uleb128 0x3b
+ 2999 00e9 0B       		.uleb128 0xb
+ 3000 00ea 49       		.uleb128 0x49
+ 3001 00eb 13       		.uleb128 0x13
+ 3002 00ec 1C       		.uleb128 0x1c
+ 3003 00ed 0B       		.uleb128 0xb
+ 3004 00ee 00       		.byte	0
+ 3005 00ef 00       		.byte	0
+ 3006 00f0 0F       		.uleb128 0xf
+ 3007 00f1 0B       		.uleb128 0xb
+ 3008 00f2 01       		.byte	0x1
+ 3009 00f3 11       		.uleb128 0x11
+ 3010 00f4 01       		.uleb128 0x1
+ 3011 00f5 12       		.uleb128 0x12
+ 3012 00f6 06       		.uleb128 0x6
+ 3013 00f7 01       		.uleb128 0x1
+ 3014 00f8 13       		.uleb128 0x13
+ 3015 00f9 00       		.byte	0
+ 3016 00fa 00       		.byte	0
+ 3017 00fb 10       		.uleb128 0x10
+ 3018 00fc 34       		.uleb128 0x34
+ 3019 00fd 00       		.byte	0
+ 3020 00fe 03       		.uleb128 0x3
+ 3021 00ff 08       		.uleb128 0x8
+ 3022 0100 3A       		.uleb128 0x3a
+ 3023 0101 0B       		.uleb128 0xb
+ 3024 0102 3B       		.uleb128 0x3b
+ 3025 0103 05       		.uleb128 0x5
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 69
+
+
+ 3026 0104 49       		.uleb128 0x49
+ 3027 0105 13       		.uleb128 0x13
+ 3028 0106 02       		.uleb128 0x2
+ 3029 0107 17       		.uleb128 0x17
+ 3030 0108 00       		.byte	0
+ 3031 0109 00       		.byte	0
+ 3032 010a 11       		.uleb128 0x11
+ 3033 010b 34       		.uleb128 0x34
+ 3034 010c 00       		.byte	0
+ 3035 010d 03       		.uleb128 0x3
+ 3036 010e 0E       		.uleb128 0xe
+ 3037 010f 3A       		.uleb128 0x3a
+ 3038 0110 0B       		.uleb128 0xb
+ 3039 0111 3B       		.uleb128 0x3b
+ 3040 0112 05       		.uleb128 0x5
+ 3041 0113 49       		.uleb128 0x49
+ 3042 0114 13       		.uleb128 0x13
+ 3043 0115 3F       		.uleb128 0x3f
+ 3044 0116 19       		.uleb128 0x19
+ 3045 0117 3C       		.uleb128 0x3c
+ 3046 0118 19       		.uleb128 0x19
+ 3047 0119 00       		.byte	0
+ 3048 011a 00       		.byte	0
+ 3049 011b 12       		.uleb128 0x12
+ 3050 011c 35       		.uleb128 0x35
+ 3051 011d 00       		.byte	0
+ 3052 011e 49       		.uleb128 0x49
+ 3053 011f 13       		.uleb128 0x13
+ 3054 0120 00       		.byte	0
+ 3055 0121 00       		.byte	0
+ 3056 0122 13       		.uleb128 0x13
+ 3057 0123 34       		.uleb128 0x34
+ 3058 0124 00       		.byte	0
+ 3059 0125 03       		.uleb128 0x3
+ 3060 0126 0E       		.uleb128 0xe
+ 3061 0127 3A       		.uleb128 0x3a
+ 3062 0128 0B       		.uleb128 0xb
+ 3063 0129 3B       		.uleb128 0x3b
+ 3064 012a 0B       		.uleb128 0xb
+ 3065 012b 49       		.uleb128 0x49
+ 3066 012c 13       		.uleb128 0x13
+ 3067 012d 3F       		.uleb128 0x3f
+ 3068 012e 19       		.uleb128 0x19
+ 3069 012f 02       		.uleb128 0x2
+ 3070 0130 18       		.uleb128 0x18
+ 3071 0131 00       		.byte	0
+ 3072 0132 00       		.byte	0
+ 3073 0133 14       		.uleb128 0x14
+ 3074 0134 01       		.uleb128 0x1
+ 3075 0135 01       		.byte	0x1
+ 3076 0136 49       		.uleb128 0x49
+ 3077 0137 13       		.uleb128 0x13
+ 3078 0138 01       		.uleb128 0x1
+ 3079 0139 13       		.uleb128 0x13
+ 3080 013a 00       		.byte	0
+ 3081 013b 00       		.byte	0
+ 3082 013c 15       		.uleb128 0x15
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 70
+
+
+ 3083 013d 21       		.uleb128 0x21
+ 3084 013e 00       		.byte	0
+ 3085 013f 49       		.uleb128 0x49
+ 3086 0140 13       		.uleb128 0x13
+ 3087 0141 2F       		.uleb128 0x2f
+ 3088 0142 0B       		.uleb128 0xb
+ 3089 0143 00       		.byte	0
+ 3090 0144 00       		.byte	0
+ 3091 0145 16       		.uleb128 0x16
+ 3092 0146 34       		.uleb128 0x34
+ 3093 0147 00       		.byte	0
+ 3094 0148 03       		.uleb128 0x3
+ 3095 0149 0E       		.uleb128 0xe
+ 3096 014a 3A       		.uleb128 0x3a
+ 3097 014b 0B       		.uleb128 0xb
+ 3098 014c 3B       		.uleb128 0x3b
+ 3099 014d 0B       		.uleb128 0xb
+ 3100 014e 49       		.uleb128 0x49
+ 3101 014f 13       		.uleb128 0x13
+ 3102 0150 3F       		.uleb128 0x3f
+ 3103 0151 19       		.uleb128 0x19
+ 3104 0152 3C       		.uleb128 0x3c
+ 3105 0153 19       		.uleb128 0x19
+ 3106 0154 00       		.byte	0
+ 3107 0155 00       		.byte	0
+ 3108 0156 17       		.uleb128 0x17
+ 3109 0157 26       		.uleb128 0x26
+ 3110 0158 00       		.byte	0
+ 3111 0159 49       		.uleb128 0x49
+ 3112 015a 13       		.uleb128 0x13
+ 3113 015b 00       		.byte	0
+ 3114 015c 00       		.byte	0
+ 3115 015d 18       		.uleb128 0x18
+ 3116 015e 2E       		.uleb128 0x2e
+ 3117 015f 00       		.byte	0
+ 3118 0160 3F       		.uleb128 0x3f
+ 3119 0161 19       		.uleb128 0x19
+ 3120 0162 3C       		.uleb128 0x3c
+ 3121 0163 19       		.uleb128 0x19
+ 3122 0164 6E       		.uleb128 0x6e
+ 3123 0165 0E       		.uleb128 0xe
+ 3124 0166 03       		.uleb128 0x3
+ 3125 0167 0E       		.uleb128 0xe
+ 3126 0168 3A       		.uleb128 0x3a
+ 3127 0169 0B       		.uleb128 0xb
+ 3128 016a 3B       		.uleb128 0x3b
+ 3129 016b 0B       		.uleb128 0xb
+ 3130 016c 00       		.byte	0
+ 3131 016d 00       		.byte	0
+ 3132 016e 00       		.byte	0
+ 3133              		.section	.debug_loc,"",%progbits
+ 3134              	.Ldebug_loc0:
+ 3135              	.LLST0:
+ 3136 0000 02000000 		.4byte	.LVL9
+ 3137 0004 12000000 		.4byte	.LVL11
+ 3138 0008 0200     		.2byte	0x2
+ 3139 000a 30       		.byte	0x30
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 71
+
+
+ 3140 000b 9F       		.byte	0x9f
+ 3141 000c 12000000 		.4byte	.LVL11
+ 3142 0010 3C000000 		.4byte	.LVL18
+ 3143 0014 0100     		.2byte	0x1
+ 3144 0016 55       		.byte	0x55
+ 3145 0017 00000000 		.4byte	0
+ 3146 001b 00000000 		.4byte	0
+ 3147              	.LLST1:
+ 3148 001f 1E000000 		.4byte	.LVL14
+ 3149 0023 20000000 		.4byte	.LVL15
+ 3150 0027 0100     		.2byte	0x1
+ 3151 0029 50       		.byte	0x50
+ 3152 002a 20000000 		.4byte	.LVL15
+ 3153 002e 36000000 		.4byte	.LVL17
+ 3154 0032 0100     		.2byte	0x1
+ 3155 0034 54       		.byte	0x54
+ 3156 0035 00000000 		.4byte	0
+ 3157 0039 00000000 		.4byte	0
+ 3158              	.LLST2:
+ 3159 003d 02000000 		.4byte	.LVL19
+ 3160 0041 2E000000 		.4byte	.LVL26
+ 3161 0045 0200     		.2byte	0x2
+ 3162 0047 30       		.byte	0x30
+ 3163 0048 9F       		.byte	0x9f
+ 3164 0049 2E000000 		.4byte	.LVL26
+ 3165 004d 34000000 		.4byte	.LVL28
+ 3166 0051 0100     		.2byte	0x1
+ 3167 0053 54       		.byte	0x54
+ 3168 0054 34000000 		.4byte	.LVL28
+ 3169 0058 36000000 		.4byte	.LVL29
+ 3170 005c 0100     		.2byte	0x1
+ 3171 005e 50       		.byte	0x50
+ 3172 005f 36000000 		.4byte	.LVL29
+ 3173 0063 5A000000 		.4byte	.LVL36
+ 3174 0067 0100     		.2byte	0x1
+ 3175 0069 54       		.byte	0x54
+ 3176 006a 00000000 		.4byte	0
+ 3177 006e 00000000 		.4byte	0
+ 3178              	.LLST3:
+ 3179 0072 08010000 		.4byte	.LVL81
+ 3180 0076 0F010000 		.4byte	.LVL82-1
+ 3181 007a 0100     		.2byte	0x1
+ 3182 007c 53       		.byte	0x53
+ 3183 007d 2E010000 		.4byte	.LVL88
+ 3184 0081 37010000 		.4byte	.LVL89-1
+ 3185 0085 0100     		.2byte	0x1
+ 3186 0087 53       		.byte	0x53
+ 3187 0088 00000000 		.4byte	0
+ 3188 008c 00000000 		.4byte	0
+ 3189              	.LLST4:
+ 3190 0090 14010000 		.4byte	.LVL83
+ 3191 0094 18010000 		.4byte	.LVL84
+ 3192 0098 0200     		.2byte	0x2
+ 3193 009a 30       		.byte	0x30
+ 3194 009b 9F       		.byte	0x9f
+ 3195 009c 18010000 		.4byte	.LVL84
+ 3196 00a0 2E010000 		.4byte	.LVL88
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 72
+
+
+ 3197 00a4 0100     		.2byte	0x1
+ 3198 00a6 54       		.byte	0x54
+ 3199 00a7 00000000 		.4byte	0
+ 3200 00ab 00000000 		.4byte	0
+ 3201              	.LLST5:
+ 3202 00af D0010000 		.4byte	.LVL100
+ 3203 00b3 DA010000 		.4byte	.LVL101
+ 3204 00b7 0200     		.2byte	0x2
+ 3205 00b9 30       		.byte	0x30
+ 3206 00ba 9F       		.byte	0x9f
+ 3207 00bb DA010000 		.4byte	.LVL101
+ 3208 00bf 26020000 		.4byte	.LVL115
+ 3209 00c3 0100     		.2byte	0x1
+ 3210 00c5 54       		.byte	0x54
+ 3211 00c6 00000000 		.4byte	0
+ 3212 00ca 00000000 		.4byte	0
+ 3213              	.LLST6:
+ 3214 00ce EC010000 		.4byte	.LVL105
+ 3215 00d2 EE010000 		.4byte	.LVL106
+ 3216 00d6 0100     		.2byte	0x1
+ 3217 00d8 50       		.byte	0x50
+ 3218 00d9 EE010000 		.4byte	.LVL106
+ 3219 00dd 04020000 		.4byte	.LVL109
+ 3220 00e1 0100     		.2byte	0x1
+ 3221 00e3 55       		.byte	0x55
+ 3222 00e4 00000000 		.4byte	0
+ 3223 00e8 00000000 		.4byte	0
+ 3224              		.section	.debug_aranges,"",%progbits
+ 3225 0000 54000000 		.4byte	0x54
+ 3226 0004 0200     		.2byte	0x2
+ 3227 0006 00000000 		.4byte	.Ldebug_info0
+ 3228 000a 04       		.byte	0x4
+ 3229 000b 00       		.byte	0
+ 3230 000c 0000     		.2byte	0
+ 3231 000e 0000     		.2byte	0
+ 3232 0010 00000000 		.4byte	.LFB64
+ 3233 0014 08000000 		.4byte	.LFE64-.LFB64
+ 3234 0018 00000000 		.4byte	.LFB65
+ 3235 001c 20000000 		.4byte	.LFE65-.LFB65
+ 3236 0020 00000000 		.4byte	.LFB66
+ 3237 0024 08000000 		.4byte	.LFE66-.LFB66
+ 3238 0028 00000000 		.4byte	.LFB67
+ 3239 002c 08000000 		.4byte	.LFE67-.LFB67
+ 3240 0030 00000000 		.4byte	.LFB68
+ 3241 0034 28000000 		.4byte	.LFE68-.LFB68
+ 3242 0038 00000000 		.4byte	.LFB70
+ 3243 003c 44000000 		.4byte	.LFE70-.LFB70
+ 3244 0040 00000000 		.4byte	.LFB71
+ 3245 0044 64000000 		.4byte	.LFE71-.LFB71
+ 3246 0048 00000000 		.4byte	.LFB69
+ 3247 004c C4020000 		.4byte	.LFE69-.LFB69
+ 3248 0050 00000000 		.4byte	0
+ 3249 0054 00000000 		.4byte	0
+ 3250              		.section	.debug_ranges,"",%progbits
+ 3251              	.Ldebug_ranges0:
+ 3252 0000 00000000 		.4byte	.LFB64
+ 3253 0004 08000000 		.4byte	.LFE64
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 73
+
+
+ 3254 0008 00000000 		.4byte	.LFB65
+ 3255 000c 20000000 		.4byte	.LFE65
+ 3256 0010 00000000 		.4byte	.LFB66
+ 3257 0014 08000000 		.4byte	.LFE66
+ 3258 0018 00000000 		.4byte	.LFB67
+ 3259 001c 08000000 		.4byte	.LFE67
+ 3260 0020 00000000 		.4byte	.LFB68
+ 3261 0024 28000000 		.4byte	.LFE68
+ 3262 0028 00000000 		.4byte	.LFB70
+ 3263 002c 44000000 		.4byte	.LFE70
+ 3264 0030 00000000 		.4byte	.LFB71
+ 3265 0034 64000000 		.4byte	.LFE71
+ 3266 0038 00000000 		.4byte	.LFB69
+ 3267 003c C4020000 		.4byte	.LFE69
+ 3268 0040 00000000 		.4byte	0
+ 3269 0044 00000000 		.4byte	0
+ 3270              		.section	.debug_line,"",%progbits
+ 3271              	.Ldebug_line0:
+ 3272 0000 EA040000 		.section	.debug_str,"MS",%progbits,1
+ 3272      02009F03 
+ 3272      00000201 
+ 3272      FB0E0D00 
+ 3272      01010101 
+ 3273              	.LASF77:
+ 3274 0000 43794465 		.ascii	"CyDelay\000"
+ 3274      6C617900 
+ 3275              	.LASF20:
+ 3276 0008 61726D4D 		.ascii	"armMoving\000"
+ 3276      6F76696E 
+ 3276      6700
+ 3277              	.LASF125:
+ 3278 0012 4D6F746F 		.ascii	"Motor_2_driver_Start\000"
+ 3278      725F325F 
+ 3278      64726976 
+ 3278      65725F53 
+ 3278      74617274 
+ 3279              	.LASF137:
+ 3280 0027 6D61696E 		.ascii	"main.c\000"
+ 3280      2E6300
+ 3281              	.LASF43:
+ 3282 002e 6F757470 		.ascii	"output\000"
+ 3282      757400
+ 3283              	.LASF72:
+ 3284 0035 69646163 		.ascii	"idac_value\000"
+ 3284      5F76616C 
+ 3284      756500
+ 3285              	.LASF47:
+ 3286 0040 4D325F42 		.ascii	"M2_BD\000"
+ 3286      4400
+ 3287              	.LASF84:
+ 3288 0046 64726966 		.ascii	"driftCorrect\000"
+ 3288      74436F72 
+ 3288      72656374 
+ 3288      00
+ 3289              	.LASF37:
+ 3290 0053 7075636B 		.ascii	"puckPileLocation\000"
+ 3290      50696C65 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 74
+
+
+ 3290      4C6F6361 
+ 3290      74696F6E 
+ 3290      00
+ 3291              	.LASF8:
+ 3292 0064 756E7369 		.ascii	"unsigned int\000"
+ 3292      676E6564 
+ 3292      20696E74 
+ 3292      00
+ 3293              	.LASF90:
+ 3294 0071 4D6F746F 		.ascii	"Motor_Left_Driver_WriteCompare\000"
+ 3294      725F4C65 
+ 3294      66745F44 
+ 3294      72697665 
+ 3294      725F5772 
+ 3295              	.LASF135:
+ 3296 0090 6C6F7765 		.ascii	"lowerAndOpen\000"
+ 3296      72416E64 
+ 3296      4F70656E 
+ 3296      00
+ 3297              	.LASF9:
+ 3298 009d 5F5F696E 		.ascii	"__int32_t\000"
+ 3298      7433325F 
+ 3298      7400
+ 3299              	.LASF94:
+ 3300 00a7 4D6F746F 		.ascii	"Motor_Right_Decoder_SetCounter\000"
+ 3300      725F5269 
+ 3300      6768745F 
+ 3300      4465636F 
+ 3300      6465725F 
+ 3301              	.LASF76:
+ 3302 00c6 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
+ 3302      61736F6E 
+ 3302      6963496E 
+ 3302      74657272 
+ 3302      75707448 
+ 3303              	.LASF51:
+ 3304 00e1 6D6F746F 		.ascii	"motor2EncoderCounts\000"
+ 3304      7232456E 
+ 3304      636F6465 
+ 3304      72436F75 
+ 3304      6E747300 
+ 3305              	.LASF17:
+ 3306 00f5 456E636F 		.ascii	"Encoder_Counts_1_IH\000"
+ 3306      6465725F 
+ 3306      436F756E 
+ 3306      74735F31 
+ 3306      5F494800 
+ 3307              	.LASF116:
+ 3308 0109 4D6F746F 		.ascii	"Motor_Left_Driver_Start\000"
+ 3308      725F4C65 
+ 3308      66745F44 
+ 3308      72697665 
+ 3308      725F5374 
+ 3309              	.LASF35:
+ 3310 0121 73776565 		.ascii	"sweeping\000"
+ 3310      70696E67 
+ 3310      00
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 75
+
+
+ 3311              	.LASF22:
+ 3312 012a 7075636B 		.ascii	"puck_scan\000"
+ 3312      5F736361 
+ 3312      6E00
+ 3313              	.LASF50:
+ 3314 0134 6D6F746F 		.ascii	"motor1EncoderCounts\000"
+ 3314      7231456E 
+ 3314      636F6465 
+ 3314      72436F75 
+ 3314      6E747300 
+ 3315              	.LASF52:
+ 3316 0148 53504545 		.ascii	"SPEED\000"
+ 3316      4400
+ 3317              	.LASF86:
+ 3318 014e 636F6C6F 		.ascii	"colourSensingOutput\000"
+ 3318      75725365 
+ 3318      6E73696E 
+ 3318      674F7574 
+ 3318      70757400 
+ 3319              	.LASF93:
+ 3320 0162 4D6F746F 		.ascii	"Motor_Left_Decoder_SetCounter\000"
+ 3320      725F4C65 
+ 3320      66745F44 
+ 3320      65636F64 
+ 3320      65725F53 
+ 3321              	.LASF117:
+ 3322 0180 4D6F746F 		.ascii	"Motor_Right_Driver_Start\000"
+ 3322      725F5269 
+ 3322      6768745F 
+ 3322      44726976 
+ 3322      65725F53 
+ 3323              	.LASF27:
+ 3324 0199 6D6F746F 		.ascii	"motor_testing\000"
+ 3324      725F7465 
+ 3324      7374696E 
+ 3324      6700
+ 3325              	.LASF95:
+ 3326 01a7 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
+ 3326      725F4C65 
+ 3326      66745F44 
+ 3326      72697665 
+ 3326      725F536C 
+ 3327              	.LASF11:
+ 3328 01bf 666C6F61 		.ascii	"float\000"
+ 3328      7400
+ 3329              	.LASF122:
+ 3330 01c5 536F6E69 		.ascii	"Sonic_StartEx\000"
+ 3330      635F5374 
+ 3330      61727445 
+ 3330      7800
+ 3331              	.LASF56:
+ 3332 01d3 63757272 		.ascii	"currentPosition\000"
+ 3332      656E7450 
+ 3332      6F736974 
+ 3332      696F6E00 
+ 3333              	.LASF85:
+ 3334 01e3 6368616E 		.ascii	"changeHeightToPuck\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 76
+
+
+ 3334      67654865 
+ 3334      69676874 
+ 3334      546F5075 
+ 3334      636B00
+ 3335              	.LASF49:
+ 3336 01f6 6D6F746F 		.ascii	"motor2Enable\000"
+ 3336      7232456E 
+ 3336      61626C65 
+ 3336      00
+ 3337              	.LASF55:
+ 3338 0203 6D6F7669 		.ascii	"moving\000"
+ 3338      6E6700
+ 3339              	.LASF87:
+ 3340 020a 4D6F746F 		.ascii	"Motor_Left_Control_Write\000"
+ 3340      725F4C65 
+ 3340      66745F43 
+ 3340      6F6E7472 
+ 3340      6F6C5F57 
+ 3341              	.LASF7:
+ 3342 0223 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3342      206C6F6E 
+ 3342      6720756E 
+ 3342      7369676E 
+ 3342      65642069 
+ 3343              	.LASF66:
+ 3344 023a 63757272 		.ascii	"currentPuckStackSize\000"
+ 3344      656E7450 
+ 3344      75636B53 
+ 3344      7461636B 
+ 3344      53697A65 
+ 3345              	.LASF123:
+ 3346 024f 53746172 		.ascii	"Start_StartEx\000"
+ 3346      745F5374 
+ 3346      61727445 
+ 3346      7800
+ 3347              	.LASF62:
+ 3348 025d 6D6F7665 		.ascii	"moveRightAllowed\000"
+ 3348      52696768 
+ 3348      74416C6C 
+ 3348      6F776564 
+ 3348      00
+ 3349              	.LASF31:
+ 3350 026e 64726976 		.ascii	"driveStraightEnable\000"
+ 3350      65537472 
+ 3350      61696768 
+ 3350      74456E61 
+ 3350      626C6500 
+ 3351              	.LASF81:
+ 3352 0282 44726966 		.ascii	"Drift_Check_Timer_Stop\000"
+ 3352      745F4368 
+ 3352      65636B5F 
+ 3352      54696D65 
+ 3352      725F5374 
+ 3353              	.LASF111:
+ 3354 0299 5261636B 		.ascii	"Rack_Servo_PWM_WriteCompare\000"
+ 3354      5F536572 
+ 3354      766F5F50 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 77
+
+
+ 3354      574D5F57 
+ 3354      72697465 
+ 3355              	.LASF103:
+ 3356 02b5 4144435F 		.ascii	"ADC_Start\000"
+ 3356      53746172 
+ 3356      7400
+ 3357              	.LASF108:
+ 3358 02bf 636F6E74 		.ascii	"control_led_Write\000"
+ 3358      726F6C5F 
+ 3358      6C65645F 
+ 3358      57726974 
+ 3358      6500
+ 3359              	.LASF96:
+ 3360 02d1 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
+ 3360      725F5269 
+ 3360      6768745F 
+ 3360      44726976 
+ 3360      65725F53 
+ 3361              	.LASF136:
+ 3362 02ea 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 3362      43313120 
+ 3362      352E342E 
+ 3362      31203230 
+ 3362      31363036 
+ 3363 031d 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 3363      20726576 
+ 3363      6973696F 
+ 3363      6E203233 
+ 3363      37373135 
+ 3364 0350 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 3364      66756E63 
+ 3364      74696F6E 
+ 3364      2D736563 
+ 3364      74696F6E 
+ 3365              	.LASF24:
+ 3366 0378 7075636B 		.ascii	"puck_detect\000"
+ 3366      5F646574 
+ 3366      65637400 
+ 3367              	.LASF46:
+ 3368 0384 4D325F46 		.ascii	"M2_FD\000"
+ 3368      4400
+ 3369              	.LASF39:
+ 3370 038a 64726976 		.ascii	"drivingBackwardFlag\000"
+ 3370      696E6742 
+ 3370      61636B77 
+ 3370      61726446 
+ 3370      6C616700 
+ 3371              	.LASF98:
+ 3372 039e 55415254 		.ascii	"UART_1_PutString\000"
+ 3372      5F315F50 
+ 3372      75745374 
+ 3372      72696E67 
+ 3372      00
+ 3373              	.LASF28:
+ 3374 03af 756C7472 		.ascii	"ultrasonic_testing\000"
+ 3374      61736F6E 
+ 3374      69635F74 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 78
+
+
+ 3374      65737469 
+ 3374      6E6700
+ 3375              	.LASF91:
+ 3376 03c2 4D6F746F 		.ascii	"Motor_Right_Driver_Wakeup\000"
+ 3376      725F5269 
+ 3376      6768745F 
+ 3376      44726976 
+ 3376      65725F57 
+ 3377              	.LASF64:
+ 3378 03dc 6D6F7665 		.ascii	"moveBackwardAllowed\000"
+ 3378      4261636B 
+ 3378      77617264 
+ 3378      416C6C6F 
+ 3378      77656400 
+ 3379              	.LASF74:
+ 3380 03f0 504C414E 		.ascii	"PLAN_SCAN_VERTICAL\000"
+ 3380      5F534341 
+ 3380      4E5F5645 
+ 3380      52544943 
+ 3380      414C00
+ 3381              	.LASF89:
+ 3382 0403 4D6F746F 		.ascii	"Motor_Left_Driver_Wakeup\000"
+ 3382      725F4C65 
+ 3382      66745F44 
+ 3382      72697665 
+ 3382      725F5761 
+ 3383              	.LASF80:
+ 3384 041c 44726966 		.ascii	"Drift_Check_Timer_ReadStatusRegister\000"
+ 3384      745F4368 
+ 3384      65636B5F 
+ 3384      54696D65 
+ 3384      725F5265 
+ 3385              	.LASF113:
+ 3386 0441 47726970 		.ascii	"Gripper_Servo_PWM_Start\000"
+ 3386      7065725F 
+ 3386      53657276 
+ 3386      6F5F5057 
+ 3386      4D5F5374 
+ 3387              	.LASF58:
+ 3388 0459 63757272 		.ascii	"currentOrientation\000"
+ 3388      656E744F 
+ 3388      7269656E 
+ 3388      74617469 
+ 3388      6F6E00
+ 3389              	.LASF131:
+ 3390 046c 456E636F 		.ascii	"Encoder_Counts_2_Interrupt_StartEx\000"
+ 3390      6465725F 
+ 3390      436F756E 
+ 3390      74735F32 
+ 3390      5F496E74 
+ 3391              	.LASF99:
+ 3392 048f 73747261 		.ascii	"straightAdjust\000"
+ 3392      69676874 
+ 3392      41646A75 
+ 3392      737400
+ 3393              	.LASF13:
+ 3394 049e 63686172 		.ascii	"char\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 79
+
+
+ 3394      00
+ 3395              	.LASF128:
+ 3396 04a3 4D6F746F 		.ascii	"Motor_2_Encoder_Counts_Start\000"
+ 3396      725F325F 
+ 3396      456E636F 
+ 3396      6465725F 
+ 3396      436F756E 
+ 3397              	.LASF119:
+ 3398 04c0 4D6F746F 		.ascii	"Motor_Right_Decoder_Start\000"
+ 3398      725F5269 
+ 3398      6768745F 
+ 3398      4465636F 
+ 3398      6465725F 
+ 3399              	.LASF40:
+ 3400 04da 7475726E 		.ascii	"turningLeftFlag\000"
+ 3400      696E674C 
+ 3400      65667446 
+ 3400      6C616700 
+ 3401              	.LASF82:
+ 3402 04ea 4D6F746F 		.ascii	"Motor_1_Encoder_Counts_ReadCounter\000"
+ 3402      725F315F 
+ 3402      456E636F 
+ 3402      6465725F 
+ 3402      436F756E 
+ 3403              	.LASF63:
+ 3404 050d 6D6F7665 		.ascii	"moveForwardAllowed\000"
+ 3404      466F7277 
+ 3404      61726441 
+ 3404      6C6C6F77 
+ 3404      656400
+ 3405              	.LASF61:
+ 3406 0520 6D6F7665 		.ascii	"moveLeftAllowed\000"
+ 3406      4C656674 
+ 3406      416C6C6F 
+ 3406      77656400 
+ 3407              	.LASF45:
+ 3408 0530 4D315F42 		.ascii	"M1_BD\000"
+ 3408      4400
+ 3409              	.LASF104:
+ 3410 0536 49444143 		.ascii	"IDAC8_1_Start\000"
+ 3410      385F315F 
+ 3410      53746172 
+ 3410      7400
+ 3411              	.LASF6:
+ 3412 0544 6C6F6E67 		.ascii	"long long int\000"
+ 3412      206C6F6E 
+ 3412      6720696E 
+ 3412      7400
+ 3413              	.LASF29:
+ 3414 0552 6C6F636B 		.ascii	"lock\000"
+ 3414      00
+ 3415              	.LASF115:
+ 3416 0557 47726970 		.ascii	"Gripper_Servo_PWM_Sleep\000"
+ 3416      7065725F 
+ 3416      53657276 
+ 3416      6F5F5057 
+ 3416      4D5F536C 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 80
+
+
+ 3417              	.LASF69:
+ 3418 056f 62656769 		.ascii	"beginNavigation\000"
+ 3418      6E4E6176 
+ 3418      69676174 
+ 3418      696F6E00 
+ 3419              	.LASF134:
+ 3420 057f 6D6F7665 		.ascii	"moveAndAngle\000"
+ 3420      416E6441 
+ 3420      6E676C65 
+ 3420      00
+ 3421              	.LASF70:
+ 3422 058c 70617468 		.ascii	"pathToPucks\000"
+ 3422      546F5075 
+ 3422      636B7300 
+ 3423              	.LASF53:
+ 3424 0598 636F6C6F 		.ascii	"colour_flag\000"
+ 3424      75725F66 
+ 3424      6C616700 
+ 3425              	.LASF67:
+ 3426 05a4 7075636B 		.ascii	"puckConstructionPlan\000"
+ 3426      436F6E73 
+ 3426      74727563 
+ 3426      74696F6E 
+ 3426      506C616E 
+ 3427              	.LASF106:
+ 3428 05b9 49444143 		.ascii	"IDAC8_1_SetValue\000"
+ 3428      385F315F 
+ 3428      53657456 
+ 3428      616C7565 
+ 3428      00
+ 3429              	.LASF19:
+ 3430 05ca 44726966 		.ascii	"Drift_Check_IH\000"
+ 3430      745F4368 
+ 3430      65636B5F 
+ 3430      494800
+ 3431              	.LASF32:
+ 3432 05d9 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 3432      656E7450 
+ 3432      75636B52 
+ 3432      61636B53 
+ 3432      63616E6E 
+ 3433              	.LASF110:
+ 3434 05f6 5261636B 		.ascii	"Rack_Servo_PWM_Start\000"
+ 3434      5F536572 
+ 3434      766F5F50 
+ 3434      574D5F53 
+ 3434      74617274 
+ 3435              	.LASF78:
+ 3436 060b 73746F70 		.ascii	"stopMotor1AndUpdate\000"
+ 3436      4D6F746F 
+ 3436      7231416E 
+ 3436      64557064 
+ 3436      61746500 
+ 3437              	.LASF68:
+ 3438 061f 686F7269 		.ascii	"horizontalPuckGrid\000"
+ 3438      7A6F6E74 
+ 3438      616C5075 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 81
+
+
+ 3438      636B4772 
+ 3438      696400
+ 3439              	.LASF133:
+ 3440 0632 6D697368 		.ascii	"mishaSwivel\000"
+ 3440      61537769 
+ 3440      76656C00 
+ 3441              	.LASF73:
+ 3442 063e 636F6C6F 		.ascii	"colour_sensing_algorithm\000"
+ 3442      75725F73 
+ 3442      656E7369 
+ 3442      6E675F61 
+ 3442      6C676F72 
+ 3443              	.LASF14:
+ 3444 0657 6C6F6E67 		.ascii	"long double\000"
+ 3444      20646F75 
+ 3444      626C6500 
+ 3445              	.LASF38:
+ 3446 0663 64726976 		.ascii	"drivingForwardFlag\000"
+ 3446      696E6746 
+ 3446      6F727761 
+ 3446      7264466C 
+ 3446      616700
+ 3447              	.LASF109:
+ 3448 0676 636F6C6F 		.ascii	"colourSensingInitialise\000"
+ 3448      75725365 
+ 3448      6E73696E 
+ 3448      67496E69 
+ 3448      7469616C 
+ 3449              	.LASF121:
+ 3450 068e 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
+ 3450      725F315F 
+ 3450      52656164 
+ 3450      53746174 
+ 3450      75735265 
+ 3451              	.LASF59:
+ 3452 06a9 64657369 		.ascii	"desiredOrientation\000"
+ 3452      7265644F 
+ 3452      7269656E 
+ 3452      74617469 
+ 3452      6F6E00
+ 3453              	.LASF2:
+ 3454 06bc 73686F72 		.ascii	"short int\000"
+ 3454      7420696E 
+ 3454      7400
+ 3455              	.LASF48:
+ 3456 06c6 6D6F746F 		.ascii	"motor1Enable\000"
+ 3456      7231456E 
+ 3456      61626C65 
+ 3456      00
+ 3457              	.LASF88:
+ 3458 06d3 4D6F746F 		.ascii	"Motor_Right_Control_Write\000"
+ 3458      725F5269 
+ 3458      6768745F 
+ 3458      436F6E74 
+ 3458      726F6C5F 
+ 3459              	.LASF4:
+ 3460 06ed 6C6F6E67 		.ascii	"long int\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 82
+
+
+ 3460      20696E74 
+ 3460      00
+ 3461              	.LASF18:
+ 3462 06f6 456E636F 		.ascii	"Encoder_Counts_2_IH\000"
+ 3462      6465725F 
+ 3462      436F756E 
+ 3462      74735F32 
+ 3462      5F494800 
+ 3463              	.LASF30:
+ 3464 070a 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 3464      52784275 
+ 3464      66666572 
+ 3464      00
+ 3465              	.LASF101:
+ 3466 0717 5449415F 		.ascii	"TIA_1_Start\000"
+ 3466      315F5374 
+ 3466      61727400 
+ 3467              	.LASF83:
+ 3468 0723 4D6F746F 		.ascii	"Motor_2_Encoder_Counts_ReadCounter\000"
+ 3468      725F325F 
+ 3468      456E636F 
+ 3468      6465725F 
+ 3468      436F756E 
+ 3469              	.LASF112:
+ 3470 0746 5261636B 		.ascii	"Rack_Servo_PWM_Sleep\000"
+ 3470      5F536572 
+ 3470      766F5F50 
+ 3470      574D5F53 
+ 3470      6C656570 
+ 3471              	.LASF44:
+ 3472 075b 4D315F46 		.ascii	"M1_FD\000"
+ 3472      4400
+ 3473              	.LASF57:
+ 3474 0761 64657369 		.ascii	"desiredPosition\000"
+ 3474      72656450 
+ 3474      6F736974 
+ 3474      696F6E00 
+ 3475              	.LASF41:
+ 3476 0771 7475726E 		.ascii	"turningRightFlag\000"
+ 3476      696E6752 
+ 3476      69676874 
+ 3476      466C6167 
+ 3476      00
+ 3477              	.LASF114:
+ 3478 0782 47726970 		.ascii	"Gripper_Servo_PWM_WriteCompare\000"
+ 3478      7065725F 
+ 3478      53657276 
+ 3478      6F5F5057 
+ 3478      4D5F5772 
+ 3479              	.LASF102:
+ 3480 07a1 55415254 		.ascii	"UART_1_Start\000"
+ 3480      5F315F53 
+ 3480      74617274 
+ 3480      00
+ 3481              	.LASF36:
+ 3482 07ae 626C6F63 		.ascii	"block_edge_location\000"
+ 3482      6B5F6564 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 83
+
+
+ 3482      67655F6C 
+ 3482      6F636174 
+ 3482      696F6E00 
+ 3483              	.LASF71:
+ 3484 07c2 70617468 		.ascii	"pathPastBlock\000"
+ 3484      50617374 
+ 3484      426C6F63 
+ 3484      6B00
+ 3485              	.LASF16:
+ 3486 07d0 53746172 		.ascii	"StartIH\000"
+ 3486      74494800 
+ 3487              	.LASF26:
+ 3488 07d8 73657276 		.ascii	"servo_testing\000"
+ 3488      6F5F7465 
+ 3488      7374696E 
+ 3488      6700
+ 3489              	.LASF15:
+ 3490 07e6 73697A65 		.ascii	"sizetype\000"
+ 3490      74797065 
+ 3490      00
+ 3491              	.LASF129:
+ 3492 07ef 44726966 		.ascii	"Drift_Check_Timer_Start\000"
+ 3492      745F4368 
+ 3492      65636B5F 
+ 3492      54696D65 
+ 3492      725F5374 
+ 3493              	.LASF107:
+ 3494 0807 636F6E74 		.ascii	"control_photodiode_Write\000"
+ 3494      726F6C5F 
+ 3494      70686F74 
+ 3494      6F64696F 
+ 3494      64655F57 
+ 3495              	.LASF5:
+ 3496 0820 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3496      20756E73 
+ 3496      69676E65 
+ 3496      6420696E 
+ 3496      7400
+ 3497              	.LASF23:
+ 3498 0832 6D6F7665 		.ascii	"moveUntilPuck\000"
+ 3498      556E7469 
+ 3498      6C507563 
+ 3498      6B00
+ 3499              	.LASF138:
+ 3500 0840 433A5C55 		.ascii	"C:\\Users\\Misha\\Documents\\PSoC Creator\\ECE3091_"
+ 3500      73657273 
+ 3500      5C4D6973 
+ 3500      68615C44 
+ 3500      6F63756D 
+ 3501 086e 47726F75 		.ascii	"Group17\\Group17RobotReal\\Group17Robot.cydsn\000"
+ 3501      7031375C 
+ 3501      47726F75 
+ 3501      70313752 
+ 3501      6F626F74 
+ 3502              	.LASF97:
+ 3503 089a 6D697368 		.ascii	"mishaMoveDynamic\000"
+ 3503      614D6F76 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 84
+
+
+ 3503      6544796E 
+ 3503      616D6963 
+ 3503      00
+ 3504              	.LASF42:
+ 3505 08ab 696E6974 		.ascii	"initialisation\000"
+ 3505      69616C69 
+ 3505      73617469 
+ 3505      6F6E00
+ 3506              	.LASF1:
+ 3507 08ba 756E7369 		.ascii	"unsigned char\000"
+ 3507      676E6564 
+ 3507      20636861 
+ 3507      7200
+ 3508              	.LASF79:
+ 3509 08c8 73746F70 		.ascii	"stopMotor2AndUpdate\000"
+ 3509      4D6F746F 
+ 3509      7232416E 
+ 3509      64557064 
+ 3509      61746500 
+ 3510              	.LASF130:
+ 3511 08dc 456E636F 		.ascii	"Encoder_Counts_1_Interrupt_StartEx\000"
+ 3511      6465725F 
+ 3511      436F756E 
+ 3511      74735F31 
+ 3511      5F496E74 
+ 3512              	.LASF105:
+ 3513 08ff 49444143 		.ascii	"IDAC8_1_SetRange\000"
+ 3513      385F315F 
+ 3513      53657452 
+ 3513      616E6765 
+ 3513      00
+ 3514              	.LASF92:
+ 3515 0910 4D6F746F 		.ascii	"Motor_Right_Driver_WriteCompare\000"
+ 3515      725F5269 
+ 3515      6768745F 
+ 3515      44726976 
+ 3515      65725F57 
+ 3516              	.LASF33:
+ 3517 0930 7075636B 		.ascii	"puckRackColours\000"
+ 3517      5261636B 
+ 3517      436F6C6F 
+ 3517      75727300 
+ 3518              	.LASF34:
+ 3519 0940 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 3519      5261636B 
+ 3519      4F666673 
+ 3519      65747346 
+ 3519      726F6D57 
+ 3520              	.LASF54:
+ 3521 0958 73746174 		.ascii	"state\000"
+ 3521      6500
+ 3522              	.LASF118:
+ 3523 095e 4D6F746F 		.ascii	"Motor_Left_Decoder_Start\000"
+ 3523      725F4C65 
+ 3523      66745F44 
+ 3523      65636F64 
+ 3523      65725F53 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 85
+
+
+ 3524              	.LASF127:
+ 3525 0977 4D6F746F 		.ascii	"Motor_1_Encoder_Counts_Start\000"
+ 3525      725F315F 
+ 3525      456E636F 
+ 3525      6465725F 
+ 3525      436F756E 
+ 3526              	.LASF60:
+ 3527 0994 6D6F7665 		.ascii	"moveNow\000"
+ 3527      4E6F7700 
+ 3528              	.LASF75:
+ 3529 099c 63757272 		.ascii	"current_stage\000"
+ 3529      656E745F 
+ 3529      73746167 
+ 3529      6500
+ 3530              	.LASF120:
+ 3531 09aa 54696D65 		.ascii	"Timer_1_Start\000"
+ 3531      725F315F 
+ 3531      53746172 
+ 3531      7400
+ 3532              	.LASF0:
+ 3533 09b8 7369676E 		.ascii	"signed char\000"
+ 3533      65642063 
+ 3533      68617200 
+ 3534              	.LASF100:
+ 3535 09c4 61726D43 		.ascii	"armClose\000"
+ 3535      6C6F7365 
+ 3535      00
+ 3536              	.LASF3:
+ 3537 09cd 73686F72 		.ascii	"short unsigned int\000"
+ 3537      7420756E 
+ 3537      7369676E 
+ 3537      65642069 
+ 3537      6E7400
+ 3538              	.LASF139:
+ 3539 09e0 6D61696E 		.ascii	"main\000"
+ 3539      00
+ 3540              	.LASF25:
+ 3541 09e5 636F6C6F 		.ascii	"colour_calibration\000"
+ 3541      75725F63 
+ 3541      616C6962 
+ 3541      72617469 
+ 3541      6F6E00
+ 3542              	.LASF21:
+ 3543 09f8 7075636B 		.ascii	"puck_correct\000"
+ 3543      5F636F72 
+ 3543      72656374 
+ 3543      00
+ 3544              	.LASF12:
+ 3545 0a05 646F7562 		.ascii	"double\000"
+ 3545      6C6500
+ 3546              	.LASF65:
+ 3547 0a0c 72756E6E 		.ascii	"running\000"
+ 3547      696E6700 
+ 3548              	.LASF124:
+ 3549 0a14 4D6F746F 		.ascii	"Motor_1_driver_Start\000"
+ 3549      725F315F 
+ 3549      64726976 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cctKAALm.s 			page 86
+
+
+ 3549      65725F53 
+ 3549      74617274 
+ 3550              	.LASF10:
+ 3551 0a29 696E7433 		.ascii	"int32_t\000"
+ 3551      325F7400 
+ 3552              	.LASF126:
+ 3553 0a31 6D6F746F 		.ascii	"motorDutyCycleUpdate\000"
+ 3553      72447574 
+ 3553      79437963 
+ 3553      6C655570 
+ 3553      64617465 
+ 3554              	.LASF132:
+ 3555 0a46 44726966 		.ascii	"Drift_Check_Interrupt_StartEx\000"
+ 3555      745F4368 
+ 3555      65636B5F 
+ 3555      496E7465 
+ 3555      72727570 
+ 3556              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
