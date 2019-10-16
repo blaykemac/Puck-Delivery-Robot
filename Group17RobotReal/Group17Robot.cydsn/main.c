@@ -56,6 +56,13 @@ int beginNavigation = 0; // Allow us to break out of the intial phase when power
 int pathToPucks; // This will give us a corridor that we should initially take when trying to go to the pucks
 int pathPastBlock;
 
+// These block clearance variables are only true if we have enough room either side of the block to fully fit the robot through within a safety tolerance
+// And only true for the puck clearance variables if there is enough room to be able to turn at the far wall to face the pucks.
+short int blockEastClearance = 0;
+short int blockWestClearance = 0;
+short int puckEastClearance = 0;
+short int puckWestClearance = 0;
+
 float currentPosition[2] = {0,0};
 float desiredPosition[2];
 int currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start facing north
@@ -368,13 +375,13 @@ int main(void)
             //while(1) {}
             
             // THEN WE FILTER THE NO PUCK VALUES:
+            int puckConstructionPlanIndex = 0; // Will be used to iterate through the 3 puck colours in construction plan
             
-            
-            
-            for (int i = 0; i < 5; i++){
-                if (puckRackColours[i] != BLANK && i != 3){
-                    puckConstructionPlan[i] = puckRackColours[i];
-                    i++;
+            // Iterate over all 5 rack slots and place the 3 colours into puckConstructionPlan.
+            for (int puckRackIndex = 0; puckRackIndex < 5; puckRackIndex++){
+                if (puckRackColours[puckRackIndex] != BLANK && puckConstructionPlanIndex != 3){
+                    puckConstructionPlan[puckConstructionPlanIndex] = puckRackColours[puckRackIndex];
+                    puckConstructionPlanIndex++;
                 }
             }
                     
@@ -399,15 +406,7 @@ int main(void)
 
             
             
-            int puckConstructionPlanIndex = 0; // Will be used to iterate through the 3 puck colours in construction plan
             
-            // Iterate over all 5 rack slots and place the 3 colours into puckConstructionPlan.
-            for (int puckRackIndex = 0; puckRackIndex < 5; puckRackIndex++){
-                if (puckRackColours[puckRackIndex] != BLANK && puckConstructionPlanIndex != 3){
-                    puckConstructionPlan[puckConstructionPlanIndex] = puckRackColours[puckRackIndex];
-                    puckConstructionPlanIndex++;
-                }
-            }
             
 
             */
@@ -453,7 +452,8 @@ int main(void)
 	    }
         
         
-
+        
+/*
         if (state == STATE_GO_TO_PUCKS){
             if (pathPastBlock == WEST){
                 if (pathToPucks != WEST) {
@@ -474,6 +474,48 @@ int main(void)
             state = STATE_FIND_REQUIRED_PUCK;
         }
         
+        */
+        
+        #define CLEARANCE_RADIUS_CENTER_TO_BACK 24 // Smallest circle centered about turning point enclosing the back half of robot. Make larger for larger tolerance
+        #define CLEARANCE_RADIUS_CENTER_TO_FRONT 13 // Smallest circle centered about turning point enclosing the front half of robot
+        #define FRONT 0
+        #define BACK 1
+        #define LEFT 0
+        #define RIGHT 1
+        
+        // Ensure that we are @ east wall facing east at a minimum verticaldistance so we can turn left without hitting bottom wall
+        if (state == STATE_GO_TO_PUCKS){
+            
+            if (blockEastClearance && puckEastClearance){
+                moveBackwardUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT,FRONT);
+                faceDirection(NORTH_ANGLE);
+                moveForwardUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT,FRONT);
+                //displaceLeft(); Repeatedly call this if below function not implemented
+                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
+                faceDirection(WEST_ANGLE);
+                //displaceLeft();
+                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
+                moveForwardUntil(DISTANCE_STOPPED_FROM_PUCK,FRONT); // Can change 10 to any value really. 
+                // Now front sensor 10cm away from puck, ready to pick up puck
+                moveForward(DISTANCE_STOPPED_FROM_PUCK + 3); // Adding 3 should move the claw enough into the puck for picking up
+                
+            }
+            
+            else if (blockWestClearance && puckWestClearance){
+                
+            }
+            
+            else if (blockEastClearance && puckWestClearance){
+                
+            }
+            
+            else if (blockWestClearance && puckEastClearance){
+                
+            }
+            
+            
+            
+        }
         
         
         if (state == STATE_FIND_REQUIRED_PUCK)

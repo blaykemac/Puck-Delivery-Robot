@@ -68,8 +68,8 @@
 #define ARENA_WIDTH 120
 #define ARENA_LENGTH 120
 
-#define BLOCK_LENGTH 30
-#define BLOCK_WIDTH 10
+#define BLOCK_LENGTH 25
+#define BLOCK_WIDTH 9
 
 #define HOME_EDGE_LENGTH 25
 #define CONSTRUCTION_EDGE_LENGTH 10
@@ -103,6 +103,7 @@
 // Miscellaneous Constants
 #define SAFETY_MARGIN 10 // The margin we will enforce be kept around us clear at all times.
 #define WIDTH_SENSOR_TO_SENSOR 22 // The distance measured from the very outer edge of each side ultrasonic sensor.
+#define WIDTH_SENSOR_TO_CENTER 11 // WIDTH_SENSOR_TO_SENSOR / 2
 #define DISPLACE_DISTANCE_NW_PUCK_CHECK_CM 3
 #define BLOCK_TOLERANCE 10 // Used for sweeping block location. This affects sensitivity in detecting block.
 #define SIDE_SENSOR_OFFSET_FROM_BACK 15 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
