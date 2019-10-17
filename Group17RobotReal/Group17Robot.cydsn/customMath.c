@@ -24,6 +24,8 @@
 #include "servo.h"
 #include "mishamotor.h"
 #include "customMath.h"
+#include "navigation.h"
+
 
 float averageSensor(float num1, float num2){
     return (num1 + num2) / 2;

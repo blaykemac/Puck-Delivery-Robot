@@ -108,8 +108,19 @@
 #define SIDE_SENSOR_OFFSET_FROM_BACK 150 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
 #define FRONT_CLAW_DISTANCE_FROM_CENTRE
 #define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
+#define CLEARANCE_RADIUS_CENTER_TO_BACK 24 // Smallest circle centered about turning point enclosing the back half of robot. Make larger for larger tolerance
+#define CLEARANCE_RADIUS_CENTER_TO_FRONT 13 // Smallest circle centered about turning point enclosing the front half of robot
 
 #define DISTANCE_STOPPED_FROM_PUCK 5 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
+
+#define ADJUST 2
+#define BACKWARD 0
+#define FORWARD 1
+#define LESS_THAN 0
+#define GREATER_THAN 1
+
+#define SENSOR_DELAY_MIN 60
+
 
 // Variables to be shared / imported
 extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
@@ -151,16 +162,4 @@ extern char output[32];
 
 extern int ultrasonic_distances_mm[5];
 
-void armMoving(void);
-void moveUntilPuck(void);
-void straightAdjust(void);
-void moveUntil(int distance, int direction, int less_or_great, int ultrasonic_sensor, int speed);           // incorporates the ultrasonics
-void locatePucks(void);
 
-#define ADJUST 2
-#define BACKWARD 0
-#define FORWARD 1
-#define LESS_THAN 0
-#define GREATER_THAN 1
-
-#define SENSOR_DELAY_MIN 60

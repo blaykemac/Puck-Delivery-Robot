@@ -26,6 +26,7 @@
 #include "servo.h"
 #include "mishamotor.h"
 #include "customMath.h"
+#include "navigation.h"
 
 
 
