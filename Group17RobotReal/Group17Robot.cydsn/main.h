@@ -92,11 +92,11 @@
 
 
 // Robot Body Orientation Constants
-#define LEFT_SIDE 0
-#define LEFT_FRONT 1
-#define RIGHT_FRONT 2
-#define RIGHT_SIDE 3
-#define BACK 4
+#define SIDE_LEFT 2          //0     
+#define FRONT_LEFT 0         //1
+#define FRONT_RIGHT 1        //2
+#define SIDE_RIGHT 3         //3
+#define BACK 4               //4
 
 #define SIDE_SENSORS_WIDTH 25
 
@@ -151,6 +151,11 @@ extern char output[32];
 
 
 extern int SPEED;
+extern int ultrasonic_distances_mm[5];
+
 void armMoving(void);
 void moveUntilPuck(void);
+void straightAdjust(void);
+void moveUntil(int distance);           // incorporates the ultrasonics
+
 

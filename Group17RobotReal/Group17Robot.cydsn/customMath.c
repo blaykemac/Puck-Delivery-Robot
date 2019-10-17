@@ -13,6 +13,7 @@
 #include "project.h"
 
 // * C LIBRARIES * // 
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -20,7 +21,6 @@
 #include "main.h"
 #include "colour.h"
 #include "ultrasonic.h" 
-#include "dcmotor.h"
 #include "servo.h"
 #include "mishamotor.h"
 #include "customMath.h"
