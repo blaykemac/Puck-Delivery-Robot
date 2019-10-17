@@ -129,9 +129,10 @@ void mishaSwivel(int degrees, int speed) {
     
     while (count_right != -1*compare) {
         count_right = Motor_Right_Decoder_GetCounter();
+        
         count_left = Motor_Left_Decoder_GetCounter();
         if (count_left > -1*count_right) {
-        speed_left-= ADJUST;
+        speed_left -= ADJUST;
         }
         if (count_right > -1*count_left) {
         speed_right -= ADJUST; 
