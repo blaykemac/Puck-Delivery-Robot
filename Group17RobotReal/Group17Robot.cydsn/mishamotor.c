@@ -108,7 +108,7 @@ void mishaSwivel(int degrees, int speed) {
     Motor_Right_Driver_Wakeup();
     Motor_Right_Driver_WriteCompare(speed_right);
     
-    distance = WIDTH_WHEEL_TO_WHEEL*degrees;            // based on the arclength the wheels need to travel
+    distance = (WIDTH_WHEEL_TO_WHEEL/2)*degrees;            // based on the arclength the wheels need to travel
     compare = round((distance*3.14*5.29)/180);
     count_left = Motor_Left_Decoder_GetCounter();
     count_right = Motor_Right_Decoder_GetCounter();
@@ -118,9 +118,10 @@ void mishaSwivel(int degrees, int speed) {
     
     while (count_right != -1*compare) {
         count_right = Motor_Right_Decoder_GetCounter();
+        
         count_left = Motor_Left_Decoder_GetCounter();
         if (count_left > -1*count_right) {
-        speed_left-= ADJUST;
+        speed_left -= ADJUST;
         }
         if (count_right > -1*count_left) {
         speed_right -= ADJUST; 

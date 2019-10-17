@@ -117,10 +117,11 @@ void straightAdjust(void) {
     int front_right;
     int difference = 300;
     int tolerance = 3;
+    int max_difference = 800;
     
     //distanceCheck(); 
     
-    while (abs(difference) > 200) {              // ensures the initial readings are accurate
+    while (abs(difference) > max_difference) {              // ensures the initial readings are accurate
         distanceSensor(FRONT_LEFT);
         CyDelay(50);                        // 50ms might not be enough ???
         sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_LEFT]);
@@ -144,7 +145,9 @@ void straightAdjust(void) {
         if (difference > 0)             // This means we need to move it right
         {
             Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
-            while (abs(difference) > tolerance && abs(difference) < 200)     // ensures working correctly
+            while (abs(difference) > tolerance
+                        && difference > 0
+                        && abs(difference) < max_difference)     // ensures working correctly
             {
             Motor_Left_Driver_Wakeup();
             Motor_Left_Driver_WriteCompare(speed_left);
@@ -170,7 +173,9 @@ void straightAdjust(void) {
         }
         else {
             Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
-            while (abs(difference) > tolerance && abs(difference) < 200) 
+            while (abs(difference) > tolerance 
+                        && difference < 0
+                        && abs(difference) < max_difference) 
             {
             Motor_Left_Driver_Wakeup();
             Motor_Left_Driver_WriteCompare(speed_left);
@@ -352,7 +357,7 @@ void changeOrientation(int orientation_change, int speed) {
     
     if (degree_change == 270 || change == -270)
     {
-        degree_change = degree_change/270;
+        degree_change = degree_change/3;
         degree_change = -1*degree_change;
     }
     
