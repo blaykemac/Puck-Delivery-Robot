@@ -437,29 +437,9 @@ int main(void)
         int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the pucks and the block
         
         
-         
-        //state = STATE_GO_TO_PUCKS;
-        
-        safety_override = TRUE;     
-        
-        changeHeightToPuck(GROUND);      // arm lowers to ground
-        //armClose();
-        //changeHeightToPuck(1);
-        moveUntilPuck(CLAW_GROUND_ALGORITHM);
-        //mishaMoveDynamic(60);       // robot moves forward
-        armClose();                 // claw closes on puck
-        changeHeightToPuck(3);      // arm lifts up to highest position
-        mishaMoveDynamic(-60, SPEED);       // robot moves back away from puck area 
-        
-        safety_override = FALSE;
-        
-        moveUntil(500, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED);   // this will move backwards until it hits the block 
-        
-        while(1) {};
-        
         state = STATE_LOCATE_BLOCK_AND_PUCKS;;
         
-        UART_1_PutString("hI");
+        //UART_1_PutString("hI");
         
         //changeOrientation(NORTH, SPEED);
         //changeOrientation(WEST, SPEED);
@@ -785,6 +765,10 @@ int main(void)
         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
         int puck_scan;
         
+            
+            
+            
+        
     
         puckConstructionPlan[1] = RED;
     
@@ -808,8 +792,12 @@ int main(void)
             }
         }
                 
-        // Picking Up puck from pile:
-        changeHeightToPuck(0);      // arm lowers to ground
+        //state = STATE_GO_TO_PUCKS;
+        
+        safety_override = TRUE;     
+        
+        changeHeightToPuck(GROUND);      // arm lowers to ground
+        //armClose();
         //changeHeightToPuck(1);
         moveUntilPuck(CLAW_GROUND_ALGORITHM);
         //mishaMoveDynamic(60);       // robot moves forward
@@ -817,8 +805,10 @@ int main(void)
         changeHeightToPuck(3);      // arm lifts up to highest position
         mishaMoveDynamic(-60, SPEED);       // robot moves back away from puck area 
         
-            
-        while(1) {};           
+        safety_override = FALSE;
+        
+                    
+        \
             
             /*
             int requiredColour = puckConstructionPlan[currentPuckStackSize];
