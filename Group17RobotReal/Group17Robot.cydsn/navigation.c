@@ -337,6 +337,31 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     
 }
 
+void changeOrientation(int orientation_change, int speed) {
+    //define NORTH 0
+    //define EAST 1
+    //define SOUTH 2
+    //define WEST 3
+    int degree_change;
+    
+    // Incorporate some failsafes so that it turns in a direction that won't hit anything:
+        // failsafes:
+    
+    int change = orientation_change - internal_orientation;
+    degree_change = 90*change;                                  // converts the amount of degrees we need to change
+    
+    if (degree_change == 270 || change == -270)
+    {
+        degree_change = degree_change/270;
+        degree_change = -1*degree_change;
+    }
+    
+    mishaSwivel(degree_change, speed);
+    internal_orientation = orientation_change;  
+}
+
+
+
 void locatePucks(void)
 {
     

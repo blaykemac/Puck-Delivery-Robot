@@ -31,11 +31,25 @@
 #define STATE_DEPOSIT_PUCK 5
 #define STATE_PARK_HOME 6
 
+<<<<<<< HEAD
+=======
+// Hard-coded distances from the west for where each puck may sit in the construction plan.
+#define PUCK_RACK_0_WEST_DISTANCE 720
+#define PUCK_RACK_1_WEST_DISTANCE 660
+#define PUCK_RACK_2_WEST_DISTANCE 600
+#define PUCK_RACK_3_WEST_DISTANCE 540
+#define PUCK_RACK_4_WEST_DISTANCE 480
+
+#define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
+
+>>>>>>> 43f63c8a9e8b878c8e2eedec6e73ca6054b7b41d
 // Cardinal Directions. North faces the pucks from the home base
 #define NORTH 0
 #define EAST 1
 #define SOUTH 2
 #define WEST 3
+
+int internal_orientation;   // this is the robots internal orientation
 
 // These are the numbers that represent the angle we are facing taken from the CCW vector pointing east
 #define NORTH_ANGLE 90
@@ -101,9 +115,13 @@
 #define WIDTH_SENSOR_TO_CENTER 110 // WIDTH_SENSOR_TO_SENSOR / 2
 #define CLEARANCE_RADIUS_CENTER_TO_BACK 24 // Smallest circle centered about turning point enclosing the back half of robot. Make larger for larger tolerance
 #define CLEARANCE_RADIUS_CENTER_TO_FRONT 13 // Smallest circle centered about turning point enclosing the front half of robot
+<<<<<<< HEAD
 #define SIDE_SENSOR_OFFSET_FROM_BACK 150 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
 #define FRONT_CLAW_DISTANCE_FROM_CENTER 110 // Distance from the absolute front extending part of robot to center turning point.
 #define DISTANCE_FRONT_SENSOR_FROM_CENTER 50 // Distance from front ultrasonic sensor to the turning center
+=======
+#define WIDTH_WHEEL_TO_WHEEL 214
+>>>>>>> 43f63c8a9e8b878c8e2eedec6e73ca6054b7b41d
 
 // Tolerances and thresholds
 #define SAFETY_MARGIN 100 // The margin we will enforce be kept around us clear at all times.

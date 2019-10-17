@@ -16,8 +16,10 @@ void moveUntilPuck(void);
 void straightAdjust(void);
 void moveUntil(int distance, int direction, int less_or_great, int ultrasonic_sensor, int speed);           // incorporates the ultrasonics
 void locatePucks(void);
+void changeOrientation(int orientation_change, int speed);
 
 extern int puckConstructionPlan[3];
 extern int current_stage;
 extern int colour_sensing_algorithm;
+
 
