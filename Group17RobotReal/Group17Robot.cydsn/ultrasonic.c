@@ -14,6 +14,7 @@
 #include "project.h"
 
 // * C LIBRARIES * // 
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -21,7 +22,6 @@
 #include "main.h"
 #include "colour.h"
 #include "ultrasonic.h" 
-#include "dcmotor.h"
 #include "servo.h"
 #include "mishamotor.h"
 #include "customMath.h"
@@ -31,10 +31,11 @@
 /* Declare global variables */
 
 int i = 0; //what is i and count used for? We might need to name them more descriptively
-int count = 0;
+int count = 0;      
 int distance_measured = 0; 
 float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0};      // array fills up depending on position of sensor
-uint8 ultrasonic_mux_control = 0;
+int ultrasonic_distances_mm[5] = {0,0,0,0,0};
+int ultrasonic_mux_control;       // THIS is a global variable that will be taken 
 int block_start = 0;
 int puck_start = 0;
 int initialisation = 1;
@@ -50,10 +51,33 @@ void ultrasonicInterruptHandler(){
     
     // Calculate distances based off timer counts
     //ultrasonic_distances[ultrasonic_mux_control] = distanceFromCount(count);
-    ultrasonic_distances[ultrasonic_mux_control] = 0.172413*(65536-count) / 10;
+    //ultrasonic_distances[ultrasonic_mux_control] = 0.172413*(65536-count) / 10;     // This is in cm
+    ultrasonic_distances_mm[ultrasonic_mux_control] = 0.172413*(65536-count);          // This is in mm
+    //ultrasonic_flag = FALSE;  
     
-    printSensorToUART(ultrasonic_mux_control, ultrasonic_distances[ultrasonic_mux_control]);    // Used to debug the ultrasonics 
+    //*distance = 0.172413*(65536-count); 
     
+    
+    // PRINTING FOR DEBUGGUNG:
+    //printSensorToUART(ultrasonic_mux_control, ultrasonic_distances_mm[ultrasonic_mux_control]);    // Used to debug the ultrasonics 
+    
+    //if (ultrasonic_mux_control == 4) { UART_1_PutString("\n"); } 
+    
+    /*
+    if (ultrasonic_mux_control == 4) {
+        
+        for (int i = 0; i < 5; i++)
+        {
+            sprintf(output, "%d \t", ultrasonic_distances_mm[i]);       
+            UART_1_PutString(output);
+        }
+        UART_1_PutString("\n");       
+    }
+    */
+    
+    
+    // STUFF using old DC motor code:
+    /*
     //This bit has been added by Nidhin. It will stop the robot moving if it has gotten too close to 
     //any obstacle (we may have to modify this to not stop motion when we are trying to pick up a puck)
     if (((ultrasonic_distances[LEFT_FRONT] < COLLISION_THRESHOLD)||(ultrasonic_distances[RIGHT_FRONT] < COLLISION_THRESHOLD))&&(drivingForwardFlag == TRUE)){
@@ -119,7 +143,7 @@ void ultrasonicInterruptHandler(){
 	}
 
     
-     /* THIS IS A SAMPLE OF THE PRELIM CODE, KEEPING IT TO REFERENCE THE MOTOR SLEEP FUNCTIONS
+     THIS IS A SAMPLE OF THE PRELIM CODE, KEEPING IT TO REFERENCE THE MOTOR SLEEP FUNCTIONS
     
     if (driveStraightEnable && ( ultrasonic_distances[LEFT_FRONT] < 24 || ultrasonic_distances[RIGHT_FRONT] < 24 ) && ( ultrasonic_distances[LEFT_FRONT] > 1 && ultrasonic_distances[RIGHT_FRONT] > 1 )) {
     //if (ultrasonic_distances[RIGHT_FRONT] < 30 ) { // Used for when left front sensor playing up
@@ -138,13 +162,15 @@ void ultrasonicInterruptHandler(){
 }
 
 
-void printSensorToUART(int sensorNumber, float distanceMeasured){
-     
+void printSensorToUART(int sensorNumber, int distanceMeasured){
+    
     // Print distance to UART
     //sprintf(output, "Ultrasonic Sensor %d - distance: %dmm\n", sensorNumber, distanceMeasured);
-    sprintf(output, "%d: %fmm\n", sensorNumber, distanceMeasured);
+    //sprintf(output, "%d: %fcm\n", sensorNumber, distanceMeasured);
+    sprintf(output, "%d: %dmm\n", sensorNumber, distanceMeasured);
+    //sprintf(output, "%dmm \t", distanceMeasured);   
     UART_1_PutString(output);
-
+    
 }
 
 /*
@@ -161,15 +187,22 @@ float distanceFromCount(int timerCount){
 
 void distanceSensor(int currentSensorIndex) {
     
+    //ultrasonic_flag = TRUE;
     Ultrasonic_Mux_Control_Write(currentSensorIndex);
-    Timer_1_Start();
-        
+    
+    // I think i need to change ultrasonic_mux_control to the correct value 
+    ultrasonic_mux_control = currentSensorIndex;    // This will be used when the interrupt occurs to put in the correct array
+    
+    
+    Timer_1_Start();            // starts the timer
+            
     switch(currentSensorIndex){
         
         case 0:
         
             //while (Echo_1_Read() == 0)
             {
+                
                 Trigger_1_Write(1);     
                 CyDelayUs(10);          // 10microsecond pulse
                 Trigger_1_Write(0);     
@@ -220,9 +253,13 @@ void distanceSensor(int currentSensorIndex) {
             }
         
         break;
+
+        default:
+            UART_1_PutString("sensor is faulty");
+        break;
             
     }
-
+    //while(ultrasonic_flag == TRUE) {}
 }
 
 void distanceCheck()
@@ -237,51 +274,23 @@ void distanceCheck()
 }
 
 
-void straightAdjust()
-{
-    // Need to take measurements from only the front two sensors and compare them 
-        
-    float front_left;
-    float front_right;
-    distanceSensor(LEFT_FRONT);         // update the distances
-    distanceSensor(RIGHT_FRONT);        // update the distances 
-    
-    //CyDelay(20);
-    front_left = ultrasonic_distances[LEFT_FRONT];
-    front_right = ultrasonic_distances[RIGHT_FRONT];
-    
-    
-    UART_1_PutString("ultrasonics: \n");
-    
-    sprintf(output, "left ultra: %f \n", front_left);       
-    UART_1_PutString(output);
-    sprintf(output, "right ultra: %f \n", front_right);      
-    UART_1_PutString(output);
-    
-    while(ultrasonic_distances[LEFT_FRONT] != ultrasonic_distances[RIGHT_FRONT])
-    {
-        distanceSensor(LEFT_FRONT);         // update the distances
-        distanceSensor(RIGHT_FRONT);        // update the distances 
-        
-        if (ultrasonic_distances[LEFT_FRONT] < ultrasonic_distances[RIGHT_FRONT]) 
-        {
-            
-        }
-        else 
-        {
-            
-            
-        }
-        
-    }
-
-    
+void distanceCheckOne(int sensor) {
+    // want to check:
+        // Front two sensors
+        // left side sensor
+        // right side sensor
+        // back sensor
+    distanceSensor(sensor);                 // passing through the sensor number 
+    CyDelay(SENSOR_PULSE_DELAY_MS); 
 }
 
-
-
-
-
+void distanceCheckNidhin(int * sensorNumberPointer)
+{
+    UART_1_PutString("CHECK BEING DONE");
+    ultrasonic_mux_control = *sensorNumberPointer;
+    distanceSensor(ultrasonic_mux_control);
+    CyDelay(SENSOR_PULSE_DELAY_MS);
+}
 
 
 /* [] END OF FILE */

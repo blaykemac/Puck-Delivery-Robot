@@ -14,6 +14,7 @@
 #include "project.h"
 
 // * C LIBRARIES * // 
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -21,7 +22,6 @@
 #include "main.h"
 #include "colour.h"
 #include "ultrasonic.h" 
-#include "dcmotor.h"
 #include "servo.h"
 #include "mishamotor.h"
 #include "customMath.h"
@@ -67,6 +67,7 @@ void mishaMoveDynamic(int distance){
     int speed_left = SPEED;
     int speed_right = SPEED;
     
+    // The distance is in millimetres 
     // Is the distance negative or positive? 
     if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); }
     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1);}
@@ -95,8 +96,7 @@ void mishaMoveDynamic(int distance){
     UART_1_PutString(output);
     sprintf(output, "right motor: %d \n", count_right);      
     UART_1_PutString(output);
-    
-    
+        
     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
     Motor_Right_Decoder_SetCounter(0);   
     
@@ -144,10 +144,12 @@ void mishaSwivel(int degrees) {
         */
     }
     
+    /*
     sprintf(output, "left motor: %d \n", count_left);       
     UART_1_PutString(output);
     sprintf(output, "right motor: %d \n", count_right);      
     UART_1_PutString(output);
+    */
     
     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
     Motor_Right_Decoder_SetCounter(0);   
@@ -161,31 +163,14 @@ void mishaSwivel(int degrees) {
 }
 
 
-
-
-void mishaDriftAdjust(){
-    int count_left;
-    int count_right;
-    count_left = Motor_Left_Decoder_GetCounter();
-    count_right = Motor_Right_Decoder_GetCounter();
+void swivelIndefinitely(void) {
     
-    if (count_left > count_right) {
-        //left_speed--;
-    }
-    if (count_right > count_left) {
-        
-    }
-
+    
+    
+    
+    
+    
 }
-
-
-
-
-
-
-
-
-
 
 
 

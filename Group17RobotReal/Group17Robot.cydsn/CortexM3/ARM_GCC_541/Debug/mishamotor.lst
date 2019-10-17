@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 1
 
 
    1              		.syntax unified
@@ -44,21 +44,21 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
   14:mishamotor.c  **** #include "project.h"
   15:mishamotor.c  **** 
   16:mishamotor.c  **** // * C LIBRARIES * // 
-  17:mishamotor.c  **** #include <stdio.h>
-  18:mishamotor.c  **** #include <math.h>
-  19:mishamotor.c  **** 
-  20:mishamotor.c  **** // * OUR LIBRARIES * //
-  21:mishamotor.c  **** #include "main.h"
-  22:mishamotor.c  **** #include "colour.h"
-  23:mishamotor.c  **** #include "ultrasonic.h" 
-  24:mishamotor.c  **** #include "dcmotor.h"
+  17:mishamotor.c  **** #include <stdlib.h>
+  18:mishamotor.c  **** #include <stdio.h>
+  19:mishamotor.c  **** #include <math.h>
+  20:mishamotor.c  **** 
+  21:mishamotor.c  **** // * OUR LIBRARIES * //
+  22:mishamotor.c  **** #include "main.h"
+  23:mishamotor.c  **** #include "colour.h"
+  24:mishamotor.c  **** #include "ultrasonic.h" 
   25:mishamotor.c  **** #include "servo.h"
   26:mishamotor.c  **** #include "mishamotor.h"
   27:mishamotor.c  **** #include "customMath.h"
   28:mishamotor.c  **** 
   29:mishamotor.c  **** // Variables:
   30:mishamotor.c  **** 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 2
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 2
 
 
   31:mishamotor.c  **** int SPEED = 130;                   // DO NOT PUT ABOVE 200
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
   48:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
   65              		.loc 1 48 0
   66 002c FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 3
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 3
 
 
   67              	.LVL7:
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  112              		.cfi_endproc
  113              	.LFE64:
  114              		.size	mishaMoveForward, .-mishaMoveForward
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 4
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 4
 
 
  115              		.section	.text.mishaMoveBackward,"ax",%progbits
@@ -237,15 +237,16 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  158              	.LVL20:
   68:mishamotor.c  ****     int speed_right = SPEED;
   69:mishamotor.c  ****     
-  70:mishamotor.c  ****     // Is the distance negative or positive? 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 5
+  70:mishamotor.c  ****     // The distance is in millimetres 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 5
 
 
-  71:mishamotor.c  ****     if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); }
- 159              		.loc 1 71 0
+  71:mishamotor.c  ****     // Is the distance negative or positive? 
+  72:mishamotor.c  ****     if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); }
+ 159              		.loc 1 72 0
  160 0006 051E     		subs	r5, r0, #0
  161 0008 06DD     		ble	.L7
- 162              		.loc 1 71 0 is_stmt 0 discriminator 1
+ 162              		.loc 1 72 0 is_stmt 0 discriminator 1
  163 000a 0020     		movs	r0, #0
  164              	.LVL21:
  165 000c FFF7FEFF 		bl	Motor_Left_Control_Write
@@ -256,8 +257,8 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  170 0016 05E0     		b	.L8
  171              	.LVL24:
  172              	.L7:
-  72:mishamotor.c  ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1);}
- 173              		.loc 1 72 0 is_stmt 1
+  73:mishamotor.c  ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1);}
+ 173              		.loc 1 73 0 is_stmt 1
  174 0018 0120     		movs	r0, #1
  175              	.LVL25:
  176 001a FFF7FEFF 		bl	Motor_Left_Control_Write
@@ -266,30 +267,30 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  179 0020 FFF7FEFF 		bl	Motor_Right_Control_Write
  180              	.LVL27:
  181              	.L8:
-  73:mishamotor.c  ****     
-  74:mishamotor.c  ****     Motor_Left_Driver_Wakeup();
- 182              		.loc 1 74 0
+  74:mishamotor.c  ****     
+  75:mishamotor.c  ****     Motor_Left_Driver_Wakeup();
+ 182              		.loc 1 75 0
  183 0024 FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
  184              	.LVL28:
-  75:mishamotor.c  ****     Motor_Left_Driver_WriteCompare(speed_left);
- 185              		.loc 1 75 0
+  76:mishamotor.c  ****     Motor_Left_Driver_WriteCompare(speed_left);
+ 185              		.loc 1 76 0
  186 0028 E4B2     		uxtb	r4, r4
  187              	.LVL29:
  188 002a 2046     		mov	r0, r4
  189 002c FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
  190              	.LVL30:
-  76:mishamotor.c  ****     Motor_Right_Driver_Wakeup();
- 191              		.loc 1 76 0
+  77:mishamotor.c  ****     Motor_Right_Driver_Wakeup();
+ 191              		.loc 1 77 0
  192 0030 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
  193              	.LVL31:
-  77:mishamotor.c  ****     Motor_Right_Driver_WriteCompare(speed_right);
- 194              		.loc 1 77 0
+  78:mishamotor.c  ****     Motor_Right_Driver_WriteCompare(speed_right);
+ 194              		.loc 1 78 0
  195 0034 2046     		mov	r0, r4
  196 0036 FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
  197              	.LVL32:
-  78:mishamotor.c  ****     
-  79:mishamotor.c  ****     compare = round(distance*5.29);
- 198              		.loc 1 79 0
+  79:mishamotor.c  ****     
+  80:mishamotor.c  ****     compare = round(distance*5.29);
+ 198              		.loc 1 80 0
  199 003a 2846     		mov	r0, r5
  200 003c FFF7FEFF 		bl	__aeabi_i2d
  201              	.LVL33:
@@ -297,89 +298,88 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  203 0042 D3E90023 		ldrd	r2, [r3]
  204 0046 FFF7FEFF 		bl	__aeabi_dmul
  205              	.LVL34:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 6
+
+
  206 004a FFF7FEFF 		bl	round
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 6
-
-
  207              	.LVL35:
  208 004e FFF7FEFF 		bl	__aeabi_d2iz
  209              	.LVL36:
  210 0052 0646     		mov	r6, r0
  211              	.LVL37:
-  80:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
- 212              		.loc 1 80 0
+  81:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
+ 212              		.loc 1 81 0
  213 0054 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
  214              	.LVL38:
  215 0058 0546     		mov	r5, r0
  216              	.LVL39:
-  81:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
- 217              		.loc 1 81 0
+  82:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
+ 217              		.loc 1 82 0
  218 005a FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
  219              	.LVL40:
  220 005e 0446     		mov	r4, r0
  221              	.LVL41:
-  82:mishamotor.c  ****     
-  83:mishamotor.c  ****     while (count_right != compare) {
- 222              		.loc 1 83 0
+  83:mishamotor.c  ****     
+  84:mishamotor.c  ****     while (count_right != compare) {
+ 222              		.loc 1 84 0
  223 0060 05E0     		b	.L9
  224              	.LVL42:
  225              	.L10:
-  84:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
- 226              		.loc 1 84 0
+  85:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
+ 226              		.loc 1 85 0
  227 0062 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
  228              	.LVL43:
  229 0066 0546     		mov	r5, r0
  230              	.LVL44:
-  85:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
- 231              		.loc 1 85 0
+  86:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
+ 231              		.loc 1 86 0
  232 0068 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
  233              	.LVL45:
  234 006c 0446     		mov	r4, r0
  235              	.LVL46:
  236              	.L9:
-  83:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
- 237              		.loc 1 83 0
+  84:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
+ 237              		.loc 1 84 0
  238 006e B442     		cmp	r4, r6
  239 0070 F7D1     		bne	.L10
-  86:mishamotor.c  ****         if (count_left > count_right) {
-  87:mishamotor.c  ****         speed_left -= 2;
-  88:mishamotor.c  ****         }
-  89:mishamotor.c  ****         if (count_right > count_left) {
-  90:mishamotor.c  ****         speed_right -=2; 
-  91:mishamotor.c  ****         }
-  92:mishamotor.c  ****     }
-  93:mishamotor.c  ****     
-  94:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
- 240              		.loc 1 94 0
+  87:mishamotor.c  ****         if (count_left > count_right) {
+  88:mishamotor.c  ****         speed_left -= 2;
+  89:mishamotor.c  ****         }
+  90:mishamotor.c  ****         if (count_right > count_left) {
+  91:mishamotor.c  ****         speed_right -=2; 
+  92:mishamotor.c  ****         }
+  93:mishamotor.c  ****     }
+  94:mishamotor.c  ****     
+  95:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
+ 240              		.loc 1 95 0
  241 0072 124E     		ldr	r6, .L12+12
  242              	.LVL47:
  243 0074 2A46     		mov	r2, r5
  244 0076 1249     		ldr	r1, .L12+16
  245 0078 3046     		mov	r0, r6
  246 007a FFF7FEFF 		bl	sprintf
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 7
+
+
  247              	.LVL48:
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 7
-
-
-  95:mishamotor.c  ****     UART_1_PutString(output);
- 248              		.loc 1 95 0
+  96:mishamotor.c  ****     UART_1_PutString(output);
+ 248              		.loc 1 96 0
  249 007e 3046     		mov	r0, r6
  250 0080 FFF7FEFF 		bl	UART_1_PutString
  251              	.LVL49:
-  96:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
- 252              		.loc 1 96 0
+  97:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
+ 252              		.loc 1 97 0
  253 0084 2246     		mov	r2, r4
  254 0086 0F49     		ldr	r1, .L12+20
  255 0088 3046     		mov	r0, r6
  256 008a FFF7FEFF 		bl	sprintf
  257              	.LVL50:
-  97:mishamotor.c  ****     UART_1_PutString(output);
- 258              		.loc 1 97 0
+  98:mishamotor.c  ****     UART_1_PutString(output);
+ 258              		.loc 1 98 0
  259 008e 3046     		mov	r0, r6
  260 0090 FFF7FEFF 		bl	UART_1_PutString
  261              	.LVL51:
-  98:mishamotor.c  ****     
-  99:mishamotor.c  ****     
+  99:mishamotor.c  ****         
  100:mishamotor.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
  262              		.loc 1 100 0
  263 0094 0020     		movs	r0, #0
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  291              		.section	.text.mishaSwivel,"ax",%progbits
  292              		.align	2
  293              		.global	mishaSwivel
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 8
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 8
 
 
  294              		.thumb
@@ -436,11 +436,11 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  301              		@ args = 0, pretend = 0, frame = 0
  302              		@ frame_needed = 0, uses_anonymous_args = 0
  303              	.LVL57:
- 304 0000 70B5     		push	{r4, r5, r6, lr}
+ 304 0000 38B5     		push	{r3, r4, r5, lr}
  305              		.cfi_def_cfa_offset 16
- 306              		.cfi_offset 4, -16
- 307              		.cfi_offset 5, -12
- 308              		.cfi_offset 6, -8
+ 306              		.cfi_offset 3, -16
+ 307              		.cfi_offset 4, -12
+ 308              		.cfi_offset 5, -8
  309              		.cfi_offset 14, -4
  110:mishamotor.c  ****     int count_left;
  111:mishamotor.c  ****     int count_right;
@@ -448,7 +448,7 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  113:mishamotor.c  ****     int distance;
  114:mishamotor.c  ****     int speed_left = SPEED;
  310              		.loc 1 114 0
- 311 0002 334B     		ldr	r3, .L20+16
+ 311 0002 294B     		ldr	r3, .L20+16
  312 0004 1C68     		ldr	r4, [r3]
  313              	.LVL58:
  115:mishamotor.c  ****     int speed_right = SPEED;
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  331 001a FFF7FEFF 		bl	Motor_Left_Control_Write
  332              	.LVL64:
  333 001e 0020     		movs	r0, #0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 9
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 9
 
 
  334 0020 FFF7FEFF 		bl	Motor_Right_Control_Write
@@ -514,56 +514,49 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  356              	.LVL71:
  357 0040 FFF7FEFF 		bl	__aeabi_i2d
  358              	.LVL72:
- 359 0044 1EA3     		adr	r3, .L20
+ 359 0044 14A3     		adr	r3, .L20
  360 0046 D3E90023 		ldrd	r2, [r3]
  361 004a FFF7FEFF 		bl	__aeabi_dmul
  362              	.LVL73:
- 363 004e 1EA3     		adr	r3, .L20+8
+ 363 004e 14A3     		adr	r3, .L20+8
  364 0050 D3E90023 		ldrd	r2, [r3]
  365 0054 FFF7FEFF 		bl	__aeabi_dmul
  366              	.LVL74:
  367 0058 0022     		movs	r2, #0
- 368 005a 1E4B     		ldr	r3, .L20+20
+ 368 005a 144B     		ldr	r3, .L20+20
  369 005c FFF7FEFF 		bl	__aeabi_ddiv
  370              	.LVL75:
  371 0060 FFF7FEFF 		bl	round
  372              	.LVL76:
  373 0064 FFF7FEFF 		bl	__aeabi_d2iz
  374              	.LVL77:
- 375 0068 0546     		mov	r5, r0
+ 375 0068 0446     		mov	r4, r0
  376              	.LVL78:
  130:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
  377              		.loc 1 130 0
  378 006a FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
  379              	.LVL79:
- 380 006e 0646     		mov	r6, r0
- 381              	.LVL80:
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 10
-
-
  131:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
- 382              		.loc 1 131 0
- 383 0070 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
- 384              	.LVL81:
- 385 0074 0446     		mov	r4, r0
- 386              	.LVL82:
+ 380              		.loc 1 131 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 10
+
+
+ 381 006e FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 382              	.LVL80:
  132:mishamotor.c  ****     
  133:mishamotor.c  ****     while (count_right != -1*compare) {
- 387              		.loc 1 133 0
- 388 0076 02E0     		b	.L17
- 389              	.LVL83:
- 390              	.L18:
+ 383              		.loc 1 133 0
+ 384 0072 01E0     		b	.L17
+ 385              	.L18:
  134:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
- 391              		.loc 1 134 0
- 392 0078 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
- 393              	.LVL84:
- 394 007c 0446     		mov	r4, r0
- 395              	.LVL85:
- 396              	.L17:
+ 386              		.loc 1 134 0
+ 387 0074 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 388              	.LVL81:
+ 389              	.L17:
  133:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
- 397              		.loc 1 133 0
- 398 007e EC42     		cmn	r4, r5
- 399 0080 FAD1     		bne	.L18
+ 390              		.loc 1 133 0
+ 391 0078 E042     		cmn	r0, r4
+ 392 007a FBD1     		bne	.L18
  135:mishamotor.c  ****         /*
  136:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
  137:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
@@ -576,2190 +569,1924 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 1
  144:mishamotor.c  ****         */
  145:mishamotor.c  ****     }
  146:mishamotor.c  ****     
- 147:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
- 400              		.loc 1 147 0
- 401 0082 154D     		ldr	r5, .L20+24
- 402              	.LVL86:
- 403 0084 3246     		mov	r2, r6
- 404 0086 1549     		ldr	r1, .L20+28
- 405 0088 2846     		mov	r0, r5
- 406 008a FFF7FEFF 		bl	sprintf
- 407              	.LVL87:
- 148:mishamotor.c  ****     UART_1_PutString(output);
- 408              		.loc 1 148 0
- 409 008e 2846     		mov	r0, r5
- 410 0090 FFF7FEFF 		bl	UART_1_PutString
- 411              	.LVL88:
- 149:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
- 412              		.loc 1 149 0
- 413 0094 2246     		mov	r2, r4
- 414 0096 1249     		ldr	r1, .L20+32
- 415 0098 2846     		mov	r0, r5
- 416 009a FFF7FEFF 		bl	sprintf
- 417              	.LVL89:
- 150:mishamotor.c  ****     UART_1_PutString(output);
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 11
+ 147:mishamotor.c  ****     /*
+ 148:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
+ 149:mishamotor.c  ****     UART_1_PutString(output);
+ 150:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
+ 151:mishamotor.c  ****     UART_1_PutString(output);
+ 152:mishamotor.c  ****     */
+ 153:mishamotor.c  ****     
+ 154:mishamotor.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
+ 393              		.loc 1 154 0
+ 394 007c 0020     		movs	r0, #0
+ 395              	.LVL82:
+ 396 007e FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
+ 397              	.LVL83:
+ 155:mishamotor.c  ****     Motor_Right_Decoder_SetCounter(0);   
+ 398              		.loc 1 155 0
+ 399 0082 0020     		movs	r0, #0
+ 400 0084 FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
+ 401              	.LVL84:
+ 156:mishamotor.c  ****     
+ 157:mishamotor.c  ****     Motor_Left_Driver_Sleep();
+ 402              		.loc 1 157 0
+ 403 0088 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 404              	.LVL85:
+ 158:mishamotor.c  ****     Motor_Right_Driver_Sleep();
+ 405              		.loc 1 158 0
+ 406 008c FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 407              	.LVL86:
+ 408 0090 38BD     		pop	{r3, r4, r5, pc}
+ 409              	.LVL87:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 11
 
 
- 418              		.loc 1 150 0
- 419 009e 2846     		mov	r0, r5
- 420 00a0 FFF7FEFF 		bl	UART_1_PutString
- 421              	.LVL90:
- 151:mishamotor.c  ****     
- 152:mishamotor.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
- 422              		.loc 1 152 0
- 423 00a4 0020     		movs	r0, #0
- 424 00a6 FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
- 425              	.LVL91:
- 153:mishamotor.c  ****     Motor_Right_Decoder_SetCounter(0);   
- 426              		.loc 1 153 0
- 427 00aa 0020     		movs	r0, #0
- 428 00ac FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
- 429              	.LVL92:
- 154:mishamotor.c  ****     
- 155:mishamotor.c  ****     Motor_Left_Driver_Sleep();
- 430              		.loc 1 155 0
- 431 00b0 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
- 432              	.LVL93:
- 156:mishamotor.c  ****     Motor_Right_Driver_Sleep();
- 433              		.loc 1 156 0
- 434 00b4 FFF7FEFF 		bl	Motor_Right_Driver_Sleep
- 435              	.LVL94:
- 436 00b8 70BD     		pop	{r4, r5, r6, pc}
- 437              	.LVL95:
- 438              	.L21:
- 439 00ba 00BFAFF3 		.align	3
- 439      0080
- 440              	.L20:
- 441 00c0 1F85EB51 		.word	1374389535
- 442 00c4 B81E0940 		.word	1074339512
- 443 00c8 295C8FC2 		.word	-1030792151
- 444 00cc F5281540 		.word	1075128565
- 445 00d0 00000000 		.word	.LANCHOR0
- 446 00d4 00806640 		.word	1080459264
- 447 00d8 00000000 		.word	output
- 448 00dc 00000000 		.word	.LC0
- 449 00e0 14000000 		.word	.LC1
- 450              		.cfi_endproc
- 451              	.LFE67:
- 452              		.size	mishaSwivel, .-mishaSwivel
- 453              		.section	.text.mishaDriftAdjust,"ax",%progbits
- 454              		.align	2
- 455              		.global	mishaDriftAdjust
- 456              		.thumb
- 457              		.thumb_func
- 458              		.type	mishaDriftAdjust, %function
- 459              	mishaDriftAdjust:
- 460              	.LFB68:
- 157:mishamotor.c  ****    
- 158:mishamotor.c  ****     
- 159:mishamotor.c  ****     
+ 410              	.L21:
+ 411 0092 00BFAFF3 		.align	3
+ 411      0080
+ 412              	.L20:
+ 413 0098 1F85EB51 		.word	1374389535
+ 414 009c B81E0940 		.word	1074339512
+ 415 00a0 295C8FC2 		.word	-1030792151
+ 416 00a4 F5281540 		.word	1075128565
+ 417 00a8 00000000 		.word	.LANCHOR0
+ 418 00ac 00806640 		.word	1080459264
+ 419              		.cfi_endproc
+ 420              	.LFE67:
+ 421              		.size	mishaSwivel, .-mishaSwivel
+ 422              		.section	.text.swivelIndefinitely,"ax",%progbits
+ 423              		.align	2
+ 424              		.global	swivelIndefinitely
+ 425              		.thumb
+ 426              		.thumb_func
+ 427              		.type	swivelIndefinitely, %function
+ 428              	swivelIndefinitely:
+ 429              	.LFB68:
+ 159:mishamotor.c  ****    
  160:mishamotor.c  ****     
- 161:mishamotor.c  **** }
- 162:mishamotor.c  **** 
- 163:mishamotor.c  **** 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 12
-
-
+ 161:mishamotor.c  ****     
+ 162:mishamotor.c  ****     
+ 163:mishamotor.c  **** }
  164:mishamotor.c  **** 
  165:mishamotor.c  **** 
- 166:mishamotor.c  **** void mishaDriftAdjust(){
- 461              		.loc 1 166 0
- 462              		.cfi_startproc
- 463              		@ args = 0, pretend = 0, frame = 0
- 464              		@ frame_needed = 0, uses_anonymous_args = 0
- 465 0000 08B5     		push	{r3, lr}
- 466              		.cfi_def_cfa_offset 8
- 467              		.cfi_offset 3, -8
- 468              		.cfi_offset 14, -4
- 167:mishamotor.c  ****     int count_left;
- 168:mishamotor.c  ****     int count_right;
- 169:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
- 469              		.loc 1 169 0
- 470 0002 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
- 471              	.LVL96:
- 170:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
- 472              		.loc 1 170 0
- 473 0006 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
- 474              	.LVL97:
- 475 000a 08BD     		pop	{r3, pc}
- 476              		.cfi_endproc
- 477              	.LFE68:
- 478              		.size	mishaDriftAdjust, .-mishaDriftAdjust
- 479              		.global	SPEED
- 480              		.comm	motor2EncoderCounts,4,4
- 481              		.comm	motor1EncoderCounts,4,4
- 482              		.comm	M2_BD,4,4
- 483              		.comm	M2_FD,4,4
- 484              		.comm	M1_BD,4,4
- 485              		.comm	M1_FD,4,4
- 486              		.comm	motor2Enable,2,2
- 487              		.comm	motor1Enable,2,2
- 488              		.comm	initialisation,4,4
- 489              		.comm	output,32,4
- 490              		.comm	turningRightFlag,2,2
- 491              		.comm	turningLeftFlag,2,2
- 492              		.comm	drivingBackwardFlag,2,2
- 493              		.comm	drivingForwardFlag,2,2
- 494              		.comm	puckPileLocation,4,4
- 495              		.comm	block_edge_location,16,4
- 496              		.comm	sweeping,4,4
- 497              		.comm	puckRackOffsetsFromWest,20,4
- 498              		.comm	puckRackColours,20,4
- 499              		.comm	currentPuckRackScanningIndex,4,4
- 500              		.comm	driveStraightEnable,4,4
- 501              		.data
- 502              		.align	2
- 503              		.set	.LANCHOR0,. + 0
- 504              		.type	SPEED, %object
- 505              		.size	SPEED, 4
- 506              	SPEED:
- 507 0000 82000000 		.word	130
- 508              		.section	.rodata.str1.4,"aMS",%progbits,1
- 509              		.align	2
- 510              	.LC0:
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 13
-
-
- 511 0000 6C656674 		.ascii	"left motor: %d \012\000"
- 511      206D6F74 
- 511      6F723A20 
- 511      2564200A 
- 511      00
- 512 0011 000000   		.space	3
- 513              	.LC1:
- 514 0014 72696768 		.ascii	"right motor: %d \012\000"
- 514      74206D6F 
- 514      746F723A 
- 514      20256420 
- 514      0A00
- 515              		.text
- 516              	.Letext0:
- 517              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 518              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 519              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
- 520              		.file 5 "ultrasonic.h"
- 521              		.file 6 "main.h"
- 522              		.file 7 "dcmotor.h"
- 523              		.file 8 "Generated_Source\\PSoC5/Motor_Left_Control.h"
- 524              		.file 9 "Generated_Source\\PSoC5/Motor_Right_Control.h"
- 525              		.file 10 "Generated_Source\\PSoC5/Motor_Left_Driver.h"
- 526              		.file 11 "Generated_Source\\PSoC5/Motor_Right_Driver.h"
- 527              		.file 12 "Generated_Source\\PSoC5/CyLib.h"
- 528              		.file 13 "Generated_Source\\PSoC5/Motor_Left_Decoder.h"
- 529              		.file 14 "Generated_Source\\PSoC5/Motor_Right_Decoder.h"
- 530              		.file 15 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
- 531              		.file 16 "Generated_Source\\PSoC5/UART_1.h"
- 532              		.file 17 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
- 533              		.section	.debug_info,"",%progbits
- 534              	.Ldebug_info0:
- 535 0000 15080000 		.4byte	0x815
- 536 0004 0400     		.2byte	0x4
- 537 0006 00000000 		.4byte	.Ldebug_abbrev0
- 538 000a 04       		.byte	0x4
- 539 000b 01       		.uleb128 0x1
- 540 000c 06040000 		.4byte	.LASF65
- 541 0010 0C       		.byte	0xc
- 542 0011 E1010000 		.4byte	.LASF66
- 543 0015 74030000 		.4byte	.LASF67
- 544 0019 00000000 		.4byte	.Ldebug_ranges0+0
- 545 001d 00000000 		.4byte	0
- 546 0021 00000000 		.4byte	.Ldebug_line0
- 547 0025 02       		.uleb128 0x2
- 548 0026 01       		.byte	0x1
- 549 0027 06       		.byte	0x6
- 550 0028 44020000 		.4byte	.LASF0
- 551 002c 02       		.uleb128 0x2
- 552 002d 01       		.byte	0x1
- 553 002e 08       		.byte	0x8
- 554 002f 28020000 		.4byte	.LASF1
- 555 0033 02       		.uleb128 0x2
- 556 0034 02       		.byte	0x2
- 557 0035 05       		.byte	0x5
- 558 0036 6E000000 		.4byte	.LASF2
- 559 003a 02       		.uleb128 0x2
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 14
-
-
- 560 003b 02       		.byte	0x2
- 561 003c 07       		.byte	0x7
- 562 003d 8E020000 		.4byte	.LASF3
- 563 0041 03       		.uleb128 0x3
- 564 0042 5A030000 		.4byte	.LASF9
- 565 0046 02       		.byte	0x2
- 566 0047 3F       		.byte	0x3f
- 567 0048 4C000000 		.4byte	0x4c
- 568 004c 02       		.uleb128 0x2
- 569 004d 04       		.byte	0x4
- 570 004e 05       		.byte	0x5
- 571 004f 60010000 		.4byte	.LASF4
- 572 0053 02       		.uleb128 0x2
- 573 0054 04       		.byte	0x4
- 574 0055 07       		.byte	0x7
- 575 0056 02030000 		.4byte	.LASF5
- 576 005a 02       		.uleb128 0x2
- 577 005b 08       		.byte	0x8
- 578 005c 05       		.byte	0x5
- 579 005d 39010000 		.4byte	.LASF6
- 580 0061 02       		.uleb128 0x2
- 581 0062 08       		.byte	0x8
- 582 0063 07       		.byte	0x7
- 583 0064 64020000 		.4byte	.LASF7
- 584 0068 04       		.uleb128 0x4
- 585 0069 04       		.byte	0x4
- 586 006a 05       		.byte	0x5
- 587 006b 696E7400 		.ascii	"int\000"
- 588 006f 02       		.uleb128 0x2
- 589 0070 04       		.byte	0x4
- 590 0071 07       		.byte	0x7
- 591 0072 7B020000 		.4byte	.LASF8
- 592 0076 03       		.uleb128 0x3
- 593 0077 BE020000 		.4byte	.LASF10
- 594 007b 03       		.byte	0x3
- 595 007c 2C       		.byte	0x2c
- 596 007d 41000000 		.4byte	0x41
- 597 0081 02       		.uleb128 0x2
- 598 0082 04       		.byte	0x4
- 599 0083 04       		.byte	0x4
- 600 0084 33010000 		.4byte	.LASF11
- 601 0088 02       		.uleb128 0x2
- 602 0089 08       		.byte	0x8
- 603 008a 04       		.byte	0x4
- 604 008b 14030000 		.4byte	.LASF12
- 605 008f 02       		.uleb128 0x2
- 606 0090 01       		.byte	0x1
- 607 0091 08       		.byte	0x8
- 608 0092 AA020000 		.4byte	.LASF13
- 609 0096 02       		.uleb128 0x2
- 610 0097 08       		.byte	0x8
- 611 0098 04       		.byte	0x4
- 612 0099 C0000000 		.4byte	.LASF14
- 613 009d 02       		.uleb128 0x2
- 614 009e 04       		.byte	0x4
- 615 009f 07       		.byte	0x7
- 616 00a0 8B000000 		.4byte	.LASF15
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 15
-
-
- 617 00a4 05       		.uleb128 0x5
- 618 00a5 F1020000 		.4byte	.LASF18
- 619 00a9 01       		.byte	0x1
- 620 00aa 23       		.byte	0x23
- 621 00ab 00000000 		.4byte	.LFB64
- 622 00af 74000000 		.4byte	.LFE64-.LFB64
- 623 00b3 01       		.uleb128 0x1
- 624 00b4 9C       		.byte	0x9c
- 625 00b5 C9010000 		.4byte	0x1c9
- 626 00b9 06       		.uleb128 0x6
- 627 00ba 69010000 		.4byte	.LASF16
- 628 00be 01       		.byte	0x1
- 629 00bf 24       		.byte	0x24
- 630 00c0 68000000 		.4byte	0x68
- 631 00c4 00000000 		.4byte	.LLST0
- 632 00c8 06       		.uleb128 0x6
- 633 00c9 9C040000 		.4byte	.LASF17
- 634 00cd 01       		.byte	0x1
- 635 00ce 25       		.byte	0x25
- 636 00cf 68000000 		.4byte	0x68
- 637 00d3 1E000000 		.4byte	.LLST1
- 638 00d7 07       		.uleb128 0x7
- 639 00d8 08000000 		.4byte	.LVL0
- 640 00dc 67070000 		.4byte	0x767
- 641 00e0 EA000000 		.4byte	0xea
- 642 00e4 08       		.uleb128 0x8
- 643 00e5 01       		.uleb128 0x1
- 644 00e6 50       		.byte	0x50
- 645 00e7 01       		.uleb128 0x1
- 646 00e8 30       		.byte	0x30
- 647 00e9 00       		.byte	0
- 648 00ea 07       		.uleb128 0x7
- 649 00eb 0E000000 		.4byte	.LVL1
- 650 00ef 72070000 		.4byte	0x772
- 651 00f3 FD000000 		.4byte	0xfd
- 652 00f7 08       		.uleb128 0x8
- 653 00f8 01       		.uleb128 0x1
- 654 00f9 50       		.byte	0x50
- 655 00fa 01       		.uleb128 0x1
- 656 00fb 30       		.byte	0x30
- 657 00fc 00       		.byte	0
- 658 00fd 09       		.uleb128 0x9
- 659 00fe 12000000 		.4byte	.LVL2
- 660 0102 7D070000 		.4byte	0x77d
- 661 0106 09       		.uleb128 0x9
- 662 0107 1A000000 		.4byte	.LVL3
- 663 010b 88070000 		.4byte	0x788
- 664 010f 09       		.uleb128 0x9
- 665 0110 1E000000 		.4byte	.LVL4
- 666 0114 93070000 		.4byte	0x793
- 667 0118 09       		.uleb128 0x9
- 668 0119 24000000 		.4byte	.LVL5
- 669 011d 9E070000 		.4byte	0x79e
- 670 0121 07       		.uleb128 0x7
- 671 0122 2C000000 		.4byte	.LVL6
- 672 0126 A9070000 		.4byte	0x7a9
- 673 012a 36010000 		.4byte	0x136
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 16
-
-
- 674 012e 08       		.uleb128 0x8
- 675 012f 01       		.uleb128 0x1
- 676 0130 50       		.byte	0x50
- 677 0131 03       		.uleb128 0x3
- 678 0132 0A       		.byte	0xa
- 679 0133 F401     		.2byte	0x1f4
- 680 0135 00       		.byte	0
- 681 0136 09       		.uleb128 0x9
- 682 0137 30000000 		.4byte	.LVL7
- 683 013b B4070000 		.4byte	0x7b4
- 684 013f 09       		.uleb128 0x9
- 685 0140 36000000 		.4byte	.LVL9
- 686 0144 BF070000 		.4byte	0x7bf
- 687 0148 07       		.uleb128 0x7
- 688 0149 44000000 		.4byte	.LVL12
- 689 014d CA070000 		.4byte	0x7ca
- 690 0151 6B010000 		.4byte	0x16b
- 691 0155 08       		.uleb128 0x8
- 692 0156 01       		.uleb128 0x1
- 693 0157 50       		.byte	0x50
- 694 0158 02       		.uleb128 0x2
- 695 0159 74       		.byte	0x74
- 696 015a 00       		.sleb128 0
- 697 015b 08       		.uleb128 0x8
- 698 015c 01       		.uleb128 0x1
- 699 015d 51       		.byte	0x51
- 700 015e 05       		.uleb128 0x5
- 701 015f 03       		.byte	0x3
- 702 0160 00000000 		.4byte	.LC0
- 703 0164 08       		.uleb128 0x8
- 704 0165 01       		.uleb128 0x1
- 705 0166 52       		.byte	0x52
- 706 0167 02       		.uleb128 0x2
- 707 0168 76       		.byte	0x76
- 708 0169 00       		.sleb128 0
- 709 016a 00       		.byte	0
- 710 016b 07       		.uleb128 0x7
- 711 016c 4A000000 		.4byte	.LVL13
- 712 0170 D5070000 		.4byte	0x7d5
- 713 0174 7F010000 		.4byte	0x17f
- 714 0178 08       		.uleb128 0x8
- 715 0179 01       		.uleb128 0x1
- 716 017a 50       		.byte	0x50
- 717 017b 02       		.uleb128 0x2
- 718 017c 74       		.byte	0x74
- 719 017d 00       		.sleb128 0
- 720 017e 00       		.byte	0
- 721 017f 07       		.uleb128 0x7
- 722 0180 54000000 		.4byte	.LVL14
- 723 0184 CA070000 		.4byte	0x7ca
- 724 0188 A2010000 		.4byte	0x1a2
- 725 018c 08       		.uleb128 0x8
- 726 018d 01       		.uleb128 0x1
- 727 018e 50       		.byte	0x50
- 728 018f 02       		.uleb128 0x2
- 729 0190 74       		.byte	0x74
- 730 0191 00       		.sleb128 0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 17
-
-
- 731 0192 08       		.uleb128 0x8
- 732 0193 01       		.uleb128 0x1
- 733 0194 51       		.byte	0x51
- 734 0195 05       		.uleb128 0x5
- 735 0196 03       		.byte	0x3
- 736 0197 14000000 		.4byte	.LC1
- 737 019b 08       		.uleb128 0x8
- 738 019c 01       		.uleb128 0x1
- 739 019d 52       		.byte	0x52
- 740 019e 02       		.uleb128 0x2
- 741 019f 75       		.byte	0x75
- 742 01a0 00       		.sleb128 0
- 743 01a1 00       		.byte	0
- 744 01a2 07       		.uleb128 0x7
- 745 01a3 5A000000 		.4byte	.LVL15
- 746 01a7 D5070000 		.4byte	0x7d5
- 747 01ab B6010000 		.4byte	0x1b6
- 748 01af 08       		.uleb128 0x8
- 749 01b0 01       		.uleb128 0x1
- 750 01b1 50       		.byte	0x50
- 751 01b2 02       		.uleb128 0x2
- 752 01b3 74       		.byte	0x74
- 753 01b4 00       		.sleb128 0
- 754 01b5 00       		.byte	0
- 755 01b6 09       		.uleb128 0x9
- 756 01b7 5E000000 		.4byte	.LVL16
- 757 01bb E0070000 		.4byte	0x7e0
- 758 01bf 09       		.uleb128 0x9
- 759 01c0 62000000 		.4byte	.LVL17
- 760 01c4 EB070000 		.4byte	0x7eb
- 761 01c8 00       		.byte	0
- 762 01c9 0A       		.uleb128 0xa
- 763 01ca C9040000 		.4byte	.LASF68
- 764 01ce 01       		.byte	0x1
- 765 01cf 3C       		.byte	0x3c
- 766 01d0 00000000 		.4byte	.LFB65
- 767 01d4 02000000 		.4byte	.LFE65-.LFB65
- 768 01d8 01       		.uleb128 0x1
- 769 01d9 9C       		.byte	0x9c
- 770 01da 0B       		.uleb128 0xb
- 771 01db CC000000 		.4byte	.LASF19
- 772 01df 01       		.byte	0x1
- 773 01e0 3F       		.byte	0x3f
- 774 01e1 00000000 		.4byte	.LFB66
- 775 01e5 C8000000 		.4byte	.LFE66-.LFB66
- 776 01e9 01       		.uleb128 0x1
- 777 01ea 9C       		.byte	0x9c
- 778 01eb A3030000 		.4byte	0x3a3
- 779 01ef 0C       		.uleb128 0xc
- 780 01f0 AF020000 		.4byte	.LASF24
- 781 01f4 01       		.byte	0x1
- 782 01f5 3F       		.byte	0x3f
- 783 01f6 68000000 		.4byte	0x68
- 784 01fa 3C000000 		.4byte	.LLST2
- 785 01fe 06       		.uleb128 0x6
- 786 01ff 69010000 		.4byte	.LASF16
- 787 0203 01       		.byte	0x1
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 18
-
-
- 788 0204 40       		.byte	0x40
- 789 0205 68000000 		.4byte	0x68
- 790 0209 7E000000 		.4byte	.LLST3
- 791 020d 06       		.uleb128 0x6
- 792 020e 9C040000 		.4byte	.LASF17
- 793 0212 01       		.byte	0x1
- 794 0213 41       		.byte	0x41
- 795 0214 68000000 		.4byte	0x68
- 796 0218 B2000000 		.4byte	.LLST4
- 797 021c 06       		.uleb128 0x6
- 798 021d 52030000 		.4byte	.LASF20
- 799 0221 01       		.byte	0x1
- 800 0222 42       		.byte	0x42
- 801 0223 68000000 		.4byte	0x68
- 802 0227 D0000000 		.4byte	.LLST5
- 803 022b 06       		.uleb128 0x6
- 804 022c 34000000 		.4byte	.LASF21
- 805 0230 01       		.byte	0x1
- 806 0231 43       		.byte	0x43
- 807 0232 68000000 		.4byte	0x68
- 808 0236 EE000000 		.4byte	.LLST6
- 809 023a 06       		.uleb128 0x6
- 810 023b A8040000 		.4byte	.LASF22
- 811 023f 01       		.byte	0x1
- 812 0240 44       		.byte	0x44
- 813 0241 68000000 		.4byte	0x68
- 814 0245 EE000000 		.4byte	.LLST6
- 815 0249 07       		.uleb128 0x7
- 816 024a 10000000 		.4byte	.LVL22
- 817 024e 67070000 		.4byte	0x767
- 818 0252 5C020000 		.4byte	0x25c
- 819 0256 08       		.uleb128 0x8
- 820 0257 01       		.uleb128 0x1
- 821 0258 50       		.byte	0x50
- 822 0259 01       		.uleb128 0x1
- 823 025a 30       		.byte	0x30
- 824 025b 00       		.byte	0
- 825 025c 07       		.uleb128 0x7
- 826 025d 16000000 		.4byte	.LVL23
- 827 0261 72070000 		.4byte	0x772
- 828 0265 6F020000 		.4byte	0x26f
- 829 0269 08       		.uleb128 0x8
- 830 026a 01       		.uleb128 0x1
- 831 026b 50       		.byte	0x50
- 832 026c 01       		.uleb128 0x1
- 833 026d 30       		.byte	0x30
- 834 026e 00       		.byte	0
- 835 026f 07       		.uleb128 0x7
- 836 0270 1E000000 		.4byte	.LVL26
- 837 0274 67070000 		.4byte	0x767
- 838 0278 82020000 		.4byte	0x282
- 839 027c 08       		.uleb128 0x8
- 840 027d 01       		.uleb128 0x1
- 841 027e 50       		.byte	0x50
- 842 027f 01       		.uleb128 0x1
- 843 0280 31       		.byte	0x31
- 844 0281 00       		.byte	0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 19
-
-
- 845 0282 07       		.uleb128 0x7
- 846 0283 24000000 		.4byte	.LVL27
- 847 0287 72070000 		.4byte	0x772
- 848 028b 95020000 		.4byte	0x295
- 849 028f 08       		.uleb128 0x8
- 850 0290 01       		.uleb128 0x1
- 851 0291 50       		.byte	0x50
- 852 0292 01       		.uleb128 0x1
- 853 0293 31       		.byte	0x31
- 854 0294 00       		.byte	0
- 855 0295 09       		.uleb128 0x9
- 856 0296 28000000 		.4byte	.LVL28
- 857 029a 7D070000 		.4byte	0x77d
- 858 029e 07       		.uleb128 0x7
- 859 029f 30000000 		.4byte	.LVL30
- 860 02a3 88070000 		.4byte	0x788
- 861 02a7 B2020000 		.4byte	0x2b2
- 862 02ab 08       		.uleb128 0x8
- 863 02ac 01       		.uleb128 0x1
- 864 02ad 50       		.byte	0x50
- 865 02ae 02       		.uleb128 0x2
- 866 02af 74       		.byte	0x74
- 867 02b0 00       		.sleb128 0
- 868 02b1 00       		.byte	0
- 869 02b2 09       		.uleb128 0x9
- 870 02b3 34000000 		.4byte	.LVL31
- 871 02b7 93070000 		.4byte	0x793
- 872 02bb 07       		.uleb128 0x7
- 873 02bc 3A000000 		.4byte	.LVL32
- 874 02c0 9E070000 		.4byte	0x79e
- 875 02c4 CF020000 		.4byte	0x2cf
- 876 02c8 08       		.uleb128 0x8
- 877 02c9 01       		.uleb128 0x1
- 878 02ca 50       		.byte	0x50
- 879 02cb 02       		.uleb128 0x2
- 880 02cc 74       		.byte	0x74
- 881 02cd 00       		.sleb128 0
- 882 02ce 00       		.byte	0
- 883 02cf 09       		.uleb128 0x9
- 884 02d0 4E000000 		.4byte	.LVL35
- 885 02d4 F6070000 		.4byte	0x7f6
- 886 02d8 09       		.uleb128 0x9
- 887 02d9 58000000 		.4byte	.LVL38
- 888 02dd B4070000 		.4byte	0x7b4
- 889 02e1 09       		.uleb128 0x9
- 890 02e2 5E000000 		.4byte	.LVL40
- 891 02e6 BF070000 		.4byte	0x7bf
- 892 02ea 09       		.uleb128 0x9
- 893 02eb 66000000 		.4byte	.LVL43
- 894 02ef B4070000 		.4byte	0x7b4
- 895 02f3 09       		.uleb128 0x9
- 896 02f4 6C000000 		.4byte	.LVL45
- 897 02f8 BF070000 		.4byte	0x7bf
- 898 02fc 07       		.uleb128 0x7
- 899 02fd 7E000000 		.4byte	.LVL48
- 900 0301 CA070000 		.4byte	0x7ca
- 901 0305 1F030000 		.4byte	0x31f
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 20
-
-
- 902 0309 08       		.uleb128 0x8
- 903 030a 01       		.uleb128 0x1
- 904 030b 50       		.byte	0x50
- 905 030c 02       		.uleb128 0x2
- 906 030d 76       		.byte	0x76
- 907 030e 00       		.sleb128 0
- 908 030f 08       		.uleb128 0x8
- 909 0310 01       		.uleb128 0x1
- 910 0311 51       		.byte	0x51
- 911 0312 05       		.uleb128 0x5
- 912 0313 03       		.byte	0x3
- 913 0314 00000000 		.4byte	.LC0
- 914 0318 08       		.uleb128 0x8
- 915 0319 01       		.uleb128 0x1
- 916 031a 52       		.byte	0x52
- 917 031b 02       		.uleb128 0x2
- 918 031c 75       		.byte	0x75
- 919 031d 00       		.sleb128 0
- 920 031e 00       		.byte	0
- 921 031f 07       		.uleb128 0x7
- 922 0320 84000000 		.4byte	.LVL49
- 923 0324 D5070000 		.4byte	0x7d5
- 924 0328 33030000 		.4byte	0x333
- 925 032c 08       		.uleb128 0x8
- 926 032d 01       		.uleb128 0x1
- 927 032e 50       		.byte	0x50
- 928 032f 02       		.uleb128 0x2
- 929 0330 76       		.byte	0x76
- 930 0331 00       		.sleb128 0
- 931 0332 00       		.byte	0
- 932 0333 07       		.uleb128 0x7
- 933 0334 8E000000 		.4byte	.LVL50
- 934 0338 CA070000 		.4byte	0x7ca
- 935 033c 56030000 		.4byte	0x356
- 936 0340 08       		.uleb128 0x8
- 937 0341 01       		.uleb128 0x1
- 938 0342 50       		.byte	0x50
- 939 0343 02       		.uleb128 0x2
- 940 0344 76       		.byte	0x76
- 941 0345 00       		.sleb128 0
- 942 0346 08       		.uleb128 0x8
- 943 0347 01       		.uleb128 0x1
- 944 0348 51       		.byte	0x51
- 945 0349 05       		.uleb128 0x5
- 946 034a 03       		.byte	0x3
- 947 034b 14000000 		.4byte	.LC1
- 948 034f 08       		.uleb128 0x8
- 949 0350 01       		.uleb128 0x1
- 950 0351 52       		.byte	0x52
- 951 0352 02       		.uleb128 0x2
- 952 0353 74       		.byte	0x74
- 953 0354 00       		.sleb128 0
- 954 0355 00       		.byte	0
- 955 0356 07       		.uleb128 0x7
- 956 0357 94000000 		.4byte	.LVL51
- 957 035b D5070000 		.4byte	0x7d5
- 958 035f 6A030000 		.4byte	0x36a
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 21
-
-
- 959 0363 08       		.uleb128 0x8
- 960 0364 01       		.uleb128 0x1
- 961 0365 50       		.byte	0x50
- 962 0366 02       		.uleb128 0x2
- 963 0367 76       		.byte	0x76
- 964 0368 00       		.sleb128 0
- 965 0369 00       		.byte	0
- 966 036a 07       		.uleb128 0x7
- 967 036b 9A000000 		.4byte	.LVL52
- 968 036f 02080000 		.4byte	0x802
- 969 0373 7D030000 		.4byte	0x37d
- 970 0377 08       		.uleb128 0x8
- 971 0378 01       		.uleb128 0x1
- 972 0379 50       		.byte	0x50
- 973 037a 01       		.uleb128 0x1
- 974 037b 30       		.byte	0x30
- 975 037c 00       		.byte	0
- 976 037d 07       		.uleb128 0x7
- 977 037e A0000000 		.4byte	.LVL53
- 978 0382 0D080000 		.4byte	0x80d
- 979 0386 90030000 		.4byte	0x390
- 980 038a 08       		.uleb128 0x8
- 981 038b 01       		.uleb128 0x1
- 982 038c 50       		.byte	0x50
- 983 038d 01       		.uleb128 0x1
- 984 038e 30       		.byte	0x30
- 985 038f 00       		.byte	0
- 986 0390 09       		.uleb128 0x9
- 987 0391 A4000000 		.4byte	.LVL54
- 988 0395 E0070000 		.4byte	0x7e0
- 989 0399 09       		.uleb128 0x9
- 990 039a A8000000 		.4byte	.LVL55
- 991 039e EB070000 		.4byte	0x7eb
- 992 03a2 00       		.byte	0
- 993 03a3 0B       		.uleb128 0xb
- 994 03a4 74010000 		.4byte	.LASF23
- 995 03a8 01       		.byte	0x1
- 996 03a9 6D       		.byte	0x6d
- 997 03aa 00000000 		.4byte	.LFB67
- 998 03ae E4000000 		.4byte	.LFE67-.LFB67
- 999 03b2 01       		.uleb128 0x1
- 1000 03b3 9C       		.byte	0x9c
- 1001 03b4 72050000 		.4byte	0x572
- 1002 03b8 0C       		.uleb128 0xc
- 1003 03b9 20020000 		.4byte	.LASF25
- 1004 03bd 01       		.byte	0x1
- 1005 03be 6D       		.byte	0x6d
- 1006 03bf 68000000 		.4byte	0x68
- 1007 03c3 01010000 		.4byte	.LLST8
- 1008 03c7 06       		.uleb128 0x6
- 1009 03c8 69010000 		.4byte	.LASF16
- 1010 03cc 01       		.byte	0x1
- 1011 03cd 6E       		.byte	0x6e
- 1012 03ce 68000000 		.4byte	0x68
- 1013 03d2 43010000 		.4byte	.LLST9
- 1014 03d6 06       		.uleb128 0x6
- 1015 03d7 9C040000 		.4byte	.LASF17
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 22
-
-
- 1016 03db 01       		.byte	0x1
- 1017 03dc 6F       		.byte	0x6f
- 1018 03dd 68000000 		.4byte	0x68
- 1019 03e1 61010000 		.4byte	.LLST10
- 1020 03e5 06       		.uleb128 0x6
- 1021 03e6 52030000 		.4byte	.LASF20
- 1022 03ea 01       		.byte	0x1
- 1023 03eb 70       		.byte	0x70
- 1024 03ec 68000000 		.4byte	0x68
- 1025 03f0 7F010000 		.4byte	.LLST11
- 1026 03f4 06       		.uleb128 0x6
- 1027 03f5 AF020000 		.4byte	.LASF24
- 1028 03f9 01       		.byte	0x1
- 1029 03fa 71       		.byte	0x71
- 1030 03fb 68000000 		.4byte	0x68
- 1031 03ff 9D010000 		.4byte	.LLST12
- 1032 0403 06       		.uleb128 0x6
- 1033 0404 34000000 		.4byte	.LASF21
- 1034 0408 01       		.byte	0x1
- 1035 0409 72       		.byte	0x72
- 1036 040a 68000000 		.4byte	0x68
- 1037 040e E1010000 		.4byte	.LLST13
- 1038 0412 06       		.uleb128 0x6
- 1039 0413 A8040000 		.4byte	.LASF22
- 1040 0417 01       		.byte	0x1
- 1041 0418 73       		.byte	0x73
- 1042 0419 68000000 		.4byte	0x68
- 1043 041d E1010000 		.4byte	.LLST13
- 1044 0421 07       		.uleb128 0x7
- 1045 0422 10000000 		.4byte	.LVL60
- 1046 0426 67070000 		.4byte	0x767
- 1047 042a 34040000 		.4byte	0x434
- 1048 042e 08       		.uleb128 0x8
- 1049 042f 01       		.uleb128 0x1
- 1050 0430 50       		.byte	0x50
- 1051 0431 01       		.uleb128 0x1
- 1052 0432 30       		.byte	0x30
- 1053 0433 00       		.byte	0
- 1054 0434 07       		.uleb128 0x7
- 1055 0435 16000000 		.4byte	.LVL61
- 1056 0439 72070000 		.4byte	0x772
- 1057 043d 47040000 		.4byte	0x447
- 1058 0441 08       		.uleb128 0x8
- 1059 0442 01       		.uleb128 0x1
- 1060 0443 50       		.byte	0x50
- 1061 0444 01       		.uleb128 0x1
- 1062 0445 31       		.byte	0x31
- 1063 0446 00       		.byte	0
- 1064 0447 07       		.uleb128 0x7
- 1065 0448 1E000000 		.4byte	.LVL64
- 1066 044c 67070000 		.4byte	0x767
- 1067 0450 5A040000 		.4byte	0x45a
- 1068 0454 08       		.uleb128 0x8
- 1069 0455 01       		.uleb128 0x1
- 1070 0456 50       		.byte	0x50
- 1071 0457 01       		.uleb128 0x1
- 1072 0458 31       		.byte	0x31
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 23
-
-
- 1073 0459 00       		.byte	0
- 1074 045a 07       		.uleb128 0x7
- 1075 045b 24000000 		.4byte	.LVL65
- 1076 045f 72070000 		.4byte	0x772
- 1077 0463 6D040000 		.4byte	0x46d
- 1078 0467 08       		.uleb128 0x8
- 1079 0468 01       		.uleb128 0x1
- 1080 0469 50       		.byte	0x50
- 1081 046a 01       		.uleb128 0x1
- 1082 046b 30       		.byte	0x30
- 1083 046c 00       		.byte	0
- 1084 046d 09       		.uleb128 0x9
- 1085 046e 28000000 		.4byte	.LVL66
- 1086 0472 7D070000 		.4byte	0x77d
- 1087 0476 07       		.uleb128 0x7
- 1088 0477 30000000 		.4byte	.LVL68
- 1089 047b 88070000 		.4byte	0x788
- 1090 047f 8A040000 		.4byte	0x48a
- 1091 0483 08       		.uleb128 0x8
- 1092 0484 01       		.uleb128 0x1
- 1093 0485 50       		.byte	0x50
- 1094 0486 02       		.uleb128 0x2
- 1095 0487 74       		.byte	0x74
- 1096 0488 00       		.sleb128 0
- 1097 0489 00       		.byte	0
- 1098 048a 09       		.uleb128 0x9
- 1099 048b 34000000 		.4byte	.LVL69
- 1100 048f 93070000 		.4byte	0x793
- 1101 0493 07       		.uleb128 0x7
- 1102 0494 3A000000 		.4byte	.LVL70
- 1103 0498 9E070000 		.4byte	0x79e
- 1104 049c A7040000 		.4byte	0x4a7
- 1105 04a0 08       		.uleb128 0x8
- 1106 04a1 01       		.uleb128 0x1
- 1107 04a2 50       		.byte	0x50
- 1108 04a3 02       		.uleb128 0x2
- 1109 04a4 74       		.byte	0x74
- 1110 04a5 00       		.sleb128 0
- 1111 04a6 00       		.byte	0
- 1112 04a7 09       		.uleb128 0x9
- 1113 04a8 64000000 		.4byte	.LVL76
- 1114 04ac F6070000 		.4byte	0x7f6
- 1115 04b0 09       		.uleb128 0x9
- 1116 04b1 6E000000 		.4byte	.LVL79
- 1117 04b5 B4070000 		.4byte	0x7b4
- 1118 04b9 09       		.uleb128 0x9
- 1119 04ba 74000000 		.4byte	.LVL81
- 1120 04be BF070000 		.4byte	0x7bf
- 1121 04c2 09       		.uleb128 0x9
- 1122 04c3 7C000000 		.4byte	.LVL84
- 1123 04c7 BF070000 		.4byte	0x7bf
- 1124 04cb 07       		.uleb128 0x7
- 1125 04cc 8E000000 		.4byte	.LVL87
- 1126 04d0 CA070000 		.4byte	0x7ca
- 1127 04d4 EE040000 		.4byte	0x4ee
- 1128 04d8 08       		.uleb128 0x8
- 1129 04d9 01       		.uleb128 0x1
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 24
-
-
- 1130 04da 50       		.byte	0x50
- 1131 04db 02       		.uleb128 0x2
- 1132 04dc 75       		.byte	0x75
- 1133 04dd 00       		.sleb128 0
- 1134 04de 08       		.uleb128 0x8
- 1135 04df 01       		.uleb128 0x1
- 1136 04e0 51       		.byte	0x51
- 1137 04e1 05       		.uleb128 0x5
- 1138 04e2 03       		.byte	0x3
- 1139 04e3 00000000 		.4byte	.LC0
- 1140 04e7 08       		.uleb128 0x8
- 1141 04e8 01       		.uleb128 0x1
- 1142 04e9 52       		.byte	0x52
- 1143 04ea 02       		.uleb128 0x2
- 1144 04eb 76       		.byte	0x76
- 1145 04ec 00       		.sleb128 0
- 1146 04ed 00       		.byte	0
- 1147 04ee 07       		.uleb128 0x7
- 1148 04ef 94000000 		.4byte	.LVL88
- 1149 04f3 D5070000 		.4byte	0x7d5
- 1150 04f7 02050000 		.4byte	0x502
- 1151 04fb 08       		.uleb128 0x8
- 1152 04fc 01       		.uleb128 0x1
- 1153 04fd 50       		.byte	0x50
- 1154 04fe 02       		.uleb128 0x2
- 1155 04ff 75       		.byte	0x75
- 1156 0500 00       		.sleb128 0
- 1157 0501 00       		.byte	0
- 1158 0502 07       		.uleb128 0x7
- 1159 0503 9E000000 		.4byte	.LVL89
- 1160 0507 CA070000 		.4byte	0x7ca
- 1161 050b 25050000 		.4byte	0x525
- 1162 050f 08       		.uleb128 0x8
- 1163 0510 01       		.uleb128 0x1
- 1164 0511 50       		.byte	0x50
- 1165 0512 02       		.uleb128 0x2
- 1166 0513 75       		.byte	0x75
- 1167 0514 00       		.sleb128 0
- 1168 0515 08       		.uleb128 0x8
- 1169 0516 01       		.uleb128 0x1
- 1170 0517 51       		.byte	0x51
- 1171 0518 05       		.uleb128 0x5
- 1172 0519 03       		.byte	0x3
- 1173 051a 14000000 		.4byte	.LC1
- 1174 051e 08       		.uleb128 0x8
- 1175 051f 01       		.uleb128 0x1
- 1176 0520 52       		.byte	0x52
- 1177 0521 02       		.uleb128 0x2
- 1178 0522 74       		.byte	0x74
- 1179 0523 00       		.sleb128 0
- 1180 0524 00       		.byte	0
- 1181 0525 07       		.uleb128 0x7
- 1182 0526 A4000000 		.4byte	.LVL90
- 1183 052a D5070000 		.4byte	0x7d5
- 1184 052e 39050000 		.4byte	0x539
- 1185 0532 08       		.uleb128 0x8
- 1186 0533 01       		.uleb128 0x1
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 25
-
-
- 1187 0534 50       		.byte	0x50
- 1188 0535 02       		.uleb128 0x2
- 1189 0536 75       		.byte	0x75
- 1190 0537 00       		.sleb128 0
- 1191 0538 00       		.byte	0
- 1192 0539 07       		.uleb128 0x7
- 1193 053a AA000000 		.4byte	.LVL91
- 1194 053e 02080000 		.4byte	0x802
- 1195 0542 4C050000 		.4byte	0x54c
- 1196 0546 08       		.uleb128 0x8
- 1197 0547 01       		.uleb128 0x1
- 1198 0548 50       		.byte	0x50
- 1199 0549 01       		.uleb128 0x1
- 1200 054a 30       		.byte	0x30
- 1201 054b 00       		.byte	0
- 1202 054c 07       		.uleb128 0x7
- 1203 054d B0000000 		.4byte	.LVL92
- 1204 0551 0D080000 		.4byte	0x80d
- 1205 0555 5F050000 		.4byte	0x55f
- 1206 0559 08       		.uleb128 0x8
- 1207 055a 01       		.uleb128 0x1
- 1208 055b 50       		.byte	0x50
- 1209 055c 01       		.uleb128 0x1
- 1210 055d 30       		.byte	0x30
- 1211 055e 00       		.byte	0
- 1212 055f 09       		.uleb128 0x9
- 1213 0560 B4000000 		.4byte	.LVL93
- 1214 0564 E0070000 		.4byte	0x7e0
- 1215 0568 09       		.uleb128 0x9
- 1216 0569 B8000000 		.4byte	.LVL94
- 1217 056d EB070000 		.4byte	0x7eb
- 1218 0571 00       		.byte	0
- 1219 0572 0D       		.uleb128 0xd
- 1220 0573 DA020000 		.4byte	.LASF69
- 1221 0577 01       		.byte	0x1
- 1222 0578 A6       		.byte	0xa6
- 1223 0579 00000000 		.4byte	.LFB68
- 1224 057d 0C000000 		.4byte	.LFE68-.LFB68
- 1225 0581 01       		.uleb128 0x1
- 1226 0582 9C       		.byte	0x9c
- 1227 0583 B0050000 		.4byte	0x5b0
- 1228 0587 0E       		.uleb128 0xe
- 1229 0588 69010000 		.4byte	.LASF16
- 1230 058c 01       		.byte	0x1
- 1231 058d A7       		.byte	0xa7
- 1232 058e 68000000 		.4byte	0x68
- 1233 0592 0E       		.uleb128 0xe
- 1234 0593 9C040000 		.4byte	.LASF17
- 1235 0597 01       		.byte	0x1
- 1236 0598 A8       		.byte	0xa8
- 1237 0599 68000000 		.4byte	0x68
- 1238 059d 09       		.uleb128 0x9
- 1239 059e 06000000 		.4byte	.LVL96
- 1240 05a2 B4070000 		.4byte	0x7b4
- 1241 05a6 09       		.uleb128 0x9
- 1242 05a7 0A000000 		.4byte	.LVL97
- 1243 05ab BF070000 		.4byte	0x7bf
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 26
-
-
- 1244 05af 00       		.byte	0
- 1245 05b0 0F       		.uleb128 0xf
- 1246 05b1 F9030000 		.4byte	.LASF26
- 1247 05b5 04       		.byte	0x4
- 1248 05b6 1207     		.2byte	0x712
- 1249 05b8 BC050000 		.4byte	0x5bc
- 1250 05bc 10       		.uleb128 0x10
- 1251 05bd 76000000 		.4byte	0x76
- 1252 05c1 11       		.uleb128 0x11
- 1253 05c2 C6020000 		.4byte	.LASF27
- 1254 05c6 05       		.byte	0x5
- 1255 05c7 1F       		.byte	0x1f
- 1256 05c8 68000000 		.4byte	0x68
- 1257 05cc 05       		.uleb128 0x5
- 1258 05cd 03       		.byte	0x3
- 1259 05ce 00000000 		.4byte	driveStraightEnable
- 1260 05d2 11       		.uleb128 0x11
- 1261 05d3 C4010000 		.4byte	.LASF28
- 1262 05d7 05       		.byte	0x5
- 1263 05d8 21       		.byte	0x21
- 1264 05d9 68000000 		.4byte	0x68
- 1265 05dd 05       		.uleb128 0x5
- 1266 05de 03       		.byte	0x3
- 1267 05df 00000000 		.4byte	currentPuckRackScanningIndex
- 1268 05e3 12       		.uleb128 0x12
- 1269 05e4 68000000 		.4byte	0x68
- 1270 05e8 F3050000 		.4byte	0x5f3
- 1271 05ec 13       		.uleb128 0x13
- 1272 05ed 9D000000 		.4byte	0x9d
- 1273 05f1 04       		.byte	0x4
- 1274 05f2 00       		.byte	0
- 1275 05f3 11       		.uleb128 0x11
- 1276 05f4 64030000 		.4byte	.LASF29
- 1277 05f8 05       		.byte	0x5
- 1278 05f9 22       		.byte	0x22
- 1279 05fa E3050000 		.4byte	0x5e3
- 1280 05fe 05       		.uleb128 0x5
- 1281 05ff 03       		.byte	0x3
- 1282 0600 00000000 		.4byte	puckRackColours
- 1283 0604 11       		.uleb128 0x11
- 1284 0605 A8000000 		.4byte	.LASF30
- 1285 0609 05       		.byte	0x5
- 1286 060a 23       		.byte	0x23
- 1287 060b E3050000 		.4byte	0x5e3
- 1288 060f 05       		.uleb128 0x5
- 1289 0610 03       		.byte	0x3
- 1290 0611 00000000 		.4byte	puckRackOffsetsFromWest
- 1291 0615 11       		.uleb128 0x11
- 1292 0616 A1020000 		.4byte	.LASF31
- 1293 061a 05       		.byte	0x5
- 1294 061b 24       		.byte	0x24
- 1295 061c 68000000 		.4byte	0x68
- 1296 0620 05       		.uleb128 0x5
- 1297 0621 03       		.byte	0x3
- 1298 0622 00000000 		.4byte	sweeping
- 1299 0626 12       		.uleb128 0x12
- 1300 0627 81000000 		.4byte	0x81
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 27
-
-
- 1301 062b 36060000 		.4byte	0x636
- 1302 062f 13       		.uleb128 0x13
- 1303 0630 9D000000 		.4byte	0x9d
- 1304 0634 03       		.byte	0x3
- 1305 0635 00       		.byte	0
- 1306 0636 11       		.uleb128 0x11
- 1307 0637 50020000 		.4byte	.LASF32
- 1308 063b 05       		.byte	0x5
- 1309 063c 25       		.byte	0x25
- 1310 063d 26060000 		.4byte	0x626
- 1311 0641 05       		.uleb128 0x5
- 1312 0642 03       		.byte	0x3
- 1313 0643 00000000 		.4byte	block_edge_location
- 1314 0647 11       		.uleb128 0x11
- 1315 0648 B3010000 		.4byte	.LASF33
- 1316 064c 06       		.byte	0x6
- 1317 064d 7A       		.byte	0x7a
- 1318 064e 81000000 		.4byte	0x81
- 1319 0652 05       		.uleb128 0x5
- 1320 0653 03       		.byte	0x3
- 1321 0654 00000000 		.4byte	puckPileLocation
- 1322 0658 11       		.uleb128 0x11
- 1323 0659 78000000 		.4byte	.LASF34
- 1324 065d 07       		.byte	0x7
- 1325 065e 3D       		.byte	0x3d
- 1326 065f 33000000 		.4byte	0x33
- 1327 0663 05       		.uleb128 0x5
- 1328 0664 03       		.byte	0x3
- 1329 0665 00000000 		.4byte	drivingForwardFlag
- 1330 0669 11       		.uleb128 0x11
- 1331 066a 80010000 		.4byte	.LASF35
- 1332 066e 07       		.byte	0x7
- 1333 066f 3E       		.byte	0x3e
- 1334 0670 33000000 		.4byte	0x33
- 1335 0674 05       		.uleb128 0x5
- 1336 0675 03       		.byte	0x3
- 1337 0676 00000000 		.4byte	drivingBackwardFlag
- 1338 067a 11       		.uleb128 0x11
- 1339 067b 3F000000 		.4byte	.LASF36
- 1340 067f 07       		.byte	0x7
- 1341 0680 3F       		.byte	0x3f
- 1342 0681 33000000 		.4byte	0x33
- 1343 0685 05       		.uleb128 0x5
- 1344 0686 03       		.byte	0x3
- 1345 0687 00000000 		.4byte	turningLeftFlag
- 1346 068b 11       		.uleb128 0x11
- 1347 068c 22010000 		.4byte	.LASF37
- 1348 0690 07       		.byte	0x7
- 1349 0691 40       		.byte	0x40
- 1350 0692 33000000 		.4byte	0x33
- 1351 0696 05       		.uleb128 0x5
- 1352 0697 03       		.byte	0x3
- 1353 0698 00000000 		.4byte	turningRightFlag
- 1354 069c 11       		.uleb128 0x11
- 1355 069d B4040000 		.4byte	.LASF38
- 1356 06a1 05       		.byte	0x5
- 1357 06a2 2D       		.byte	0x2d
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 28
-
-
- 1358 06a3 68000000 		.4byte	0x68
- 1359 06a7 05       		.uleb128 0x5
- 1360 06a8 03       		.byte	0x3
- 1361 06a9 00000000 		.4byte	initialisation
- 1362 06ad 12       		.uleb128 0x12
- 1363 06ae 8F000000 		.4byte	0x8f
- 1364 06b2 BD060000 		.4byte	0x6bd
- 1365 06b6 13       		.uleb128 0x13
- 1366 06b7 9D000000 		.4byte	0x9d
- 1367 06bb 1F       		.byte	0x1f
- 1368 06bc 00       		.byte	0
- 1369 06bd 11       		.uleb128 0x11
- 1370 06be CE030000 		.4byte	.LASF39
- 1371 06c2 07       		.byte	0x7
- 1372 06c3 48       		.byte	0x48
- 1373 06c4 AD060000 		.4byte	0x6ad
- 1374 06c8 05       		.uleb128 0x5
- 1375 06c9 03       		.byte	0x3
- 1376 06ca 00000000 		.4byte	output
- 1377 06ce 11       		.uleb128 0x11
- 1378 06cf EB020000 		.4byte	.LASF40
- 1379 06d3 07       		.byte	0x7
- 1380 06d4 2D       		.byte	0x2d
- 1381 06d5 68000000 		.4byte	0x68
- 1382 06d9 05       		.uleb128 0x5
- 1383 06da 03       		.byte	0x3
- 1384 06db 00000000 		.4byte	M1_FD
- 1385 06df 11       		.uleb128 0x11
- 1386 06e0 B8020000 		.4byte	.LASF41
- 1387 06e4 07       		.byte	0x7
- 1388 06e5 2E       		.byte	0x2e
- 1389 06e6 68000000 		.4byte	0x68
- 1390 06ea 05       		.uleb128 0x5
- 1391 06eb 03       		.byte	0x3
- 1392 06ec 00000000 		.4byte	M1_BD
- 1393 06f0 11       		.uleb128 0x11
- 1394 06f1 C3040000 		.4byte	.LASF42
- 1395 06f5 07       		.byte	0x7
- 1396 06f6 2F       		.byte	0x2f
- 1397 06f7 68000000 		.4byte	0x68
- 1398 06fb 05       		.uleb128 0x5
- 1399 06fc 03       		.byte	0x3
- 1400 06fd 00000000 		.4byte	M2_FD
- 1401 0701 11       		.uleb128 0x11
- 1402 0702 F3030000 		.4byte	.LASF43
- 1403 0706 07       		.byte	0x7
- 1404 0707 30       		.byte	0x30
- 1405 0708 68000000 		.4byte	0x68
- 1406 070c 05       		.uleb128 0x5
- 1407 070d 03       		.byte	0x3
- 1408 070e 00000000 		.4byte	M2_BD
- 1409 0712 11       		.uleb128 0x11
- 1410 0713 15010000 		.4byte	.LASF44
- 1411 0717 07       		.byte	0x7
- 1412 0718 2B       		.byte	0x2b
- 1413 0719 33000000 		.4byte	0x33
- 1414 071d 05       		.uleb128 0x5
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 29
-
-
- 1415 071e 03       		.byte	0x3
- 1416 071f 00000000 		.4byte	motor1Enable
- 1417 0723 11       		.uleb128 0x11
- 1418 0724 45030000 		.4byte	.LASF45
- 1419 0728 07       		.byte	0x7
- 1420 0729 2C       		.byte	0x2c
- 1421 072a 33000000 		.4byte	0x33
- 1422 072e 05       		.uleb128 0x5
- 1423 072f 03       		.byte	0x3
- 1424 0730 00000000 		.4byte	motor2Enable
- 1425 0734 11       		.uleb128 0x11
- 1426 0735 94000000 		.4byte	.LASF46
- 1427 0739 07       		.byte	0x7
- 1428 073a 31       		.byte	0x31
- 1429 073b 68000000 		.4byte	0x68
- 1430 073f 05       		.uleb128 0x5
- 1431 0740 03       		.byte	0x3
- 1432 0741 00000000 		.4byte	motor1EncoderCounts
- 1433 0745 11       		.uleb128 0x11
- 1434 0746 00000000 		.4byte	.LASF47
- 1435 074a 07       		.byte	0x7
- 1436 074b 32       		.byte	0x32
- 1437 074c 68000000 		.4byte	0x68
- 1438 0750 05       		.uleb128 0x5
- 1439 0751 03       		.byte	0x3
- 1440 0752 00000000 		.4byte	motor2EncoderCounts
- 1441 0756 11       		.uleb128 0x11
- 1442 0757 88020000 		.4byte	.LASF48
- 1443 075b 01       		.byte	0x1
- 1444 075c 1F       		.byte	0x1f
- 1445 075d 68000000 		.4byte	0x68
- 1446 0761 05       		.uleb128 0x5
- 1447 0762 03       		.byte	0x3
- 1448 0763 00000000 		.4byte	SPEED
- 1449 0767 14       		.uleb128 0x14
- 1450 0768 2C030000 		.4byte	.LASF49
- 1451 076c 2C030000 		.4byte	.LASF49
- 1452 0770 08       		.byte	0x8
- 1453 0771 2F       		.byte	0x2f
- 1454 0772 14       		.uleb128 0x14
- 1455 0773 FB000000 		.4byte	.LASF50
- 1456 0777 FB000000 		.4byte	.LASF50
- 1457 077b 09       		.byte	0x9
- 1458 077c 2F       		.byte	0x2f
- 1459 077d 14       		.uleb128 0x14
- 1460 077e FA040000 		.4byte	.LASF51
- 1461 0782 FA040000 		.4byte	.LASF51
- 1462 0786 0A       		.byte	0xa
- 1463 0787 DD       		.byte	0xdd
- 1464 0788 14       		.uleb128 0x14
- 1465 0789 DB040000 		.4byte	.LASF52
- 1466 078d DB040000 		.4byte	.LASF52
- 1467 0791 0A       		.byte	0xa
- 1468 0792 C3       		.byte	0xc3
- 1469 0793 14       		.uleb128 0x14
- 1470 0794 EE010000 		.4byte	.LASF53
- 1471 0798 EE010000 		.4byte	.LASF53
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 30
-
-
- 1472 079c 0B       		.byte	0xb
- 1473 079d DD       		.byte	0xdd
- 1474 079e 14       		.uleb128 0x14
- 1475 079f 14000000 		.4byte	.LASF54
- 1476 07a3 14000000 		.4byte	.LASF54
- 1477 07a7 0B       		.byte	0xb
- 1478 07a8 C3       		.byte	0xc3
- 1479 07a9 14       		.uleb128 0x14
- 1480 07aa 94040000 		.4byte	.LASF55
- 1481 07ae 94040000 		.4byte	.LASF55
- 1482 07b2 0C       		.byte	0xc
- 1483 07b3 76       		.byte	0x76
- 1484 07b4 14       		.uleb128 0x14
- 1485 07b5 D5030000 		.4byte	.LASF56
- 1486 07b9 D5030000 		.4byte	.LASF56
- 1487 07bd 0D       		.byte	0xd
- 1488 07be 4E       		.byte	0x4e
- 1489 07bf 14       		.uleb128 0x14
- 1490 07c0 4F000000 		.4byte	.LASF57
- 1491 07c4 4F000000 		.4byte	.LASF57
- 1492 07c8 0E       		.byte	0xe
- 1493 07c9 4E       		.byte	0x4e
- 1494 07ca 14       		.uleb128 0x14
- 1495 07cb 36020000 		.4byte	.LASF58
- 1496 07cf 36020000 		.4byte	.LASF58
- 1497 07d3 0F       		.byte	0xf
- 1498 07d4 E7       		.byte	0xe7
- 1499 07d5 14       		.uleb128 0x14
- 1500 07d6 1B030000 		.4byte	.LASF59
- 1501 07da 1B030000 		.4byte	.LASF59
- 1502 07de 10       		.byte	0x10
- 1503 07df 8B       		.byte	0x8b
- 1504 07e0 14       		.uleb128 0x14
- 1505 07e1 08020000 		.4byte	.LASF60
- 1506 07e5 08020000 		.4byte	.LASF60
- 1507 07e9 0A       		.byte	0xa
- 1508 07ea DC       		.byte	0xdc
- 1509 07eb 14       		.uleb128 0x14
- 1510 07ec 47010000 		.4byte	.LASF61
- 1511 07f0 47010000 		.4byte	.LASF61
- 1512 07f4 0B       		.byte	0xb
- 1513 07f5 DC       		.byte	0xdc
- 1514 07f6 15       		.uleb128 0x15
- 1515 07f7 3E020000 		.4byte	.LASF62
- 1516 07fb 3E020000 		.4byte	.LASF62
- 1517 07ff 11       		.byte	0x11
- 1518 0800 4B01     		.2byte	0x14b
- 1519 0802 14       		.uleb128 0x14
- 1520 0803 DD000000 		.4byte	.LASF63
- 1521 0807 DD000000 		.4byte	.LASF63
- 1522 080b 0D       		.byte	0xd
- 1523 080c 4F       		.byte	0x4f
- 1524 080d 14       		.uleb128 0x14
- 1525 080e 94010000 		.4byte	.LASF64
- 1526 0812 94010000 		.4byte	.LASF64
- 1527 0816 0E       		.byte	0xe
- 1528 0817 4F       		.byte	0x4f
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 31
-
-
- 1529 0818 00       		.byte	0
- 1530              		.section	.debug_abbrev,"",%progbits
- 1531              	.Ldebug_abbrev0:
- 1532 0000 01       		.uleb128 0x1
- 1533 0001 11       		.uleb128 0x11
- 1534 0002 01       		.byte	0x1
- 1535 0003 25       		.uleb128 0x25
- 1536 0004 0E       		.uleb128 0xe
- 1537 0005 13       		.uleb128 0x13
- 1538 0006 0B       		.uleb128 0xb
- 1539 0007 03       		.uleb128 0x3
- 1540 0008 0E       		.uleb128 0xe
- 1541 0009 1B       		.uleb128 0x1b
- 1542 000a 0E       		.uleb128 0xe
- 1543 000b 55       		.uleb128 0x55
- 1544 000c 17       		.uleb128 0x17
- 1545 000d 11       		.uleb128 0x11
- 1546 000e 01       		.uleb128 0x1
- 1547 000f 10       		.uleb128 0x10
- 1548 0010 17       		.uleb128 0x17
- 1549 0011 00       		.byte	0
- 1550 0012 00       		.byte	0
- 1551 0013 02       		.uleb128 0x2
- 1552 0014 24       		.uleb128 0x24
- 1553 0015 00       		.byte	0
- 1554 0016 0B       		.uleb128 0xb
- 1555 0017 0B       		.uleb128 0xb
- 1556 0018 3E       		.uleb128 0x3e
- 1557 0019 0B       		.uleb128 0xb
- 1558 001a 03       		.uleb128 0x3
- 1559 001b 0E       		.uleb128 0xe
- 1560 001c 00       		.byte	0
- 1561 001d 00       		.byte	0
- 1562 001e 03       		.uleb128 0x3
- 1563 001f 16       		.uleb128 0x16
- 1564 0020 00       		.byte	0
- 1565 0021 03       		.uleb128 0x3
- 1566 0022 0E       		.uleb128 0xe
- 1567 0023 3A       		.uleb128 0x3a
- 1568 0024 0B       		.uleb128 0xb
- 1569 0025 3B       		.uleb128 0x3b
- 1570 0026 0B       		.uleb128 0xb
- 1571 0027 49       		.uleb128 0x49
- 1572 0028 13       		.uleb128 0x13
- 1573 0029 00       		.byte	0
- 1574 002a 00       		.byte	0
- 1575 002b 04       		.uleb128 0x4
- 1576 002c 24       		.uleb128 0x24
- 1577 002d 00       		.byte	0
- 1578 002e 0B       		.uleb128 0xb
- 1579 002f 0B       		.uleb128 0xb
- 1580 0030 3E       		.uleb128 0x3e
- 1581 0031 0B       		.uleb128 0xb
- 1582 0032 03       		.uleb128 0x3
- 1583 0033 08       		.uleb128 0x8
- 1584 0034 00       		.byte	0
- 1585 0035 00       		.byte	0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 32
-
-
- 1586 0036 05       		.uleb128 0x5
- 1587 0037 2E       		.uleb128 0x2e
- 1588 0038 01       		.byte	0x1
- 1589 0039 3F       		.uleb128 0x3f
- 1590 003a 19       		.uleb128 0x19
- 1591 003b 03       		.uleb128 0x3
- 1592 003c 0E       		.uleb128 0xe
- 1593 003d 3A       		.uleb128 0x3a
- 1594 003e 0B       		.uleb128 0xb
- 1595 003f 3B       		.uleb128 0x3b
- 1596 0040 0B       		.uleb128 0xb
- 1597 0041 27       		.uleb128 0x27
- 1598 0042 19       		.uleb128 0x19
- 1599 0043 11       		.uleb128 0x11
- 1600 0044 01       		.uleb128 0x1
- 1601 0045 12       		.uleb128 0x12
- 1602 0046 06       		.uleb128 0x6
- 1603 0047 40       		.uleb128 0x40
- 1604 0048 18       		.uleb128 0x18
- 1605 0049 9742     		.uleb128 0x2117
- 1606 004b 19       		.uleb128 0x19
- 1607 004c 01       		.uleb128 0x1
- 1608 004d 13       		.uleb128 0x13
- 1609 004e 00       		.byte	0
- 1610 004f 00       		.byte	0
- 1611 0050 06       		.uleb128 0x6
- 1612 0051 34       		.uleb128 0x34
- 1613 0052 00       		.byte	0
- 1614 0053 03       		.uleb128 0x3
- 1615 0054 0E       		.uleb128 0xe
- 1616 0055 3A       		.uleb128 0x3a
- 1617 0056 0B       		.uleb128 0xb
- 1618 0057 3B       		.uleb128 0x3b
- 1619 0058 0B       		.uleb128 0xb
- 1620 0059 49       		.uleb128 0x49
- 1621 005a 13       		.uleb128 0x13
- 1622 005b 02       		.uleb128 0x2
- 1623 005c 17       		.uleb128 0x17
- 1624 005d 00       		.byte	0
- 1625 005e 00       		.byte	0
- 1626 005f 07       		.uleb128 0x7
- 1627 0060 898201   		.uleb128 0x4109
- 1628 0063 01       		.byte	0x1
- 1629 0064 11       		.uleb128 0x11
- 1630 0065 01       		.uleb128 0x1
- 1631 0066 31       		.uleb128 0x31
- 1632 0067 13       		.uleb128 0x13
- 1633 0068 01       		.uleb128 0x1
- 1634 0069 13       		.uleb128 0x13
- 1635 006a 00       		.byte	0
- 1636 006b 00       		.byte	0
- 1637 006c 08       		.uleb128 0x8
- 1638 006d 8A8201   		.uleb128 0x410a
- 1639 0070 00       		.byte	0
- 1640 0071 02       		.uleb128 0x2
- 1641 0072 18       		.uleb128 0x18
- 1642 0073 9142     		.uleb128 0x2111
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 33
-
-
- 1643 0075 18       		.uleb128 0x18
- 1644 0076 00       		.byte	0
- 1645 0077 00       		.byte	0
- 1646 0078 09       		.uleb128 0x9
- 1647 0079 898201   		.uleb128 0x4109
- 1648 007c 00       		.byte	0
- 1649 007d 11       		.uleb128 0x11
- 1650 007e 01       		.uleb128 0x1
- 1651 007f 31       		.uleb128 0x31
- 1652 0080 13       		.uleb128 0x13
- 1653 0081 00       		.byte	0
- 1654 0082 00       		.byte	0
- 1655 0083 0A       		.uleb128 0xa
- 1656 0084 2E       		.uleb128 0x2e
- 1657 0085 00       		.byte	0
- 1658 0086 3F       		.uleb128 0x3f
- 1659 0087 19       		.uleb128 0x19
- 1660 0088 03       		.uleb128 0x3
- 1661 0089 0E       		.uleb128 0xe
- 1662 008a 3A       		.uleb128 0x3a
- 1663 008b 0B       		.uleb128 0xb
- 1664 008c 3B       		.uleb128 0x3b
- 1665 008d 0B       		.uleb128 0xb
- 1666 008e 27       		.uleb128 0x27
- 1667 008f 19       		.uleb128 0x19
- 1668 0090 11       		.uleb128 0x11
- 1669 0091 01       		.uleb128 0x1
- 1670 0092 12       		.uleb128 0x12
- 1671 0093 06       		.uleb128 0x6
- 1672 0094 40       		.uleb128 0x40
- 1673 0095 18       		.uleb128 0x18
- 1674 0096 9742     		.uleb128 0x2117
- 1675 0098 19       		.uleb128 0x19
- 1676 0099 00       		.byte	0
- 1677 009a 00       		.byte	0
- 1678 009b 0B       		.uleb128 0xb
- 1679 009c 2E       		.uleb128 0x2e
- 1680 009d 01       		.byte	0x1
- 1681 009e 3F       		.uleb128 0x3f
- 1682 009f 19       		.uleb128 0x19
- 1683 00a0 03       		.uleb128 0x3
- 1684 00a1 0E       		.uleb128 0xe
- 1685 00a2 3A       		.uleb128 0x3a
- 1686 00a3 0B       		.uleb128 0xb
- 1687 00a4 3B       		.uleb128 0x3b
- 1688 00a5 0B       		.uleb128 0xb
- 1689 00a6 27       		.uleb128 0x27
- 1690 00a7 19       		.uleb128 0x19
- 1691 00a8 11       		.uleb128 0x11
- 1692 00a9 01       		.uleb128 0x1
- 1693 00aa 12       		.uleb128 0x12
- 1694 00ab 06       		.uleb128 0x6
- 1695 00ac 40       		.uleb128 0x40
- 1696 00ad 18       		.uleb128 0x18
- 1697 00ae 9642     		.uleb128 0x2116
- 1698 00b0 19       		.uleb128 0x19
- 1699 00b1 01       		.uleb128 0x1
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 34
-
-
- 1700 00b2 13       		.uleb128 0x13
- 1701 00b3 00       		.byte	0
- 1702 00b4 00       		.byte	0
- 1703 00b5 0C       		.uleb128 0xc
- 1704 00b6 05       		.uleb128 0x5
- 1705 00b7 00       		.byte	0
- 1706 00b8 03       		.uleb128 0x3
- 1707 00b9 0E       		.uleb128 0xe
- 1708 00ba 3A       		.uleb128 0x3a
- 1709 00bb 0B       		.uleb128 0xb
- 1710 00bc 3B       		.uleb128 0x3b
- 1711 00bd 0B       		.uleb128 0xb
- 1712 00be 49       		.uleb128 0x49
- 1713 00bf 13       		.uleb128 0x13
- 1714 00c0 02       		.uleb128 0x2
- 1715 00c1 17       		.uleb128 0x17
- 1716 00c2 00       		.byte	0
- 1717 00c3 00       		.byte	0
- 1718 00c4 0D       		.uleb128 0xd
- 1719 00c5 2E       		.uleb128 0x2e
- 1720 00c6 01       		.byte	0x1
- 1721 00c7 3F       		.uleb128 0x3f
- 1722 00c8 19       		.uleb128 0x19
- 1723 00c9 03       		.uleb128 0x3
- 1724 00ca 0E       		.uleb128 0xe
- 1725 00cb 3A       		.uleb128 0x3a
- 1726 00cc 0B       		.uleb128 0xb
- 1727 00cd 3B       		.uleb128 0x3b
- 1728 00ce 0B       		.uleb128 0xb
- 1729 00cf 11       		.uleb128 0x11
- 1730 00d0 01       		.uleb128 0x1
- 1731 00d1 12       		.uleb128 0x12
- 1732 00d2 06       		.uleb128 0x6
- 1733 00d3 40       		.uleb128 0x40
- 1734 00d4 18       		.uleb128 0x18
- 1735 00d5 9742     		.uleb128 0x2117
- 1736 00d7 19       		.uleb128 0x19
- 1737 00d8 01       		.uleb128 0x1
- 1738 00d9 13       		.uleb128 0x13
- 1739 00da 00       		.byte	0
- 1740 00db 00       		.byte	0
- 1741 00dc 0E       		.uleb128 0xe
- 1742 00dd 34       		.uleb128 0x34
- 1743 00de 00       		.byte	0
- 1744 00df 03       		.uleb128 0x3
- 1745 00e0 0E       		.uleb128 0xe
- 1746 00e1 3A       		.uleb128 0x3a
- 1747 00e2 0B       		.uleb128 0xb
- 1748 00e3 3B       		.uleb128 0x3b
- 1749 00e4 0B       		.uleb128 0xb
- 1750 00e5 49       		.uleb128 0x49
- 1751 00e6 13       		.uleb128 0x13
- 1752 00e7 00       		.byte	0
- 1753 00e8 00       		.byte	0
- 1754 00e9 0F       		.uleb128 0xf
- 1755 00ea 34       		.uleb128 0x34
- 1756 00eb 00       		.byte	0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 35
-
-
- 1757 00ec 03       		.uleb128 0x3
- 1758 00ed 0E       		.uleb128 0xe
- 1759 00ee 3A       		.uleb128 0x3a
- 1760 00ef 0B       		.uleb128 0xb
- 1761 00f0 3B       		.uleb128 0x3b
- 1762 00f1 05       		.uleb128 0x5
- 1763 00f2 49       		.uleb128 0x49
- 1764 00f3 13       		.uleb128 0x13
- 1765 00f4 3F       		.uleb128 0x3f
- 1766 00f5 19       		.uleb128 0x19
- 1767 00f6 3C       		.uleb128 0x3c
- 1768 00f7 19       		.uleb128 0x19
- 1769 00f8 00       		.byte	0
- 1770 00f9 00       		.byte	0
- 1771 00fa 10       		.uleb128 0x10
- 1772 00fb 35       		.uleb128 0x35
- 1773 00fc 00       		.byte	0
- 1774 00fd 49       		.uleb128 0x49
- 1775 00fe 13       		.uleb128 0x13
- 1776 00ff 00       		.byte	0
- 1777 0100 00       		.byte	0
- 1778 0101 11       		.uleb128 0x11
- 1779 0102 34       		.uleb128 0x34
- 1780 0103 00       		.byte	0
- 1781 0104 03       		.uleb128 0x3
- 1782 0105 0E       		.uleb128 0xe
- 1783 0106 3A       		.uleb128 0x3a
- 1784 0107 0B       		.uleb128 0xb
- 1785 0108 3B       		.uleb128 0x3b
- 1786 0109 0B       		.uleb128 0xb
- 1787 010a 49       		.uleb128 0x49
- 1788 010b 13       		.uleb128 0x13
- 1789 010c 3F       		.uleb128 0x3f
- 1790 010d 19       		.uleb128 0x19
- 1791 010e 02       		.uleb128 0x2
- 1792 010f 18       		.uleb128 0x18
- 1793 0110 00       		.byte	0
- 1794 0111 00       		.byte	0
- 1795 0112 12       		.uleb128 0x12
- 1796 0113 01       		.uleb128 0x1
- 1797 0114 01       		.byte	0x1
- 1798 0115 49       		.uleb128 0x49
- 1799 0116 13       		.uleb128 0x13
- 1800 0117 01       		.uleb128 0x1
- 1801 0118 13       		.uleb128 0x13
- 1802 0119 00       		.byte	0
- 1803 011a 00       		.byte	0
- 1804 011b 13       		.uleb128 0x13
- 1805 011c 21       		.uleb128 0x21
- 1806 011d 00       		.byte	0
- 1807 011e 49       		.uleb128 0x49
- 1808 011f 13       		.uleb128 0x13
- 1809 0120 2F       		.uleb128 0x2f
- 1810 0121 0B       		.uleb128 0xb
- 1811 0122 00       		.byte	0
- 1812 0123 00       		.byte	0
- 1813 0124 14       		.uleb128 0x14
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 36
-
-
- 1814 0125 2E       		.uleb128 0x2e
- 1815 0126 00       		.byte	0
- 1816 0127 3F       		.uleb128 0x3f
- 1817 0128 19       		.uleb128 0x19
- 1818 0129 3C       		.uleb128 0x3c
- 1819 012a 19       		.uleb128 0x19
- 1820 012b 6E       		.uleb128 0x6e
- 1821 012c 0E       		.uleb128 0xe
- 1822 012d 03       		.uleb128 0x3
- 1823 012e 0E       		.uleb128 0xe
- 1824 012f 3A       		.uleb128 0x3a
- 1825 0130 0B       		.uleb128 0xb
- 1826 0131 3B       		.uleb128 0x3b
- 1827 0132 0B       		.uleb128 0xb
- 1828 0133 00       		.byte	0
- 1829 0134 00       		.byte	0
- 1830 0135 15       		.uleb128 0x15
- 1831 0136 2E       		.uleb128 0x2e
- 1832 0137 00       		.byte	0
- 1833 0138 3F       		.uleb128 0x3f
- 1834 0139 19       		.uleb128 0x19
- 1835 013a 3C       		.uleb128 0x3c
- 1836 013b 19       		.uleb128 0x19
- 1837 013c 6E       		.uleb128 0x6e
- 1838 013d 0E       		.uleb128 0xe
- 1839 013e 03       		.uleb128 0x3
- 1840 013f 0E       		.uleb128 0xe
- 1841 0140 3A       		.uleb128 0x3a
- 1842 0141 0B       		.uleb128 0xb
- 1843 0142 3B       		.uleb128 0x3b
- 1844 0143 05       		.uleb128 0x5
- 1845 0144 00       		.byte	0
- 1846 0145 00       		.byte	0
- 1847 0146 00       		.byte	0
- 1848              		.section	.debug_loc,"",%progbits
- 1849              	.Ldebug_loc0:
- 1850              	.LLST0:
- 1851 0000 32000000 		.4byte	.LVL8
- 1852 0004 35000000 		.4byte	.LVL9-1
- 1853 0008 0100     		.2byte	0x1
- 1854 000a 50       		.byte	0x50
- 1855 000b 35000000 		.4byte	.LVL9-1
- 1856 000f 64000000 		.4byte	.LVL18
- 1857 0013 0100     		.2byte	0x1
- 1858 0015 56       		.byte	0x56
- 1859 0016 00000000 		.4byte	0
- 1860 001a 00000000 		.4byte	0
- 1861              	.LLST1:
- 1862 001e 38000000 		.4byte	.LVL10
- 1863 0022 40000000 		.4byte	.LVL11
- 1864 0026 0100     		.2byte	0x1
- 1865 0028 50       		.byte	0x50
- 1866 0029 40000000 		.4byte	.LVL11
- 1867 002d 64000000 		.4byte	.LVL18
- 1868 0031 0100     		.2byte	0x1
- 1869 0033 55       		.byte	0x55
- 1870 0034 00000000 		.4byte	0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 37
-
-
- 1871 0038 00000000 		.4byte	0
- 1872              	.LLST2:
- 1873 003c 00000000 		.4byte	.LVL19
- 1874 0040 0C000000 		.4byte	.LVL21
- 1875 0044 0100     		.2byte	0x1
- 1876 0046 50       		.byte	0x50
- 1877 0047 0C000000 		.4byte	.LVL21
- 1878 004b 18000000 		.4byte	.LVL24
- 1879 004f 0100     		.2byte	0x1
- 1880 0051 55       		.byte	0x55
- 1881 0052 18000000 		.4byte	.LVL24
- 1882 0056 1A000000 		.4byte	.LVL25
- 1883 005a 0100     		.2byte	0x1
- 1884 005c 50       		.byte	0x50
- 1885 005d 1A000000 		.4byte	.LVL25
- 1886 0061 5A000000 		.4byte	.LVL39
- 1887 0065 0100     		.2byte	0x1
- 1888 0067 55       		.byte	0x55
- 1889 0068 5A000000 		.4byte	.LVL39
- 1890 006c C8000000 		.4byte	.LFE66
- 1891 0070 0400     		.2byte	0x4
- 1892 0072 F3       		.byte	0xf3
- 1893 0073 01       		.uleb128 0x1
- 1894 0074 50       		.byte	0x50
- 1895 0075 9F       		.byte	0x9f
- 1896 0076 00000000 		.4byte	0
- 1897 007a 00000000 		.4byte	0
- 1898              	.LLST3:
- 1899 007e 5A000000 		.4byte	.LVL39
- 1900 0082 5D000000 		.4byte	.LVL40-1
- 1901 0086 0100     		.2byte	0x1
- 1902 0088 50       		.byte	0x50
- 1903 0089 5D000000 		.4byte	.LVL40-1
- 1904 008d 68000000 		.4byte	.LVL44
- 1905 0091 0100     		.2byte	0x1
- 1906 0093 55       		.byte	0x55
- 1907 0094 68000000 		.4byte	.LVL44
- 1908 0098 6B000000 		.4byte	.LVL45-1
- 1909 009c 0100     		.2byte	0x1
- 1910 009e 50       		.byte	0x50
- 1911 009f 6B000000 		.4byte	.LVL45-1
- 1912 00a3 AA000000 		.4byte	.LVL56
- 1913 00a7 0100     		.2byte	0x1
- 1914 00a9 55       		.byte	0x55
- 1915 00aa 00000000 		.4byte	0
- 1916 00ae 00000000 		.4byte	0
- 1917              	.LLST4:
- 1918 00b2 60000000 		.4byte	.LVL41
- 1919 00b6 62000000 		.4byte	.LVL42
- 1920 00ba 0100     		.2byte	0x1
- 1921 00bc 50       		.byte	0x50
- 1922 00bd 62000000 		.4byte	.LVL42
- 1923 00c1 AA000000 		.4byte	.LVL56
- 1924 00c5 0100     		.2byte	0x1
- 1925 00c7 54       		.byte	0x54
- 1926 00c8 00000000 		.4byte	0
- 1927 00cc 00000000 		.4byte	0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 38
-
-
- 1928              	.LLST5:
- 1929 00d0 54000000 		.4byte	.LVL37
- 1930 00d4 57000000 		.4byte	.LVL38-1
- 1931 00d8 0100     		.2byte	0x1
- 1932 00da 50       		.byte	0x50
- 1933 00db 57000000 		.4byte	.LVL38-1
- 1934 00df 74000000 		.4byte	.LVL47
- 1935 00e3 0100     		.2byte	0x1
- 1936 00e5 56       		.byte	0x56
- 1937 00e6 00000000 		.4byte	0
- 1938 00ea 00000000 		.4byte	0
- 1939              	.LLST6:
- 1940 00ee 06000000 		.4byte	.LVL20
- 1941 00f2 2A000000 		.4byte	.LVL29
- 1942 00f6 0100     		.2byte	0x1
- 1943 00f8 54       		.byte	0x54
- 1944 00f9 00000000 		.4byte	0
- 1945 00fd 00000000 		.4byte	0
- 1946              	.LLST8:
- 1947 0101 00000000 		.4byte	.LVL57
- 1948 0105 0C000000 		.4byte	.LVL59
- 1949 0109 0100     		.2byte	0x1
- 1950 010b 50       		.byte	0x50
- 1951 010c 0C000000 		.4byte	.LVL59
- 1952 0110 18000000 		.4byte	.LVL62
- 1953 0114 0100     		.2byte	0x1
- 1954 0116 55       		.byte	0x55
- 1955 0117 18000000 		.4byte	.LVL62
- 1956 011b 1A000000 		.4byte	.LVL63
- 1957 011f 0100     		.2byte	0x1
- 1958 0121 50       		.byte	0x50
- 1959 0122 1A000000 		.4byte	.LVL63
- 1960 0126 6A000000 		.4byte	.LVL78
- 1961 012a 0100     		.2byte	0x1
- 1962 012c 55       		.byte	0x55
- 1963 012d 6A000000 		.4byte	.LVL78
- 1964 0131 E4000000 		.4byte	.LFE67
- 1965 0135 0400     		.2byte	0x4
- 1966 0137 F3       		.byte	0xf3
- 1967 0138 01       		.uleb128 0x1
- 1968 0139 50       		.byte	0x50
- 1969 013a 9F       		.byte	0x9f
- 1970 013b 00000000 		.4byte	0
- 1971 013f 00000000 		.4byte	0
- 1972              	.LLST9:
- 1973 0143 70000000 		.4byte	.LVL80
- 1974 0147 73000000 		.4byte	.LVL81-1
- 1975 014b 0100     		.2byte	0x1
- 1976 014d 50       		.byte	0x50
- 1977 014e 73000000 		.4byte	.LVL81-1
- 1978 0152 BA000000 		.4byte	.LVL95
- 1979 0156 0100     		.2byte	0x1
- 1980 0158 56       		.byte	0x56
- 1981 0159 00000000 		.4byte	0
- 1982 015d 00000000 		.4byte	0
- 1983              	.LLST10:
- 1984 0161 76000000 		.4byte	.LVL82
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 39
-
-
- 1985 0165 78000000 		.4byte	.LVL83
- 1986 0169 0100     		.2byte	0x1
- 1987 016b 50       		.byte	0x50
- 1988 016c 78000000 		.4byte	.LVL83
- 1989 0170 BA000000 		.4byte	.LVL95
- 1990 0174 0100     		.2byte	0x1
- 1991 0176 54       		.byte	0x54
- 1992 0177 00000000 		.4byte	0
- 1993 017b 00000000 		.4byte	0
- 1994              	.LLST11:
- 1995 017f 6A000000 		.4byte	.LVL78
- 1996 0183 6D000000 		.4byte	.LVL79-1
- 1997 0187 0100     		.2byte	0x1
- 1998 0189 50       		.byte	0x50
- 1999 018a 6D000000 		.4byte	.LVL79-1
- 2000 018e 84000000 		.4byte	.LVL86
- 2001 0192 0100     		.2byte	0x1
- 2002 0194 55       		.byte	0x55
- 2003 0195 00000000 		.4byte	0
- 2004 0199 00000000 		.4byte	0
- 2005              	.LLST12:
- 2006 019d 3A000000 		.4byte	.LVL70
- 2007 01a1 40000000 		.4byte	.LVL71
- 2008 01a5 0600     		.2byte	0x6
- 2009 01a7 75       		.byte	0x75
- 2010 01a8 00       		.sleb128 0
- 2011 01a9 08       		.byte	0x8
- 2012 01aa 6B       		.byte	0x6b
- 2013 01ab 1E       		.byte	0x1e
- 2014 01ac 9F       		.byte	0x9f
- 2015 01ad 40000000 		.4byte	.LVL71
- 2016 01b1 43000000 		.4byte	.LVL72-1
- 2017 01b5 0100     		.2byte	0x1
- 2018 01b7 50       		.byte	0x50
- 2019 01b8 43000000 		.4byte	.LVL72-1
- 2020 01bc 6A000000 		.4byte	.LVL78
- 2021 01c0 0600     		.2byte	0x6
- 2022 01c2 75       		.byte	0x75
- 2023 01c3 00       		.sleb128 0
- 2024 01c4 08       		.byte	0x8
- 2025 01c5 6B       		.byte	0x6b
- 2026 01c6 1E       		.byte	0x1e
- 2027 01c7 9F       		.byte	0x9f
- 2028 01c8 6A000000 		.4byte	.LVL78
- 2029 01cc E4000000 		.4byte	.LFE67
- 2030 01d0 0700     		.2byte	0x7
- 2031 01d2 F3       		.byte	0xf3
- 2032 01d3 01       		.uleb128 0x1
- 2033 01d4 50       		.byte	0x50
- 2034 01d5 08       		.byte	0x8
- 2035 01d6 6B       		.byte	0x6b
- 2036 01d7 1E       		.byte	0x1e
- 2037 01d8 9F       		.byte	0x9f
- 2038 01d9 00000000 		.4byte	0
- 2039 01dd 00000000 		.4byte	0
- 2040              	.LLST13:
- 2041 01e1 06000000 		.4byte	.LVL58
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 40
-
-
- 2042 01e5 2A000000 		.4byte	.LVL67
- 2043 01e9 0100     		.2byte	0x1
- 2044 01eb 54       		.byte	0x54
- 2045 01ec 00000000 		.4byte	0
- 2046 01f0 00000000 		.4byte	0
- 2047              		.section	.debug_aranges,"",%progbits
- 2048 0000 3C000000 		.4byte	0x3c
- 2049 0004 0200     		.2byte	0x2
- 2050 0006 00000000 		.4byte	.Ldebug_info0
- 2051 000a 04       		.byte	0x4
- 2052 000b 00       		.byte	0
- 2053 000c 0000     		.2byte	0
- 2054 000e 0000     		.2byte	0
- 2055 0010 00000000 		.4byte	.LFB64
- 2056 0014 74000000 		.4byte	.LFE64-.LFB64
- 2057 0018 00000000 		.4byte	.LFB65
- 2058 001c 02000000 		.4byte	.LFE65-.LFB65
- 2059 0020 00000000 		.4byte	.LFB66
- 2060 0024 C8000000 		.4byte	.LFE66-.LFB66
- 2061 0028 00000000 		.4byte	.LFB67
- 2062 002c E4000000 		.4byte	.LFE67-.LFB67
- 2063 0030 00000000 		.4byte	.LFB68
- 2064 0034 0C000000 		.4byte	.LFE68-.LFB68
- 2065 0038 00000000 		.4byte	0
- 2066 003c 00000000 		.4byte	0
- 2067              		.section	.debug_ranges,"",%progbits
- 2068              	.Ldebug_ranges0:
- 2069 0000 00000000 		.4byte	.LFB64
- 2070 0004 74000000 		.4byte	.LFE64
- 2071 0008 00000000 		.4byte	.LFB65
- 2072 000c 02000000 		.4byte	.LFE65
- 2073 0010 00000000 		.4byte	.LFB66
- 2074 0014 C8000000 		.4byte	.LFE66
- 2075 0018 00000000 		.4byte	.LFB67
- 2076 001c E4000000 		.4byte	.LFE67
- 2077 0020 00000000 		.4byte	.LFB68
- 2078 0024 0C000000 		.4byte	.LFE68
- 2079 0028 00000000 		.4byte	0
- 2080 002c 00000000 		.4byte	0
- 2081              		.section	.debug_line,"",%progbits
- 2082              	.Ldebug_line0:
- 2083 0000 34030000 		.section	.debug_str,"MS",%progbits,1
- 2083      02009102 
- 2083      00000201 
- 2083      FB0E0D00 
- 2083      01010101 
- 2084              	.LASF47:
- 2085 0000 6D6F746F 		.ascii	"motor2EncoderCounts\000"
- 2085      7232456E 
- 2085      636F6465 
- 2085      72436F75 
- 2085      6E747300 
- 2086              	.LASF54:
- 2087 0014 4D6F746F 		.ascii	"Motor_Right_Driver_WriteCompare\000"
- 2087      725F5269 
- 2087      6768745F 
- 2087      44726976 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 41
-
-
- 2087      65725F57 
- 2088              	.LASF21:
- 2089 0034 73706565 		.ascii	"speed_left\000"
- 2089      645F6C65 
- 2089      667400
- 2090              	.LASF36:
- 2091 003f 7475726E 		.ascii	"turningLeftFlag\000"
- 2091      696E674C 
- 2091      65667446 
- 2091      6C616700 
- 2092              	.LASF57:
- 2093 004f 4D6F746F 		.ascii	"Motor_Right_Decoder_GetCounter\000"
- 2093      725F5269 
- 2093      6768745F 
- 2093      4465636F 
- 2093      6465725F 
- 2094              	.LASF2:
- 2095 006e 73686F72 		.ascii	"short int\000"
- 2095      7420696E 
- 2095      7400
- 2096              	.LASF34:
- 2097 0078 64726976 		.ascii	"drivingForwardFlag\000"
- 2097      696E6746 
- 2097      6F727761 
- 2097      7264466C 
- 2097      616700
- 2098              	.LASF15:
- 2099 008b 73697A65 		.ascii	"sizetype\000"
- 2099      74797065 
- 2099      00
- 2100              	.LASF46:
- 2101 0094 6D6F746F 		.ascii	"motor1EncoderCounts\000"
- 2101      7231456E 
- 2101      636F6465 
- 2101      72436F75 
- 2101      6E747300 
- 2102              	.LASF30:
- 2103 00a8 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
- 2103      5261636B 
- 2103      4F666673 
- 2103      65747346 
- 2103      726F6D57 
- 2104              	.LASF14:
- 2105 00c0 6C6F6E67 		.ascii	"long double\000"
- 2105      20646F75 
- 2105      626C6500 
- 2106              	.LASF19:
- 2107 00cc 6D697368 		.ascii	"mishaMoveDynamic\000"
- 2107      614D6F76 
- 2107      6544796E 
- 2107      616D6963 
- 2107      00
- 2108              	.LASF63:
- 2109 00dd 4D6F746F 		.ascii	"Motor_Left_Decoder_SetCounter\000"
- 2109      725F4C65 
- 2109      66745F44 
- 2109      65636F64 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 42
-
-
- 2109      65725F53 
- 2110              	.LASF50:
- 2111 00fb 4D6F746F 		.ascii	"Motor_Right_Control_Write\000"
- 2111      725F5269 
- 2111      6768745F 
- 2111      436F6E74 
- 2111      726F6C5F 
- 2112              	.LASF44:
- 2113 0115 6D6F746F 		.ascii	"motor1Enable\000"
- 2113      7231456E 
- 2113      61626C65 
- 2113      00
- 2114              	.LASF37:
- 2115 0122 7475726E 		.ascii	"turningRightFlag\000"
- 2115      696E6752 
- 2115      69676874 
- 2115      466C6167 
- 2115      00
- 2116              	.LASF11:
- 2117 0133 666C6F61 		.ascii	"float\000"
- 2117      7400
- 2118              	.LASF6:
- 2119 0139 6C6F6E67 		.ascii	"long long int\000"
- 2119      206C6F6E 
- 2119      6720696E 
- 2119      7400
- 2120              	.LASF61:
- 2121 0147 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
- 2121      725F5269 
- 2121      6768745F 
- 2121      44726976 
- 2121      65725F53 
- 2122              	.LASF4:
- 2123 0160 6C6F6E67 		.ascii	"long int\000"
- 2123      20696E74 
- 2123      00
- 2124              	.LASF16:
- 2125 0169 636F756E 		.ascii	"count_left\000"
- 2125      745F6C65 
- 2125      667400
- 2126              	.LASF23:
- 2127 0174 6D697368 		.ascii	"mishaSwivel\000"
- 2127      61537769 
- 2127      76656C00 
- 2128              	.LASF35:
- 2129 0180 64726976 		.ascii	"drivingBackwardFlag\000"
- 2129      696E6742 
- 2129      61636B77 
- 2129      61726446 
- 2129      6C616700 
- 2130              	.LASF64:
- 2131 0194 4D6F746F 		.ascii	"Motor_Right_Decoder_SetCounter\000"
- 2131      725F5269 
- 2131      6768745F 
- 2131      4465636F 
- 2131      6465725F 
- 2132              	.LASF33:
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 43
-
-
- 2133 01b3 7075636B 		.ascii	"puckPileLocation\000"
- 2133      50696C65 
- 2133      4C6F6361 
- 2133      74696F6E 
- 2133      00
- 2134              	.LASF28:
- 2135 01c4 63757272 		.ascii	"currentPuckRackScanningIndex\000"
- 2135      656E7450 
- 2135      75636B52 
- 2135      61636B53 
- 2135      63616E6E 
- 2136              	.LASF66:
- 2137 01e1 6D697368 		.ascii	"mishamotor.c\000"
- 2137      616D6F74 
- 2137      6F722E63 
- 2137      00
- 2138              	.LASF53:
- 2139 01ee 4D6F746F 		.ascii	"Motor_Right_Driver_Wakeup\000"
- 2139      725F5269 
- 2139      6768745F 
- 2139      44726976 
- 2139      65725F57 
- 2140              	.LASF60:
- 2141 0208 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
- 2141      725F4C65 
- 2141      66745F44 
- 2141      72697665 
- 2141      725F536C 
- 2142              	.LASF25:
- 2143 0220 64656772 		.ascii	"degrees\000"
- 2143      65657300 
- 2144              	.LASF1:
- 2145 0228 756E7369 		.ascii	"unsigned char\000"
- 2145      676E6564 
- 2145      20636861 
- 2145      7200
- 2146              	.LASF58:
- 2147 0236 73707269 		.ascii	"sprintf\000"
- 2147      6E746600 
- 2148              	.LASF62:
- 2149 023e 726F756E 		.ascii	"round\000"
- 2149      6400
- 2150              	.LASF0:
- 2151 0244 7369676E 		.ascii	"signed char\000"
- 2151      65642063 
- 2151      68617200 
- 2152              	.LASF32:
- 2153 0250 626C6F63 		.ascii	"block_edge_location\000"
- 2153      6B5F6564 
- 2153      67655F6C 
- 2153      6F636174 
- 2153      696F6E00 
- 2154              	.LASF7:
- 2155 0264 6C6F6E67 		.ascii	"long long unsigned int\000"
- 2155      206C6F6E 
- 2155      6720756E 
- 2155      7369676E 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 44
-
-
- 2155      65642069 
- 2156              	.LASF8:
- 2157 027b 756E7369 		.ascii	"unsigned int\000"
- 2157      676E6564 
- 2157      20696E74 
- 2157      00
- 2158              	.LASF48:
- 2159 0288 53504545 		.ascii	"SPEED\000"
- 2159      4400
- 2160              	.LASF3:
- 2161 028e 73686F72 		.ascii	"short unsigned int\000"
- 2161      7420756E 
- 2161      7369676E 
- 2161      65642069 
- 2161      6E7400
- 2162              	.LASF31:
- 2163 02a1 73776565 		.ascii	"sweeping\000"
- 2163      70696E67 
- 2163      00
- 2164              	.LASF13:
- 2165 02aa 63686172 		.ascii	"char\000"
- 2165      00
- 2166              	.LASF24:
- 2167 02af 64697374 		.ascii	"distance\000"
- 2167      616E6365 
- 2167      00
- 2168              	.LASF41:
- 2169 02b8 4D315F42 		.ascii	"M1_BD\000"
- 2169      4400
- 2170              	.LASF10:
- 2171 02be 696E7433 		.ascii	"int32_t\000"
- 2171      325F7400 
- 2172              	.LASF27:
- 2173 02c6 64726976 		.ascii	"driveStraightEnable\000"
- 2173      65537472 
- 2173      61696768 
- 2173      74456E61 
- 2173      626C6500 
- 2174              	.LASF69:
- 2175 02da 6D697368 		.ascii	"mishaDriftAdjust\000"
- 2175      61447269 
- 2175      66744164 
- 2175      6A757374 
- 2175      00
- 2176              	.LASF40:
- 2177 02eb 4D315F46 		.ascii	"M1_FD\000"
- 2177      4400
- 2178              	.LASF18:
- 2179 02f1 6D697368 		.ascii	"mishaMoveForward\000"
- 2179      614D6F76 
- 2179      65466F72 
- 2179      77617264 
- 2179      00
- 2180              	.LASF5:
- 2181 0302 6C6F6E67 		.ascii	"long unsigned int\000"
- 2181      20756E73 
- 2181      69676E65 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 45
-
-
- 2181      6420696E 
- 2181      7400
- 2182              	.LASF12:
- 2183 0314 646F7562 		.ascii	"double\000"
- 2183      6C6500
- 2184              	.LASF59:
- 2185 031b 55415254 		.ascii	"UART_1_PutString\000"
- 2185      5F315F50 
- 2185      75745374 
- 2185      72696E67 
- 2185      00
- 2186              	.LASF49:
- 2187 032c 4D6F746F 		.ascii	"Motor_Left_Control_Write\000"
- 2187      725F4C65 
- 2187      66745F43 
- 2187      6F6E7472 
- 2187      6F6C5F57 
- 2188              	.LASF45:
- 2189 0345 6D6F746F 		.ascii	"motor2Enable\000"
- 2189      7232456E 
- 2189      61626C65 
- 2189      00
- 2190              	.LASF20:
- 2191 0352 636F6D70 		.ascii	"compare\000"
- 2191      61726500 
- 2192              	.LASF9:
- 2193 035a 5F5F696E 		.ascii	"__int32_t\000"
- 2193      7433325F 
- 2193      7400
- 2194              	.LASF29:
- 2195 0364 7075636B 		.ascii	"puckRackColours\000"
- 2195      5261636B 
- 2195      436F6C6F 
- 2195      75727300 
- 2196              	.LASF67:
- 2197 0374 433A5C55 		.ascii	"C:\\Users\\Misha\\Documents\\PSoC Creator\\ECE3091_"
- 2197      73657273 
- 2197      5C4D6973 
- 2197      68615C44 
- 2197      6F63756D 
- 2198 03a2 47726F75 		.ascii	"Group17\\Group17RobotReal\\Group17Robot.cydsn\000"
- 2198      7031375C 
- 2198      47726F75 
- 2198      70313752 
- 2198      6F626F74 
- 2199              	.LASF39:
- 2200 03ce 6F757470 		.ascii	"output\000"
- 2200      757400
- 2201              	.LASF56:
- 2202 03d5 4D6F746F 		.ascii	"Motor_Left_Decoder_GetCounter\000"
- 2202      725F4C65 
- 2202      66745F44 
- 2202      65636F64 
- 2202      65725F47 
- 2203              	.LASF43:
- 2204 03f3 4D325F42 		.ascii	"M2_BD\000"
- 2204      4400
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 46
-
-
- 2205              	.LASF26:
- 2206 03f9 49544D5F 		.ascii	"ITM_RxBuffer\000"
- 2206      52784275 
- 2206      66666572 
- 2206      00
- 2207              	.LASF65:
- 2208 0406 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 2208      43313120 
- 2208      352E342E 
- 2208      31203230 
- 2208      31363036 
- 2209 0439 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
- 2209      20726576 
- 2209      6973696F 
- 2209      6E203233 
- 2209      37373135 
- 2210 046c 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 2210      66756E63 
- 2210      74696F6E 
- 2210      2D736563 
- 2210      74696F6E 
- 2211              	.LASF55:
- 2212 0494 43794465 		.ascii	"CyDelay\000"
- 2212      6C617900 
- 2213              	.LASF17:
- 2214 049c 636F756E 		.ascii	"count_right\000"
- 2214      745F7269 
- 2214      67687400 
- 2215              	.LASF22:
- 2216 04a8 73706565 		.ascii	"speed_right\000"
- 2216      645F7269 
- 2216      67687400 
- 2217              	.LASF38:
- 2218 04b4 696E6974 		.ascii	"initialisation\000"
- 2218      69616C69 
- 2218      73617469 
- 2218      6F6E00
- 2219              	.LASF42:
- 2220 04c3 4D325F46 		.ascii	"M2_FD\000"
- 2220      4400
- 2221              	.LASF68:
- 2222 04c9 6D697368 		.ascii	"mishaMoveBackward\000"
- 2222      614D6F76 
- 2222      65426163 
- 2222      6B776172 
- 2222      6400
- 2223              	.LASF52:
- 2224 04db 4D6F746F 		.ascii	"Motor_Left_Driver_WriteCompare\000"
- 2224      725F4C65 
- 2224      66745F44 
- 2224      72697665 
- 2224      725F5772 
- 2225              	.LASF51:
- 2226 04fa 4D6F746F 		.ascii	"Motor_Left_Driver_Wakeup\000"
- 2226      725F4C65 
- 2226      66745F44 
- 2226      72697665 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccvKgAJb.s 			page 47
-
-
- 2226      725F5761 
- 2227              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ 166:mishamotor.c  **** void swivelIndefinitely(void) {
+ 430              		.loc 1 166 0
+ 431              		.cfi_startproc
+ 432              		@ args = 0, pretend = 0, frame = 0
+ 433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 434              		@ link register save eliminated.
+ 435 0000 7047     		bx	lr
+ 436              		.cfi_endproc
+ 437              	.LFE68:
+ 438              		.size	swivelIndefinitely, .-swivelIndefinitely
+ 439              		.global	SPEED
+ 440              		.comm	ultrasonic_flag,4,4
+ 441              		.comm	initialisation,4,4
+ 442              		.comm	output,32,4
+ 443              		.comm	turningRightFlag,2,2
+ 444              		.comm	turningLeftFlag,2,2
+ 445              		.comm	drivingBackwardFlag,2,2
+ 446              		.comm	drivingForwardFlag,2,2
+ 447              		.comm	puckPileLocation,4,4
+ 448              		.comm	block_edge_location,16,4
+ 449              		.comm	sweeping,4,4
+ 450              		.comm	puckRackOffsetsFromWest,20,4
+ 451              		.comm	puckRackColours,20,4
+ 452              		.comm	currentPuckRackScanningIndex,4,4
+ 453              		.comm	driveStraightEnable,4,4
+ 454 0002 00BF     		.data
+ 455              		.align	2
+ 456              		.set	.LANCHOR0,. + 0
+ 457              		.type	SPEED, %object
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 12
+
+
+ 458              		.size	SPEED, 4
+ 459              	SPEED:
+ 460 0000 82000000 		.word	130
+ 461              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 462              		.align	2
+ 463              	.LC0:
+ 464 0000 6C656674 		.ascii	"left motor: %d \012\000"
+ 464      206D6F74 
+ 464      6F723A20 
+ 464      2564200A 
+ 464      00
+ 465 0011 000000   		.space	3
+ 466              	.LC1:
+ 467 0014 72696768 		.ascii	"right motor: %d \012\000"
+ 467      74206D6F 
+ 467      746F723A 
+ 467      20256420 
+ 467      0A00
+ 468              		.text
+ 469              	.Letext0:
+ 470              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 471              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 472              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 473              		.file 5 "ultrasonic.h"
+ 474              		.file 6 "main.h"
+ 475              		.file 7 "Generated_Source\\PSoC5/Motor_Left_Control.h"
+ 476              		.file 8 "Generated_Source\\PSoC5/Motor_Right_Control.h"
+ 477              		.file 9 "Generated_Source\\PSoC5/Motor_Left_Driver.h"
+ 478              		.file 10 "Generated_Source\\PSoC5/Motor_Right_Driver.h"
+ 479              		.file 11 "Generated_Source\\PSoC5/CyLib.h"
+ 480              		.file 12 "Generated_Source\\PSoC5/Motor_Left_Decoder.h"
+ 481              		.file 13 "Generated_Source\\PSoC5/Motor_Right_Decoder.h"
+ 482              		.file 14 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
+ 483              		.file 15 "Generated_Source\\PSoC5/UART_1.h"
+ 484              		.file 16 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
+ 485              		.section	.debug_info,"",%progbits
+ 486              	.Ldebug_info0:
+ 487 0000 FF060000 		.4byte	0x6ff
+ 488 0004 0400     		.2byte	0x4
+ 489 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 490 000a 04       		.byte	0x4
+ 491 000b 01       		.uleb128 0x1
+ 492 000c C4030000 		.4byte	.LASF60
+ 493 0010 0C       		.byte	0xc
+ 494 0011 BC010000 		.4byte	.LASF61
+ 495 0015 38030000 		.4byte	.LASF62
+ 496 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 497 001d 00000000 		.4byte	0
+ 498 0021 00000000 		.4byte	.Ldebug_line0
+ 499 0025 02       		.uleb128 0x2
+ 500 0026 01       		.byte	0x1
+ 501 0027 06       		.byte	0x6
+ 502 0028 1F020000 		.4byte	.LASF0
+ 503 002c 02       		.uleb128 0x2
+ 504 002d 01       		.byte	0x1
+ 505 002e 08       		.byte	0x8
+ 506 002f 03020000 		.4byte	.LASF1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 13
+
+
+ 507 0033 02       		.uleb128 0x2
+ 508 0034 02       		.byte	0x2
+ 509 0035 05       		.byte	0x5
+ 510 0036 5A000000 		.4byte	.LASF2
+ 511 003a 02       		.uleb128 0x2
+ 512 003b 02       		.byte	0x2
+ 513 003c 07       		.byte	0x7
+ 514 003d 69020000 		.4byte	.LASF3
+ 515 0041 03       		.uleb128 0x3
+ 516 0042 1E030000 		.4byte	.LASF9
+ 517 0046 02       		.byte	0x2
+ 518 0047 3F       		.byte	0x3f
+ 519 0048 4C000000 		.4byte	0x4c
+ 520 004c 02       		.uleb128 0x2
+ 521 004d 04       		.byte	0x4
+ 522 004e 05       		.byte	0x5
+ 523 004f 3B010000 		.4byte	.LASF4
+ 524 0053 02       		.uleb128 0x2
+ 525 0054 04       		.byte	0x4
+ 526 0055 07       		.byte	0x7
+ 527 0056 C0020000 		.4byte	.LASF5
+ 528 005a 02       		.uleb128 0x2
+ 529 005b 08       		.byte	0x8
+ 530 005c 05       		.byte	0x5
+ 531 005d 14010000 		.4byte	.LASF6
+ 532 0061 02       		.uleb128 0x2
+ 533 0062 08       		.byte	0x8
+ 534 0063 07       		.byte	0x7
+ 535 0064 3F020000 		.4byte	.LASF7
+ 536 0068 04       		.uleb128 0x4
+ 537 0069 04       		.byte	0x4
+ 538 006a 05       		.byte	0x5
+ 539 006b 696E7400 		.ascii	"int\000"
+ 540 006f 02       		.uleb128 0x2
+ 541 0070 04       		.byte	0x4
+ 542 0071 07       		.byte	0x7
+ 543 0072 56020000 		.4byte	.LASF8
+ 544 0076 03       		.uleb128 0x3
+ 545 0077 93020000 		.4byte	.LASF10
+ 546 007b 03       		.byte	0x3
+ 547 007c 2C       		.byte	0x2c
+ 548 007d 41000000 		.4byte	0x41
+ 549 0081 02       		.uleb128 0x2
+ 550 0082 04       		.byte	0x4
+ 551 0083 04       		.byte	0x4
+ 552 0084 0E010000 		.4byte	.LASF11
+ 553 0088 02       		.uleb128 0x2
+ 554 0089 08       		.byte	0x8
+ 555 008a 04       		.byte	0x4
+ 556 008b D2020000 		.4byte	.LASF12
+ 557 008f 02       		.uleb128 0x2
+ 558 0090 01       		.byte	0x1
+ 559 0091 08       		.byte	0x8
+ 560 0092 85020000 		.4byte	.LASF13
+ 561 0096 02       		.uleb128 0x2
+ 562 0097 08       		.byte	0x8
+ 563 0098 04       		.byte	0x4
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 14
+
+
+ 564 0099 98000000 		.4byte	.LASF14
+ 565 009d 02       		.uleb128 0x2
+ 566 009e 04       		.byte	0x4
+ 567 009f 07       		.byte	0x7
+ 568 00a0 77000000 		.4byte	.LASF15
+ 569 00a4 05       		.uleb128 0x5
+ 570 00a5 AF020000 		.4byte	.LASF18
+ 571 00a9 01       		.byte	0x1
+ 572 00aa 23       		.byte	0x23
+ 573 00ab 00000000 		.4byte	.LFB64
+ 574 00af 74000000 		.4byte	.LFE64-.LFB64
+ 575 00b3 01       		.uleb128 0x1
+ 576 00b4 9C       		.byte	0x9c
+ 577 00b5 C9010000 		.4byte	0x1c9
+ 578 00b9 06       		.uleb128 0x6
+ 579 00ba 44010000 		.4byte	.LASF16
+ 580 00be 01       		.byte	0x1
+ 581 00bf 24       		.byte	0x24
+ 582 00c0 68000000 		.4byte	0x68
+ 583 00c4 00000000 		.4byte	.LLST0
+ 584 00c8 06       		.uleb128 0x6
+ 585 00c9 5A040000 		.4byte	.LASF17
+ 586 00cd 01       		.byte	0x1
+ 587 00ce 25       		.byte	0x25
+ 588 00cf 68000000 		.4byte	0x68
+ 589 00d3 1E000000 		.4byte	.LLST1
+ 590 00d7 07       		.uleb128 0x7
+ 591 00d8 08000000 		.4byte	.LVL0
+ 592 00dc 51060000 		.4byte	0x651
+ 593 00e0 EA000000 		.4byte	0xea
+ 594 00e4 08       		.uleb128 0x8
+ 595 00e5 01       		.uleb128 0x1
+ 596 00e6 50       		.byte	0x50
+ 597 00e7 01       		.uleb128 0x1
+ 598 00e8 30       		.byte	0x30
+ 599 00e9 00       		.byte	0
+ 600 00ea 07       		.uleb128 0x7
+ 601 00eb 0E000000 		.4byte	.LVL1
+ 602 00ef 5C060000 		.4byte	0x65c
+ 603 00f3 FD000000 		.4byte	0xfd
+ 604 00f7 08       		.uleb128 0x8
+ 605 00f8 01       		.uleb128 0x1
+ 606 00f9 50       		.byte	0x50
+ 607 00fa 01       		.uleb128 0x1
+ 608 00fb 30       		.byte	0x30
+ 609 00fc 00       		.byte	0
+ 610 00fd 09       		.uleb128 0x9
+ 611 00fe 12000000 		.4byte	.LVL2
+ 612 0102 67060000 		.4byte	0x667
+ 613 0106 09       		.uleb128 0x9
+ 614 0107 1A000000 		.4byte	.LVL3
+ 615 010b 72060000 		.4byte	0x672
+ 616 010f 09       		.uleb128 0x9
+ 617 0110 1E000000 		.4byte	.LVL4
+ 618 0114 7D060000 		.4byte	0x67d
+ 619 0118 09       		.uleb128 0x9
+ 620 0119 24000000 		.4byte	.LVL5
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 15
+
+
+ 621 011d 88060000 		.4byte	0x688
+ 622 0121 07       		.uleb128 0x7
+ 623 0122 2C000000 		.4byte	.LVL6
+ 624 0126 93060000 		.4byte	0x693
+ 625 012a 36010000 		.4byte	0x136
+ 626 012e 08       		.uleb128 0x8
+ 627 012f 01       		.uleb128 0x1
+ 628 0130 50       		.byte	0x50
+ 629 0131 03       		.uleb128 0x3
+ 630 0132 0A       		.byte	0xa
+ 631 0133 F401     		.2byte	0x1f4
+ 632 0135 00       		.byte	0
+ 633 0136 09       		.uleb128 0x9
+ 634 0137 30000000 		.4byte	.LVL7
+ 635 013b 9E060000 		.4byte	0x69e
+ 636 013f 09       		.uleb128 0x9
+ 637 0140 36000000 		.4byte	.LVL9
+ 638 0144 A9060000 		.4byte	0x6a9
+ 639 0148 07       		.uleb128 0x7
+ 640 0149 44000000 		.4byte	.LVL12
+ 641 014d B4060000 		.4byte	0x6b4
+ 642 0151 6B010000 		.4byte	0x16b
+ 643 0155 08       		.uleb128 0x8
+ 644 0156 01       		.uleb128 0x1
+ 645 0157 50       		.byte	0x50
+ 646 0158 02       		.uleb128 0x2
+ 647 0159 74       		.byte	0x74
+ 648 015a 00       		.sleb128 0
+ 649 015b 08       		.uleb128 0x8
+ 650 015c 01       		.uleb128 0x1
+ 651 015d 51       		.byte	0x51
+ 652 015e 05       		.uleb128 0x5
+ 653 015f 03       		.byte	0x3
+ 654 0160 00000000 		.4byte	.LC0
+ 655 0164 08       		.uleb128 0x8
+ 656 0165 01       		.uleb128 0x1
+ 657 0166 52       		.byte	0x52
+ 658 0167 02       		.uleb128 0x2
+ 659 0168 76       		.byte	0x76
+ 660 0169 00       		.sleb128 0
+ 661 016a 00       		.byte	0
+ 662 016b 07       		.uleb128 0x7
+ 663 016c 4A000000 		.4byte	.LVL13
+ 664 0170 BF060000 		.4byte	0x6bf
+ 665 0174 7F010000 		.4byte	0x17f
+ 666 0178 08       		.uleb128 0x8
+ 667 0179 01       		.uleb128 0x1
+ 668 017a 50       		.byte	0x50
+ 669 017b 02       		.uleb128 0x2
+ 670 017c 74       		.byte	0x74
+ 671 017d 00       		.sleb128 0
+ 672 017e 00       		.byte	0
+ 673 017f 07       		.uleb128 0x7
+ 674 0180 54000000 		.4byte	.LVL14
+ 675 0184 B4060000 		.4byte	0x6b4
+ 676 0188 A2010000 		.4byte	0x1a2
+ 677 018c 08       		.uleb128 0x8
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 16
+
+
+ 678 018d 01       		.uleb128 0x1
+ 679 018e 50       		.byte	0x50
+ 680 018f 02       		.uleb128 0x2
+ 681 0190 74       		.byte	0x74
+ 682 0191 00       		.sleb128 0
+ 683 0192 08       		.uleb128 0x8
+ 684 0193 01       		.uleb128 0x1
+ 685 0194 51       		.byte	0x51
+ 686 0195 05       		.uleb128 0x5
+ 687 0196 03       		.byte	0x3
+ 688 0197 14000000 		.4byte	.LC1
+ 689 019b 08       		.uleb128 0x8
+ 690 019c 01       		.uleb128 0x1
+ 691 019d 52       		.byte	0x52
+ 692 019e 02       		.uleb128 0x2
+ 693 019f 75       		.byte	0x75
+ 694 01a0 00       		.sleb128 0
+ 695 01a1 00       		.byte	0
+ 696 01a2 07       		.uleb128 0x7
+ 697 01a3 5A000000 		.4byte	.LVL15
+ 698 01a7 BF060000 		.4byte	0x6bf
+ 699 01ab B6010000 		.4byte	0x1b6
+ 700 01af 08       		.uleb128 0x8
+ 701 01b0 01       		.uleb128 0x1
+ 702 01b1 50       		.byte	0x50
+ 703 01b2 02       		.uleb128 0x2
+ 704 01b3 74       		.byte	0x74
+ 705 01b4 00       		.sleb128 0
+ 706 01b5 00       		.byte	0
+ 707 01b6 09       		.uleb128 0x9
+ 708 01b7 5E000000 		.4byte	.LVL16
+ 709 01bb CA060000 		.4byte	0x6ca
+ 710 01bf 09       		.uleb128 0x9
+ 711 01c0 62000000 		.4byte	.LVL17
+ 712 01c4 D5060000 		.4byte	0x6d5
+ 713 01c8 00       		.byte	0
+ 714 01c9 0A       		.uleb128 0xa
+ 715 01ca 81040000 		.4byte	.LASF26
+ 716 01ce 01       		.byte	0x1
+ 717 01cf 3C       		.byte	0x3c
+ 718 01d0 00000000 		.4byte	.LFB65
+ 719 01d4 02000000 		.4byte	.LFE65-.LFB65
+ 720 01d8 01       		.uleb128 0x1
+ 721 01d9 9C       		.byte	0x9c
+ 722 01da 0B       		.uleb128 0xb
+ 723 01db B4000000 		.4byte	.LASF19
+ 724 01df 01       		.byte	0x1
+ 725 01e0 3F       		.byte	0x3f
+ 726 01e1 00000000 		.4byte	.LFB66
+ 727 01e5 C8000000 		.4byte	.LFE66-.LFB66
+ 728 01e9 01       		.uleb128 0x1
+ 729 01ea 9C       		.byte	0x9c
+ 730 01eb A3030000 		.4byte	0x3a3
+ 731 01ef 0C       		.uleb128 0xc
+ 732 01f0 8A020000 		.4byte	.LASF24
+ 733 01f4 01       		.byte	0x1
+ 734 01f5 3F       		.byte	0x3f
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 17
+
+
+ 735 01f6 68000000 		.4byte	0x68
+ 736 01fa 3C000000 		.4byte	.LLST2
+ 737 01fe 06       		.uleb128 0x6
+ 738 01ff 44010000 		.4byte	.LASF16
+ 739 0203 01       		.byte	0x1
+ 740 0204 40       		.byte	0x40
+ 741 0205 68000000 		.4byte	0x68
+ 742 0209 7E000000 		.4byte	.LLST3
+ 743 020d 06       		.uleb128 0x6
+ 744 020e 5A040000 		.4byte	.LASF17
+ 745 0212 01       		.byte	0x1
+ 746 0213 41       		.byte	0x41
+ 747 0214 68000000 		.4byte	0x68
+ 748 0218 B2000000 		.4byte	.LLST4
+ 749 021c 06       		.uleb128 0x6
+ 750 021d 16030000 		.4byte	.LASF20
+ 751 0221 01       		.byte	0x1
+ 752 0222 42       		.byte	0x42
+ 753 0223 68000000 		.4byte	0x68
+ 754 0227 D0000000 		.4byte	.LLST5
+ 755 022b 06       		.uleb128 0x6
+ 756 022c 20000000 		.4byte	.LASF21
+ 757 0230 01       		.byte	0x1
+ 758 0231 43       		.byte	0x43
+ 759 0232 68000000 		.4byte	0x68
+ 760 0236 EE000000 		.4byte	.LLST6
+ 761 023a 06       		.uleb128 0x6
+ 762 023b 66040000 		.4byte	.LASF22
+ 763 023f 01       		.byte	0x1
+ 764 0240 44       		.byte	0x44
+ 765 0241 68000000 		.4byte	0x68
+ 766 0245 EE000000 		.4byte	.LLST6
+ 767 0249 07       		.uleb128 0x7
+ 768 024a 10000000 		.4byte	.LVL22
+ 769 024e 51060000 		.4byte	0x651
+ 770 0252 5C020000 		.4byte	0x25c
+ 771 0256 08       		.uleb128 0x8
+ 772 0257 01       		.uleb128 0x1
+ 773 0258 50       		.byte	0x50
+ 774 0259 01       		.uleb128 0x1
+ 775 025a 30       		.byte	0x30
+ 776 025b 00       		.byte	0
+ 777 025c 07       		.uleb128 0x7
+ 778 025d 16000000 		.4byte	.LVL23
+ 779 0261 5C060000 		.4byte	0x65c
+ 780 0265 6F020000 		.4byte	0x26f
+ 781 0269 08       		.uleb128 0x8
+ 782 026a 01       		.uleb128 0x1
+ 783 026b 50       		.byte	0x50
+ 784 026c 01       		.uleb128 0x1
+ 785 026d 30       		.byte	0x30
+ 786 026e 00       		.byte	0
+ 787 026f 07       		.uleb128 0x7
+ 788 0270 1E000000 		.4byte	.LVL26
+ 789 0274 51060000 		.4byte	0x651
+ 790 0278 82020000 		.4byte	0x282
+ 791 027c 08       		.uleb128 0x8
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 18
+
+
+ 792 027d 01       		.uleb128 0x1
+ 793 027e 50       		.byte	0x50
+ 794 027f 01       		.uleb128 0x1
+ 795 0280 31       		.byte	0x31
+ 796 0281 00       		.byte	0
+ 797 0282 07       		.uleb128 0x7
+ 798 0283 24000000 		.4byte	.LVL27
+ 799 0287 5C060000 		.4byte	0x65c
+ 800 028b 95020000 		.4byte	0x295
+ 801 028f 08       		.uleb128 0x8
+ 802 0290 01       		.uleb128 0x1
+ 803 0291 50       		.byte	0x50
+ 804 0292 01       		.uleb128 0x1
+ 805 0293 31       		.byte	0x31
+ 806 0294 00       		.byte	0
+ 807 0295 09       		.uleb128 0x9
+ 808 0296 28000000 		.4byte	.LVL28
+ 809 029a 67060000 		.4byte	0x667
+ 810 029e 07       		.uleb128 0x7
+ 811 029f 30000000 		.4byte	.LVL30
+ 812 02a3 72060000 		.4byte	0x672
+ 813 02a7 B2020000 		.4byte	0x2b2
+ 814 02ab 08       		.uleb128 0x8
+ 815 02ac 01       		.uleb128 0x1
+ 816 02ad 50       		.byte	0x50
+ 817 02ae 02       		.uleb128 0x2
+ 818 02af 74       		.byte	0x74
+ 819 02b0 00       		.sleb128 0
+ 820 02b1 00       		.byte	0
+ 821 02b2 09       		.uleb128 0x9
+ 822 02b3 34000000 		.4byte	.LVL31
+ 823 02b7 7D060000 		.4byte	0x67d
+ 824 02bb 07       		.uleb128 0x7
+ 825 02bc 3A000000 		.4byte	.LVL32
+ 826 02c0 88060000 		.4byte	0x688
+ 827 02c4 CF020000 		.4byte	0x2cf
+ 828 02c8 08       		.uleb128 0x8
+ 829 02c9 01       		.uleb128 0x1
+ 830 02ca 50       		.byte	0x50
+ 831 02cb 02       		.uleb128 0x2
+ 832 02cc 74       		.byte	0x74
+ 833 02cd 00       		.sleb128 0
+ 834 02ce 00       		.byte	0
+ 835 02cf 09       		.uleb128 0x9
+ 836 02d0 4E000000 		.4byte	.LVL35
+ 837 02d4 E0060000 		.4byte	0x6e0
+ 838 02d8 09       		.uleb128 0x9
+ 839 02d9 58000000 		.4byte	.LVL38
+ 840 02dd 9E060000 		.4byte	0x69e
+ 841 02e1 09       		.uleb128 0x9
+ 842 02e2 5E000000 		.4byte	.LVL40
+ 843 02e6 A9060000 		.4byte	0x6a9
+ 844 02ea 09       		.uleb128 0x9
+ 845 02eb 66000000 		.4byte	.LVL43
+ 846 02ef 9E060000 		.4byte	0x69e
+ 847 02f3 09       		.uleb128 0x9
+ 848 02f4 6C000000 		.4byte	.LVL45
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 19
+
+
+ 849 02f8 A9060000 		.4byte	0x6a9
+ 850 02fc 07       		.uleb128 0x7
+ 851 02fd 7E000000 		.4byte	.LVL48
+ 852 0301 B4060000 		.4byte	0x6b4
+ 853 0305 1F030000 		.4byte	0x31f
+ 854 0309 08       		.uleb128 0x8
+ 855 030a 01       		.uleb128 0x1
+ 856 030b 50       		.byte	0x50
+ 857 030c 02       		.uleb128 0x2
+ 858 030d 76       		.byte	0x76
+ 859 030e 00       		.sleb128 0
+ 860 030f 08       		.uleb128 0x8
+ 861 0310 01       		.uleb128 0x1
+ 862 0311 51       		.byte	0x51
+ 863 0312 05       		.uleb128 0x5
+ 864 0313 03       		.byte	0x3
+ 865 0314 00000000 		.4byte	.LC0
+ 866 0318 08       		.uleb128 0x8
+ 867 0319 01       		.uleb128 0x1
+ 868 031a 52       		.byte	0x52
+ 869 031b 02       		.uleb128 0x2
+ 870 031c 75       		.byte	0x75
+ 871 031d 00       		.sleb128 0
+ 872 031e 00       		.byte	0
+ 873 031f 07       		.uleb128 0x7
+ 874 0320 84000000 		.4byte	.LVL49
+ 875 0324 BF060000 		.4byte	0x6bf
+ 876 0328 33030000 		.4byte	0x333
+ 877 032c 08       		.uleb128 0x8
+ 878 032d 01       		.uleb128 0x1
+ 879 032e 50       		.byte	0x50
+ 880 032f 02       		.uleb128 0x2
+ 881 0330 76       		.byte	0x76
+ 882 0331 00       		.sleb128 0
+ 883 0332 00       		.byte	0
+ 884 0333 07       		.uleb128 0x7
+ 885 0334 8E000000 		.4byte	.LVL50
+ 886 0338 B4060000 		.4byte	0x6b4
+ 887 033c 56030000 		.4byte	0x356
+ 888 0340 08       		.uleb128 0x8
+ 889 0341 01       		.uleb128 0x1
+ 890 0342 50       		.byte	0x50
+ 891 0343 02       		.uleb128 0x2
+ 892 0344 76       		.byte	0x76
+ 893 0345 00       		.sleb128 0
+ 894 0346 08       		.uleb128 0x8
+ 895 0347 01       		.uleb128 0x1
+ 896 0348 51       		.byte	0x51
+ 897 0349 05       		.uleb128 0x5
+ 898 034a 03       		.byte	0x3
+ 899 034b 14000000 		.4byte	.LC1
+ 900 034f 08       		.uleb128 0x8
+ 901 0350 01       		.uleb128 0x1
+ 902 0351 52       		.byte	0x52
+ 903 0352 02       		.uleb128 0x2
+ 904 0353 74       		.byte	0x74
+ 905 0354 00       		.sleb128 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 20
+
+
+ 906 0355 00       		.byte	0
+ 907 0356 07       		.uleb128 0x7
+ 908 0357 94000000 		.4byte	.LVL51
+ 909 035b BF060000 		.4byte	0x6bf
+ 910 035f 6A030000 		.4byte	0x36a
+ 911 0363 08       		.uleb128 0x8
+ 912 0364 01       		.uleb128 0x1
+ 913 0365 50       		.byte	0x50
+ 914 0366 02       		.uleb128 0x2
+ 915 0367 76       		.byte	0x76
+ 916 0368 00       		.sleb128 0
+ 917 0369 00       		.byte	0
+ 918 036a 07       		.uleb128 0x7
+ 919 036b 9A000000 		.4byte	.LVL52
+ 920 036f EC060000 		.4byte	0x6ec
+ 921 0373 7D030000 		.4byte	0x37d
+ 922 0377 08       		.uleb128 0x8
+ 923 0378 01       		.uleb128 0x1
+ 924 0379 50       		.byte	0x50
+ 925 037a 01       		.uleb128 0x1
+ 926 037b 30       		.byte	0x30
+ 927 037c 00       		.byte	0
+ 928 037d 07       		.uleb128 0x7
+ 929 037e A0000000 		.4byte	.LVL53
+ 930 0382 F7060000 		.4byte	0x6f7
+ 931 0386 90030000 		.4byte	0x390
+ 932 038a 08       		.uleb128 0x8
+ 933 038b 01       		.uleb128 0x1
+ 934 038c 50       		.byte	0x50
+ 935 038d 01       		.uleb128 0x1
+ 936 038e 30       		.byte	0x30
+ 937 038f 00       		.byte	0
+ 938 0390 09       		.uleb128 0x9
+ 939 0391 A4000000 		.4byte	.LVL54
+ 940 0395 CA060000 		.4byte	0x6ca
+ 941 0399 09       		.uleb128 0x9
+ 942 039a A8000000 		.4byte	.LVL55
+ 943 039e D5060000 		.4byte	0x6d5
+ 944 03a2 00       		.byte	0
+ 945 03a3 0B       		.uleb128 0xb
+ 946 03a4 4F010000 		.4byte	.LASF23
+ 947 03a8 01       		.byte	0x1
+ 948 03a9 6D       		.byte	0x6d
+ 949 03aa 00000000 		.4byte	.LFB67
+ 950 03ae B0000000 		.4byte	.LFE67-.LFB67
+ 951 03b2 01       		.uleb128 0x1
+ 952 03b3 9C       		.byte	0x9c
+ 953 03b4 00050000 		.4byte	0x500
+ 954 03b8 0C       		.uleb128 0xc
+ 955 03b9 FB010000 		.4byte	.LASF25
+ 956 03bd 01       		.byte	0x1
+ 957 03be 6D       		.byte	0x6d
+ 958 03bf 68000000 		.4byte	0x68
+ 959 03c3 01010000 		.4byte	.LLST8
+ 960 03c7 0D       		.uleb128 0xd
+ 961 03c8 44010000 		.4byte	.LASF16
+ 962 03cc 01       		.byte	0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 21
+
+
+ 963 03cd 6E       		.byte	0x6e
+ 964 03ce 68000000 		.4byte	0x68
+ 965 03d2 06       		.uleb128 0x6
+ 966 03d3 5A040000 		.4byte	.LASF17
+ 967 03d7 01       		.byte	0x1
+ 968 03d8 6F       		.byte	0x6f
+ 969 03d9 68000000 		.4byte	0x68
+ 970 03dd 43010000 		.4byte	.LLST9
+ 971 03e1 06       		.uleb128 0x6
+ 972 03e2 16030000 		.4byte	.LASF20
+ 973 03e6 01       		.byte	0x1
+ 974 03e7 70       		.byte	0x70
+ 975 03e8 68000000 		.4byte	0x68
+ 976 03ec 61010000 		.4byte	.LLST10
+ 977 03f0 06       		.uleb128 0x6
+ 978 03f1 8A020000 		.4byte	.LASF24
+ 979 03f5 01       		.byte	0x1
+ 980 03f6 71       		.byte	0x71
+ 981 03f7 68000000 		.4byte	0x68
+ 982 03fb 7F010000 		.4byte	.LLST11
+ 983 03ff 06       		.uleb128 0x6
+ 984 0400 20000000 		.4byte	.LASF21
+ 985 0404 01       		.byte	0x1
+ 986 0405 72       		.byte	0x72
+ 987 0406 68000000 		.4byte	0x68
+ 988 040a C3010000 		.4byte	.LLST12
+ 989 040e 06       		.uleb128 0x6
+ 990 040f 66040000 		.4byte	.LASF22
+ 991 0413 01       		.byte	0x1
+ 992 0414 73       		.byte	0x73
+ 993 0415 68000000 		.4byte	0x68
+ 994 0419 C3010000 		.4byte	.LLST12
+ 995 041d 07       		.uleb128 0x7
+ 996 041e 10000000 		.4byte	.LVL60
+ 997 0422 51060000 		.4byte	0x651
+ 998 0426 30040000 		.4byte	0x430
+ 999 042a 08       		.uleb128 0x8
+ 1000 042b 01       		.uleb128 0x1
+ 1001 042c 50       		.byte	0x50
+ 1002 042d 01       		.uleb128 0x1
+ 1003 042e 30       		.byte	0x30
+ 1004 042f 00       		.byte	0
+ 1005 0430 07       		.uleb128 0x7
+ 1006 0431 16000000 		.4byte	.LVL61
+ 1007 0435 5C060000 		.4byte	0x65c
+ 1008 0439 43040000 		.4byte	0x443
+ 1009 043d 08       		.uleb128 0x8
+ 1010 043e 01       		.uleb128 0x1
+ 1011 043f 50       		.byte	0x50
+ 1012 0440 01       		.uleb128 0x1
+ 1013 0441 31       		.byte	0x31
+ 1014 0442 00       		.byte	0
+ 1015 0443 07       		.uleb128 0x7
+ 1016 0444 1E000000 		.4byte	.LVL64
+ 1017 0448 51060000 		.4byte	0x651
+ 1018 044c 56040000 		.4byte	0x456
+ 1019 0450 08       		.uleb128 0x8
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 22
+
+
+ 1020 0451 01       		.uleb128 0x1
+ 1021 0452 50       		.byte	0x50
+ 1022 0453 01       		.uleb128 0x1
+ 1023 0454 31       		.byte	0x31
+ 1024 0455 00       		.byte	0
+ 1025 0456 07       		.uleb128 0x7
+ 1026 0457 24000000 		.4byte	.LVL65
+ 1027 045b 5C060000 		.4byte	0x65c
+ 1028 045f 69040000 		.4byte	0x469
+ 1029 0463 08       		.uleb128 0x8
+ 1030 0464 01       		.uleb128 0x1
+ 1031 0465 50       		.byte	0x50
+ 1032 0466 01       		.uleb128 0x1
+ 1033 0467 30       		.byte	0x30
+ 1034 0468 00       		.byte	0
+ 1035 0469 09       		.uleb128 0x9
+ 1036 046a 28000000 		.4byte	.LVL66
+ 1037 046e 67060000 		.4byte	0x667
+ 1038 0472 07       		.uleb128 0x7
+ 1039 0473 30000000 		.4byte	.LVL68
+ 1040 0477 72060000 		.4byte	0x672
+ 1041 047b 86040000 		.4byte	0x486
+ 1042 047f 08       		.uleb128 0x8
+ 1043 0480 01       		.uleb128 0x1
+ 1044 0481 50       		.byte	0x50
+ 1045 0482 02       		.uleb128 0x2
+ 1046 0483 74       		.byte	0x74
+ 1047 0484 00       		.sleb128 0
+ 1048 0485 00       		.byte	0
+ 1049 0486 09       		.uleb128 0x9
+ 1050 0487 34000000 		.4byte	.LVL69
+ 1051 048b 7D060000 		.4byte	0x67d
+ 1052 048f 07       		.uleb128 0x7
+ 1053 0490 3A000000 		.4byte	.LVL70
+ 1054 0494 88060000 		.4byte	0x688
+ 1055 0498 A3040000 		.4byte	0x4a3
+ 1056 049c 08       		.uleb128 0x8
+ 1057 049d 01       		.uleb128 0x1
+ 1058 049e 50       		.byte	0x50
+ 1059 049f 02       		.uleb128 0x2
+ 1060 04a0 74       		.byte	0x74
+ 1061 04a1 00       		.sleb128 0
+ 1062 04a2 00       		.byte	0
+ 1063 04a3 09       		.uleb128 0x9
+ 1064 04a4 64000000 		.4byte	.LVL76
+ 1065 04a8 E0060000 		.4byte	0x6e0
+ 1066 04ac 09       		.uleb128 0x9
+ 1067 04ad 6E000000 		.4byte	.LVL79
+ 1068 04b1 9E060000 		.4byte	0x69e
+ 1069 04b5 09       		.uleb128 0x9
+ 1070 04b6 72000000 		.4byte	.LVL80
+ 1071 04ba A9060000 		.4byte	0x6a9
+ 1072 04be 09       		.uleb128 0x9
+ 1073 04bf 78000000 		.4byte	.LVL81
+ 1074 04c3 A9060000 		.4byte	0x6a9
+ 1075 04c7 07       		.uleb128 0x7
+ 1076 04c8 82000000 		.4byte	.LVL83
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 23
+
+
+ 1077 04cc EC060000 		.4byte	0x6ec
+ 1078 04d0 DA040000 		.4byte	0x4da
+ 1079 04d4 08       		.uleb128 0x8
+ 1080 04d5 01       		.uleb128 0x1
+ 1081 04d6 50       		.byte	0x50
+ 1082 04d7 01       		.uleb128 0x1
+ 1083 04d8 30       		.byte	0x30
+ 1084 04d9 00       		.byte	0
+ 1085 04da 07       		.uleb128 0x7
+ 1086 04db 88000000 		.4byte	.LVL84
+ 1087 04df F7060000 		.4byte	0x6f7
+ 1088 04e3 ED040000 		.4byte	0x4ed
+ 1089 04e7 08       		.uleb128 0x8
+ 1090 04e8 01       		.uleb128 0x1
+ 1091 04e9 50       		.byte	0x50
+ 1092 04ea 01       		.uleb128 0x1
+ 1093 04eb 30       		.byte	0x30
+ 1094 04ec 00       		.byte	0
+ 1095 04ed 09       		.uleb128 0x9
+ 1096 04ee 8C000000 		.4byte	.LVL85
+ 1097 04f2 CA060000 		.4byte	0x6ca
+ 1098 04f6 09       		.uleb128 0x9
+ 1099 04f7 90000000 		.4byte	.LVL86
+ 1100 04fb D5060000 		.4byte	0x6d5
+ 1101 04ff 00       		.byte	0
+ 1102 0500 0A       		.uleb128 0xa
+ 1103 0501 03030000 		.4byte	.LASF27
+ 1104 0505 01       		.byte	0x1
+ 1105 0506 A6       		.byte	0xa6
+ 1106 0507 00000000 		.4byte	.LFB68
+ 1107 050b 02000000 		.4byte	.LFE68-.LFB68
+ 1108 050f 01       		.uleb128 0x1
+ 1109 0510 9C       		.byte	0x9c
+ 1110 0511 0E       		.uleb128 0xe
+ 1111 0512 B7030000 		.4byte	.LASF28
+ 1112 0516 04       		.byte	0x4
+ 1113 0517 1207     		.2byte	0x712
+ 1114 0519 1D050000 		.4byte	0x51d
+ 1115 051d 0F       		.uleb128 0xf
+ 1116 051e 76000000 		.4byte	0x76
+ 1117 0522 10       		.uleb128 0x10
+ 1118 0523 9B020000 		.4byte	.LASF29
+ 1119 0527 05       		.byte	0x5
+ 1120 0528 1E       		.byte	0x1e
+ 1121 0529 68000000 		.4byte	0x68
+ 1122 052d 05       		.uleb128 0x5
+ 1123 052e 03       		.byte	0x3
+ 1124 052f 00000000 		.4byte	driveStraightEnable
+ 1125 0533 10       		.uleb128 0x10
+ 1126 0534 9F010000 		.4byte	.LASF30
+ 1127 0538 05       		.byte	0x5
+ 1128 0539 20       		.byte	0x20
+ 1129 053a 68000000 		.4byte	0x68
+ 1130 053e 05       		.uleb128 0x5
+ 1131 053f 03       		.byte	0x3
+ 1132 0540 00000000 		.4byte	currentPuckRackScanningIndex
+ 1133 0544 11       		.uleb128 0x11
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 24
+
+
+ 1134 0545 68000000 		.4byte	0x68
+ 1135 0549 54050000 		.4byte	0x554
+ 1136 054d 12       		.uleb128 0x12
+ 1137 054e 9D000000 		.4byte	0x9d
+ 1138 0552 04       		.byte	0x4
+ 1139 0553 00       		.byte	0
+ 1140 0554 10       		.uleb128 0x10
+ 1141 0555 28030000 		.4byte	.LASF31
+ 1142 0559 05       		.byte	0x5
+ 1143 055a 21       		.byte	0x21
+ 1144 055b 44050000 		.4byte	0x544
+ 1145 055f 05       		.uleb128 0x5
+ 1146 0560 03       		.byte	0x3
+ 1147 0561 00000000 		.4byte	puckRackColours
+ 1148 0565 10       		.uleb128 0x10
+ 1149 0566 80000000 		.4byte	.LASF32
+ 1150 056a 05       		.byte	0x5
+ 1151 056b 22       		.byte	0x22
+ 1152 056c 44050000 		.4byte	0x544
+ 1153 0570 05       		.uleb128 0x5
+ 1154 0571 03       		.byte	0x3
+ 1155 0572 00000000 		.4byte	puckRackOffsetsFromWest
+ 1156 0576 10       		.uleb128 0x10
+ 1157 0577 7C020000 		.4byte	.LASF33
+ 1158 057b 05       		.byte	0x5
+ 1159 057c 23       		.byte	0x23
+ 1160 057d 68000000 		.4byte	0x68
+ 1161 0581 05       		.uleb128 0x5
+ 1162 0582 03       		.byte	0x3
+ 1163 0583 00000000 		.4byte	sweeping
+ 1164 0587 11       		.uleb128 0x11
+ 1165 0588 81000000 		.4byte	0x81
+ 1166 058c 97050000 		.4byte	0x597
+ 1167 0590 12       		.uleb128 0x12
+ 1168 0591 9D000000 		.4byte	0x9d
+ 1169 0595 03       		.byte	0x3
+ 1170 0596 00       		.byte	0
+ 1171 0597 10       		.uleb128 0x10
+ 1172 0598 2B020000 		.4byte	.LASF34
+ 1173 059c 05       		.byte	0x5
+ 1174 059d 24       		.byte	0x24
+ 1175 059e 87050000 		.4byte	0x587
+ 1176 05a2 05       		.uleb128 0x5
+ 1177 05a3 03       		.byte	0x3
+ 1178 05a4 00000000 		.4byte	block_edge_location
+ 1179 05a8 10       		.uleb128 0x10
+ 1180 05a9 8E010000 		.4byte	.LASF35
+ 1181 05ad 06       		.byte	0x6
+ 1182 05ae 7A       		.byte	0x7a
+ 1183 05af 81000000 		.4byte	0x81
+ 1184 05b3 05       		.uleb128 0x5
+ 1185 05b4 03       		.byte	0x3
+ 1186 05b5 00000000 		.4byte	puckPileLocation
+ 1187 05b9 10       		.uleb128 0x10
+ 1188 05ba 64000000 		.4byte	.LASF36
+ 1189 05be 05       		.byte	0x5
+ 1190 05bf 26       		.byte	0x26
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 25
+
+
+ 1191 05c0 33000000 		.4byte	0x33
+ 1192 05c4 05       		.uleb128 0x5
+ 1193 05c5 03       		.byte	0x3
+ 1194 05c6 00000000 		.4byte	drivingForwardFlag
+ 1195 05ca 10       		.uleb128 0x10
+ 1196 05cb 5B010000 		.4byte	.LASF37
+ 1197 05cf 05       		.byte	0x5
+ 1198 05d0 27       		.byte	0x27
+ 1199 05d1 33000000 		.4byte	0x33
+ 1200 05d5 05       		.uleb128 0x5
+ 1201 05d6 03       		.byte	0x3
+ 1202 05d7 00000000 		.4byte	drivingBackwardFlag
+ 1203 05db 10       		.uleb128 0x10
+ 1204 05dc 2B000000 		.4byte	.LASF38
+ 1205 05e0 05       		.byte	0x5
+ 1206 05e1 28       		.byte	0x28
+ 1207 05e2 33000000 		.4byte	0x33
+ 1208 05e6 05       		.uleb128 0x5
+ 1209 05e7 03       		.byte	0x3
+ 1210 05e8 00000000 		.4byte	turningLeftFlag
+ 1211 05ec 10       		.uleb128 0x10
+ 1212 05ed FD000000 		.4byte	.LASF39
+ 1213 05f1 05       		.byte	0x5
+ 1214 05f2 29       		.byte	0x29
+ 1215 05f3 33000000 		.4byte	0x33
+ 1216 05f7 05       		.uleb128 0x5
+ 1217 05f8 03       		.byte	0x3
+ 1218 05f9 00000000 		.4byte	turningRightFlag
+ 1219 05fd 10       		.uleb128 0x10
+ 1220 05fe 72040000 		.4byte	.LASF40
+ 1221 0602 05       		.byte	0x5
+ 1222 0603 2C       		.byte	0x2c
+ 1223 0604 68000000 		.4byte	0x68
+ 1224 0608 05       		.uleb128 0x5
+ 1225 0609 03       		.byte	0x3
+ 1226 060a 00000000 		.4byte	initialisation
+ 1227 060e 11       		.uleb128 0x11
+ 1228 060f 8F000000 		.4byte	0x8f
+ 1229 0613 1E060000 		.4byte	0x61e
+ 1230 0617 12       		.uleb128 0x12
+ 1231 0618 9D000000 		.4byte	0x9d
+ 1232 061c 1F       		.byte	0x1f
+ 1233 061d 00       		.byte	0
+ 1234 061e 10       		.uleb128 0x10
+ 1235 061f 92030000 		.4byte	.LASF41
+ 1236 0623 05       		.byte	0x5
+ 1237 0624 2A       		.byte	0x2a
+ 1238 0625 0E060000 		.4byte	0x60e
+ 1239 0629 05       		.uleb128 0x5
+ 1240 062a 03       		.byte	0x3
+ 1241 062b 00000000 		.4byte	output
+ 1242 062f 10       		.uleb128 0x10
+ 1243 0630 63020000 		.4byte	.LASF42
+ 1244 0634 01       		.byte	0x1
+ 1245 0635 1F       		.byte	0x1f
+ 1246 0636 68000000 		.4byte	0x68
+ 1247 063a 05       		.uleb128 0x5
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 26
+
+
+ 1248 063b 03       		.byte	0x3
+ 1249 063c 00000000 		.4byte	SPEED
+ 1250 0640 10       		.uleb128 0x10
+ 1251 0641 A4000000 		.4byte	.LASF43
+ 1252 0645 05       		.byte	0x5
+ 1253 0646 2E       		.byte	0x2e
+ 1254 0647 68000000 		.4byte	0x68
+ 1255 064b 05       		.uleb128 0x5
+ 1256 064c 03       		.byte	0x3
+ 1257 064d 00000000 		.4byte	ultrasonic_flag
+ 1258 0651 13       		.uleb128 0x13
+ 1259 0652 EA020000 		.4byte	.LASF44
+ 1260 0656 EA020000 		.4byte	.LASF44
+ 1261 065a 07       		.byte	0x7
+ 1262 065b 2F       		.byte	0x2f
+ 1263 065c 13       		.uleb128 0x13
+ 1264 065d E3000000 		.4byte	.LASF45
+ 1265 0661 E3000000 		.4byte	.LASF45
+ 1266 0665 08       		.byte	0x8
+ 1267 0666 2F       		.byte	0x2f
+ 1268 0667 13       		.uleb128 0x13
+ 1269 0668 B2040000 		.4byte	.LASF46
+ 1270 066c B2040000 		.4byte	.LASF46
+ 1271 0670 09       		.byte	0x9
+ 1272 0671 DD       		.byte	0xdd
+ 1273 0672 13       		.uleb128 0x13
+ 1274 0673 93040000 		.4byte	.LASF47
+ 1275 0677 93040000 		.4byte	.LASF47
+ 1276 067b 09       		.byte	0x9
+ 1277 067c C3       		.byte	0xc3
+ 1278 067d 13       		.uleb128 0x13
+ 1279 067e C9010000 		.4byte	.LASF48
+ 1280 0682 C9010000 		.4byte	.LASF48
+ 1281 0686 0A       		.byte	0xa
+ 1282 0687 DD       		.byte	0xdd
+ 1283 0688 13       		.uleb128 0x13
+ 1284 0689 00000000 		.4byte	.LASF49
+ 1285 068d 00000000 		.4byte	.LASF49
+ 1286 0691 0A       		.byte	0xa
+ 1287 0692 C3       		.byte	0xc3
+ 1288 0693 13       		.uleb128 0x13
+ 1289 0694 52040000 		.4byte	.LASF50
+ 1290 0698 52040000 		.4byte	.LASF50
+ 1291 069c 0B       		.byte	0xb
+ 1292 069d 76       		.byte	0x76
+ 1293 069e 13       		.uleb128 0x13
+ 1294 069f 99030000 		.4byte	.LASF51
+ 1295 06a3 99030000 		.4byte	.LASF51
+ 1296 06a7 0C       		.byte	0xc
+ 1297 06a8 4E       		.byte	0x4e
+ 1298 06a9 13       		.uleb128 0x13
+ 1299 06aa 3B000000 		.4byte	.LASF52
+ 1300 06ae 3B000000 		.4byte	.LASF52
+ 1301 06b2 0D       		.byte	0xd
+ 1302 06b3 4E       		.byte	0x4e
+ 1303 06b4 13       		.uleb128 0x13
+ 1304 06b5 11020000 		.4byte	.LASF53
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 27
+
+
+ 1305 06b9 11020000 		.4byte	.LASF53
+ 1306 06bd 0E       		.byte	0xe
+ 1307 06be E7       		.byte	0xe7
+ 1308 06bf 13       		.uleb128 0x13
+ 1309 06c0 D9020000 		.4byte	.LASF54
+ 1310 06c4 D9020000 		.4byte	.LASF54
+ 1311 06c8 0F       		.byte	0xf
+ 1312 06c9 8B       		.byte	0x8b
+ 1313 06ca 13       		.uleb128 0x13
+ 1314 06cb E3010000 		.4byte	.LASF55
+ 1315 06cf E3010000 		.4byte	.LASF55
+ 1316 06d3 09       		.byte	0x9
+ 1317 06d4 DC       		.byte	0xdc
+ 1318 06d5 13       		.uleb128 0x13
+ 1319 06d6 22010000 		.4byte	.LASF56
+ 1320 06da 22010000 		.4byte	.LASF56
+ 1321 06de 0A       		.byte	0xa
+ 1322 06df DC       		.byte	0xdc
+ 1323 06e0 14       		.uleb128 0x14
+ 1324 06e1 19020000 		.4byte	.LASF57
+ 1325 06e5 19020000 		.4byte	.LASF57
+ 1326 06e9 10       		.byte	0x10
+ 1327 06ea 4B01     		.2byte	0x14b
+ 1328 06ec 13       		.uleb128 0x13
+ 1329 06ed C5000000 		.4byte	.LASF58
+ 1330 06f1 C5000000 		.4byte	.LASF58
+ 1331 06f5 0C       		.byte	0xc
+ 1332 06f6 4F       		.byte	0x4f
+ 1333 06f7 13       		.uleb128 0x13
+ 1334 06f8 6F010000 		.4byte	.LASF59
+ 1335 06fc 6F010000 		.4byte	.LASF59
+ 1336 0700 0D       		.byte	0xd
+ 1337 0701 4F       		.byte	0x4f
+ 1338 0702 00       		.byte	0
+ 1339              		.section	.debug_abbrev,"",%progbits
+ 1340              	.Ldebug_abbrev0:
+ 1341 0000 01       		.uleb128 0x1
+ 1342 0001 11       		.uleb128 0x11
+ 1343 0002 01       		.byte	0x1
+ 1344 0003 25       		.uleb128 0x25
+ 1345 0004 0E       		.uleb128 0xe
+ 1346 0005 13       		.uleb128 0x13
+ 1347 0006 0B       		.uleb128 0xb
+ 1348 0007 03       		.uleb128 0x3
+ 1349 0008 0E       		.uleb128 0xe
+ 1350 0009 1B       		.uleb128 0x1b
+ 1351 000a 0E       		.uleb128 0xe
+ 1352 000b 55       		.uleb128 0x55
+ 1353 000c 17       		.uleb128 0x17
+ 1354 000d 11       		.uleb128 0x11
+ 1355 000e 01       		.uleb128 0x1
+ 1356 000f 10       		.uleb128 0x10
+ 1357 0010 17       		.uleb128 0x17
+ 1358 0011 00       		.byte	0
+ 1359 0012 00       		.byte	0
+ 1360 0013 02       		.uleb128 0x2
+ 1361 0014 24       		.uleb128 0x24
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 28
+
+
+ 1362 0015 00       		.byte	0
+ 1363 0016 0B       		.uleb128 0xb
+ 1364 0017 0B       		.uleb128 0xb
+ 1365 0018 3E       		.uleb128 0x3e
+ 1366 0019 0B       		.uleb128 0xb
+ 1367 001a 03       		.uleb128 0x3
+ 1368 001b 0E       		.uleb128 0xe
+ 1369 001c 00       		.byte	0
+ 1370 001d 00       		.byte	0
+ 1371 001e 03       		.uleb128 0x3
+ 1372 001f 16       		.uleb128 0x16
+ 1373 0020 00       		.byte	0
+ 1374 0021 03       		.uleb128 0x3
+ 1375 0022 0E       		.uleb128 0xe
+ 1376 0023 3A       		.uleb128 0x3a
+ 1377 0024 0B       		.uleb128 0xb
+ 1378 0025 3B       		.uleb128 0x3b
+ 1379 0026 0B       		.uleb128 0xb
+ 1380 0027 49       		.uleb128 0x49
+ 1381 0028 13       		.uleb128 0x13
+ 1382 0029 00       		.byte	0
+ 1383 002a 00       		.byte	0
+ 1384 002b 04       		.uleb128 0x4
+ 1385 002c 24       		.uleb128 0x24
+ 1386 002d 00       		.byte	0
+ 1387 002e 0B       		.uleb128 0xb
+ 1388 002f 0B       		.uleb128 0xb
+ 1389 0030 3E       		.uleb128 0x3e
+ 1390 0031 0B       		.uleb128 0xb
+ 1391 0032 03       		.uleb128 0x3
+ 1392 0033 08       		.uleb128 0x8
+ 1393 0034 00       		.byte	0
+ 1394 0035 00       		.byte	0
+ 1395 0036 05       		.uleb128 0x5
+ 1396 0037 2E       		.uleb128 0x2e
+ 1397 0038 01       		.byte	0x1
+ 1398 0039 3F       		.uleb128 0x3f
+ 1399 003a 19       		.uleb128 0x19
+ 1400 003b 03       		.uleb128 0x3
+ 1401 003c 0E       		.uleb128 0xe
+ 1402 003d 3A       		.uleb128 0x3a
+ 1403 003e 0B       		.uleb128 0xb
+ 1404 003f 3B       		.uleb128 0x3b
+ 1405 0040 0B       		.uleb128 0xb
+ 1406 0041 27       		.uleb128 0x27
+ 1407 0042 19       		.uleb128 0x19
+ 1408 0043 11       		.uleb128 0x11
+ 1409 0044 01       		.uleb128 0x1
+ 1410 0045 12       		.uleb128 0x12
+ 1411 0046 06       		.uleb128 0x6
+ 1412 0047 40       		.uleb128 0x40
+ 1413 0048 18       		.uleb128 0x18
+ 1414 0049 9742     		.uleb128 0x2117
+ 1415 004b 19       		.uleb128 0x19
+ 1416 004c 01       		.uleb128 0x1
+ 1417 004d 13       		.uleb128 0x13
+ 1418 004e 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 29
+
+
+ 1419 004f 00       		.byte	0
+ 1420 0050 06       		.uleb128 0x6
+ 1421 0051 34       		.uleb128 0x34
+ 1422 0052 00       		.byte	0
+ 1423 0053 03       		.uleb128 0x3
+ 1424 0054 0E       		.uleb128 0xe
+ 1425 0055 3A       		.uleb128 0x3a
+ 1426 0056 0B       		.uleb128 0xb
+ 1427 0057 3B       		.uleb128 0x3b
+ 1428 0058 0B       		.uleb128 0xb
+ 1429 0059 49       		.uleb128 0x49
+ 1430 005a 13       		.uleb128 0x13
+ 1431 005b 02       		.uleb128 0x2
+ 1432 005c 17       		.uleb128 0x17
+ 1433 005d 00       		.byte	0
+ 1434 005e 00       		.byte	0
+ 1435 005f 07       		.uleb128 0x7
+ 1436 0060 898201   		.uleb128 0x4109
+ 1437 0063 01       		.byte	0x1
+ 1438 0064 11       		.uleb128 0x11
+ 1439 0065 01       		.uleb128 0x1
+ 1440 0066 31       		.uleb128 0x31
+ 1441 0067 13       		.uleb128 0x13
+ 1442 0068 01       		.uleb128 0x1
+ 1443 0069 13       		.uleb128 0x13
+ 1444 006a 00       		.byte	0
+ 1445 006b 00       		.byte	0
+ 1446 006c 08       		.uleb128 0x8
+ 1447 006d 8A8201   		.uleb128 0x410a
+ 1448 0070 00       		.byte	0
+ 1449 0071 02       		.uleb128 0x2
+ 1450 0072 18       		.uleb128 0x18
+ 1451 0073 9142     		.uleb128 0x2111
+ 1452 0075 18       		.uleb128 0x18
+ 1453 0076 00       		.byte	0
+ 1454 0077 00       		.byte	0
+ 1455 0078 09       		.uleb128 0x9
+ 1456 0079 898201   		.uleb128 0x4109
+ 1457 007c 00       		.byte	0
+ 1458 007d 11       		.uleb128 0x11
+ 1459 007e 01       		.uleb128 0x1
+ 1460 007f 31       		.uleb128 0x31
+ 1461 0080 13       		.uleb128 0x13
+ 1462 0081 00       		.byte	0
+ 1463 0082 00       		.byte	0
+ 1464 0083 0A       		.uleb128 0xa
+ 1465 0084 2E       		.uleb128 0x2e
+ 1466 0085 00       		.byte	0
+ 1467 0086 3F       		.uleb128 0x3f
+ 1468 0087 19       		.uleb128 0x19
+ 1469 0088 03       		.uleb128 0x3
+ 1470 0089 0E       		.uleb128 0xe
+ 1471 008a 3A       		.uleb128 0x3a
+ 1472 008b 0B       		.uleb128 0xb
+ 1473 008c 3B       		.uleb128 0x3b
+ 1474 008d 0B       		.uleb128 0xb
+ 1475 008e 27       		.uleb128 0x27
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 30
+
+
+ 1476 008f 19       		.uleb128 0x19
+ 1477 0090 11       		.uleb128 0x11
+ 1478 0091 01       		.uleb128 0x1
+ 1479 0092 12       		.uleb128 0x12
+ 1480 0093 06       		.uleb128 0x6
+ 1481 0094 40       		.uleb128 0x40
+ 1482 0095 18       		.uleb128 0x18
+ 1483 0096 9742     		.uleb128 0x2117
+ 1484 0098 19       		.uleb128 0x19
+ 1485 0099 00       		.byte	0
+ 1486 009a 00       		.byte	0
+ 1487 009b 0B       		.uleb128 0xb
+ 1488 009c 2E       		.uleb128 0x2e
+ 1489 009d 01       		.byte	0x1
+ 1490 009e 3F       		.uleb128 0x3f
+ 1491 009f 19       		.uleb128 0x19
+ 1492 00a0 03       		.uleb128 0x3
+ 1493 00a1 0E       		.uleb128 0xe
+ 1494 00a2 3A       		.uleb128 0x3a
+ 1495 00a3 0B       		.uleb128 0xb
+ 1496 00a4 3B       		.uleb128 0x3b
+ 1497 00a5 0B       		.uleb128 0xb
+ 1498 00a6 27       		.uleb128 0x27
+ 1499 00a7 19       		.uleb128 0x19
+ 1500 00a8 11       		.uleb128 0x11
+ 1501 00a9 01       		.uleb128 0x1
+ 1502 00aa 12       		.uleb128 0x12
+ 1503 00ab 06       		.uleb128 0x6
+ 1504 00ac 40       		.uleb128 0x40
+ 1505 00ad 18       		.uleb128 0x18
+ 1506 00ae 9642     		.uleb128 0x2116
+ 1507 00b0 19       		.uleb128 0x19
+ 1508 00b1 01       		.uleb128 0x1
+ 1509 00b2 13       		.uleb128 0x13
+ 1510 00b3 00       		.byte	0
+ 1511 00b4 00       		.byte	0
+ 1512 00b5 0C       		.uleb128 0xc
+ 1513 00b6 05       		.uleb128 0x5
+ 1514 00b7 00       		.byte	0
+ 1515 00b8 03       		.uleb128 0x3
+ 1516 00b9 0E       		.uleb128 0xe
+ 1517 00ba 3A       		.uleb128 0x3a
+ 1518 00bb 0B       		.uleb128 0xb
+ 1519 00bc 3B       		.uleb128 0x3b
+ 1520 00bd 0B       		.uleb128 0xb
+ 1521 00be 49       		.uleb128 0x49
+ 1522 00bf 13       		.uleb128 0x13
+ 1523 00c0 02       		.uleb128 0x2
+ 1524 00c1 17       		.uleb128 0x17
+ 1525 00c2 00       		.byte	0
+ 1526 00c3 00       		.byte	0
+ 1527 00c4 0D       		.uleb128 0xd
+ 1528 00c5 34       		.uleb128 0x34
+ 1529 00c6 00       		.byte	0
+ 1530 00c7 03       		.uleb128 0x3
+ 1531 00c8 0E       		.uleb128 0xe
+ 1532 00c9 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 31
+
+
+ 1533 00ca 0B       		.uleb128 0xb
+ 1534 00cb 3B       		.uleb128 0x3b
+ 1535 00cc 0B       		.uleb128 0xb
+ 1536 00cd 49       		.uleb128 0x49
+ 1537 00ce 13       		.uleb128 0x13
+ 1538 00cf 00       		.byte	0
+ 1539 00d0 00       		.byte	0
+ 1540 00d1 0E       		.uleb128 0xe
+ 1541 00d2 34       		.uleb128 0x34
+ 1542 00d3 00       		.byte	0
+ 1543 00d4 03       		.uleb128 0x3
+ 1544 00d5 0E       		.uleb128 0xe
+ 1545 00d6 3A       		.uleb128 0x3a
+ 1546 00d7 0B       		.uleb128 0xb
+ 1547 00d8 3B       		.uleb128 0x3b
+ 1548 00d9 05       		.uleb128 0x5
+ 1549 00da 49       		.uleb128 0x49
+ 1550 00db 13       		.uleb128 0x13
+ 1551 00dc 3F       		.uleb128 0x3f
+ 1552 00dd 19       		.uleb128 0x19
+ 1553 00de 3C       		.uleb128 0x3c
+ 1554 00df 19       		.uleb128 0x19
+ 1555 00e0 00       		.byte	0
+ 1556 00e1 00       		.byte	0
+ 1557 00e2 0F       		.uleb128 0xf
+ 1558 00e3 35       		.uleb128 0x35
+ 1559 00e4 00       		.byte	0
+ 1560 00e5 49       		.uleb128 0x49
+ 1561 00e6 13       		.uleb128 0x13
+ 1562 00e7 00       		.byte	0
+ 1563 00e8 00       		.byte	0
+ 1564 00e9 10       		.uleb128 0x10
+ 1565 00ea 34       		.uleb128 0x34
+ 1566 00eb 00       		.byte	0
+ 1567 00ec 03       		.uleb128 0x3
+ 1568 00ed 0E       		.uleb128 0xe
+ 1569 00ee 3A       		.uleb128 0x3a
+ 1570 00ef 0B       		.uleb128 0xb
+ 1571 00f0 3B       		.uleb128 0x3b
+ 1572 00f1 0B       		.uleb128 0xb
+ 1573 00f2 49       		.uleb128 0x49
+ 1574 00f3 13       		.uleb128 0x13
+ 1575 00f4 3F       		.uleb128 0x3f
+ 1576 00f5 19       		.uleb128 0x19
+ 1577 00f6 02       		.uleb128 0x2
+ 1578 00f7 18       		.uleb128 0x18
+ 1579 00f8 00       		.byte	0
+ 1580 00f9 00       		.byte	0
+ 1581 00fa 11       		.uleb128 0x11
+ 1582 00fb 01       		.uleb128 0x1
+ 1583 00fc 01       		.byte	0x1
+ 1584 00fd 49       		.uleb128 0x49
+ 1585 00fe 13       		.uleb128 0x13
+ 1586 00ff 01       		.uleb128 0x1
+ 1587 0100 13       		.uleb128 0x13
+ 1588 0101 00       		.byte	0
+ 1589 0102 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 32
+
+
+ 1590 0103 12       		.uleb128 0x12
+ 1591 0104 21       		.uleb128 0x21
+ 1592 0105 00       		.byte	0
+ 1593 0106 49       		.uleb128 0x49
+ 1594 0107 13       		.uleb128 0x13
+ 1595 0108 2F       		.uleb128 0x2f
+ 1596 0109 0B       		.uleb128 0xb
+ 1597 010a 00       		.byte	0
+ 1598 010b 00       		.byte	0
+ 1599 010c 13       		.uleb128 0x13
+ 1600 010d 2E       		.uleb128 0x2e
+ 1601 010e 00       		.byte	0
+ 1602 010f 3F       		.uleb128 0x3f
+ 1603 0110 19       		.uleb128 0x19
+ 1604 0111 3C       		.uleb128 0x3c
+ 1605 0112 19       		.uleb128 0x19
+ 1606 0113 6E       		.uleb128 0x6e
+ 1607 0114 0E       		.uleb128 0xe
+ 1608 0115 03       		.uleb128 0x3
+ 1609 0116 0E       		.uleb128 0xe
+ 1610 0117 3A       		.uleb128 0x3a
+ 1611 0118 0B       		.uleb128 0xb
+ 1612 0119 3B       		.uleb128 0x3b
+ 1613 011a 0B       		.uleb128 0xb
+ 1614 011b 00       		.byte	0
+ 1615 011c 00       		.byte	0
+ 1616 011d 14       		.uleb128 0x14
+ 1617 011e 2E       		.uleb128 0x2e
+ 1618 011f 00       		.byte	0
+ 1619 0120 3F       		.uleb128 0x3f
+ 1620 0121 19       		.uleb128 0x19
+ 1621 0122 3C       		.uleb128 0x3c
+ 1622 0123 19       		.uleb128 0x19
+ 1623 0124 6E       		.uleb128 0x6e
+ 1624 0125 0E       		.uleb128 0xe
+ 1625 0126 03       		.uleb128 0x3
+ 1626 0127 0E       		.uleb128 0xe
+ 1627 0128 3A       		.uleb128 0x3a
+ 1628 0129 0B       		.uleb128 0xb
+ 1629 012a 3B       		.uleb128 0x3b
+ 1630 012b 05       		.uleb128 0x5
+ 1631 012c 00       		.byte	0
+ 1632 012d 00       		.byte	0
+ 1633 012e 00       		.byte	0
+ 1634              		.section	.debug_loc,"",%progbits
+ 1635              	.Ldebug_loc0:
+ 1636              	.LLST0:
+ 1637 0000 32000000 		.4byte	.LVL8
+ 1638 0004 35000000 		.4byte	.LVL9-1
+ 1639 0008 0100     		.2byte	0x1
+ 1640 000a 50       		.byte	0x50
+ 1641 000b 35000000 		.4byte	.LVL9-1
+ 1642 000f 64000000 		.4byte	.LVL18
+ 1643 0013 0100     		.2byte	0x1
+ 1644 0015 56       		.byte	0x56
+ 1645 0016 00000000 		.4byte	0
+ 1646 001a 00000000 		.4byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 33
+
+
+ 1647              	.LLST1:
+ 1648 001e 38000000 		.4byte	.LVL10
+ 1649 0022 40000000 		.4byte	.LVL11
+ 1650 0026 0100     		.2byte	0x1
+ 1651 0028 50       		.byte	0x50
+ 1652 0029 40000000 		.4byte	.LVL11
+ 1653 002d 64000000 		.4byte	.LVL18
+ 1654 0031 0100     		.2byte	0x1
+ 1655 0033 55       		.byte	0x55
+ 1656 0034 00000000 		.4byte	0
+ 1657 0038 00000000 		.4byte	0
+ 1658              	.LLST2:
+ 1659 003c 00000000 		.4byte	.LVL19
+ 1660 0040 0C000000 		.4byte	.LVL21
+ 1661 0044 0100     		.2byte	0x1
+ 1662 0046 50       		.byte	0x50
+ 1663 0047 0C000000 		.4byte	.LVL21
+ 1664 004b 18000000 		.4byte	.LVL24
+ 1665 004f 0100     		.2byte	0x1
+ 1666 0051 55       		.byte	0x55
+ 1667 0052 18000000 		.4byte	.LVL24
+ 1668 0056 1A000000 		.4byte	.LVL25
+ 1669 005a 0100     		.2byte	0x1
+ 1670 005c 50       		.byte	0x50
+ 1671 005d 1A000000 		.4byte	.LVL25
+ 1672 0061 5A000000 		.4byte	.LVL39
+ 1673 0065 0100     		.2byte	0x1
+ 1674 0067 55       		.byte	0x55
+ 1675 0068 5A000000 		.4byte	.LVL39
+ 1676 006c C8000000 		.4byte	.LFE66
+ 1677 0070 0400     		.2byte	0x4
+ 1678 0072 F3       		.byte	0xf3
+ 1679 0073 01       		.uleb128 0x1
+ 1680 0074 50       		.byte	0x50
+ 1681 0075 9F       		.byte	0x9f
+ 1682 0076 00000000 		.4byte	0
+ 1683 007a 00000000 		.4byte	0
+ 1684              	.LLST3:
+ 1685 007e 5A000000 		.4byte	.LVL39
+ 1686 0082 5D000000 		.4byte	.LVL40-1
+ 1687 0086 0100     		.2byte	0x1
+ 1688 0088 50       		.byte	0x50
+ 1689 0089 5D000000 		.4byte	.LVL40-1
+ 1690 008d 68000000 		.4byte	.LVL44
+ 1691 0091 0100     		.2byte	0x1
+ 1692 0093 55       		.byte	0x55
+ 1693 0094 68000000 		.4byte	.LVL44
+ 1694 0098 6B000000 		.4byte	.LVL45-1
+ 1695 009c 0100     		.2byte	0x1
+ 1696 009e 50       		.byte	0x50
+ 1697 009f 6B000000 		.4byte	.LVL45-1
+ 1698 00a3 AA000000 		.4byte	.LVL56
+ 1699 00a7 0100     		.2byte	0x1
+ 1700 00a9 55       		.byte	0x55
+ 1701 00aa 00000000 		.4byte	0
+ 1702 00ae 00000000 		.4byte	0
+ 1703              	.LLST4:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 34
+
+
+ 1704 00b2 60000000 		.4byte	.LVL41
+ 1705 00b6 62000000 		.4byte	.LVL42
+ 1706 00ba 0100     		.2byte	0x1
+ 1707 00bc 50       		.byte	0x50
+ 1708 00bd 62000000 		.4byte	.LVL42
+ 1709 00c1 AA000000 		.4byte	.LVL56
+ 1710 00c5 0100     		.2byte	0x1
+ 1711 00c7 54       		.byte	0x54
+ 1712 00c8 00000000 		.4byte	0
+ 1713 00cc 00000000 		.4byte	0
+ 1714              	.LLST5:
+ 1715 00d0 54000000 		.4byte	.LVL37
+ 1716 00d4 57000000 		.4byte	.LVL38-1
+ 1717 00d8 0100     		.2byte	0x1
+ 1718 00da 50       		.byte	0x50
+ 1719 00db 57000000 		.4byte	.LVL38-1
+ 1720 00df 74000000 		.4byte	.LVL47
+ 1721 00e3 0100     		.2byte	0x1
+ 1722 00e5 56       		.byte	0x56
+ 1723 00e6 00000000 		.4byte	0
+ 1724 00ea 00000000 		.4byte	0
+ 1725              	.LLST6:
+ 1726 00ee 06000000 		.4byte	.LVL20
+ 1727 00f2 2A000000 		.4byte	.LVL29
+ 1728 00f6 0100     		.2byte	0x1
+ 1729 00f8 54       		.byte	0x54
+ 1730 00f9 00000000 		.4byte	0
+ 1731 00fd 00000000 		.4byte	0
+ 1732              	.LLST8:
+ 1733 0101 00000000 		.4byte	.LVL57
+ 1734 0105 0C000000 		.4byte	.LVL59
+ 1735 0109 0100     		.2byte	0x1
+ 1736 010b 50       		.byte	0x50
+ 1737 010c 0C000000 		.4byte	.LVL59
+ 1738 0110 18000000 		.4byte	.LVL62
+ 1739 0114 0100     		.2byte	0x1
+ 1740 0116 55       		.byte	0x55
+ 1741 0117 18000000 		.4byte	.LVL62
+ 1742 011b 1A000000 		.4byte	.LVL63
+ 1743 011f 0100     		.2byte	0x1
+ 1744 0121 50       		.byte	0x50
+ 1745 0122 1A000000 		.4byte	.LVL63
+ 1746 0126 92000000 		.4byte	.LVL87
+ 1747 012a 0100     		.2byte	0x1
+ 1748 012c 55       		.byte	0x55
+ 1749 012d 92000000 		.4byte	.LVL87
+ 1750 0131 B0000000 		.4byte	.LFE67
+ 1751 0135 0400     		.2byte	0x4
+ 1752 0137 F3       		.byte	0xf3
+ 1753 0138 01       		.uleb128 0x1
+ 1754 0139 50       		.byte	0x50
+ 1755 013a 9F       		.byte	0x9f
+ 1756 013b 00000000 		.4byte	0
+ 1757 013f 00000000 		.4byte	0
+ 1758              	.LLST9:
+ 1759 0143 72000000 		.4byte	.LVL80
+ 1760 0147 77000000 		.4byte	.LVL81-1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 35
+
+
+ 1761 014b 0100     		.2byte	0x1
+ 1762 014d 50       		.byte	0x50
+ 1763 014e 78000000 		.4byte	.LVL81
+ 1764 0152 7E000000 		.4byte	.LVL82
+ 1765 0156 0100     		.2byte	0x1
+ 1766 0158 50       		.byte	0x50
+ 1767 0159 00000000 		.4byte	0
+ 1768 015d 00000000 		.4byte	0
+ 1769              	.LLST10:
+ 1770 0161 6A000000 		.4byte	.LVL78
+ 1771 0165 6D000000 		.4byte	.LVL79-1
+ 1772 0169 0100     		.2byte	0x1
+ 1773 016b 50       		.byte	0x50
+ 1774 016c 6D000000 		.4byte	.LVL79-1
+ 1775 0170 92000000 		.4byte	.LVL87
+ 1776 0174 0100     		.2byte	0x1
+ 1777 0176 54       		.byte	0x54
+ 1778 0177 00000000 		.4byte	0
+ 1779 017b 00000000 		.4byte	0
+ 1780              	.LLST11:
+ 1781 017f 3A000000 		.4byte	.LVL70
+ 1782 0183 40000000 		.4byte	.LVL71
+ 1783 0187 0600     		.2byte	0x6
+ 1784 0189 75       		.byte	0x75
+ 1785 018a 00       		.sleb128 0
+ 1786 018b 08       		.byte	0x8
+ 1787 018c 6B       		.byte	0x6b
+ 1788 018d 1E       		.byte	0x1e
+ 1789 018e 9F       		.byte	0x9f
+ 1790 018f 40000000 		.4byte	.LVL71
+ 1791 0193 43000000 		.4byte	.LVL72-1
+ 1792 0197 0100     		.2byte	0x1
+ 1793 0199 50       		.byte	0x50
+ 1794 019a 43000000 		.4byte	.LVL72-1
+ 1795 019e 92000000 		.4byte	.LVL87
+ 1796 01a2 0600     		.2byte	0x6
+ 1797 01a4 75       		.byte	0x75
+ 1798 01a5 00       		.sleb128 0
+ 1799 01a6 08       		.byte	0x8
+ 1800 01a7 6B       		.byte	0x6b
+ 1801 01a8 1E       		.byte	0x1e
+ 1802 01a9 9F       		.byte	0x9f
+ 1803 01aa 92000000 		.4byte	.LVL87
+ 1804 01ae B0000000 		.4byte	.LFE67
+ 1805 01b2 0700     		.2byte	0x7
+ 1806 01b4 F3       		.byte	0xf3
+ 1807 01b5 01       		.uleb128 0x1
+ 1808 01b6 50       		.byte	0x50
+ 1809 01b7 08       		.byte	0x8
+ 1810 01b8 6B       		.byte	0x6b
+ 1811 01b9 1E       		.byte	0x1e
+ 1812 01ba 9F       		.byte	0x9f
+ 1813 01bb 00000000 		.4byte	0
+ 1814 01bf 00000000 		.4byte	0
+ 1815              	.LLST12:
+ 1816 01c3 06000000 		.4byte	.LVL58
+ 1817 01c7 2A000000 		.4byte	.LVL67
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 36
+
+
+ 1818 01cb 0100     		.2byte	0x1
+ 1819 01cd 54       		.byte	0x54
+ 1820 01ce 00000000 		.4byte	0
+ 1821 01d2 00000000 		.4byte	0
+ 1822              		.section	.debug_aranges,"",%progbits
+ 1823 0000 3C000000 		.4byte	0x3c
+ 1824 0004 0200     		.2byte	0x2
+ 1825 0006 00000000 		.4byte	.Ldebug_info0
+ 1826 000a 04       		.byte	0x4
+ 1827 000b 00       		.byte	0
+ 1828 000c 0000     		.2byte	0
+ 1829 000e 0000     		.2byte	0
+ 1830 0010 00000000 		.4byte	.LFB64
+ 1831 0014 74000000 		.4byte	.LFE64-.LFB64
+ 1832 0018 00000000 		.4byte	.LFB65
+ 1833 001c 02000000 		.4byte	.LFE65-.LFB65
+ 1834 0020 00000000 		.4byte	.LFB66
+ 1835 0024 C8000000 		.4byte	.LFE66-.LFB66
+ 1836 0028 00000000 		.4byte	.LFB67
+ 1837 002c B0000000 		.4byte	.LFE67-.LFB67
+ 1838 0030 00000000 		.4byte	.LFB68
+ 1839 0034 02000000 		.4byte	.LFE68-.LFB68
+ 1840 0038 00000000 		.4byte	0
+ 1841 003c 00000000 		.4byte	0
+ 1842              		.section	.debug_ranges,"",%progbits
+ 1843              	.Ldebug_ranges0:
+ 1844 0000 00000000 		.4byte	.LFB64
+ 1845 0004 74000000 		.4byte	.LFE64
+ 1846 0008 00000000 		.4byte	.LFB65
+ 1847 000c 02000000 		.4byte	.LFE65
+ 1848 0010 00000000 		.4byte	.LFB66
+ 1849 0014 C8000000 		.4byte	.LFE66
+ 1850 0018 00000000 		.4byte	.LFB67
+ 1851 001c B0000000 		.4byte	.LFE67
+ 1852 0020 00000000 		.4byte	.LFB68
+ 1853 0024 02000000 		.4byte	.LFE68
+ 1854 0028 00000000 		.4byte	0
+ 1855 002c 00000000 		.4byte	0
+ 1856              		.section	.debug_line,"",%progbits
+ 1857              	.Ldebug_line0:
+ 1858 0000 21030000 		.section	.debug_str,"MS",%progbits,1
+ 1858      02008402 
+ 1858      00000201 
+ 1858      FB0E0D00 
+ 1858      01010101 
+ 1859              	.LASF49:
+ 1860 0000 4D6F746F 		.ascii	"Motor_Right_Driver_WriteCompare\000"
+ 1860      725F5269 
+ 1860      6768745F 
+ 1860      44726976 
+ 1860      65725F57 
+ 1861              	.LASF21:
+ 1862 0020 73706565 		.ascii	"speed_left\000"
+ 1862      645F6C65 
+ 1862      667400
+ 1863              	.LASF38:
+ 1864 002b 7475726E 		.ascii	"turningLeftFlag\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 37
+
+
+ 1864      696E674C 
+ 1864      65667446 
+ 1864      6C616700 
+ 1865              	.LASF52:
+ 1866 003b 4D6F746F 		.ascii	"Motor_Right_Decoder_GetCounter\000"
+ 1866      725F5269 
+ 1866      6768745F 
+ 1866      4465636F 
+ 1866      6465725F 
+ 1867              	.LASF2:
+ 1868 005a 73686F72 		.ascii	"short int\000"
+ 1868      7420696E 
+ 1868      7400
+ 1869              	.LASF36:
+ 1870 0064 64726976 		.ascii	"drivingForwardFlag\000"
+ 1870      696E6746 
+ 1870      6F727761 
+ 1870      7264466C 
+ 1870      616700
+ 1871              	.LASF15:
+ 1872 0077 73697A65 		.ascii	"sizetype\000"
+ 1872      74797065 
+ 1872      00
+ 1873              	.LASF32:
+ 1874 0080 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 1874      5261636B 
+ 1874      4F666673 
+ 1874      65747346 
+ 1874      726F6D57 
+ 1875              	.LASF14:
+ 1876 0098 6C6F6E67 		.ascii	"long double\000"
+ 1876      20646F75 
+ 1876      626C6500 
+ 1877              	.LASF43:
+ 1878 00a4 756C7472 		.ascii	"ultrasonic_flag\000"
+ 1878      61736F6E 
+ 1878      69635F66 
+ 1878      6C616700 
+ 1879              	.LASF19:
+ 1880 00b4 6D697368 		.ascii	"mishaMoveDynamic\000"
+ 1880      614D6F76 
+ 1880      6544796E 
+ 1880      616D6963 
+ 1880      00
+ 1881              	.LASF58:
+ 1882 00c5 4D6F746F 		.ascii	"Motor_Left_Decoder_SetCounter\000"
+ 1882      725F4C65 
+ 1882      66745F44 
+ 1882      65636F64 
+ 1882      65725F53 
+ 1883              	.LASF45:
+ 1884 00e3 4D6F746F 		.ascii	"Motor_Right_Control_Write\000"
+ 1884      725F5269 
+ 1884      6768745F 
+ 1884      436F6E74 
+ 1884      726F6C5F 
+ 1885              	.LASF39:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 38
+
+
+ 1886 00fd 7475726E 		.ascii	"turningRightFlag\000"
+ 1886      696E6752 
+ 1886      69676874 
+ 1886      466C6167 
+ 1886      00
+ 1887              	.LASF11:
+ 1888 010e 666C6F61 		.ascii	"float\000"
+ 1888      7400
+ 1889              	.LASF6:
+ 1890 0114 6C6F6E67 		.ascii	"long long int\000"
+ 1890      206C6F6E 
+ 1890      6720696E 
+ 1890      7400
+ 1891              	.LASF56:
+ 1892 0122 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
+ 1892      725F5269 
+ 1892      6768745F 
+ 1892      44726976 
+ 1892      65725F53 
+ 1893              	.LASF4:
+ 1894 013b 6C6F6E67 		.ascii	"long int\000"
+ 1894      20696E74 
+ 1894      00
+ 1895              	.LASF16:
+ 1896 0144 636F756E 		.ascii	"count_left\000"
+ 1896      745F6C65 
+ 1896      667400
+ 1897              	.LASF23:
+ 1898 014f 6D697368 		.ascii	"mishaSwivel\000"
+ 1898      61537769 
+ 1898      76656C00 
+ 1899              	.LASF37:
+ 1900 015b 64726976 		.ascii	"drivingBackwardFlag\000"
+ 1900      696E6742 
+ 1900      61636B77 
+ 1900      61726446 
+ 1900      6C616700 
+ 1901              	.LASF59:
+ 1902 016f 4D6F746F 		.ascii	"Motor_Right_Decoder_SetCounter\000"
+ 1902      725F5269 
+ 1902      6768745F 
+ 1902      4465636F 
+ 1902      6465725F 
+ 1903              	.LASF35:
+ 1904 018e 7075636B 		.ascii	"puckPileLocation\000"
+ 1904      50696C65 
+ 1904      4C6F6361 
+ 1904      74696F6E 
+ 1904      00
+ 1905              	.LASF30:
+ 1906 019f 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 1906      656E7450 
+ 1906      75636B52 
+ 1906      61636B53 
+ 1906      63616E6E 
+ 1907              	.LASF61:
+ 1908 01bc 6D697368 		.ascii	"mishamotor.c\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 39
+
+
+ 1908      616D6F74 
+ 1908      6F722E63 
+ 1908      00
+ 1909              	.LASF48:
+ 1910 01c9 4D6F746F 		.ascii	"Motor_Right_Driver_Wakeup\000"
+ 1910      725F5269 
+ 1910      6768745F 
+ 1910      44726976 
+ 1910      65725F57 
+ 1911              	.LASF55:
+ 1912 01e3 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
+ 1912      725F4C65 
+ 1912      66745F44 
+ 1912      72697665 
+ 1912      725F536C 
+ 1913              	.LASF25:
+ 1914 01fb 64656772 		.ascii	"degrees\000"
+ 1914      65657300 
+ 1915              	.LASF1:
+ 1916 0203 756E7369 		.ascii	"unsigned char\000"
+ 1916      676E6564 
+ 1916      20636861 
+ 1916      7200
+ 1917              	.LASF53:
+ 1918 0211 73707269 		.ascii	"sprintf\000"
+ 1918      6E746600 
+ 1919              	.LASF57:
+ 1920 0219 726F756E 		.ascii	"round\000"
+ 1920      6400
+ 1921              	.LASF0:
+ 1922 021f 7369676E 		.ascii	"signed char\000"
+ 1922      65642063 
+ 1922      68617200 
+ 1923              	.LASF34:
+ 1924 022b 626C6F63 		.ascii	"block_edge_location\000"
+ 1924      6B5F6564 
+ 1924      67655F6C 
+ 1924      6F636174 
+ 1924      696F6E00 
+ 1925              	.LASF7:
+ 1926 023f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1926      206C6F6E 
+ 1926      6720756E 
+ 1926      7369676E 
+ 1926      65642069 
+ 1927              	.LASF8:
+ 1928 0256 756E7369 		.ascii	"unsigned int\000"
+ 1928      676E6564 
+ 1928      20696E74 
+ 1928      00
+ 1929              	.LASF42:
+ 1930 0263 53504545 		.ascii	"SPEED\000"
+ 1930      4400
+ 1931              	.LASF3:
+ 1932 0269 73686F72 		.ascii	"short unsigned int\000"
+ 1932      7420756E 
+ 1932      7369676E 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 40
+
+
+ 1932      65642069 
+ 1932      6E7400
+ 1933              	.LASF33:
+ 1934 027c 73776565 		.ascii	"sweeping\000"
+ 1934      70696E67 
+ 1934      00
+ 1935              	.LASF13:
+ 1936 0285 63686172 		.ascii	"char\000"
+ 1936      00
+ 1937              	.LASF24:
+ 1938 028a 64697374 		.ascii	"distance\000"
+ 1938      616E6365 
+ 1938      00
+ 1939              	.LASF10:
+ 1940 0293 696E7433 		.ascii	"int32_t\000"
+ 1940      325F7400 
+ 1941              	.LASF29:
+ 1942 029b 64726976 		.ascii	"driveStraightEnable\000"
+ 1942      65537472 
+ 1942      61696768 
+ 1942      74456E61 
+ 1942      626C6500 
+ 1943              	.LASF18:
+ 1944 02af 6D697368 		.ascii	"mishaMoveForward\000"
+ 1944      614D6F76 
+ 1944      65466F72 
+ 1944      77617264 
+ 1944      00
+ 1945              	.LASF5:
+ 1946 02c0 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1946      20756E73 
+ 1946      69676E65 
+ 1946      6420696E 
+ 1946      7400
+ 1947              	.LASF12:
+ 1948 02d2 646F7562 		.ascii	"double\000"
+ 1948      6C6500
+ 1949              	.LASF54:
+ 1950 02d9 55415254 		.ascii	"UART_1_PutString\000"
+ 1950      5F315F50 
+ 1950      75745374 
+ 1950      72696E67 
+ 1950      00
+ 1951              	.LASF44:
+ 1952 02ea 4D6F746F 		.ascii	"Motor_Left_Control_Write\000"
+ 1952      725F4C65 
+ 1952      66745F43 
+ 1952      6F6E7472 
+ 1952      6F6C5F57 
+ 1953              	.LASF27:
+ 1954 0303 73776976 		.ascii	"swivelIndefinitely\000"
+ 1954      656C496E 
+ 1954      64656669 
+ 1954      6E697465 
+ 1954      6C7900
+ 1955              	.LASF20:
+ 1956 0316 636F6D70 		.ascii	"compare\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 41
+
+
+ 1956      61726500 
+ 1957              	.LASF9:
+ 1958 031e 5F5F696E 		.ascii	"__int32_t\000"
+ 1958      7433325F 
+ 1958      7400
+ 1959              	.LASF31:
+ 1960 0328 7075636B 		.ascii	"puckRackColours\000"
+ 1960      5261636B 
+ 1960      436F6C6F 
+ 1960      75727300 
+ 1961              	.LASF62:
+ 1962 0338 433A5C55 		.ascii	"C:\\Users\\Misha\\Documents\\PSoC Creator\\ECE3091_"
+ 1962      73657273 
+ 1962      5C4D6973 
+ 1962      68615C44 
+ 1962      6F63756D 
+ 1963 0366 47726F75 		.ascii	"Group17\\Group17RobotReal\\Group17Robot.cydsn\000"
+ 1963      7031375C 
+ 1963      47726F75 
+ 1963      70313752 
+ 1963      6F626F74 
+ 1964              	.LASF41:
+ 1965 0392 6F757470 		.ascii	"output\000"
+ 1965      757400
+ 1966              	.LASF51:
+ 1967 0399 4D6F746F 		.ascii	"Motor_Left_Decoder_GetCounter\000"
+ 1967      725F4C65 
+ 1967      66745F44 
+ 1967      65636F64 
+ 1967      65725F47 
+ 1968              	.LASF28:
+ 1969 03b7 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1969      52784275 
+ 1969      66666572 
+ 1969      00
+ 1970              	.LASF60:
+ 1971 03c4 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1971      43313120 
+ 1971      352E342E 
+ 1971      31203230 
+ 1971      31363036 
+ 1972 03f7 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1972      20726576 
+ 1972      6973696F 
+ 1972      6E203233 
+ 1972      37373135 
+ 1973 042a 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1973      66756E63 
+ 1973      74696F6E 
+ 1973      2D736563 
+ 1973      74696F6E 
+ 1974              	.LASF50:
+ 1975 0452 43794465 		.ascii	"CyDelay\000"
+ 1975      6C617900 
+ 1976              	.LASF17:
+ 1977 045a 636F756E 		.ascii	"count_right\000"
+ 1977      745F7269 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccjliaAq.s 			page 42
+
+
+ 1977      67687400 
+ 1978              	.LASF22:
+ 1979 0466 73706565 		.ascii	"speed_right\000"
+ 1979      645F7269 
+ 1979      67687400 
+ 1980              	.LASF40:
+ 1981 0472 696E6974 		.ascii	"initialisation\000"
+ 1981      69616C69 
+ 1981      73617469 
+ 1981      6F6E00
+ 1982              	.LASF26:
+ 1983 0481 6D697368 		.ascii	"mishaMoveBackward\000"
+ 1983      614D6F76 
+ 1983      65426163 
+ 1983      6B776172 
+ 1983      6400
+ 1984              	.LASF47:
+ 1985 0493 4D6F746F 		.ascii	"Motor_Left_Driver_WriteCompare\000"
+ 1985      725F4C65 
+ 1985      66745F44 
+ 1985      72697665 
+ 1985      725F5772 
+ 1986              	.LASF46:
+ 1987 04b2 4D6F746F 		.ascii	"Motor_Left_Driver_Wakeup\000"
+ 1987      725F4C65 
+ 1987      66745F44 
+ 1987      72697665 
+ 1987      725F5761 
+ 1988              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
