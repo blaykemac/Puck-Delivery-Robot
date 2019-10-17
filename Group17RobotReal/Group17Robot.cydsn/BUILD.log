@@ -1,32 +1,45 @@
---------------- Build Started: 10/17/2019 16:57:29 Project: Group17Robot, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Build Started: 10/17/2019 19:13:10 Project: Group17Robot, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 The code generation step is up to date.
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM3\ARM_GCC_541\Debug\main.o
-main.c: In function 'main':
-main.c:603:17: warning: unused variable 'block_check' [-Wunused-variable]
-             int block_check = ARENA_WIDTH - BLOCK_ZONE_NORTH - WIDTH_SENSOR_TO_SENSOR - ultrasonic_distances_mm[SIDE_LEFT] - (BLOCK_WIDTH/2); 
-                 ^
-main.c: In function 'straightAdjust':
-main.c:980:9: warning: unused variable 'front_right' [-Wunused-variable]
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/colour.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c colour.c -o .\CortexM3\ARM_GCC_541\Debug\colour.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/ultrasonic.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c ultrasonic.c -o .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/servo.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c servo.c -o .\CortexM3\ARM_GCC_541\Debug\servo.o
+servo.c:34:1: warning: multi-line comment [-Wcomment]
+ //arm. These were found by experiment, so if need to recalibrate, you know where to go\
+ ^
+servo.c: In function 'armTranslate':
+servo.c:76:22: warning: suggest parentheses around comparison in operand of '|' [-Wparentheses]
+     if (new_position > 2400 | new_position < 1000) {return;}    // if a value is inputed that is bad for the servo
+                      ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/customMath.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c customMath.c -o .\CortexM3\ARM_GCC_541\Debug\customMath.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/mishamotor.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c mishamotor.c -o .\CortexM3\ARM_GCC_541\Debug\mishamotor.o
+mishamotor.c: In function 'mishaSwivel':
+mishamotor.c:87:9: warning: variable 'count_left' set but not used [-Wunused-but-set-variable]
+     int count_left;
+         ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/navigation.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c navigation.c -o .\CortexM3\ARM_GCC_541\Debug\navigation.o
+navigation.c: In function 'straightAdjust':
+navigation.c:117:9: warning: unused variable 'front_right' [-Wunused-variable]
      int front_right;
          ^
-main.c:979:9: warning: unused variable 'front_left' [-Wunused-variable]
+navigation.c:116:9: warning: unused variable 'front_left' [-Wunused-variable]
      int front_left;
          ^
-main.c: In function 'moveUntil':
-main.c:1118:9: warning: variable 'compare' set but not used [-Wunused-but-set-variable]
+navigation.c: In function 'moveUntil':
+navigation.c:254:9: warning: variable 'compare' set but not used [-Wunused-but-set-variable]
      int compare;                    
          ^
-main.c:1153:15: warning: 'distance_sensor' may be used uninitialized in this function [-Wmaybe-uninitialized]
+navigation.c:289:15: warning: 'distance_sensor' may be used uninitialized in this function [-Wmaybe-uninitialized]
          while (distance_sensor > abs(distance_set)) {                // This adjusts for drift 
                ^
 arm-none-eabi-ar.exe -rs .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a .\CortexM3\ARM_GCC_541\Debug\TIA_1.o .\CortexM3\ARM_GCC_541\Debug\TIA_1_PM.o .\CortexM3\ARM_GCC_541\Debug\CyDmac.o .\CortexM3\ARM_GCC_541\Debug\CyFlash.o .\CortexM3\ARM_GCC_541\Debug\CyLib.o .\CortexM3\ARM_GCC_541\Debug\cyPm.o .\CortexM3\ARM_GCC_541\Debug\CySpc.o .\CortexM3\ARM_GCC_541\Debug\cyutils.o .\CortexM3\ARM_GCC_541\Debug\cy_em_eeprom.o .\CortexM3\ARM_GCC_541\Debug\UART_1.o .\CortexM3\ARM_GCC_541\Debug\UART_1_PM.o .\CortexM3\ARM_GCC_541\Debug\UART_1_INT.o .\CortexM3\ARM_GCC_541\Debug\UART_1_BOOT.o .\CortexM3\ARM_GCC_541\Debug\UART_1_IntClock.o .\CortexM3\ARM_GCC_541\Debug\ADC.o .\CortexM3\ARM_GCC_541\Debug\ADC_PM.o .\CortexM3\ARM_GCC_541\Debug\ADC_INT.o .\CortexM3\ARM_GCC_541\Debug\ADC_Ext_CP_Clk.o .\CortexM3\ARM_GCC_541\Debug\ADC_IRQ.o .\CortexM3\ARM_GCC_541\Debug\ADC_theACLK.o .\CortexM3\ARM_GCC_541\Debug\IDAC8_1.o .\CortexM3\ARM_GCC_541\Debug\IDAC8_1_PM.o .\CortexM3\ARM_GCC_541\Debug\LED_Blue.o .\CortexM3\ARM_GCC_541\Debug\LED_Red.o .\CortexM3\ARM_GCC_541\Debug\LED_Green.o .\CortexM3\ARM_GCC_541\Debug\RGB_Green.o .\CortexM3\ARM_GCC_541\Debug\RGB_Red.o .\CortexM3\ARM_GCC_541\Debug\RGB_Blue.o .\CortexM3\ARM_GCC_541\Debug\Photo_Diode_1.o .\CortexM3\ARM_GCC_541\Debug\Photo_Diode_2.o .\CortexM3\ARM_GCC_541\Debug\timer_clock.o .\CortexM3\ARM_GCC_541\Debug\Timer_1.o .\CortexM3\ARM_GCC_541\Debug\Timer_1_PM.o .\CortexM3\ARM_GCC_541\Debug\Trigger_1.o .\CortexM3\ARM_GCC_541\Debug\Echo_1.o .\CortexM3\ARM_GCC_541\Debug\Trigger_2.o .\CortexM3\ARM_GCC_541\Debug\Trigger_3.o .\CortexM3\ARM_GCC_541\Debug\Trigger_4.o .\CortexM3\ARM_GCC_541\Debug\Trigger_5.o .\CortexM3\ARM_GCC_541\Debug\Echo_2.o .\CortexM3\ARM_GCC_541\Debug\Echo_3.o .\CortexM3\ARM_GCC_541\Debug\Echo_4.o .\CortexM3\ARM_GCC_541\Debug\Echo_5.o .\CortexM3\ARM_GCC_541\Debug\Ultrasonic_Mux_Control.o .\CortexM3\ARM_GCC_541\Debug\Ultrasonic_Mux_Control_PM.o .\CortexM3\ARM_GCC_541\Debug\Gripper_Servo_PWM.o .\CortexM3\ARM_GCC_541\Debug\Gripper_Servo_PWM_PM.o .\CortexM3\ARM_GCC_541\Debug\Rack_Servo_PWM.o .\CortexM3\ARM_GCC_541\Debug\Rack_Servo_PWM_PM.o .\CortexM3\ARM_GCC_541\Debug\Gripper_Servo.o .\CortexM3\ARM_GCC_541\Debug\Rack_Servo.o .\CortexM3\ARM_GCC_541\Debug\Pin_Start.o .\CortexM3\ARM_GCC_541\Debug\control_led.o .\CortexM3\ARM_GCC_541\Debug\control_led_PM.o .\CortexM3\ARM_GCC_541\Debug\control_photodiode.o .\CortexM3\ARM_GCC_541\Debug\control_photodiode_PM.o .\CortexM3\ARM_GCC_541\Debug\Start.o .\CortexM3\ARM_GCC_541\Debug\Sonic.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Decoder.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Decoder_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Decoder.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Decoder_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Phase_A.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Phase_B.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Phase_A.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Phase_B.o .\CortexM3\ARM_GCC_541\Debug\Clock_5.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Driver.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Driver_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Driver.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Driver_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Forward.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Backward.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Backward.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Forward.o .\CortexM3\ARM_GCC_541\Debug\Clock_6.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Control.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Control_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Control.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Control_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Decoder_Cnt16.o .\CortexM3\ARM_GCC_541\Debug\Motor_Left_Decoder_Cnt16_PM.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Decoder_Cnt16.o .\CortexM3\ARM_GCC_541\Debug\Motor_Right_Decoder_Cnt16_PM.o .\CortexM3\ARM_GCC_541\Debug\CyBootAsmGnu.o
 arm-none-eabi-ar.exe: creating .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a
-arm-none-eabi-gcc.exe -Wl,--start-group -o C:\Users\bamcg3\Desktop\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf .\CortexM3\ARM_GCC_541\Debug\main.o .\CortexM3\ARM_GCC_541\Debug\colour.o .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o .\CortexM3\ARM_GCC_541\Debug\servo.o .\CortexM3\ARM_GCC_541\Debug\customMath.o .\CortexM3\ARM_GCC_541\Debug\mishamotor.o .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o .\CortexM3\ARM_GCC_541\Debug\cymetadata.o .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_541\Debug\CyComponentLibrary.a" -mcpu=cortex-m3 -mthumb -l m -L Generated_Source\PSoC5 -Wl,-Map,.\CortexM3\ARM_GCC_541\Debug/Group17Robot.map -T Generated_Source\PSoC5\cm3gcc.ld -specs=nano.specs -u _printf_float -Wl,--gc-sections -uprintf_float -g -ffunction-sections -Og -ffat-lto-objects -Wl,--end-group
-cyelftool.exe -C C:\Users\bamcg3\Desktop\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf --flash_row_size 256 --flash_size 262144 --flash_offset 0x00000000
+arm-none-eabi-gcc.exe -Wl,--start-group -o \\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf .\CortexM3\ARM_GCC_541\Debug\main.o .\CortexM3\ARM_GCC_541\Debug\colour.o .\CortexM3\ARM_GCC_541\Debug\ultrasonic.o .\CortexM3\ARM_GCC_541\Debug\servo.o .\CortexM3\ARM_GCC_541\Debug\customMath.o .\CortexM3\ARM_GCC_541\Debug\mishamotor.o .\CortexM3\ARM_GCC_541\Debug\navigation.o .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o .\CortexM3\ARM_GCC_541\Debug\cymetadata.o .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o .\CortexM3\ARM_GCC_541\Debug\Group17Robot.a "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_541\Debug\CyComponentLibrary.a" -mcpu=cortex-m3 -mthumb -l m -L Generated_Source\PSoC5 -Wl,-Map,.\CortexM3\ARM_GCC_541\Debug/Group17Robot.map -T Generated_Source\PSoC5\cm3gcc.ld -specs=nano.specs -u _printf_float -Wl,--gc-sections -uprintf_float -g -ffunction-sections -Og -ffat-lto-objects -Wl,--end-group
+cyelftool.exe -C \\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf --flash_row_size 256 --flash_size 262144 --flash_offset 0x00000000
 No ELF section .cychecksum found, creating one
 Application checksum calculated and stored in ELF section .cychecksum
 Checksum calculated and stored in ELF section .cymeta
-cyelftool.exe -S C:\Users\bamcg3\Desktop\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf
-Flash used: 22904 of 262144 bytes (8.7%).
+cyelftool.exe -S \\ad.monash.edu\home\User026\bamcg3\Documents\GitHub\ECE3091_Group17\Group17RobotReal\Group17Robot.cydsn\CortexM3\ARM_GCC_541\Debug\Group17Robot.elf
+Flash used: 21536 of 262144 bytes (8.2%).
 SRAM used: 3425 of 65536 bytes (5.2%). Stack: 2048 bytes. Heap: 512 bytes.
---------------- Build Succeeded: 10/17/2019 16:57:31 ---------------
+--------------- Build Succeeded: 10/17/2019 19:13:21 ---------------

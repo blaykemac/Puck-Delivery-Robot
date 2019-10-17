@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 1
 
 
    1              		.syntax unified
@@ -58,16 +58,17 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
   25:mishamotor.c  **** #include "servo.h"
   26:mishamotor.c  **** #include "mishamotor.h"
   27:mishamotor.c  **** #include "customMath.h"
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 2
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 2
 
 
-  28:mishamotor.c  **** 
-  29:mishamotor.c  **** // Variables:
-  30:mishamotor.c  **** 
+  28:mishamotor.c  **** #include "navigation.h"
+  29:mishamotor.c  **** 
+  30:mishamotor.c  **** // Variables:
   31:mishamotor.c  **** 
   32:mishamotor.c  **** 
-  33:mishamotor.c  **** void mishaMoveDynamic(int distance, int speed){
-  31              		.loc 1 33 0
+  33:mishamotor.c  **** 
+  34:mishamotor.c  **** void mishaMoveDynamic(int distance, int speed){
+  31              		.loc 1 34 0
   32              		.cfi_startproc
   33              		@ args = 0, pretend = 0, frame = 0
   34              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -81,32 +82,32 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
   42 0002 0546     		mov	r5, r0
   43 0004 0C46     		mov	r4, r1
   44              	.LVL1:
-  34:mishamotor.c  ****     int count_left;
-  35:mishamotor.c  ****     int count_right;
-  36:mishamotor.c  ****     int compare;
-  37:mishamotor.c  ****     
-  38:mishamotor.c  ****     // FAILSAFE if you give a speed greater than it can handle 
-  39:mishamotor.c  ****     int speed_left = speed;
-  40:mishamotor.c  ****     int speed_right = speed;
-  41:mishamotor.c  ****     if (speed > SPEED_MAX) {
-  45              		.loc 1 41 0
+  35:mishamotor.c  ****     int count_left;
+  36:mishamotor.c  ****     int count_right;
+  37:mishamotor.c  ****     int compare;
+  38:mishamotor.c  ****     
+  39:mishamotor.c  ****     // FAILSAFE if you give a speed greater than it can handle 
+  40:mishamotor.c  ****     int speed_left = speed;
+  41:mishamotor.c  ****     int speed_right = speed;
+  42:mishamotor.c  ****     if (speed > SPEED_MAX) {
+  45              		.loc 1 42 0
   46 0006 C829     		cmp	r1, #200
   47 0008 00DD     		ble	.L2
-  42:mishamotor.c  ****         speed_left = SPEED;         
-  48              		.loc 1 42 0
+  43:mishamotor.c  ****         speed_left = SPEED;         
+  48              		.loc 1 43 0
   49 000a AA24     		movs	r4, #170
   50              	.L2:
   51              	.LVL2:
-  43:mishamotor.c  ****         speed_right = SPEED;
-  44:mishamotor.c  ****     }
-  45:mishamotor.c  ****     
-  46:mishamotor.c  ****     // The distance is in millimetres 
-  47:mishamotor.c  ****     // Is the distance negative or positive? 
-  48:mishamotor.c  ****     if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); }
-  52              		.loc 1 48 0
+  44:mishamotor.c  ****         speed_right = SPEED;
+  45:mishamotor.c  ****     }
+  46:mishamotor.c  ****     
+  47:mishamotor.c  ****     // The distance is in millimetres 
+  48:mishamotor.c  ****     // Is the distance negative or positive? 
+  49:mishamotor.c  ****     if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); }
+  52              		.loc 1 49 0
   53 000c 002D     		cmp	r5, #0
   54 000e 06DD     		ble	.L3
-  55              		.loc 1 48 0 is_stmt 0 discriminator 1
+  55              		.loc 1 49 0 is_stmt 0 discriminator 1
   56 0010 0020     		movs	r0, #0
   57              	.LVL3:
   58 0012 FFF7FEFF 		bl	Motor_Left_Control_Write
@@ -117,11 +118,11 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
   63 001c 05E0     		b	.L4
   64              	.LVL6:
   65              	.L3:
-  49:mishamotor.c  ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1);}
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 3
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 3
 
 
-  66              		.loc 1 49 0 is_stmt 1
+  50:mishamotor.c  ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1);}
+  66              		.loc 1 50 0 is_stmt 1
   67 001e 0120     		movs	r0, #1
   68              	.LVL7:
   69 0020 FFF7FEFF 		bl	Motor_Left_Control_Write
@@ -130,30 +131,30 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
   72 0026 FFF7FEFF 		bl	Motor_Right_Control_Write
   73              	.LVL9:
   74              	.L4:
-  50:mishamotor.c  ****     
-  51:mishamotor.c  ****     Motor_Left_Driver_Wakeup();
-  75              		.loc 1 51 0
+  51:mishamotor.c  ****     
+  52:mishamotor.c  ****     Motor_Left_Driver_Wakeup();
+  75              		.loc 1 52 0
   76 002a FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
   77              	.LVL10:
-  52:mishamotor.c  ****     Motor_Left_Driver_WriteCompare(speed_left);
-  78              		.loc 1 52 0
+  53:mishamotor.c  ****     Motor_Left_Driver_WriteCompare(speed_left);
+  78              		.loc 1 53 0
   79 002e E4B2     		uxtb	r4, r4
   80              	.LVL11:
   81 0030 2046     		mov	r0, r4
   82 0032 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
   83              	.LVL12:
-  53:mishamotor.c  ****     Motor_Right_Driver_Wakeup();
-  84              		.loc 1 53 0
+  54:mishamotor.c  ****     Motor_Right_Driver_Wakeup();
+  84              		.loc 1 54 0
   85 0036 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
   86              	.LVL13:
-  54:mishamotor.c  ****     Motor_Right_Driver_WriteCompare(speed_right);
-  87              		.loc 1 54 0
+  55:mishamotor.c  ****     Motor_Right_Driver_WriteCompare(speed_right);
+  87              		.loc 1 55 0
   88 003a 2046     		mov	r0, r4
   89 003c FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
   90              	.LVL14:
-  55:mishamotor.c  ****     
-  56:mishamotor.c  ****     compare = round(distance*5.29);
-  91              		.loc 1 56 0
+  56:mishamotor.c  ****     
+  57:mishamotor.c  ****     compare = round(distance*5.29);
+  91              		.loc 1 57 0
   92 0040 2846     		mov	r0, r5
   93 0042 FFF7FEFF 		bl	__aeabi_i2d
   94              	.LVL15:
@@ -167,54 +168,54 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  102              	.LVL18:
  103 0058 0646     		mov	r6, r0
  104              	.LVL19:
-  57:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
- 105              		.loc 1 57 0
+  58:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
+ 105              		.loc 1 58 0
  106 005a FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
  107              	.LVL20:
  108 005e 0546     		mov	r5, r0
  109              	.LVL21:
-  58:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
- 110              		.loc 1 58 0
+  59:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
+ 110              		.loc 1 59 0
  111 0060 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
  112              	.LVL22:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 4
+
+
  113 0064 0446     		mov	r4, r0
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 4
-
-
  114              	.LVL23:
-  59:mishamotor.c  ****     
-  60:mishamotor.c  ****     while (count_right != compare) {
- 115              		.loc 1 60 0
+  60:mishamotor.c  ****     
+  61:mishamotor.c  ****     while (count_right != compare) {
+ 115              		.loc 1 61 0
  116 0066 05E0     		b	.L5
  117              	.LVL24:
  118              	.L6:
-  61:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
- 119              		.loc 1 61 0
+  62:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
+ 119              		.loc 1 62 0
  120 0068 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
  121              	.LVL25:
  122 006c 0546     		mov	r5, r0
  123              	.LVL26:
-  62:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
- 124              		.loc 1 62 0
+  63:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
+ 124              		.loc 1 63 0
  125 006e FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
  126              	.LVL27:
  127 0072 0446     		mov	r4, r0
  128              	.LVL28:
  129              	.L5:
-  60:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
- 130              		.loc 1 60 0
+  61:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
+ 130              		.loc 1 61 0
  131 0074 B442     		cmp	r4, r6
  132 0076 F7D1     		bne	.L6
-  63:mishamotor.c  ****         if (count_left > count_right) {
-  64:mishamotor.c  ****         speed_left -= ADJUST;
-  65:mishamotor.c  ****         }
-  66:mishamotor.c  ****         if (count_right > count_left) {
-  67:mishamotor.c  ****         speed_right -= ADJUST; 
-  68:mishamotor.c  ****         }
-  69:mishamotor.c  ****     }
-  70:mishamotor.c  ****     
-  71:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
- 133              		.loc 1 71 0
+  64:mishamotor.c  ****         if (count_left > count_right) {
+  65:mishamotor.c  ****         speed_left -= ADJUST;
+  66:mishamotor.c  ****         }
+  67:mishamotor.c  ****         if (count_right > count_left) {
+  68:mishamotor.c  ****         speed_right -= ADJUST; 
+  69:mishamotor.c  ****         }
+  70:mishamotor.c  ****     }
+  71:mishamotor.c  ****     
+  72:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
+ 133              		.loc 1 72 0
  134 0078 0F4E     		ldr	r6, .L9+8
  135              	.LVL29:
  136 007a 2A46     		mov	r2, r5
@@ -222,44 +223,44 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  138 007e 3046     		mov	r0, r6
  139 0080 FFF7FEFF 		bl	sprintf
  140              	.LVL30:
-  72:mishamotor.c  ****     UART_1_PutString(output);
- 141              		.loc 1 72 0
+  73:mishamotor.c  ****     UART_1_PutString(output);
+ 141              		.loc 1 73 0
  142 0084 3046     		mov	r0, r6
  143 0086 FFF7FEFF 		bl	UART_1_PutString
  144              	.LVL31:
-  73:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
- 145              		.loc 1 73 0
+  74:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
+ 145              		.loc 1 74 0
  146 008a 2246     		mov	r2, r4
  147 008c 0C49     		ldr	r1, .L9+16
  148 008e 3046     		mov	r0, r6
  149 0090 FFF7FEFF 		bl	sprintf
  150              	.LVL32:
-  74:mishamotor.c  ****     UART_1_PutString(output);
- 151              		.loc 1 74 0
+  75:mishamotor.c  ****     UART_1_PutString(output);
+ 151              		.loc 1 75 0
  152 0094 3046     		mov	r0, r6
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 5
+
+
  153 0096 FFF7FEFF 		bl	UART_1_PutString
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 5
-
-
  154              	.LVL33:
-  75:mishamotor.c  ****         
-  76:mishamotor.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
- 155              		.loc 1 76 0
+  76:mishamotor.c  ****         
+  77:mishamotor.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
+ 155              		.loc 1 77 0
  156 009a 0020     		movs	r0, #0
  157 009c FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
  158              	.LVL34:
-  77:mishamotor.c  ****     Motor_Right_Decoder_SetCounter(0);   
- 159              		.loc 1 77 0
+  78:mishamotor.c  ****     Motor_Right_Decoder_SetCounter(0);   
+ 159              		.loc 1 78 0
  160 00a0 0020     		movs	r0, #0
  161 00a2 FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
  162              	.LVL35:
-  78:mishamotor.c  ****     
-  79:mishamotor.c  ****     Motor_Left_Driver_Sleep();
- 163              		.loc 1 79 0
+  79:mishamotor.c  ****     
+  80:mishamotor.c  ****     Motor_Left_Driver_Sleep();
+ 163              		.loc 1 80 0
  164 00a6 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
  165              	.LVL36:
-  80:mishamotor.c  ****     Motor_Right_Driver_Sleep();
- 166              		.loc 1 80 0
+  81:mishamotor.c  ****     Motor_Right_Driver_Sleep();
+ 166              		.loc 1 81 0
  167 00aa FFF7FEFF 		bl	Motor_Right_Driver_Sleep
  168              	.LVL37:
  169 00ae 70BD     		pop	{r4, r5, r6, pc}
@@ -284,12 +285,12 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  188              		.type	mishaSwivel, %function
  189              	mishaSwivel:
  190              	.LFB65:
-  81:mishamotor.c  ****    
-  82:mishamotor.c  ****     
-  83:mishamotor.c  **** }
-  84:mishamotor.c  **** 
-  85:mishamotor.c  **** void mishaSwivel(int degrees, int speed) {
- 191              		.loc 1 85 0
+  82:mishamotor.c  ****    
+  83:mishamotor.c  ****     
+  84:mishamotor.c  **** }
+  85:mishamotor.c  **** 
+  86:mishamotor.c  **** void mishaSwivel(int degrees, int speed) {
+ 191              		.loc 1 86 0
  192              		.cfi_startproc
  193              		@ args = 0, pretend = 0, frame = 0
  194              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -297,43 +298,43 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  196 0000 38B5     		push	{r3, r4, r5, lr}
  197              		.cfi_def_cfa_offset 16
  198              		.cfi_offset 3, -16
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 6
+
+
  199              		.cfi_offset 4, -12
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 6
-
-
  200              		.cfi_offset 5, -8
  201              		.cfi_offset 14, -4
  202 0002 0546     		mov	r5, r0
  203 0004 0C46     		mov	r4, r1
  204              	.LVL40:
-  86:mishamotor.c  ****     int count_left;
-  87:mishamotor.c  ****     int count_right;
-  88:mishamotor.c  ****     int compare;
-  89:mishamotor.c  ****     int distance;
-  90:mishamotor.c  ****     int speed_left = speed;
-  91:mishamotor.c  ****     int speed_right = speed;
-  92:mishamotor.c  ****     
-  93:mishamotor.c  ****     // FAILSAFE if you give a speed greater than it can handle:
-  94:mishamotor.c  ****     if (speed > SPEED_MAX) {
- 205              		.loc 1 94 0
+  87:mishamotor.c  ****     int count_left;
+  88:mishamotor.c  ****     int count_right;
+  89:mishamotor.c  ****     int compare;
+  90:mishamotor.c  ****     int distance;
+  91:mishamotor.c  ****     int speed_left = speed;
+  92:mishamotor.c  ****     int speed_right = speed;
+  93:mishamotor.c  ****     
+  94:mishamotor.c  ****     // FAILSAFE if you give a speed greater than it can handle:
+  95:mishamotor.c  ****     if (speed > SPEED_MAX) {
+ 205              		.loc 1 95 0
  206 0006 C829     		cmp	r1, #200
  207 0008 00DD     		ble	.L12
-  95:mishamotor.c  ****         speed_left = SPEED;         
- 208              		.loc 1 95 0
+  96:mishamotor.c  ****         speed_left = SPEED;         
+ 208              		.loc 1 96 0
  209 000a AA24     		movs	r4, #170
  210              	.L12:
  211              	.LVL41:
-  96:mishamotor.c  ****         speed_right = SPEED;
-  97:mishamotor.c  ****     }
-  98:mishamotor.c  ****     
-  99:mishamotor.c  ****     // Is the degrees negative or positive? 
- 100:mishamotor.c  ****         // positive = right hand turn: left wheel goes forward, right wheel goes backward 
- 101:mishamotor.c  ****         // negative = left hand turn: right wheel goes forward, left wheel goes backward 
- 102:mishamotor.c  ****     if (degrees > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); }
- 212              		.loc 1 102 0
+  97:mishamotor.c  ****         speed_right = SPEED;
+  98:mishamotor.c  ****     }
+  99:mishamotor.c  ****     
+ 100:mishamotor.c  ****     // Is the degrees negative or positive? 
+ 101:mishamotor.c  ****         // positive = right hand turn: left wheel goes forward, right wheel goes backward 
+ 102:mishamotor.c  ****         // negative = left hand turn: right wheel goes forward, left wheel goes backward 
+ 103:mishamotor.c  ****     if (degrees > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); }
+ 212              		.loc 1 103 0
  213 000c 002D     		cmp	r5, #0
  214 000e 06DD     		ble	.L13
- 215              		.loc 1 102 0 is_stmt 0 discriminator 1
+ 215              		.loc 1 103 0 is_stmt 0 discriminator 1
  216 0010 0020     		movs	r0, #0
  217              	.LVL42:
  218 0012 FFF7FEFF 		bl	Motor_Left_Control_Write
@@ -344,8 +345,8 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  223 001c 05E0     		b	.L14
  224              	.LVL45:
  225              	.L13:
- 103:mishamotor.c  ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);}
- 226              		.loc 1 103 0 is_stmt 1
+ 104:mishamotor.c  ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);}
+ 226              		.loc 1 104 0 is_stmt 1
  227 001e 0120     		movs	r0, #1
  228              	.LVL46:
  229 0020 FFF7FEFF 		bl	Motor_Left_Control_Write
@@ -354,34 +355,34 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  232 0026 FFF7FEFF 		bl	Motor_Right_Control_Write
  233              	.LVL48:
  234              	.L14:
- 104:mishamotor.c  ****     
- 105:mishamotor.c  ****     Motor_Left_Driver_Wakeup();
- 235              		.loc 1 105 0
+ 105:mishamotor.c  ****     
+ 106:mishamotor.c  ****     Motor_Left_Driver_Wakeup();
+ 235              		.loc 1 106 0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 7
+
+
  236 002a FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 7
-
-
  237              	.LVL49:
- 106:mishamotor.c  ****     Motor_Left_Driver_WriteCompare(speed_left);
- 238              		.loc 1 106 0
+ 107:mishamotor.c  ****     Motor_Left_Driver_WriteCompare(speed_left);
+ 238              		.loc 1 107 0
  239 002e E4B2     		uxtb	r4, r4
  240              	.LVL50:
  241 0030 2046     		mov	r0, r4
  242 0032 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
  243              	.LVL51:
- 107:mishamotor.c  ****     Motor_Right_Driver_Wakeup();
- 244              		.loc 1 107 0
+ 108:mishamotor.c  ****     Motor_Right_Driver_Wakeup();
+ 244              		.loc 1 108 0
  245 0036 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
  246              	.LVL52:
- 108:mishamotor.c  ****     Motor_Right_Driver_WriteCompare(speed_right);
- 247              		.loc 1 108 0
+ 109:mishamotor.c  ****     Motor_Right_Driver_WriteCompare(speed_right);
+ 247              		.loc 1 109 0
  248 003a 2046     		mov	r0, r4
  249 003c FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
  250              	.LVL53:
- 109:mishamotor.c  ****     
- 110:mishamotor.c  ****     distance = 107*degrees;
- 111:mishamotor.c  ****     compare = round((distance*3.14*5.29)/180);
- 251              		.loc 1 111 0
+ 110:mishamotor.c  ****     
+ 111:mishamotor.c  ****     distance = 107*degrees;
+ 112:mishamotor.c  ****     compare = round((distance*3.14*5.29)/180);
+ 251              		.loc 1 112 0
  252 0040 6B20     		movs	r0, #107
  253 0042 00FB05F0 		mul	r0, r0, r5
  254              	.LVL54:
@@ -405,68 +406,68 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  272              	.LVL60:
  273 006e 0446     		mov	r4, r0
  274              	.LVL61:
- 112:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
- 275              		.loc 1 112 0
+ 113:mishamotor.c  ****     count_left = Motor_Left_Decoder_GetCounter();
+ 275              		.loc 1 113 0
  276 0070 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
  277              	.LVL62:
- 113:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
- 278              		.loc 1 113 0
+ 114:mishamotor.c  ****     count_right = Motor_Right_Decoder_GetCounter();
+ 278              		.loc 1 114 0
  279 0074 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
  280              	.LVL63:
- 114:mishamotor.c  ****     
- 115:mishamotor.c  ****     while (count_right != -1*compare) {
- 281              		.loc 1 115 0
+ 115:mishamotor.c  ****     
+ 116:mishamotor.c  ****     while (count_right != -1*compare) {
+ 281              		.loc 1 116 0
  282 0078 01E0     		b	.L15
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 8
+
+
  283              	.L16:
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 8
-
-
- 116:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
- 284              		.loc 1 116 0
+ 117:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
+ 284              		.loc 1 117 0
  285 007a FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
  286              	.LVL64:
  287              	.L15:
- 115:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
- 288              		.loc 1 115 0
+ 116:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
+ 288              		.loc 1 116 0
  289 007e E042     		cmn	r0, r4
  290 0080 FBD1     		bne	.L16
- 117:mishamotor.c  ****         /*
- 118:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
- 119:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
- 120:mishamotor.c  ****         if (count_left > count_right) {
- 121:mishamotor.c  ****         speed_left--;
- 122:mishamotor.c  ****         }
- 123:mishamotor.c  ****         if (count_right > count_left) {
- 124:mishamotor.c  ****         speed_right--; 
- 125:mishamotor.c  ****         }
- 126:mishamotor.c  ****         */
- 127:mishamotor.c  ****     }
- 128:mishamotor.c  ****     
- 129:mishamotor.c  ****     /*
- 130:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
- 131:mishamotor.c  ****     UART_1_PutString(output);
- 132:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
- 133:mishamotor.c  ****     UART_1_PutString(output);
- 134:mishamotor.c  ****     */
- 135:mishamotor.c  ****     
- 136:mishamotor.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
- 291              		.loc 1 136 0
+ 118:mishamotor.c  ****         /*
+ 119:mishamotor.c  ****         count_left = Motor_Left_Decoder_GetCounter();
+ 120:mishamotor.c  ****         count_right = Motor_Right_Decoder_GetCounter();
+ 121:mishamotor.c  ****         if (count_left > count_right) {
+ 122:mishamotor.c  ****         speed_left--;
+ 123:mishamotor.c  ****         }
+ 124:mishamotor.c  ****         if (count_right > count_left) {
+ 125:mishamotor.c  ****         speed_right--; 
+ 126:mishamotor.c  ****         }
+ 127:mishamotor.c  ****         */
+ 128:mishamotor.c  ****     }
+ 129:mishamotor.c  ****     
+ 130:mishamotor.c  ****     /*
+ 131:mishamotor.c  ****     sprintf(output, "left motor: %d \n", count_left);       
+ 132:mishamotor.c  ****     UART_1_PutString(output);
+ 133:mishamotor.c  ****     sprintf(output, "right motor: %d \n", count_right);      
+ 134:mishamotor.c  ****     UART_1_PutString(output);
+ 135:mishamotor.c  ****     */
+ 136:mishamotor.c  ****     
+ 137:mishamotor.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
+ 291              		.loc 1 137 0
  292 0082 0020     		movs	r0, #0
  293              	.LVL65:
  294 0084 FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
  295              	.LVL66:
- 137:mishamotor.c  ****     Motor_Right_Decoder_SetCounter(0);   
- 296              		.loc 1 137 0
+ 138:mishamotor.c  ****     Motor_Right_Decoder_SetCounter(0);   
+ 296              		.loc 1 138 0
  297 0088 0020     		movs	r0, #0
  298 008a FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
  299              	.LVL67:
- 138:mishamotor.c  ****     
- 139:mishamotor.c  ****     Motor_Left_Driver_Sleep();
- 300              		.loc 1 139 0
+ 139:mishamotor.c  ****     
+ 140:mishamotor.c  ****     Motor_Left_Driver_Sleep();
+ 300              		.loc 1 140 0
  301 008e FFF7FEFF 		bl	Motor_Left_Driver_Sleep
  302              	.LVL68:
- 140:mishamotor.c  ****     Motor_Right_Driver_Sleep();
- 303              		.loc 1 140 0
+ 141:mishamotor.c  ****     Motor_Right_Driver_Sleep();
+ 303              		.loc 1 141 0
  304 0092 FFF7FEFF 		bl	Motor_Right_Driver_Sleep
  305              	.LVL69:
  306 0096 38BD     		pop	{r3, r4, r5, pc}
@@ -477,10 +478,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  311 0098 1F85EB51 		.word	1374389535
  312 009c B81E0940 		.word	1074339512
  313 00a0 295C8FC2 		.word	-1030792151
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 9
+
+
  314 00a4 F5281540 		.word	1075128565
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 9
-
-
  315 00a8 00806640 		.word	1080459264
  316              		.cfi_endproc
  317              	.LFE65:
@@ -493,12 +494,12 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  324              		.type	translateMoveDynamic, %function
  325              	translateMoveDynamic:
  326              	.LFB66:
- 141:mishamotor.c  ****     
  142:mishamotor.c  ****     
- 143:mishamotor.c  **** }
- 144:mishamotor.c  **** 
- 145:mishamotor.c  **** void translateMoveDynamic(int distance) {
- 327              		.loc 1 145 0
+ 143:mishamotor.c  ****     
+ 144:mishamotor.c  **** }
+ 145:mishamotor.c  **** 
+ 146:mishamotor.c  **** void translateMoveDynamic(int distance) {
+ 327              		.loc 1 146 0
  328              		.cfi_startproc
  329              		@ args = 0, pretend = 0, frame = 0
  330              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -537,10 +538,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  357      746F723A 
  357      20256420 
  357      0A00
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 10
+
+
  358              		.text
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 10
-
-
  359              	.Letext0:
  360              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
  361              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
@@ -563,29 +564,29 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  378 0006 00000000 		.4byte	.Ldebug_abbrev0
  379 000a 04       		.byte	0x4
  380 000b 01       		.uleb128 0x1
- 381 000c 3F010000 		.4byte	.LASF57
+ 381 000c 4F010000 		.4byte	.LASF57
  382 0010 0C       		.byte	0xc
- 383 0011 B5000000 		.4byte	.LASF58
- 384 0015 DA020000 		.4byte	.LASF59
+ 383 0011 C5000000 		.4byte	.LASF58
+ 384 0015 3D030000 		.4byte	.LASF59
  385 0019 00000000 		.4byte	.Ldebug_ranges0+0
  386 001d 00000000 		.4byte	0
  387 0021 00000000 		.4byte	.Ldebug_line0
  388 0025 02       		.uleb128 0x2
  389 0026 01       		.byte	0x1
  390 0027 06       		.byte	0x6
- 391 0028 3D040000 		.4byte	.LASF0
+ 391 0028 5A040000 		.4byte	.LASF0
  392 002c 02       		.uleb128 0x2
  393 002d 01       		.byte	0x1
  394 002e 08       		.byte	0x8
- 395 002f 31010000 		.4byte	.LASF1
+ 395 002f 41010000 		.4byte	.LASF1
  396 0033 02       		.uleb128 0x2
  397 0034 02       		.byte	0x2
  398 0035 05       		.byte	0x5
- 399 0036 1A040000 		.4byte	.LASF2
+ 399 0036 37040000 		.4byte	.LASF2
  400 003a 02       		.uleb128 0x2
  401 003b 02       		.byte	0x2
  402 003c 07       		.byte	0x7
- 403 003d FA010000 		.4byte	.LASF3
+ 403 003d 0A020000 		.4byte	.LASF3
  404 0041 03       		.uleb128 0x3
  405 0042 2D000000 		.4byte	.LASF9
  406 0046 02       		.byte	0x2
@@ -594,14 +595,14 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  409 004c 02       		.uleb128 0x2
  410 004d 04       		.byte	0x4
  411 004e 05       		.byte	0x5
- 412 004f 2B040000 		.4byte	.LASF4
+ 412 004f 48040000 		.4byte	.LASF4
  413 0053 02       		.uleb128 0x2
  414 0054 04       		.byte	0x4
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 11
+
+
  415 0055 07       		.byte	0x7
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 11
-
-
- 416 0056 5D020000 		.4byte	.LASF5
+ 416 0056 63020000 		.4byte	.LASF5
  417 005a 02       		.uleb128 0x2
  418 005b 08       		.byte	0x8
  419 005c 05       		.byte	0x5
@@ -609,7 +610,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  421 0061 02       		.uleb128 0x2
  422 0062 08       		.byte	0x8
  423 0063 07       		.byte	0x7
- 424 0064 09010000 		.4byte	.LASF7
+ 424 0064 19010000 		.4byte	.LASF7
  425 0068 04       		.uleb128 0x4
  426 0069 04       		.byte	0x4
  427 006a 05       		.byte	0x5
@@ -617,84 +618,84 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  429 006f 02       		.uleb128 0x2
  430 0070 04       		.byte	0x4
  431 0071 07       		.byte	0x7
- 432 0072 26030000 		.4byte	.LASF8
+ 432 0072 E0020000 		.4byte	.LASF8
  433 0076 03       		.uleb128 0x3
- 434 0077 CE000000 		.4byte	.LASF10
+ 434 0077 DE000000 		.4byte	.LASF10
  435 007b 03       		.byte	0x3
  436 007c 2C       		.byte	0x2c
  437 007d 41000000 		.4byte	0x41
  438 0081 02       		.uleb128 0x2
  439 0082 04       		.byte	0x4
  440 0083 04       		.byte	0x4
- 441 0084 EB000000 		.4byte	.LASF11
+ 441 0084 FB000000 		.4byte	.LASF11
  442 0088 02       		.uleb128 0x2
  443 0089 08       		.byte	0x8
  444 008a 04       		.byte	0x4
- 445 008b 9A000000 		.4byte	.LASF12
+ 445 008b AA000000 		.4byte	.LASF12
  446 008f 02       		.uleb128 0x2
  447 0090 01       		.byte	0x1
  448 0091 08       		.byte	0x8
- 449 0092 DE030000 		.4byte	.LASF13
+ 449 0092 FB030000 		.4byte	.LASF13
  450 0096 02       		.uleb128 0x2
  451 0097 08       		.byte	0x8
  452 0098 04       		.byte	0x4
- 453 0099 DF000000 		.4byte	.LASF14
+ 453 0099 EF000000 		.4byte	.LASF14
  454 009d 02       		.uleb128 0x2
  455 009e 04       		.byte	0x4
  456 009f 07       		.byte	0x7
- 457 00a0 89030000 		.4byte	.LASF15
+ 457 00a0 A6030000 		.4byte	.LASF15
  458 00a4 05       		.uleb128 0x5
- 459 00a5 20010000 		.4byte	.LASF23
+ 459 00a5 30010000 		.4byte	.LASF23
  460 00a9 01       		.byte	0x1
- 461 00aa 21       		.byte	0x21
+ 461 00aa 22       		.byte	0x22
  462 00ab 00000000 		.4byte	.LFB64
  463 00af C4000000 		.4byte	.LFE64-.LFB64
  464 00b3 01       		.uleb128 0x1
  465 00b4 9C       		.byte	0x9c
  466 00b5 7C020000 		.4byte	0x27c
  467 00b9 06       		.uleb128 0x6
- 468 00ba D6000000 		.4byte	.LASF16
+ 468 00ba E6000000 		.4byte	.LASF16
  469 00be 01       		.byte	0x1
- 470 00bf 21       		.byte	0x21
+ 470 00bf 22       		.byte	0x22
  471 00c0 68000000 		.4byte	0x68
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 12
+
+
  472 00c4 00000000 		.4byte	.LLST0
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 12
-
-
  473 00c8 06       		.uleb128 0x6
- 474 00c9 83030000 		.4byte	.LASF17
+ 474 00c9 37020000 		.4byte	.LASF17
  475 00cd 01       		.byte	0x1
- 476 00ce 21       		.byte	0x21
+ 476 00ce 22       		.byte	0x22
  477 00cf 68000000 		.4byte	0x68
  478 00d3 42000000 		.4byte	.LLST1
  479 00d7 07       		.uleb128 0x7
- 480 00d8 EF030000 		.4byte	.LASF18
+ 480 00d8 0C040000 		.4byte	.LASF18
  481 00dc 01       		.byte	0x1
- 482 00dd 22       		.byte	0x22
+ 482 00dd 23       		.byte	0x23
  483 00de 68000000 		.4byte	0x68
  484 00e2 7C000000 		.4byte	.LLST2
  485 00e6 07       		.uleb128 0x7
- 486 00e7 E3030000 		.4byte	.LASF19
+ 486 00e7 00040000 		.4byte	.LASF19
  487 00eb 01       		.byte	0x1
- 488 00ec 23       		.byte	0x23
+ 488 00ec 24       		.byte	0x24
  489 00ed 68000000 		.4byte	0x68
  490 00f1 B0000000 		.4byte	.LLST3
  491 00f5 07       		.uleb128 0x7
- 492 00f6 49040000 		.4byte	.LASF20
+ 492 00f6 66040000 		.4byte	.LASF20
  493 00fa 01       		.byte	0x1
- 494 00fb 24       		.byte	0x24
+ 494 00fb 25       		.byte	0x25
  495 00fc 68000000 		.4byte	0x68
  496 0100 CE000000 		.4byte	.LLST4
  497 0104 07       		.uleb128 0x7
- 498 0105 55000000 		.4byte	.LASF21
+ 498 0105 65000000 		.4byte	.LASF21
  499 0109 01       		.byte	0x1
- 500 010a 27       		.byte	0x27
+ 500 010a 28       		.byte	0x28
  501 010b 68000000 		.4byte	0x68
  502 010f EC000000 		.4byte	.LLST5
  503 0113 07       		.uleb128 0x7
- 504 0114 6F020000 		.4byte	.LASF22
+ 504 0114 75020000 		.4byte	.LASF22
  505 0118 01       		.byte	0x1
- 506 0119 28       		.byte	0x28
+ 506 0119 29       		.byte	0x29
  507 011a 68000000 		.4byte	0x68
  508 011e EC000000 		.4byte	.LLST5
  509 0122 08       		.uleb128 0x8
@@ -717,10 +718,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  526 0145 01       		.uleb128 0x1
  527 0146 30       		.byte	0x30
  528 0147 00       		.byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 13
+
+
  529 0148 08       		.uleb128 0x8
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 13
-
-
  530 0149 24000000 		.4byte	.LVL8
  531 014d 3C050000 		.4byte	0x53c
  532 0151 5B010000 		.4byte	0x15b
@@ -777,10 +778,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  583 01ba 0A       		.uleb128 0xa
  584 01bb 64000000 		.4byte	.LVL22
  585 01bf 95050000 		.4byte	0x595
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 14
+
+
  586 01c3 0A       		.uleb128 0xa
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 14
-
-
  587 01c4 6C000000 		.4byte	.LVL25
  588 01c8 8A050000 		.4byte	0x58a
  589 01cc 0A       		.uleb128 0xa
@@ -837,10 +838,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  640 0223 03       		.byte	0x3
  641 0224 14000000 		.4byte	.LC1
  642 0228 09       		.uleb128 0x9
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 15
+
+
  643 0229 01       		.uleb128 0x1
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 15
-
-
  644 022a 52       		.byte	0x52
  645 022b 02       		.uleb128 0x2
  646 022c 74       		.byte	0x74
@@ -885,62 +886,62 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  685 0277 D7050000 		.4byte	0x5d7
  686 027b 00       		.byte	0
  687 027c 05       		.uleb128 0x5
- 688 027d C2000000 		.4byte	.LASF24
+ 688 027d D2000000 		.4byte	.LASF24
  689 0281 01       		.byte	0x1
- 690 0282 55       		.byte	0x55
+ 690 0282 56       		.byte	0x56
  691 0283 00000000 		.4byte	.LFB65
  692 0287 AC000000 		.4byte	.LFE65-.LFB65
  693 028b 01       		.uleb128 0x1
  694 028c 9C       		.byte	0x9c
  695 028d E8030000 		.4byte	0x3e8
  696 0291 06       		.uleb128 0x6
- 697 0292 55020000 		.4byte	.LASF25
+ 697 0292 5B020000 		.4byte	.LASF25
  698 0296 01       		.byte	0x1
- 699 0297 55       		.byte	0x55
+ 699 0297 56       		.byte	0x56
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 16
+
+
  700 0298 68000000 		.4byte	0x68
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 16
-
-
  701 029c 0A010000 		.4byte	.LLST7
  702 02a0 06       		.uleb128 0x6
- 703 02a1 83030000 		.4byte	.LASF17
+ 703 02a1 37020000 		.4byte	.LASF17
  704 02a5 01       		.byte	0x1
- 705 02a6 55       		.byte	0x55
+ 705 02a6 56       		.byte	0x56
  706 02a7 68000000 		.4byte	0x68
  707 02ab 4C010000 		.4byte	.LLST8
  708 02af 0B       		.uleb128 0xb
- 709 02b0 EF030000 		.4byte	.LASF18
+ 709 02b0 0C040000 		.4byte	.LASF18
  710 02b4 01       		.byte	0x1
- 711 02b5 56       		.byte	0x56
+ 711 02b5 57       		.byte	0x57
  712 02b6 68000000 		.4byte	0x68
  713 02ba 07       		.uleb128 0x7
- 714 02bb E3030000 		.4byte	.LASF19
+ 714 02bb 00040000 		.4byte	.LASF19
  715 02bf 01       		.byte	0x1
- 716 02c0 57       		.byte	0x57
+ 716 02c0 58       		.byte	0x58
  717 02c1 68000000 		.4byte	0x68
  718 02c5 86010000 		.4byte	.LLST9
  719 02c9 07       		.uleb128 0x7
- 720 02ca 49040000 		.4byte	.LASF20
+ 720 02ca 66040000 		.4byte	.LASF20
  721 02ce 01       		.byte	0x1
- 722 02cf 58       		.byte	0x58
+ 722 02cf 59       		.byte	0x59
  723 02d0 68000000 		.4byte	0x68
  724 02d4 A4010000 		.4byte	.LLST10
  725 02d8 07       		.uleb128 0x7
- 726 02d9 D6000000 		.4byte	.LASF16
+ 726 02d9 E6000000 		.4byte	.LASF16
  727 02dd 01       		.byte	0x1
- 728 02de 59       		.byte	0x59
+ 728 02de 5A       		.byte	0x5a
  729 02df 68000000 		.4byte	0x68
  730 02e3 C2010000 		.4byte	.LLST11
  731 02e7 07       		.uleb128 0x7
- 732 02e8 55000000 		.4byte	.LASF21
+ 732 02e8 65000000 		.4byte	.LASF21
  733 02ec 01       		.byte	0x1
- 734 02ed 5A       		.byte	0x5a
+ 734 02ed 5B       		.byte	0x5b
  735 02ee 68000000 		.4byte	0x68
  736 02f2 06020000 		.4byte	.LLST12
  737 02f6 07       		.uleb128 0x7
- 738 02f7 6F020000 		.4byte	.LASF22
+ 738 02f7 75020000 		.4byte	.LASF22
  739 02fb 01       		.byte	0x1
- 740 02fc 5B       		.byte	0x5b
+ 740 02fc 5C       		.byte	0x5c
  741 02fd 68000000 		.4byte	0x68
  742 0301 06020000 		.4byte	.LLST12
  743 0305 08       		.uleb128 0x8
@@ -957,10 +958,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  754 0319 1C000000 		.4byte	.LVL44
  755 031d 47050000 		.4byte	0x547
  756 0321 2B030000 		.4byte	0x32b
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 17
+
+
  757 0325 09       		.uleb128 0x9
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 17
-
-
  758 0326 01       		.uleb128 0x1
  759 0327 50       		.byte	0x50
  760 0328 01       		.uleb128 0x1
@@ -1017,10 +1018,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  811 038b 0A       		.uleb128 0xa
  812 038c 6A000000 		.4byte	.LVL59
  813 0390 7E050000 		.4byte	0x57e
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 18
+
+
  814 0394 0A       		.uleb128 0xa
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 18
-
-
  815 0395 74000000 		.4byte	.LVL62
  816 0399 8A050000 		.4byte	0x58a
  817 039d 0A       		.uleb128 0xa
@@ -1057,33 +1058,33 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  848 03e3 D7050000 		.4byte	0x5d7
  849 03e7 00       		.byte	0
  850 03e8 0C       		.uleb128 0xc
- 851 03e9 B2020000 		.4byte	.LASF26
+ 851 03e9 B8020000 		.4byte	.LASF26
  852 03ed 01       		.byte	0x1
- 853 03ee 91       		.byte	0x91
+ 853 03ee 92       		.byte	0x92
  854 03ef 00000000 		.4byte	.LFB66
  855 03f3 02000000 		.4byte	.LFE66-.LFB66
  856 03f7 01       		.uleb128 0x1
  857 03f8 9C       		.byte	0x9c
  858 03f9 0D040000 		.4byte	0x40d
  859 03fd 06       		.uleb128 0x6
- 860 03fe D6000000 		.4byte	.LASF16
+ 860 03fe E6000000 		.4byte	.LASF16
  861 0402 01       		.byte	0x1
- 862 0403 91       		.byte	0x91
+ 862 0403 92       		.byte	0x92
  863 0404 68000000 		.4byte	0x68
  864 0408 24020000 		.4byte	.LLST14
  865 040c 00       		.byte	0
  866 040d 0D       		.uleb128 0xd
- 867 040e 37020000 		.4byte	.LASF27
+ 867 040e 3D020000 		.4byte	.LASF27
  868 0412 04       		.byte	0x4
  869 0413 1207     		.2byte	0x712
  870 0415 19040000 		.4byte	0x419
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 19
+
+
  871 0419 0E       		.uleb128 0xe
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 19
-
-
  872 041a 76000000 		.4byte	0x76
  873 041e 0F       		.uleb128 0xf
- 874 041f CA030000 		.4byte	.LASF28
+ 874 041f E7030000 		.4byte	.LASF28
  875 0423 05       		.byte	0x5
  876 0424 1E       		.byte	0x1e
  877 0425 68000000 		.4byte	0x68
@@ -1091,7 +1092,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  879 042a 03       		.byte	0x3
  880 042b 00000000 		.4byte	driveStraightEnable
  881 042f 0F       		.uleb128 0xf
- 882 0430 66030000 		.4byte	.LASF29
+ 882 0430 20030000 		.4byte	.LASF29
  883 0434 05       		.byte	0x5
  884 0435 20       		.byte	0x20
  885 0436 68000000 		.4byte	0x68
@@ -1106,7 +1107,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  894 044e 04       		.byte	0x4
  895 044f 00       		.byte	0
  896 0450 0F       		.uleb128 0xf
- 897 0451 8A000000 		.4byte	.LASF30
+ 897 0451 9A000000 		.4byte	.LASF30
  898 0455 05       		.byte	0x5
  899 0456 21       		.byte	0x21
  900 0457 40040000 		.4byte	0x440
@@ -1114,7 +1115,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  902 045c 03       		.byte	0x3
  903 045d 00000000 		.4byte	puckRackColours
  904 0461 0F       		.uleb128 0xf
- 905 0462 9A020000 		.4byte	.LASF31
+ 905 0462 A0020000 		.4byte	.LASF31
  906 0466 05       		.byte	0x5
  907 0467 22       		.byte	0x22
  908 0468 40040000 		.4byte	0x440
@@ -1122,7 +1123,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  910 046d 03       		.byte	0x3
  911 046e 00000000 		.4byte	puckRackOffsetsFromWest
  912 0472 0F       		.uleb128 0xf
- 913 0473 34040000 		.4byte	.LASF32
+ 913 0473 51040000 		.4byte	.LASF32
  914 0477 05       		.byte	0x5
  915 0478 23       		.byte	0x23
  916 0479 68000000 		.4byte	0x68
@@ -1137,10 +1138,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  925 0491 03       		.byte	0x3
  926 0492 00       		.byte	0
  927 0493 0F       		.uleb128 0xf
- 928 0494 A1000000 		.4byte	.LASF33
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 20
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 20
 
 
+ 928 0494 B1000000 		.4byte	.LASF33
  929 0498 05       		.byte	0x5
  930 0499 24       		.byte	0x24
  931 049a 83040000 		.4byte	0x483
@@ -1148,15 +1149,15 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  933 049f 03       		.byte	0x3
  934 04a0 00000000 		.4byte	block_edge_location
  935 04a4 0F       		.uleb128 0xf
- 936 04a5 44020000 		.4byte	.LASF34
+ 936 04a5 4A020000 		.4byte	.LASF34
  937 04a9 06       		.byte	0x6
- 938 04aa 7A       		.byte	0x7a
+ 938 04aa 86       		.byte	0x86
  939 04ab 81000000 		.4byte	0x81
  940 04af 05       		.uleb128 0x5
  941 04b0 03       		.byte	0x3
  942 04b1 00000000 		.4byte	puckPileLocation
  943 04b5 0F       		.uleb128 0xf
- 944 04b6 C7020000 		.4byte	.LASF35
+ 944 04b6 CD020000 		.4byte	.LASF35
  945 04ba 05       		.byte	0x5
  946 04bb 26       		.byte	0x26
  947 04bc 33000000 		.4byte	0x33
@@ -1164,7 +1165,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  949 04c1 03       		.byte	0x3
  950 04c2 00000000 		.4byte	drivingForwardFlag
  951 04c6 0F       		.uleb128 0xf
- 952 04c7 52030000 		.4byte	.LASF36
+ 952 04c7 0C030000 		.4byte	.LASF36
  953 04cb 05       		.byte	0x5
  954 04cc 27       		.byte	0x27
  955 04cd 33000000 		.4byte	0x33
@@ -1172,7 +1173,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  957 04d2 03       		.byte	0x3
  958 04d3 00000000 		.4byte	drivingBackwardFlag
  959 04d7 0F       		.uleb128 0xf
- 960 04d8 27020000 		.4byte	.LASF37
+ 960 04d8 37000000 		.4byte	.LASF37
  961 04dc 05       		.byte	0x5
  962 04dd 28       		.byte	0x28
  963 04de 33000000 		.4byte	0x33
@@ -1180,7 +1181,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  965 04e3 03       		.byte	0x3
  966 04e4 00000000 		.4byte	turningLeftFlag
  967 04e8 0F       		.uleb128 0xf
- 968 04e9 7B040000 		.4byte	.LASF38
+ 968 04e9 98040000 		.4byte	.LASF38
  969 04ed 05       		.byte	0x5
  970 04ee 29       		.byte	0x29
  971 04ef 33000000 		.4byte	0x33
@@ -1188,7 +1189,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  973 04f4 03       		.byte	0x3
  974 04f5 00000000 		.4byte	turningRightFlag
  975 04f9 0F       		.uleb128 0xf
- 976 04fa CD010000 		.4byte	.LASF39
+ 976 04fa DD010000 		.4byte	.LASF39
  977 04fe 05       		.byte	0x5
  978 04ff 2C       		.byte	0x2c
  979 0500 68000000 		.4byte	0x68
@@ -1197,16 +1198,16 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  982 0506 00000000 		.4byte	initialisation
  983 050a 10       		.uleb128 0x10
  984 050b 8F000000 		.4byte	0x8f
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 21
+
+
  985 050f 1A050000 		.4byte	0x51a
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 21
-
-
  986 0513 11       		.uleb128 0x11
  987 0514 9D000000 		.4byte	0x9d
  988 0518 1F       		.byte	0x1f
  989 0519 00       		.byte	0
  990 051a 0F       		.uleb128 0xf
- 991 051b 24040000 		.4byte	.LASF40
+ 991 051b 41040000 		.4byte	.LASF40
  992 051f 05       		.byte	0x5
  993 0520 2A       		.byte	0x2a
  994 0521 0A050000 		.4byte	0x50a
@@ -1214,7 +1215,7 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  996 0526 03       		.byte	0x3
  997 0527 00000000 		.4byte	output
  998 052b 0F       		.uleb128 0xf
- 999 052c 7A000000 		.4byte	.LASF41
+ 999 052c 8A000000 		.4byte	.LASF41
  1000 0530 05       		.byte	0x5
  1001 0531 2E       		.byte	0x2e
  1002 0532 68000000 		.4byte	0x68
@@ -1222,66 +1223,66 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1004 0537 03       		.byte	0x3
  1005 0538 00000000 		.4byte	ultrasonic_flag
  1006 053c 12       		.uleb128 0x12
- 1007 053d 51040000 		.4byte	.LASF42
- 1008 0541 51040000 		.4byte	.LASF42
+ 1007 053d 6E040000 		.4byte	.LASF42
+ 1008 0541 6E040000 		.4byte	.LASF42
  1009 0545 07       		.byte	0x7
  1010 0546 2F       		.byte	0x2f
  1011 0547 12       		.uleb128 0x12
- 1012 0548 60000000 		.4byte	.LASF43
- 1013 054c 60000000 		.4byte	.LASF43
+ 1012 0548 70000000 		.4byte	.LASF43
+ 1013 054c 70000000 		.4byte	.LASF43
  1014 0550 08       		.byte	0x8
  1015 0551 2F       		.byte	0x2f
  1016 0552 12       		.uleb128 0x12
- 1017 0553 92030000 		.4byte	.LASF44
- 1018 0557 92030000 		.4byte	.LASF44
+ 1017 0553 AF030000 		.4byte	.LASF44
+ 1018 0557 AF030000 		.4byte	.LASF44
  1019 055b 09       		.byte	0x9
  1020 055c DD       		.byte	0xdd
  1021 055d 12       		.uleb128 0x12
- 1022 055e 33030000 		.4byte	.LASF45
- 1023 0562 33030000 		.4byte	.LASF45
+ 1022 055e ED020000 		.4byte	.LASF45
+ 1023 0562 ED020000 		.4byte	.LASF45
  1024 0566 09       		.byte	0x9
  1025 0567 C3       		.byte	0xc3
  1026 0568 12       		.uleb128 0x12
- 1027 0569 0D020000 		.4byte	.LASF46
- 1028 056d 0D020000 		.4byte	.LASF46
+ 1027 0569 1D020000 		.4byte	.LASF46
+ 1028 056d 1D020000 		.4byte	.LASF46
  1029 0571 0A       		.byte	0xa
  1030 0572 DD       		.byte	0xdd
  1031 0573 12       		.uleb128 0x12
- 1032 0574 FA030000 		.4byte	.LASF47
- 1033 0578 FA030000 		.4byte	.LASF47
+ 1032 0574 17040000 		.4byte	.LASF47
+ 1033 0578 17040000 		.4byte	.LASF47
  1034 057c 0A       		.byte	0xa
  1035 057d C3       		.byte	0xc3
  1036 057e 13       		.uleb128 0x13
- 1037 057f 94020000 		.4byte	.LASF48
- 1038 0583 94020000 		.4byte	.LASF48
+ 1037 057f 9A020000 		.4byte	.LASF48
+ 1038 0583 9A020000 		.4byte	.LASF48
  1039 0587 0B       		.byte	0xb
  1040 0588 4B01     		.2byte	0x14b
  1041 058a 12       		.uleb128 0x12
- 1042 058b DC010000 		.4byte	.LASF49
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 22
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 22
 
 
- 1043 058f DC010000 		.4byte	.LASF49
+ 1042 058b EC010000 		.4byte	.LASF49
+ 1043 058f EC010000 		.4byte	.LASF49
  1044 0593 0C       		.byte	0xc
  1045 0594 4E       		.byte	0x4e
  1046 0595 12       		.uleb128 0x12
- 1047 0596 AB030000 		.4byte	.LASF50
- 1048 059a AB030000 		.4byte	.LASF50
+ 1047 0596 C8030000 		.4byte	.LASF50
+ 1048 059a C8030000 		.4byte	.LASF50
  1049 059e 0D       		.byte	0xd
  1050 059f 4E       		.byte	0x4e
  1051 05a0 12       		.uleb128 0x12
- 1052 05a1 8C040000 		.4byte	.LASF51
- 1053 05a5 8C040000 		.4byte	.LASF51
+ 1052 05a1 A9040000 		.4byte	.LASF51
+ 1053 05a5 A9040000 		.4byte	.LASF51
  1054 05a9 0E       		.byte	0xe
  1055 05aa E7       		.byte	0xe7
  1056 05ab 12       		.uleb128 0x12
- 1057 05ac 6A040000 		.4byte	.LASF52
- 1058 05b0 6A040000 		.4byte	.LASF52
+ 1057 05ac 87040000 		.4byte	.LASF52
+ 1058 05b0 87040000 		.4byte	.LASF52
  1059 05b4 0F       		.byte	0xf
  1060 05b5 8B       		.byte	0x8b
  1061 05b6 12       		.uleb128 0x12
- 1062 05b7 37000000 		.4byte	.LASF53
- 1063 05bb 37000000 		.4byte	.LASF53
+ 1062 05b7 47000000 		.4byte	.LASF53
+ 1063 05bb 47000000 		.4byte	.LASF53
  1064 05bf 0C       		.byte	0xc
  1065 05c0 4F       		.byte	0x4f
  1066 05c1 12       		.uleb128 0x12
@@ -1290,13 +1291,13 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1069 05ca 0D       		.byte	0xd
  1070 05cb 4F       		.byte	0x4f
  1071 05cc 12       		.uleb128 0x12
- 1072 05cd F1000000 		.4byte	.LASF55
- 1073 05d1 F1000000 		.4byte	.LASF55
+ 1072 05cd 01010000 		.4byte	.LASF55
+ 1073 05d1 01010000 		.4byte	.LASF55
  1074 05d5 09       		.byte	0x9
  1075 05d6 DC       		.byte	0xdc
  1076 05d7 12       		.uleb128 0x12
- 1077 05d8 7B020000 		.4byte	.LASF56
- 1078 05dc 7B020000 		.4byte	.LASF56
+ 1077 05d8 81020000 		.4byte	.LASF56
+ 1078 05dc 81020000 		.4byte	.LASF56
  1079 05e0 0A       		.byte	0xa
  1080 05e1 DC       		.byte	0xdc
  1081 05e2 00       		.byte	0
@@ -1317,10 +1318,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1096 000c 17       		.uleb128 0x17
  1097 000d 11       		.uleb128 0x11
  1098 000e 01       		.uleb128 0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 23
+
+
  1099 000f 10       		.uleb128 0x10
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 23
-
-
  1100 0010 17       		.uleb128 0x17
  1101 0011 00       		.byte	0
  1102 0012 00       		.byte	0
@@ -1377,10 +1378,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1153 0045 12       		.uleb128 0x12
  1154 0046 06       		.uleb128 0x6
  1155 0047 40       		.uleb128 0x40
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 24
+
+
  1156 0048 18       		.uleb128 0x18
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 24
-
-
  1157 0049 9642     		.uleb128 0x2116
  1158 004b 19       		.uleb128 0x19
  1159 004c 01       		.uleb128 0x1
@@ -1437,10 +1438,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1210 0084 18       		.uleb128 0x18
  1211 0085 00       		.byte	0
  1212 0086 00       		.byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 25
+
+
  1213 0087 0A       		.uleb128 0xa
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 25
-
-
  1214 0088 898201   		.uleb128 0x4109
  1215 008b 00       		.byte	0
  1216 008c 11       		.uleb128 0x11
@@ -1497,10 +1498,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1267 00c0 3B       		.uleb128 0x3b
  1268 00c1 05       		.uleb128 0x5
  1269 00c2 49       		.uleb128 0x49
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 26
+
+
  1270 00c3 13       		.uleb128 0x13
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 26
-
-
  1271 00c4 3F       		.uleb128 0x3f
  1272 00c5 19       		.uleb128 0x19
  1273 00c6 3C       		.uleb128 0x3c
@@ -1557,10 +1558,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1324 00f9 3C       		.uleb128 0x3c
  1325 00fa 19       		.uleb128 0x19
  1326 00fb 6E       		.uleb128 0x6e
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 27
+
+
  1327 00fc 0E       		.uleb128 0xe
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 27
-
-
  1328 00fd 03       		.uleb128 0x3
  1329 00fe 0E       		.uleb128 0xe
  1330 00ff 3A       		.uleb128 0x3a
@@ -1617,10 +1618,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1381 003e 00000000 		.4byte	0
  1382              	.LLST1:
  1383 0042 00000000 		.4byte	.LVL0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 28
+
+
  1384 0046 15000000 		.4byte	.LVL4-1
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 28
-
-
  1385 004a 0100     		.2byte	0x1
  1386 004c 51       		.byte	0x51
  1387 004d 15000000 		.4byte	.LVL4-1
@@ -1677,10 +1678,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1438 00ce 5A000000 		.4byte	.LVL19
  1439 00d2 5D000000 		.4byte	.LVL20-1
  1440 00d6 0100     		.2byte	0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 29
+
+
  1441 00d8 50       		.byte	0x50
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 29
-
-
  1442 00d9 5D000000 		.4byte	.LVL20-1
  1443 00dd 7A000000 		.4byte	.LVL29
  1444 00e1 0100     		.2byte	0x1
@@ -1737,10 +1738,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1495 0163 51       		.byte	0x51
  1496 0164 9F       		.byte	0x9f
  1497 0165 1E000000 		.4byte	.LVL45
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 30
+
+
  1498 0169 23000000 		.4byte	.LVL47-1
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 30
-
-
  1499 016d 0100     		.2byte	0x1
  1500 016f 51       		.byte	0x51
  1501 0170 23000000 		.4byte	.LVL47-1
@@ -1797,10 +1798,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1552 01ea 6B       		.byte	0x6b
  1553 01eb 1E       		.byte	0x1e
  1554 01ec 9F       		.byte	0x9f
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 31
+
+
  1555 01ed 98000000 		.4byte	.LVL70
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 31
-
-
  1556 01f1 AC000000 		.4byte	.LFE65
  1557 01f5 0700     		.2byte	0x7
  1558 01f7 F3       		.byte	0xf3
@@ -1857,10 +1858,10 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1609 0004 C4000000 		.4byte	.LFE64
  1610 0008 00000000 		.4byte	.LFB65
  1611 000c AC000000 		.4byte	.LFE65
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 32
+
+
  1612 0010 00000000 		.4byte	.LFB66
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 32
-
-
  1613 0014 02000000 		.4byte	.LFE66
  1614 0018 00000000 		.4byte	0
  1615 001c 00000000 		.4byte	0
@@ -1886,314 +1887,318 @@ ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 1
  1624 002d 5F5F696E 		.ascii	"__int32_t\000"
  1624      7433325F 
  1624      7400
- 1625              	.LASF53:
- 1626 0037 4D6F746F 		.ascii	"Motor_Left_Decoder_SetCounter\000"
- 1626      725F4C65 
- 1626      66745F44 
- 1626      65636F64 
- 1626      65725F53 
- 1627              	.LASF21:
- 1628 0055 73706565 		.ascii	"speed_left\000"
- 1628      645F6C65 
- 1628      667400
- 1629              	.LASF43:
- 1630 0060 4D6F746F 		.ascii	"Motor_Right_Control_Write\000"
- 1630      725F5269 
- 1630      6768745F 
- 1630      436F6E74 
- 1630      726F6C5F 
- 1631              	.LASF41:
- 1632 007a 756C7472 		.ascii	"ultrasonic_flag\000"
- 1632      61736F6E 
- 1632      69635F66 
- 1632      6C616700 
- 1633              	.LASF30:
- 1634 008a 7075636B 		.ascii	"puckRackColours\000"
- 1634      5261636B 
- 1634      436F6C6F 
- 1634      75727300 
- 1635              	.LASF12:
- 1636 009a 646F7562 		.ascii	"double\000"
- 1636      6C6500
- 1637              	.LASF33:
- 1638 00a1 626C6F63 		.ascii	"block_edge_location\000"
- 1638      6B5F6564 
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 33
+ 1625              	.LASF37:
+ 1626 0037 7475726E 		.ascii	"turningLeftFlag\000"
+ 1626      696E674C 
+ 1626      65667446 
+ 1626      6C616700 
+ 1627              	.LASF53:
+ 1628 0047 4D6F746F 		.ascii	"Motor_Left_Decoder_SetCounter\000"
+ 1628      725F4C65 
+ 1628      66745F44 
+ 1628      65636F64 
+ 1628      65725F53 
+ 1629              	.LASF21:
+ 1630 0065 73706565 		.ascii	"speed_left\000"
+ 1630      645F6C65 
+ 1630      667400
+ 1631              	.LASF43:
+ 1632 0070 4D6F746F 		.ascii	"Motor_Right_Control_Write\000"
+ 1632      725F5269 
+ 1632      6768745F 
+ 1632      436F6E74 
+ 1632      726F6C5F 
+ 1633              	.LASF41:
+ 1634 008a 756C7472 		.ascii	"ultrasonic_flag\000"
+ 1634      61736F6E 
+ 1634      69635F66 
+ 1634      6C616700 
+ 1635              	.LASF30:
+ 1636 009a 7075636B 		.ascii	"puckRackColours\000"
+ 1636      5261636B 
+ 1636      436F6C6F 
+ 1636      75727300 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 33
 
 
- 1638      67655F6C 
- 1638      6F636174 
- 1638      696F6E00 
- 1639              	.LASF58:
- 1640 00b5 6D697368 		.ascii	"mishamotor.c\000"
- 1640      616D6F74 
- 1640      6F722E63 
- 1640      00
- 1641              	.LASF24:
- 1642 00c2 6D697368 		.ascii	"mishaSwivel\000"
- 1642      61537769 
- 1642      76656C00 
- 1643              	.LASF10:
- 1644 00ce 696E7433 		.ascii	"int32_t\000"
- 1644      325F7400 
- 1645              	.LASF16:
- 1646 00d6 64697374 		.ascii	"distance\000"
- 1646      616E6365 
- 1646      00
- 1647              	.LASF14:
- 1648 00df 6C6F6E67 		.ascii	"long double\000"
- 1648      20646F75 
- 1648      626C6500 
- 1649              	.LASF11:
- 1650 00eb 666C6F61 		.ascii	"float\000"
- 1650      7400
- 1651              	.LASF55:
- 1652 00f1 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
- 1652      725F4C65 
- 1652      66745F44 
- 1652      72697665 
- 1652      725F536C 
- 1653              	.LASF7:
- 1654 0109 6C6F6E67 		.ascii	"long long unsigned int\000"
- 1654      206C6F6E 
- 1654      6720756E 
- 1654      7369676E 
- 1654      65642069 
- 1655              	.LASF23:
- 1656 0120 6D697368 		.ascii	"mishaMoveDynamic\000"
- 1656      614D6F76 
- 1656      6544796E 
- 1656      616D6963 
- 1656      00
- 1657              	.LASF1:
- 1658 0131 756E7369 		.ascii	"unsigned char\000"
- 1658      676E6564 
- 1658      20636861 
- 1658      7200
- 1659              	.LASF57:
- 1660 013f 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 1660      43313120 
- 1660      352E342E 
- 1660      31203230 
- 1660      31363036 
- 1661 0172 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
- 1661      20726576 
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 34
+ 1637              	.LASF12:
+ 1638 00aa 646F7562 		.ascii	"double\000"
+ 1638      6C6500
+ 1639              	.LASF33:
+ 1640 00b1 626C6F63 		.ascii	"block_edge_location\000"
+ 1640      6B5F6564 
+ 1640      67655F6C 
+ 1640      6F636174 
+ 1640      696F6E00 
+ 1641              	.LASF58:
+ 1642 00c5 6D697368 		.ascii	"mishamotor.c\000"
+ 1642      616D6F74 
+ 1642      6F722E63 
+ 1642      00
+ 1643              	.LASF24:
+ 1644 00d2 6D697368 		.ascii	"mishaSwivel\000"
+ 1644      61537769 
+ 1644      76656C00 
+ 1645              	.LASF10:
+ 1646 00de 696E7433 		.ascii	"int32_t\000"
+ 1646      325F7400 
+ 1647              	.LASF16:
+ 1648 00e6 64697374 		.ascii	"distance\000"
+ 1648      616E6365 
+ 1648      00
+ 1649              	.LASF14:
+ 1650 00ef 6C6F6E67 		.ascii	"long double\000"
+ 1650      20646F75 
+ 1650      626C6500 
+ 1651              	.LASF11:
+ 1652 00fb 666C6F61 		.ascii	"float\000"
+ 1652      7400
+ 1653              	.LASF55:
+ 1654 0101 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
+ 1654      725F4C65 
+ 1654      66745F44 
+ 1654      72697665 
+ 1654      725F536C 
+ 1655              	.LASF7:
+ 1656 0119 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1656      206C6F6E 
+ 1656      6720756E 
+ 1656      7369676E 
+ 1656      65642069 
+ 1657              	.LASF23:
+ 1658 0130 6D697368 		.ascii	"mishaMoveDynamic\000"
+ 1658      614D6F76 
+ 1658      6544796E 
+ 1658      616D6963 
+ 1658      00
+ 1659              	.LASF1:
+ 1660 0141 756E7369 		.ascii	"unsigned char\000"
+ 1660      676E6564 
+ 1660      20636861 
+ 1660      7200
+ 1661              	.LASF57:
+ 1662 014f 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 34
 
 
- 1661      6973696F 
- 1661      6E203233 
- 1661      37373135 
- 1662 01a5 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 1662      66756E63 
- 1662      74696F6E 
- 1662      2D736563 
- 1662      74696F6E 
- 1663              	.LASF39:
- 1664 01cd 696E6974 		.ascii	"initialisation\000"
- 1664      69616C69 
- 1664      73617469 
- 1664      6F6E00
- 1665              	.LASF49:
- 1666 01dc 4D6F746F 		.ascii	"Motor_Left_Decoder_GetCounter\000"
- 1666      725F4C65 
- 1666      66745F44 
- 1666      65636F64 
- 1666      65725F47 
- 1667              	.LASF3:
- 1668 01fa 73686F72 		.ascii	"short unsigned int\000"
- 1668      7420756E 
- 1668      7369676E 
- 1668      65642069 
- 1668      6E7400
- 1669              	.LASF46:
- 1670 020d 4D6F746F 		.ascii	"Motor_Right_Driver_Wakeup\000"
- 1670      725F5269 
- 1670      6768745F 
- 1670      44726976 
- 1670      65725F57 
- 1671              	.LASF37:
- 1672 0227 7475726E 		.ascii	"turningLeftFlag\000"
- 1672      696E674C 
- 1672      65667446 
- 1672      6C616700 
- 1673              	.LASF27:
- 1674 0237 49544D5F 		.ascii	"ITM_RxBuffer\000"
- 1674      52784275 
- 1674      66666572 
- 1674      00
- 1675              	.LASF34:
- 1676 0244 7075636B 		.ascii	"puckPileLocation\000"
- 1676      50696C65 
- 1676      4C6F6361 
- 1676      74696F6E 
+ 1662      43313120 
+ 1662      352E342E 
+ 1662      31203230 
+ 1662      31363036 
+ 1663 0182 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1663      20726576 
+ 1663      6973696F 
+ 1663      6E203233 
+ 1663      37373135 
+ 1664 01b5 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1664      66756E63 
+ 1664      74696F6E 
+ 1664      2D736563 
+ 1664      74696F6E 
+ 1665              	.LASF39:
+ 1666 01dd 696E6974 		.ascii	"initialisation\000"
+ 1666      69616C69 
+ 1666      73617469 
+ 1666      6F6E00
+ 1667              	.LASF49:
+ 1668 01ec 4D6F746F 		.ascii	"Motor_Left_Decoder_GetCounter\000"
+ 1668      725F4C65 
+ 1668      66745F44 
+ 1668      65636F64 
+ 1668      65725F47 
+ 1669              	.LASF3:
+ 1670 020a 73686F72 		.ascii	"short unsigned int\000"
+ 1670      7420756E 
+ 1670      7369676E 
+ 1670      65642069 
+ 1670      6E7400
+ 1671              	.LASF46:
+ 1672 021d 4D6F746F 		.ascii	"Motor_Right_Driver_Wakeup\000"
+ 1672      725F5269 
+ 1672      6768745F 
+ 1672      44726976 
+ 1672      65725F57 
+ 1673              	.LASF17:
+ 1674 0237 73706565 		.ascii	"speed\000"
+ 1674      6400
+ 1675              	.LASF27:
+ 1676 023d 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1676      52784275 
+ 1676      66666572 
  1676      00
- 1677              	.LASF25:
- 1678 0255 64656772 		.ascii	"degrees\000"
- 1678      65657300 
- 1679              	.LASF5:
- 1680 025d 6C6F6E67 		.ascii	"long unsigned int\000"
- 1680      20756E73 
- 1680      69676E65 
- 1680      6420696E 
- 1680      7400
- 1681              	.LASF22:
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 35
+ 1677              	.LASF34:
+ 1678 024a 7075636B 		.ascii	"puckPileLocation\000"
+ 1678      50696C65 
+ 1678      4C6F6361 
+ 1678      74696F6E 
+ 1678      00
+ 1679              	.LASF25:
+ 1680 025b 64656772 		.ascii	"degrees\000"
+ 1680      65657300 
+ 1681              	.LASF5:
+ 1682 0263 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1682      20756E73 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 35
 
 
- 1682 026f 73706565 		.ascii	"speed_right\000"
- 1682      645F7269 
- 1682      67687400 
- 1683              	.LASF56:
- 1684 027b 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
- 1684      725F5269 
- 1684      6768745F 
- 1684      44726976 
- 1684      65725F53 
- 1685              	.LASF48:
- 1686 0294 726F756E 		.ascii	"round\000"
- 1686      6400
- 1687              	.LASF31:
- 1688 029a 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
- 1688      5261636B 
- 1688      4F666673 
- 1688      65747346 
- 1688      726F6D57 
- 1689              	.LASF26:
- 1690 02b2 7472616E 		.ascii	"translateMoveDynamic\000"
- 1690      736C6174 
- 1690      654D6F76 
- 1690      6544796E 
- 1690      616D6963 
- 1691              	.LASF35:
- 1692 02c7 64726976 		.ascii	"drivingForwardFlag\000"
- 1692      696E6746 
- 1692      6F727761 
- 1692      7264466C 
- 1692      616700
- 1693              	.LASF59:
- 1694 02da 433A5C55 		.ascii	"C:\\Users\\bamcg3\\Desktop\\ECE3091_Group17\\Group1"
- 1694      73657273 
- 1694      5C62616D 
- 1694      6367335C 
- 1694      4465736B 
- 1695 0308 37526F62 		.ascii	"7RobotReal\\Group17Robot.cydsn\000"
- 1695      6F745265 
- 1695      616C5C47 
- 1695      726F7570 
- 1695      3137526F 
- 1696              	.LASF8:
- 1697 0326 756E7369 		.ascii	"unsigned int\000"
- 1697      676E6564 
- 1697      20696E74 
- 1697      00
- 1698              	.LASF45:
- 1699 0333 4D6F746F 		.ascii	"Motor_Left_Driver_WriteCompare\000"
- 1699      725F4C65 
- 1699      66745F44 
- 1699      72697665 
- 1699      725F5772 
- 1700              	.LASF36:
- 1701 0352 64726976 		.ascii	"drivingBackwardFlag\000"
- 1701      696E6742 
- 1701      61636B77 
- 1701      61726446 
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 36
+ 1682      69676E65 
+ 1682      6420696E 
+ 1682      7400
+ 1683              	.LASF22:
+ 1684 0275 73706565 		.ascii	"speed_right\000"
+ 1684      645F7269 
+ 1684      67687400 
+ 1685              	.LASF56:
+ 1686 0281 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
+ 1686      725F5269 
+ 1686      6768745F 
+ 1686      44726976 
+ 1686      65725F53 
+ 1687              	.LASF48:
+ 1688 029a 726F756E 		.ascii	"round\000"
+ 1688      6400
+ 1689              	.LASF31:
+ 1690 02a0 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 1690      5261636B 
+ 1690      4F666673 
+ 1690      65747346 
+ 1690      726F6D57 
+ 1691              	.LASF26:
+ 1692 02b8 7472616E 		.ascii	"translateMoveDynamic\000"
+ 1692      736C6174 
+ 1692      654D6F76 
+ 1692      6544796E 
+ 1692      616D6963 
+ 1693              	.LASF35:
+ 1694 02cd 64726976 		.ascii	"drivingForwardFlag\000"
+ 1694      696E6746 
+ 1694      6F727761 
+ 1694      7264466C 
+ 1694      616700
+ 1695              	.LASF8:
+ 1696 02e0 756E7369 		.ascii	"unsigned int\000"
+ 1696      676E6564 
+ 1696      20696E74 
+ 1696      00
+ 1697              	.LASF45:
+ 1698 02ed 4D6F746F 		.ascii	"Motor_Left_Driver_WriteCompare\000"
+ 1698      725F4C65 
+ 1698      66745F44 
+ 1698      72697665 
+ 1698      725F5772 
+ 1699              	.LASF36:
+ 1700 030c 64726976 		.ascii	"drivingBackwardFlag\000"
+ 1700      696E6742 
+ 1700      61636B77 
+ 1700      61726446 
+ 1700      6C616700 
+ 1701              	.LASF29:
+ 1702 0320 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 1702      656E7450 
+ 1702      75636B52 
+ 1702      61636B53 
+ 1702      63616E6E 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 36
 
 
- 1701      6C616700 
- 1702              	.LASF29:
- 1703 0366 63757272 		.ascii	"currentPuckRackScanningIndex\000"
- 1703      656E7450 
- 1703      75636B52 
- 1703      61636B53 
- 1703      63616E6E 
- 1704              	.LASF17:
- 1705 0383 73706565 		.ascii	"speed\000"
- 1705      6400
- 1706              	.LASF15:
- 1707 0389 73697A65 		.ascii	"sizetype\000"
- 1707      74797065 
- 1707      00
- 1708              	.LASF44:
- 1709 0392 4D6F746F 		.ascii	"Motor_Left_Driver_Wakeup\000"
- 1709      725F4C65 
- 1709      66745F44 
- 1709      72697665 
- 1709      725F5761 
- 1710              	.LASF50:
- 1711 03ab 4D6F746F 		.ascii	"Motor_Right_Decoder_GetCounter\000"
- 1711      725F5269 
- 1711      6768745F 
- 1711      4465636F 
- 1711      6465725F 
- 1712              	.LASF28:
- 1713 03ca 64726976 		.ascii	"driveStraightEnable\000"
- 1713      65537472 
- 1713      61696768 
- 1713      74456E61 
- 1713      626C6500 
- 1714              	.LASF13:
- 1715 03de 63686172 		.ascii	"char\000"
- 1715      00
- 1716              	.LASF19:
- 1717 03e3 636F756E 		.ascii	"count_right\000"
- 1717      745F7269 
- 1717      67687400 
- 1718              	.LASF18:
- 1719 03ef 636F756E 		.ascii	"count_left\000"
- 1719      745F6C65 
- 1719      667400
- 1720              	.LASF47:
- 1721 03fa 4D6F746F 		.ascii	"Motor_Right_Driver_WriteCompare\000"
- 1721      725F5269 
- 1721      6768745F 
- 1721      44726976 
- 1721      65725F57 
- 1722              	.LASF2:
- 1723 041a 73686F72 		.ascii	"short int\000"
- 1723      7420696E 
- 1723      7400
- 1724              	.LASF40:
- 1725 0424 6F757470 		.ascii	"output\000"
- 1725      757400
- 1726              	.LASF4:
-ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccZlFqFj.s 			page 37
+ 1703              	.LASF59:
+ 1704 033d 5C5C6164 		.ascii	"\\\\ad.monash.edu\\home\\User026\\bamcg3\\Documents"
+ 1704      2E6D6F6E 
+ 1704      6173682E 
+ 1704      6564755C 
+ 1704      686F6D65 
+ 1705 036a 5C476974 		.ascii	"\\GitHub\\ECE3091_Group17\\Group17RobotReal\\Group1"
+ 1705      4875625C 
+ 1705      45434533 
+ 1705      3039315F 
+ 1705      47726F75 
+ 1706 0399 37526F62 		.ascii	"7Robot.cydsn\000"
+ 1706      6F742E63 
+ 1706      7964736E 
+ 1706      00
+ 1707              	.LASF15:
+ 1708 03a6 73697A65 		.ascii	"sizetype\000"
+ 1708      74797065 
+ 1708      00
+ 1709              	.LASF44:
+ 1710 03af 4D6F746F 		.ascii	"Motor_Left_Driver_Wakeup\000"
+ 1710      725F4C65 
+ 1710      66745F44 
+ 1710      72697665 
+ 1710      725F5761 
+ 1711              	.LASF50:
+ 1712 03c8 4D6F746F 		.ascii	"Motor_Right_Decoder_GetCounter\000"
+ 1712      725F5269 
+ 1712      6768745F 
+ 1712      4465636F 
+ 1712      6465725F 
+ 1713              	.LASF28:
+ 1714 03e7 64726976 		.ascii	"driveStraightEnable\000"
+ 1714      65537472 
+ 1714      61696768 
+ 1714      74456E61 
+ 1714      626C6500 
+ 1715              	.LASF13:
+ 1716 03fb 63686172 		.ascii	"char\000"
+ 1716      00
+ 1717              	.LASF19:
+ 1718 0400 636F756E 		.ascii	"count_right\000"
+ 1718      745F7269 
+ 1718      67687400 
+ 1719              	.LASF18:
+ 1720 040c 636F756E 		.ascii	"count_left\000"
+ 1720      745F6C65 
+ 1720      667400
+ 1721              	.LASF47:
+ 1722 0417 4D6F746F 		.ascii	"Motor_Right_Driver_WriteCompare\000"
+ 1722      725F5269 
+ 1722      6768745F 
+ 1722      44726976 
+ 1722      65725F57 
+ 1723              	.LASF2:
+ 1724 0437 73686F72 		.ascii	"short int\000"
+ 1724      7420696E 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\cclw1icm.s 			page 37
 
 
- 1727 042b 6C6F6E67 		.ascii	"long int\000"
- 1727      20696E74 
- 1727      00
- 1728              	.LASF32:
- 1729 0434 73776565 		.ascii	"sweeping\000"
- 1729      70696E67 
- 1729      00
- 1730              	.LASF0:
- 1731 043d 7369676E 		.ascii	"signed char\000"
- 1731      65642063 
- 1731      68617200 
- 1732              	.LASF20:
- 1733 0449 636F6D70 		.ascii	"compare\000"
- 1733      61726500 
- 1734              	.LASF42:
- 1735 0451 4D6F746F 		.ascii	"Motor_Left_Control_Write\000"
- 1735      725F4C65 
- 1735      66745F43 
- 1735      6F6E7472 
- 1735      6F6C5F57 
- 1736              	.LASF52:
- 1737 046a 55415254 		.ascii	"UART_1_PutString\000"
- 1737      5F315F50 
- 1737      75745374 
- 1737      72696E67 
- 1737      00
- 1738              	.LASF38:
- 1739 047b 7475726E 		.ascii	"turningRightFlag\000"
- 1739      696E6752 
- 1739      69676874 
- 1739      466C6167 
- 1739      00
- 1740              	.LASF51:
- 1741 048c 73707269 		.ascii	"sprintf\000"
- 1741      6E746600 
- 1742              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ 1724      7400
+ 1725              	.LASF40:
+ 1726 0441 6F757470 		.ascii	"output\000"
+ 1726      757400
+ 1727              	.LASF4:
+ 1728 0448 6C6F6E67 		.ascii	"long int\000"
+ 1728      20696E74 
+ 1728      00
+ 1729              	.LASF32:
+ 1730 0451 73776565 		.ascii	"sweeping\000"
+ 1730      70696E67 
+ 1730      00
+ 1731              	.LASF0:
+ 1732 045a 7369676E 		.ascii	"signed char\000"
+ 1732      65642063 
+ 1732      68617200 
+ 1733              	.LASF20:
+ 1734 0466 636F6D70 		.ascii	"compare\000"
+ 1734      61726500 
+ 1735              	.LASF42:
+ 1736 046e 4D6F746F 		.ascii	"Motor_Left_Control_Write\000"
+ 1736      725F4C65 
+ 1736      66745F43 
+ 1736      6F6E7472 
+ 1736      6F6C5F57 
+ 1737              	.LASF52:
+ 1738 0487 55415254 		.ascii	"UART_1_PutString\000"
+ 1738      5F315F50 
+ 1738      75745374 
+ 1738      72696E67 
+ 1738      00
+ 1739              	.LASF38:
+ 1740 0498 7475726E 		.ascii	"turningRightFlag\000"
+ 1740      696E6752 
+ 1740      69676874 
+ 1740      466C6167 
+ 1740      00
+ 1741              	.LASF51:
+ 1742 04a9 73707269 		.ascii	"sprintf\000"
+ 1742      6E746600 
+ 1743              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

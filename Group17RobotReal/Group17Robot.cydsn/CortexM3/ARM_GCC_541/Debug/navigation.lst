@@ -1,0 +1,3754 @@
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"navigation.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.armMoving,"ax",%progbits
+  20              		.align	2
+  21              		.global	armMoving
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	armMoving, %function
+  25              	armMoving:
+  26              	.LFB64:
+  27              		.file 1 "navigation.c"
+   1:navigation.c  **** 
+   2:navigation.c  **** /* ========================================
+   3:navigation.c  ****  *
+   4:navigation.c  ****  * Copyright Group 17, 2019
+   5:navigation.c  ****  * All Rights Reserved
+   6:navigation.c  ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   7:navigation.c  ****  *
+   8:navigation.c  ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   9:navigation.c  ****  * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
+  10:navigation.c  ****  *
+  11:navigation.c  ****  * ========================================
+  12:navigation.c  **** */
+  13:navigation.c  **** 
+  14:navigation.c  **** // * PSOC LIBRARY * //
+  15:navigation.c  **** #include "project.h"
+  16:navigation.c  **** 
+  17:navigation.c  **** // * C LIBRARIES * // 
+  18:navigation.c  **** #include <stdlib.h>
+  19:navigation.c  **** #include <stdio.h>
+  20:navigation.c  **** #include <math.h>
+  21:navigation.c  **** 
+  22:navigation.c  **** // * OUR LIBRARIES * //
+  23:navigation.c  **** #include "main.h"
+  24:navigation.c  **** #include "colour.h"
+  25:navigation.c  **** #include "ultrasonic.h" 
+  26:navigation.c  **** #include "servo.h"
+  27:navigation.c  **** #include "mishamotor.h"
+  28:navigation.c  **** #include "customMath.h"
+  29:navigation.c  **** #include "navigation.h"
+  30:navigation.c  **** 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 2
+
+
+  31:navigation.c  **** void armMoving(void){
+  28              		.loc 1 31 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 38B5     		push	{r3, r4, r5, lr}
+  33              		.cfi_def_cfa_offset 16
+  34              		.cfi_offset 3, -16
+  35              		.cfi_offset 4, -12
+  36              		.cfi_offset 5, -8
+  37              		.cfi_offset 14, -4
+  38              	.LVL0:
+  32:navigation.c  ****     
+  33:navigation.c  ****     int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
+  34:navigation.c  ****     int puck_scan;
+  35:navigation.c  ****     
+  36:navigation.c  ****     puckConstructionPlan[1] = RED;
+  39              		.loc 1 36 0
+  40 0002 0122     		movs	r2, #1
+  41 0004 0D4B     		ldr	r3, .L7
+  42 0006 5A60     		str	r2, [r3, #4]
+  37:navigation.c  ****     
+  38:navigation.c  ****     // States
+  39:navigation.c  ****     // moving
+  40:navigation.c  ****     changeHeightToPuck(3);  // Arm has to be lifted to highest position
+  43              		.loc 1 40 0
+  44 0008 0320     		movs	r0, #3
+  45 000a FFF7FEFF 		bl	changeHeightToPuck
+  46              	.LVL1:
+  33:navigation.c  ****     int puck_scan;
+  47              		.loc 1 33 0
+  48 000e 0025     		movs	r5, #0
+  41:navigation.c  ****         // THIS WILL be ensured by always returning the claw to the highest position after completi
+  42:navigation.c  ****         
+  43:navigation.c  ****     // Scanning puck:
+  44:navigation.c  ****     while (puck_correct == FALSE) 
+  49              		.loc 1 44 0
+  50 0010 10E0     		b	.L2
+  51              	.LVL2:
+  52              	.L4:
+  45:navigation.c  ****     {
+  46:navigation.c  ****                                 // robot moves forward towards puck
+  47:navigation.c  ****         changeHeightToPuck(1);  // arm lowers onto robot
+  53              		.loc 1 47 0
+  54 0012 0120     		movs	r0, #1
+  55 0014 FFF7FEFF 		bl	changeHeightToPuck
+  56              	.LVL3:
+  48:navigation.c  ****         puck_scan = colourSensingOutput();  // colour sensor takes a scan
+  57              		.loc 1 48 0
+  58 0018 FFF7FEFF 		bl	colourSensingOutput
+  59              	.LVL4:
+  60 001c 0446     		mov	r4, r0
+  61              	.LVL5:
+  49:navigation.c  ****         changeHeightToPuck(3);  // arm returns to high position
+  62              		.loc 1 49 0
+  63 001e 0320     		movs	r0, #3
+  64              	.LVL6:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 3
+
+
+  65 0020 FFF7FEFF 		bl	changeHeightToPuck
+  66              	.LVL7:
+  50:navigation.c  ****                                 // robot moves backwards
+  51:navigation.c  ****         if (puck_scan == puckConstructionPlan[current_stage]) {puck_correct = TRUE;}
+  67              		.loc 1 51 0
+  68 0024 064B     		ldr	r3, .L7+4
+  69 0026 1A68     		ldr	r2, [r3]
+  70 0028 044B     		ldr	r3, .L7
+  71 002a 53F82230 		ldr	r3, [r3, r2, lsl #2]
+  72 002e 9C42     		cmp	r4, r3
+  73 0030 00D1     		bne	.L2
+  74 0032 0125     		movs	r5, #1
+  75              	.LVL8:
+  76              	.L2:
+  44:navigation.c  ****     {
+  77              		.loc 1 44 0
+  78 0034 002D     		cmp	r5, #0
+  79 0036 ECD0     		beq	.L4
+  52:navigation.c  ****                                 // if colour == true:
+  53:navigation.c  ****                                     // enter picking up puck from 
+  54:navigation.c  ****         else 
+  55:navigation.c  ****         {
+  56:navigation.c  ****                                 // if colour == false
+  57:navigation.c  ****                                     // robot translates to side to see next puck, and performs scan
+  58:navigation.c  ****         }
+  59:navigation.c  ****     }
+  60:navigation.c  ****     
+  61:navigation.c  ****     /*
+  62:navigation.c  ****     
+  63:navigation.c  ****     // Picking Up puck from pile:
+  64:navigation.c  ****     changeHeightToPuck(0);      // arm lowers to ground
+  65:navigation.c  ****                                 // robot moves forward
+  66:navigation.c  ****     armClose();                 // claw closes on puck
+  67:navigation.c  ****     changeHeightToPuck(3);      // arm lifts up to highest position
+  68:navigation.c  ****                                 // robot moves back away from puck area   
+  69:navigation.c  ****       
+  70:navigation.c  ****     
+  71:navigation.c  ****     // Deposition puck in construction zone:
+  72:navigation.c  ****                                 // arm will be in highest position from moving
+  73:navigation.c  ****         changeHeightToPuck(current_stage-1);    // arm moves to position of stacking pucks         
+  74:navigation.c  ****                                                 // stage 1st = ground/0
+  75:navigation.c  ****                                                 // stage 2nd = 1
+  76:navigation.c  ****                                                 // stage 3rd = 2
+  77:navigation.c  ****         armOpen();              // gripper releases puck
+  78:navigation.c  ****         changeHeightToPuck(3);  // arm moves back to highest position availabe
+  79:navigation.c  ****                                 // robot moves away 
+  80:navigation.c  ****     */
+  81:navigation.c  ****     
+  82:navigation.c  **** }
+  80              		.loc 1 82 0
+  81 0038 38BD     		pop	{r3, r4, r5, pc}
+  82              	.LVL9:
+  83              	.L8:
+  84 003a 00BF     		.align	2
+  85              	.L7:
+  86 003c 00000000 		.word	puckConstructionPlan
+  87 0040 00000000 		.word	current_stage
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 4
+
+
+  88              		.cfi_endproc
+  89              	.LFE64:
+  90              		.size	armMoving, .-armMoving
+  91              		.section	.text.moveUntilPuck,"ax",%progbits
+  92              		.align	2
+  93              		.global	moveUntilPuck
+  94              		.thumb
+  95              		.thumb_func
+  96              		.type	moveUntilPuck, %function
+  97              	moveUntilPuck:
+  98              	.LFB65:
+  83:navigation.c  **** 
+  84:navigation.c  **** void moveUntilPuck(void) {
+  99              		.loc 1 84 0
+ 100              		.cfi_startproc
+ 101              		@ args = 0, pretend = 0, frame = 0
+ 102              		@ frame_needed = 0, uses_anonymous_args = 0
+ 103 0000 10B5     		push	{r4, lr}
+ 104              		.cfi_def_cfa_offset 8
+ 105              		.cfi_offset 4, -8
+ 106              		.cfi_offset 14, -4
+ 107              	.LVL10:
+  85:navigation.c  ****     int puck_detect = 0;
+  86:navigation.c  ****     Motor_Left_Control_Write(0);
+ 108              		.loc 1 86 0
+ 109 0002 0020     		movs	r0, #0
+ 110 0004 FFF7FEFF 		bl	Motor_Left_Control_Write
+ 111              	.LVL11:
+  87:navigation.c  ****     Motor_Right_Control_Write(0);
+ 112              		.loc 1 87 0
+ 113 0008 0020     		movs	r0, #0
+ 114 000a FFF7FEFF 		bl	Motor_Right_Control_Write
+ 115              	.LVL12:
+  88:navigation.c  ****     
+  89:navigation.c  ****     Motor_Left_Driver_Wakeup();
+ 116              		.loc 1 89 0
+ 117 000e FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
+ 118              	.LVL13:
+  90:navigation.c  ****     Motor_Left_Driver_WriteCompare(SPEED);
+ 119              		.loc 1 90 0
+ 120 0012 AA20     		movs	r0, #170
+ 121 0014 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 122              	.LVL14:
+  91:navigation.c  ****     Motor_Right_Driver_Wakeup();
+ 123              		.loc 1 91 0
+ 124 0018 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
+ 125              	.LVL15:
+  92:navigation.c  ****     Motor_Right_Driver_WriteCompare(SPEED);
+ 126              		.loc 1 92 0
+ 127 001c AA20     		movs	r0, #170
+ 128 001e FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 129              	.LVL16:
+  93:navigation.c  ****     
+  94:navigation.c  ****     colour_sensing_algorithm = 2;       
+ 130              		.loc 1 94 0
+ 131 0022 0222     		movs	r2, #2
+ 132 0024 0D4B     		ldr	r3, .L13
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 5
+
+
+ 133 0026 1A60     		str	r2, [r3]
+  85:navigation.c  ****     Motor_Left_Control_Write(0);
+ 134              		.loc 1 85 0
+ 135 0028 0024     		movs	r4, #0
+  95:navigation.c  ****     
+  96:navigation.c  ****     while (puck_detect == 0) 
+ 136              		.loc 1 96 0
+ 137 002a 05E0     		b	.L10
+ 138              	.LVL17:
+ 139              	.L11:
+  97:navigation.c  ****     {
+  98:navigation.c  ****         puck_detect = colourSensingOutput();
+ 140              		.loc 1 98 0
+ 141 002c FFF7FEFF 		bl	colourSensingOutput
+ 142              	.LVL18:
+ 143 0030 0446     		mov	r4, r0
+ 144              	.LVL19:
+  99:navigation.c  ****         CyDelay(10);
+ 145              		.loc 1 99 0
+ 146 0032 0A20     		movs	r0, #10
+ 147              	.LVL20:
+ 148 0034 FFF7FEFF 		bl	CyDelay
+ 149              	.LVL21:
+ 150              	.L10:
+  96:navigation.c  ****     {
+ 151              		.loc 1 96 0
+ 152 0038 002C     		cmp	r4, #0
+ 153 003a F7D0     		beq	.L11
+ 100:navigation.c  ****         //sprintf(output, "%i \t", puck_detect);       
+ 101:navigation.c  ****         //UART_1_PutString(output);
+ 102:navigation.c  ****     }
+ 103:navigation.c  ****        
+ 104:navigation.c  ****     Motor_Left_Decoder_SetCounter(0);
+ 154              		.loc 1 104 0
+ 155 003c 0020     		movs	r0, #0
+ 156 003e FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
+ 157              	.LVL22:
+ 105:navigation.c  ****     Motor_Right_Decoder_SetCounter(0);
+ 158              		.loc 1 105 0
+ 159 0042 0020     		movs	r0, #0
+ 160 0044 FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
+ 161              	.LVL23:
+ 106:navigation.c  ****     
+ 107:navigation.c  ****     Motor_Left_Driver_Sleep();
+ 162              		.loc 1 107 0
+ 163 0048 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 164              	.LVL24:
+ 108:navigation.c  ****     Motor_Right_Driver_Sleep();
+ 165              		.loc 1 108 0
+ 166 004c FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 167              	.LVL25:
+ 109:navigation.c  ****     
+ 110:navigation.c  ****     mishaMoveDynamic(30, SPEED);
+ 168              		.loc 1 110 0
+ 169 0050 AA21     		movs	r1, #170
+ 170 0052 1E20     		movs	r0, #30
+ 171 0054 FFF7FEFF 		bl	mishaMoveDynamic
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 6
+
+
+ 172              	.LVL26:
+ 173 0058 10BD     		pop	{r4, pc}
+ 174              	.LVL27:
+ 175              	.L14:
+ 176 005a 00BF     		.align	2
+ 177              	.L13:
+ 178 005c 00000000 		.word	colour_sensing_algorithm
+ 179              		.cfi_endproc
+ 180              	.LFE65:
+ 181              		.size	moveUntilPuck, .-moveUntilPuck
+ 182              		.section	.text.straightAdjust,"ax",%progbits
+ 183              		.align	2
+ 184              		.global	straightAdjust
+ 185              		.thumb
+ 186              		.thumb_func
+ 187              		.type	straightAdjust, %function
+ 188              	straightAdjust:
+ 189              	.LFB66:
+ 111:navigation.c  ****     
+ 112:navigation.c  **** }
+ 113:navigation.c  **** 
+ 114:navigation.c  **** void straightAdjust(void) {
+ 190              		.loc 1 114 0
+ 191              		.cfi_startproc
+ 192              		@ args = 0, pretend = 0, frame = 0
+ 193              		@ frame_needed = 0, uses_anonymous_args = 0
+ 194 0000 70B5     		push	{r4, r5, r6, lr}
+ 195              		.cfi_def_cfa_offset 16
+ 196              		.cfi_offset 4, -16
+ 197              		.cfi_offset 5, -12
+ 198              		.cfi_offset 6, -8
+ 199              		.cfi_offset 14, -4
+ 200              	.LVL28:
+ 115:navigation.c  ****        
+ 116:navigation.c  ****     int front_left;
+ 117:navigation.c  ****     int front_right;
+ 118:navigation.c  ****     int difference = 300;
+ 201              		.loc 1 118 0
+ 202 0002 4FF49674 		mov	r4, #300
+ 119:navigation.c  ****     int tolerance = 3;
+ 120:navigation.c  ****     
+ 121:navigation.c  ****     //distanceCheck(); 
+ 122:navigation.c  ****     
+ 123:navigation.c  ****     while (abs(difference) > 200) {              // ensures the initial readings are accurate
+ 203              		.loc 1 123 0
+ 204 0006 29E0     		b	.L16
+ 205              	.LVL29:
+ 206              	.L17:
+ 124:navigation.c  ****         distanceSensor(FRONT_LEFT);
+ 207              		.loc 1 124 0
+ 208 0008 0020     		movs	r0, #0
+ 209 000a FFF7FEFF 		bl	distanceSensor
+ 210              	.LVL30:
+ 125:navigation.c  ****         CyDelay(50);                        // 50ms might not be enough ???
+ 211              		.loc 1 125 0
+ 212 000e 3220     		movs	r0, #50
+ 213 0010 FFF7FEFF 		bl	CyDelay
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 7
+
+
+ 214              	.LVL31:
+ 126:navigation.c  ****         sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_LEFT]);
+ 215              		.loc 1 126 0
+ 216 0014 674E     		ldr	r6, .L26
+ 217 0016 684C     		ldr	r4, .L26+4
+ 218              	.LVL32:
+ 219 0018 684D     		ldr	r5, .L26+8
+ 220 001a 3268     		ldr	r2, [r6]
+ 221 001c 2146     		mov	r1, r4
+ 222 001e 2846     		mov	r0, r5
+ 223 0020 FFF7FEFF 		bl	sprintf
+ 224              	.LVL33:
+ 127:navigation.c  ****         UART_1_PutString(output);
+ 225              		.loc 1 127 0
+ 226 0024 2846     		mov	r0, r5
+ 227 0026 FFF7FEFF 		bl	UART_1_PutString
+ 228              	.LVL34:
+ 128:navigation.c  ****         
+ 129:navigation.c  ****         distanceSensor(FRONT_RIGHT);
+ 229              		.loc 1 129 0
+ 230 002a 0120     		movs	r0, #1
+ 231 002c FFF7FEFF 		bl	distanceSensor
+ 232              	.LVL35:
+ 130:navigation.c  ****         CyDelay(50);
+ 233              		.loc 1 130 0
+ 234 0030 3220     		movs	r0, #50
+ 235 0032 FFF7FEFF 		bl	CyDelay
+ 236              	.LVL36:
+ 131:navigation.c  ****         sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_RIGHT]);
+ 237              		.loc 1 131 0
+ 238 0036 7268     		ldr	r2, [r6, #4]
+ 239 0038 2146     		mov	r1, r4
+ 240 003a 2846     		mov	r0, r5
+ 241 003c FFF7FEFF 		bl	sprintf
+ 242              	.LVL37:
+ 132:navigation.c  ****         UART_1_PutString(output);
+ 243              		.loc 1 132 0
+ 244 0040 2846     		mov	r0, r5
+ 245 0042 FFF7FEFF 		bl	UART_1_PutString
+ 246              	.LVL38:
+ 133:navigation.c  ****         
+ 134:navigation.c  ****         difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+ 247              		.loc 1 134 0
+ 248 0046 3468     		ldr	r4, [r6]
+ 249 0048 7368     		ldr	r3, [r6, #4]
+ 250 004a E41A     		subs	r4, r4, r3
+ 251              	.LVL39:
+ 135:navigation.c  ****         sprintf(output, "difference = %d, \n", difference);       
+ 252              		.loc 1 135 0
+ 253 004c 2246     		mov	r2, r4
+ 254 004e 5C49     		ldr	r1, .L26+12
+ 255 0050 2846     		mov	r0, r5
+ 256 0052 FFF7FEFF 		bl	sprintf
+ 257              	.LVL40:
+ 136:navigation.c  ****         UART_1_PutString(output);
+ 258              		.loc 1 136 0
+ 259 0056 2846     		mov	r0, r5
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 8
+
+
+ 260 0058 FFF7FEFF 		bl	UART_1_PutString
+ 261              	.LVL41:
+ 262              	.L16:
+ 123:navigation.c  ****         distanceSensor(FRONT_LEFT);
+ 263              		.loc 1 123 0
+ 264 005c 84EAE473 		eor	r3, r4, r4, asr #31
+ 265 0060 A3EBE473 		sub	r3, r3, r4, asr #31
+ 266 0064 C82B     		cmp	r3, #200
+ 267 0066 CFDC     		bgt	.L17
+ 268              	.L24:
+ 137:navigation.c  ****     }
+ 138:navigation.c  ****     
+ 139:navigation.c  ****     
+ 140:navigation.c  ****     int speed_left = 25;        // slow speed
+ 141:navigation.c  ****     int speed_right = 25;
+ 142:navigation.c  ****     
+ 143:navigation.c  ****     do {
+ 144:navigation.c  ****         if (difference > 0)             // This means we need to move it right
+ 269              		.loc 1 144 0
+ 270 0068 002C     		cmp	r4, #0
+ 271 006a 3BDD     		ble	.L18
+ 145:navigation.c  ****         {
+ 146:navigation.c  ****             Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
+ 272              		.loc 1 146 0
+ 273 006c 0020     		movs	r0, #0
+ 274 006e FFF7FEFF 		bl	Motor_Left_Control_Write
+ 275              	.LVL42:
+ 276 0072 0120     		movs	r0, #1
+ 277 0074 FFF7FEFF 		bl	Motor_Right_Control_Write
+ 278              	.LVL43:
+ 147:navigation.c  ****             while (abs(difference) > tolerance && abs(difference) < 200)     // ensures working cor
+ 279              		.loc 1 147 0
+ 280 0078 29E0     		b	.L19
+ 281              	.LVL44:
+ 282              	.L21:
+ 148:navigation.c  ****             {
+ 149:navigation.c  ****             Motor_Left_Driver_Wakeup();
+ 283              		.loc 1 149 0
+ 284 007a FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
+ 285              	.LVL45:
+ 150:navigation.c  ****             Motor_Left_Driver_WriteCompare(speed_left);
+ 286              		.loc 1 150 0
+ 287 007e 1920     		movs	r0, #25
+ 288 0080 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 289              	.LVL46:
+ 151:navigation.c  ****             Motor_Right_Driver_Wakeup();
+ 290              		.loc 1 151 0
+ 291 0084 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
+ 292              	.LVL47:
+ 152:navigation.c  ****             Motor_Right_Driver_WriteCompare(speed_right);
+ 293              		.loc 1 152 0
+ 294 0088 1920     		movs	r0, #25
+ 295 008a FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 296              	.LVL48:
+ 153:navigation.c  **** 
+ 154:navigation.c  ****             distanceSensor(FRONT_LEFT);
+ 297              		.loc 1 154 0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 9
+
+
+ 298 008e 0020     		movs	r0, #0
+ 299 0090 FFF7FEFF 		bl	distanceSensor
+ 300              	.LVL49:
+ 155:navigation.c  ****             CyDelay(50);
+ 301              		.loc 1 155 0
+ 302 0094 3220     		movs	r0, #50
+ 303 0096 FFF7FEFF 		bl	CyDelay
+ 304              	.LVL50:
+ 156:navigation.c  ****             distanceSensor(FRONT_RIGHT);
+ 305              		.loc 1 156 0
+ 306 009a 0120     		movs	r0, #1
+ 307 009c FFF7FEFF 		bl	distanceSensor
+ 308              	.LVL51:
+ 157:navigation.c  ****             CyDelay(50);
+ 309              		.loc 1 157 0
+ 310 00a0 3220     		movs	r0, #50
+ 311 00a2 FFF7FEFF 		bl	CyDelay
+ 312              	.LVL52:
+ 158:navigation.c  ****                       
+ 159:navigation.c  ****             difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT]
+ 313              		.loc 1 159 0
+ 314 00a6 434B     		ldr	r3, .L26
+ 315 00a8 1A68     		ldr	r2, [r3]
+ 316 00aa 5B68     		ldr	r3, [r3, #4]
+ 317 00ac D41A     		subs	r4, r2, r3
+ 318              	.LVL53:
+ 160:navigation.c  ****             
+ 161:navigation.c  ****             sprintf(output, "%d, %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_
+ 319              		.loc 1 161 0
+ 320 00ae 434D     		ldr	r5, .L26+8
+ 321 00b0 4449     		ldr	r1, .L26+16
+ 322 00b2 2846     		mov	r0, r5
+ 323 00b4 FFF7FEFF 		bl	sprintf
+ 324              	.LVL54:
+ 162:navigation.c  ****             UART_1_PutString(output);
+ 325              		.loc 1 162 0
+ 326 00b8 2846     		mov	r0, r5
+ 327 00ba FFF7FEFF 		bl	UART_1_PutString
+ 328              	.LVL55:
+ 163:navigation.c  ****             
+ 164:navigation.c  ****             sprintf(output, "difference = %d, \n", difference);       
+ 329              		.loc 1 164 0
+ 330 00be 2246     		mov	r2, r4
+ 331 00c0 3F49     		ldr	r1, .L26+12
+ 332 00c2 2846     		mov	r0, r5
+ 333 00c4 FFF7FEFF 		bl	sprintf
+ 334              	.LVL56:
+ 165:navigation.c  ****             UART_1_PutString(output);
+ 335              		.loc 1 165 0
+ 336 00c8 2846     		mov	r0, r5
+ 337 00ca FFF7FEFF 		bl	UART_1_PutString
+ 338              	.LVL57:
+ 339              	.L19:
+ 147:navigation.c  ****             {
+ 340              		.loc 1 147 0
+ 341 00ce 84EAE473 		eor	r3, r4, r4, asr #31
+ 342 00d2 A3EBE473 		sub	r3, r3, r4, asr #31
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 10
+
+
+ 343 00d6 032B     		cmp	r3, #3
+ 344 00d8 3FDD     		ble	.L20
+ 147:navigation.c  ****             {
+ 345              		.loc 1 147 0 is_stmt 0 discriminator 1
+ 346 00da C734     		adds	r4, r4, #199
+ 347              	.LVL58:
+ 348 00dc B4F5C77F 		cmp	r4, #398
+ 349 00e0 CBD9     		bls	.L21
+ 350 00e2 3AE0     		b	.L20
+ 351              	.LVL59:
+ 352              	.L18:
+ 166:navigation.c  ****             
+ 167:navigation.c  ****             
+ 168:navigation.c  ****             }
+ 169:navigation.c  ****             
+ 170:navigation.c  ****         }
+ 171:navigation.c  ****         else {
+ 172:navigation.c  ****             Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
+ 353              		.loc 1 172 0 is_stmt 1
+ 354 00e4 0120     		movs	r0, #1
+ 355 00e6 FFF7FEFF 		bl	Motor_Left_Control_Write
+ 356              	.LVL60:
+ 357 00ea 0020     		movs	r0, #0
+ 358 00ec FFF7FEFF 		bl	Motor_Right_Control_Write
+ 359              	.LVL61:
+ 173:navigation.c  ****             while (abs(difference) > tolerance && abs(difference) < 200) 
+ 360              		.loc 1 173 0
+ 361 00f0 29E0     		b	.L22
+ 362              	.LVL62:
+ 363              	.L23:
+ 174:navigation.c  ****             {
+ 175:navigation.c  ****             Motor_Left_Driver_Wakeup();
+ 364              		.loc 1 175 0
+ 365 00f2 FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
+ 366              	.LVL63:
+ 176:navigation.c  ****             Motor_Left_Driver_WriteCompare(speed_left);
+ 367              		.loc 1 176 0
+ 368 00f6 1920     		movs	r0, #25
+ 369 00f8 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 370              	.LVL64:
+ 177:navigation.c  ****             Motor_Right_Driver_Wakeup();
+ 371              		.loc 1 177 0
+ 372 00fc FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
+ 373              	.LVL65:
+ 178:navigation.c  ****             Motor_Right_Driver_WriteCompare(speed_right); 
+ 374              		.loc 1 178 0
+ 375 0100 1920     		movs	r0, #25
+ 376 0102 FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 377              	.LVL66:
+ 179:navigation.c  ****             
+ 180:navigation.c  ****             distanceSensor(FRONT_LEFT);
+ 378              		.loc 1 180 0
+ 379 0106 0020     		movs	r0, #0
+ 380 0108 FFF7FEFF 		bl	distanceSensor
+ 381              	.LVL67:
+ 181:navigation.c  ****             CyDelay(50);
+ 382              		.loc 1 181 0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 11
+
+
+ 383 010c 3220     		movs	r0, #50
+ 384 010e FFF7FEFF 		bl	CyDelay
+ 385              	.LVL68:
+ 182:navigation.c  ****             distanceSensor(FRONT_RIGHT);
+ 386              		.loc 1 182 0
+ 387 0112 0120     		movs	r0, #1
+ 388 0114 FFF7FEFF 		bl	distanceSensor
+ 389              	.LVL69:
+ 183:navigation.c  ****             CyDelay(50);
+ 390              		.loc 1 183 0
+ 391 0118 3220     		movs	r0, #50
+ 392 011a FFF7FEFF 		bl	CyDelay
+ 393              	.LVL70:
+ 184:navigation.c  ****                       
+ 185:navigation.c  ****             difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT]
+ 394              		.loc 1 185 0
+ 395 011e 254B     		ldr	r3, .L26
+ 396 0120 1A68     		ldr	r2, [r3]
+ 397 0122 5B68     		ldr	r3, [r3, #4]
+ 398 0124 D41A     		subs	r4, r2, r3
+ 399              	.LVL71:
+ 186:navigation.c  ****             
+ 187:navigation.c  ****             sprintf(output, " %d , %d \t", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distance
+ 400              		.loc 1 187 0
+ 401 0126 254D     		ldr	r5, .L26+8
+ 402 0128 2749     		ldr	r1, .L26+20
+ 403 012a 2846     		mov	r0, r5
+ 404 012c FFF7FEFF 		bl	sprintf
+ 405              	.LVL72:
+ 188:navigation.c  ****             UART_1_PutString(output);
+ 406              		.loc 1 188 0
+ 407 0130 2846     		mov	r0, r5
+ 408 0132 FFF7FEFF 		bl	UART_1_PutString
+ 409              	.LVL73:
+ 189:navigation.c  ****             
+ 190:navigation.c  ****             sprintf(output, "dif: %d, \n", difference);       
+ 410              		.loc 1 190 0
+ 411 0136 2246     		mov	r2, r4
+ 412 0138 2449     		ldr	r1, .L26+24
+ 413 013a 2846     		mov	r0, r5
+ 414 013c FFF7FEFF 		bl	sprintf
+ 415              	.LVL74:
+ 191:navigation.c  ****             UART_1_PutString(output);
+ 416              		.loc 1 191 0
+ 417 0140 2846     		mov	r0, r5
+ 418 0142 FFF7FEFF 		bl	UART_1_PutString
+ 419              	.LVL75:
+ 420              	.L22:
+ 173:navigation.c  ****             {
+ 421              		.loc 1 173 0
+ 422 0146 84EAE473 		eor	r3, r4, r4, asr #31
+ 423 014a A3EBE473 		sub	r3, r3, r4, asr #31
+ 424 014e 032B     		cmp	r3, #3
+ 425 0150 03DD     		ble	.L20
+ 173:navigation.c  ****             {
+ 426              		.loc 1 173 0 is_stmt 0 discriminator 1
+ 427 0152 C734     		adds	r4, r4, #199
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 12
+
+
+ 428              	.LVL76:
+ 429 0154 B4F5C77F 		cmp	r4, #398
+ 430 0158 CBD9     		bls	.L23
+ 431              	.LVL77:
+ 432              	.L20:
+ 192:navigation.c  ****             
+ 193:navigation.c  ****             }
+ 194:navigation.c  ****             
+ 195:navigation.c  ****         }
+ 196:navigation.c  ****         
+ 197:navigation.c  ****         
+ 198:navigation.c  ****         // CHECKS one more time to ensure the difference is accurate: 
+ 199:navigation.c  ****         distanceSensor(FRONT_LEFT);
+ 433              		.loc 1 199 0 is_stmt 1
+ 434 015a 0020     		movs	r0, #0
+ 435 015c FFF7FEFF 		bl	distanceSensor
+ 436              	.LVL78:
+ 200:navigation.c  ****         CyDelay(50);
+ 437              		.loc 1 200 0
+ 438 0160 3220     		movs	r0, #50
+ 439 0162 FFF7FEFF 		bl	CyDelay
+ 440              	.LVL79:
+ 201:navigation.c  ****         distanceSensor(FRONT_RIGHT);
+ 441              		.loc 1 201 0
+ 442 0166 0120     		movs	r0, #1
+ 443 0168 FFF7FEFF 		bl	distanceSensor
+ 444              	.LVL80:
+ 202:navigation.c  ****         CyDelay(50);
+ 445              		.loc 1 202 0
+ 446 016c 3220     		movs	r0, #50
+ 447 016e FFF7FEFF 		bl	CyDelay
+ 448              	.LVL81:
+ 203:navigation.c  ****                       
+ 204:navigation.c  ****         difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+ 449              		.loc 1 204 0
+ 450 0172 104B     		ldr	r3, .L26
+ 451 0174 1A68     		ldr	r2, [r3]
+ 452 0176 5B68     		ldr	r3, [r3, #4]
+ 453 0178 D41A     		subs	r4, r2, r3
+ 454              	.LVL82:
+ 205:navigation.c  ****         sprintf(output, "%d, %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[F
+ 455              		.loc 1 205 0
+ 456 017a 104D     		ldr	r5, .L26+8
+ 457 017c 1149     		ldr	r1, .L26+16
+ 458 017e 2846     		mov	r0, r5
+ 459 0180 FFF7FEFF 		bl	sprintf
+ 460              	.LVL83:
+ 206:navigation.c  ****         UART_1_PutString(output);
+ 461              		.loc 1 206 0
+ 462 0184 2846     		mov	r0, r5
+ 463 0186 FFF7FEFF 		bl	UART_1_PutString
+ 464              	.LVL84:
+ 207:navigation.c  ****         sprintf(output, "difference = %d, \n", difference);       
+ 465              		.loc 1 207 0
+ 466 018a 2246     		mov	r2, r4
+ 467 018c 0C49     		ldr	r1, .L26+12
+ 468 018e 2846     		mov	r0, r5
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 13
+
+
+ 469 0190 FFF7FEFF 		bl	sprintf
+ 470              	.LVL85:
+ 208:navigation.c  ****         UART_1_PutString(output);
+ 471              		.loc 1 208 0
+ 472 0194 2846     		mov	r0, r5
+ 473 0196 FFF7FEFF 		bl	UART_1_PutString
+ 474              	.LVL86:
+ 209:navigation.c  ****         
+ 210:navigation.c  ****     } while (abs(difference) > 10);        // This ensures that the turning worked correctly
+ 475              		.loc 1 210 0
+ 476 019a 84EAE473 		eor	r3, r4, r4, asr #31
+ 477 019e A3EBE473 		sub	r3, r3, r4, asr #31
+ 478 01a2 0A2B     		cmp	r3, #10
+ 479 01a4 3FF760AF 		bgt	.L24
+ 211:navigation.c  ****     
+ 212:navigation.c  ****     Motor_Left_Driver_Sleep();
+ 480              		.loc 1 212 0
+ 481 01a8 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 482              	.LVL87:
+ 213:navigation.c  ****     Motor_Right_Driver_Sleep();
+ 483              		.loc 1 213 0
+ 484 01ac FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 485              	.LVL88:
+ 486 01b0 70BD     		pop	{r4, r5, r6, pc}
+ 487              	.LVL89:
+ 488              	.L27:
+ 489 01b2 00BF     		.align	2
+ 490              	.L26:
+ 491 01b4 00000000 		.word	ultrasonic_distances_mm
+ 492 01b8 00000000 		.word	.LC0
+ 493 01bc 00000000 		.word	output
+ 494 01c0 08000000 		.word	.LC1
+ 495 01c4 1C000000 		.word	.LC2
+ 496 01c8 28000000 		.word	.LC3
+ 497 01cc 34000000 		.word	.LC4
+ 498              		.cfi_endproc
+ 499              	.LFE66:
+ 500              		.size	straightAdjust, .-straightAdjust
+ 501              		.section	.text.moveUntil,"ax",%progbits
+ 502              		.align	2
+ 503              		.global	moveUntil
+ 504              		.thumb
+ 505              		.thumb_func
+ 506              		.type	moveUntil, %function
+ 507              	moveUntil:
+ 508              	.LFB67:
+ 214:navigation.c  ****     
+ 215:navigation.c  ****     // I WANT TO CREATE A FUNCTION THAT TAKES A CONTINOUS POLL OF THE UTLRASONICS 
+ 216:navigation.c  ****     
+ 217:navigation.c  ****     
+ 218:navigation.c  ****     /*
+ 219:navigation.c  **** 
+ 220:navigation.c  ****     while(abs(difference) > tolerance)
+ 221:navigation.c  ****     {
+ 222:navigation.c  ****         distanceCheck();         // updates the distances
+ 223:navigation.c  ****         difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+ 224:navigation.c  ****         sprintf(output, "%d, \t", ultrasonic_distances_mm[FRONT_LEFT]);       
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 14
+
+
+ 225:navigation.c  ****         UART_1_PutString(output);
+ 226:navigation.c  ****         sprintf(output, "%d \n", ultrasonic_distances_mm[FRONT_RIGHT]);      
+ 227:navigation.c  ****         UART_1_PutString(output);
+ 228:navigation.c  ****         
+ 229:navigation.c  ****         if (ultrasonic_distances_mm[FRONT_LEFT] < ultrasonic_distances_mm[FRONT_RIGHT] 
+ 230:navigation.c  ****                 || ultrasonic_distances_mm[FRONT_LEFT] > 8000) 
+ 231:navigation.c  ****         {
+ 232:navigation.c  ****             mishaSwivel(-1);    // we want to swivel left
+ 233:navigation.c  ****         }
+ 234:navigation.c  ****         else if (ultrasonic_distances_mm[FRONT_LEFT] > ultrasonic_distances_mm[FRONT_RIGHT])
+ 235:navigation.c  ****         {
+ 236:navigation.c  ****             mishaSwivel(1);    // want to swivel right
+ 237:navigation.c  ****         }
+ 238:navigation.c  ****         
+ 239:navigation.c  ****     }
+ 240:navigation.c  ****     
+ 241:navigation.c  ****     */
+ 242:navigation.c  **** 
+ 243:navigation.c  **** }
+ 244:navigation.c  **** 
+ 245:navigation.c  **** void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed
+ 509              		.loc 1 245 0
+ 510              		.cfi_startproc
+ 511              		@ args = 4, pretend = 0, frame = 0
+ 512              		@ frame_needed = 0, uses_anonymous_args = 0
+ 513              	.LVL90:
+ 514 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 515              		.cfi_def_cfa_offset 24
+ 516              		.cfi_offset 4, -24
+ 517              		.cfi_offset 5, -20
+ 518              		.cfi_offset 6, -16
+ 519              		.cfi_offset 7, -12
+ 520              		.cfi_offset 8, -8
+ 521              		.cfi_offset 14, -4
+ 522 0004 0746     		mov	r7, r0
+ 523 0006 0E46     		mov	r6, r1
+ 524 0008 9046     		mov	r8, r2
+ 525 000a 1C46     		mov	r4, r3
+ 526              	.LVL91:
+ 246:navigation.c  ****     // distance_set is in millimeteres
+ 247:navigation.c  ****     // will check the front two ultrasonics 
+ 248:navigation.c  ****     // will move until distance specified in function 
+ 249:navigation.c  ****     
+ 250:navigation.c  ****     int count_left;                 // counts the encoder values
+ 251:navigation.c  ****     int count_right;
+ 252:navigation.c  ****     int speed_left = speed;         // the set speed of the motors
+ 253:navigation.c  ****     int speed_right = speed;
+ 254:navigation.c  ****     int compare;                    
+ 255:navigation.c  ****                                   // the ultrasonic sensor we will be using 
+ 256:navigation.c  ****     int distance_sensor;            // the measured distance of the sensor
+ 257:navigation.c  ****     
+ 258:navigation.c  ****     // The distance is in millimetres 
+ 259:navigation.c  ****     // Is the distance negative or positive? 
+ 260:navigation.c  ****     if (direction == FORWARD) { 
+ 527              		.loc 1 260 0
+ 528 000c 0129     		cmp	r1, #1
+ 529 000e 05D1     		bne	.L29
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 15
+
+
+ 261:navigation.c  ****         Motor_Left_Control_Write(0); 
+ 530              		.loc 1 261 0
+ 531 0010 0020     		movs	r0, #0
+ 532              	.LVL92:
+ 533 0012 FFF7FEFF 		bl	Motor_Left_Control_Write
+ 534              	.LVL93:
+ 262:navigation.c  ****         Motor_Right_Control_Write(0); 
+ 535              		.loc 1 262 0
+ 536 0016 0020     		movs	r0, #0
+ 537 0018 FFF7FEFF 		bl	Motor_Right_Control_Write
+ 538              	.LVL94:
+ 539              	.L29:
+ 263:navigation.c  ****         //ultrasonic_sensor = FRONT_LEFT;       // use the back ultrasonic to test our distance
+ 264:navigation.c  ****                                         // THIS CHECKS THE FRONT LEFT SENSOR, for some reason?
+ 265:navigation.c  ****         compare = 32000;                // max compare value
+ 266:navigation.c  ****     }
+ 267:navigation.c  ****     if (direction == BACKWARD) {
+ 540              		.loc 1 267 0
+ 541 001c 2EB9     		cbnz	r6, .L30
+ 268:navigation.c  ****         Motor_Left_Control_Write(1); 
+ 542              		.loc 1 268 0
+ 543 001e 0120     		movs	r0, #1
+ 544 0020 FFF7FEFF 		bl	Motor_Left_Control_Write
+ 545              	.LVL95:
+ 269:navigation.c  ****         Motor_Right_Control_Write(1);
+ 546              		.loc 1 269 0
+ 547 0024 0120     		movs	r0, #1
+ 548 0026 FFF7FEFF 		bl	Motor_Right_Control_Write
+ 549              	.LVL96:
+ 550              	.L30:
+ 270:navigation.c  ****         //ultrasonic_sensor = BACK; // We just use one ultrasonic front sensor
+ 271:navigation.c  ****         compare = -32000;               // min compare value
+ 272:navigation.c  ****     }
+ 273:navigation.c  ****     
+ 274:navigation.c  ****     ultrasonic_distances_mm[ultrasonic_sensor] = ARENA_WIDTH + 100;             // So it will enter
+ 551              		.loc 1 274 0
+ 552 002a 40F21452 		movw	r2, #1300
+ 553 002e 3A4B     		ldr	r3, .L40
+ 554 0030 43F82420 		str	r2, [r3, r4, lsl #2]
+ 275:navigation.c  ****     while (ultrasonic_distances_mm[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against
+ 555              		.loc 1 275 0
+ 556 0034 11E0     		b	.L31
+ 557              	.LVL97:
+ 558              	.L32:
+ 276:navigation.c  ****         distanceSensor(ultrasonic_sensor);
+ 559              		.loc 1 276 0
+ 560 0036 2046     		mov	r0, r4
+ 561 0038 FFF7FEFF 		bl	distanceSensor
+ 562              	.LVL98:
+ 277:navigation.c  ****         CyDelay(50);
+ 563              		.loc 1 277 0
+ 564 003c 3220     		movs	r0, #50
+ 565 003e FFF7FEFF 		bl	CyDelay
+ 566              	.LVL99:
+ 278:navigation.c  ****         distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance meas
+ 567              		.loc 1 278 0
+ 568 0042 354B     		ldr	r3, .L40
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 16
+
+
+ 569 0044 53F82450 		ldr	r5, [r3, r4, lsl #2]
+ 570              	.LVL100:
+ 279:navigation.c  ****         sprintf(output, "%d \t", distance_sensor);       
+ 571              		.loc 1 279 0
+ 572 0048 344E     		ldr	r6, .L40+4
+ 573 004a 2A46     		mov	r2, r5
+ 574 004c 3449     		ldr	r1, .L40+8
+ 575 004e 3046     		mov	r0, r6
+ 576 0050 FFF7FEFF 		bl	sprintf
+ 577              	.LVL101:
+ 280:navigation.c  ****         UART_1_PutString(output);
+ 578              		.loc 1 280 0
+ 579 0054 3046     		mov	r0, r6
+ 580 0056 FFF7FEFF 		bl	UART_1_PutString
+ 581              	.LVL102:
+ 582              	.L31:
+ 275:navigation.c  ****         distanceSensor(ultrasonic_sensor);
+ 583              		.loc 1 275 0
+ 584 005a 2F4B     		ldr	r3, .L40
+ 585 005c 53F82430 		ldr	r3, [r3, r4, lsl #2]
+ 586 0060 B3F5966F 		cmp	r3, #1200
+ 587 0064 E7DC     		bgt	.L32
+ 281:navigation.c  ****     }
+ 282:navigation.c  ****     
+ 283:navigation.c  ****     Motor_Left_Driver_Wakeup();
+ 588              		.loc 1 283 0
+ 589 0066 FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
+ 590              	.LVL103:
+ 284:navigation.c  ****     Motor_Left_Driver_WriteCompare(speed_left);
+ 591              		.loc 1 284 0
+ 592 006a 9DF81860 		ldrb	r6, [sp, #24]	@ zero_extendqisi2
+ 593 006e 3046     		mov	r0, r6
+ 594 0070 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 595              	.LVL104:
+ 285:navigation.c  ****     Motor_Right_Driver_Wakeup();
+ 596              		.loc 1 285 0
+ 597 0074 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
+ 598              	.LVL105:
+ 286:navigation.c  ****     Motor_Right_Driver_WriteCompare(speed_right);
+ 599              		.loc 1 286 0
+ 600 0078 3046     		mov	r0, r6
+ 601 007a FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 602              	.LVL106:
+ 287:navigation.c  ****         
+ 288:navigation.c  ****     if (less_or_great == LESS_THAN) {                                         // if distance_set is
+ 603              		.loc 1 288 0
+ 604 007e B8F1000F 		cmp	r8, #0
+ 605 0082 16D0     		beq	.L33
+ 606 0084 1BE0     		b	.L34
+ 607              	.LVL107:
+ 608              	.L35:
+ 289:navigation.c  ****         while (distance_sensor > abs(distance_set)) {                // This adjusts for drift 
+ 290:navigation.c  ****             count_left = Motor_Left_Decoder_GetCounter();
+ 609              		.loc 1 290 0
+ 610 0086 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
+ 611              	.LVL108:
+ 291:navigation.c  ****             count_right = Motor_Right_Decoder_GetCounter();
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 17
+
+
+ 612              		.loc 1 291 0
+ 613 008a FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 614              	.LVL109:
+ 292:navigation.c  ****             if (count_left > count_right) {
+ 293:navigation.c  ****             speed_left -= ADJUST;
+ 294:navigation.c  ****             }
+ 295:navigation.c  ****             if (count_right > count_left) {
+ 296:navigation.c  ****             speed_right -= ADJUST; 
+ 297:navigation.c  ****             }
+ 298:navigation.c  ****             distanceSensor(ultrasonic_sensor);
+ 615              		.loc 1 298 0
+ 616 008e 2046     		mov	r0, r4
+ 617 0090 FFF7FEFF 		bl	distanceSensor
+ 618              	.LVL110:
+ 299:navigation.c  ****             CyDelay(50);
+ 619              		.loc 1 299 0
+ 620 0094 3220     		movs	r0, #50
+ 621 0096 FFF7FEFF 		bl	CyDelay
+ 622              	.LVL111:
+ 300:navigation.c  ****             //distanceCheckOne(ultrasonic_sensor);                            // checks the distanc
+ 301:navigation.c  ****             distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance 
+ 623              		.loc 1 301 0
+ 624 009a 1F4B     		ldr	r3, .L40
+ 625 009c 53F82450 		ldr	r5, [r3, r4, lsl #2]
+ 626              	.LVL112:
+ 302:navigation.c  ****             sprintf(output, "%d \t", distance_sensor);       
+ 627              		.loc 1 302 0
+ 628 00a0 1E4E     		ldr	r6, .L40+4
+ 629 00a2 2A46     		mov	r2, r5
+ 630 00a4 1E49     		ldr	r1, .L40+8
+ 631 00a6 3046     		mov	r0, r6
+ 632 00a8 FFF7FEFF 		bl	sprintf
+ 633              	.LVL113:
+ 303:navigation.c  ****             UART_1_PutString(output);
+ 634              		.loc 1 303 0
+ 635 00ac 3046     		mov	r0, r6
+ 636 00ae FFF7FEFF 		bl	UART_1_PutString
+ 637              	.LVL114:
+ 638              	.L33:
+ 289:navigation.c  ****             count_left = Motor_Left_Decoder_GetCounter();
+ 639              		.loc 1 289 0
+ 640 00b2 87EAE773 		eor	r3, r7, r7, asr #31
+ 641 00b6 A3EBE773 		sub	r3, r3, r7, asr #31
+ 642 00ba 9D42     		cmp	r5, r3
+ 643 00bc E3DC     		bgt	.L35
+ 644              	.L34:
+ 304:navigation.c  ****         }
+ 305:navigation.c  ****     }
+ 306:navigation.c  ****     
+ 307:navigation.c  ****     if (less_or_great == GREATER_THAN){                                         // if distance_set 
+ 645              		.loc 1 307 0
+ 646 00be B8F1010F 		cmp	r8, #1
+ 647 00c2 1CD1     		bne	.L37
+ 648 00c4 15E0     		b	.L36
+ 649              	.L38:
+ 308:navigation.c  ****         while (distance_sensor < abs(distance_set)) {                // This adjusts for drift 
+ 309:navigation.c  ****             count_left = Motor_Left_Decoder_GetCounter();
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 18
+
+
+ 650              		.loc 1 309 0
+ 651 00c6 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
+ 652              	.LVL115:
+ 310:navigation.c  ****             count_right = Motor_Right_Decoder_GetCounter();
+ 653              		.loc 1 310 0
+ 654 00ca FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 655              	.LVL116:
+ 311:navigation.c  ****             if (count_left > count_right) {
+ 312:navigation.c  ****             speed_left -= ADJUST;
+ 313:navigation.c  ****             }
+ 314:navigation.c  ****             if (count_right > count_left) {
+ 315:navigation.c  ****             speed_right -= ADJUST; 
+ 316:navigation.c  ****             }
+ 317:navigation.c  ****             distanceSensor(ultrasonic_sensor);
+ 656              		.loc 1 317 0
+ 657 00ce 2046     		mov	r0, r4
+ 658 00d0 FFF7FEFF 		bl	distanceSensor
+ 659              	.LVL117:
+ 318:navigation.c  ****             CyDelay(50);
+ 660              		.loc 1 318 0
+ 661 00d4 3220     		movs	r0, #50
+ 662 00d6 FFF7FEFF 		bl	CyDelay
+ 663              	.LVL118:
+ 319:navigation.c  ****             //distanceCheckOne(ultrasonic_sensor);                            // checks the distanc
+ 320:navigation.c  ****             distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance 
+ 664              		.loc 1 320 0
+ 665 00da 0F4B     		ldr	r3, .L40
+ 666 00dc 53F82450 		ldr	r5, [r3, r4, lsl #2]
+ 667              	.LVL119:
+ 321:navigation.c  ****             sprintf(output, "%d \t", distance_sensor);       
+ 668              		.loc 1 321 0
+ 669 00e0 0E4E     		ldr	r6, .L40+4
+ 670 00e2 2A46     		mov	r2, r5
+ 671 00e4 0E49     		ldr	r1, .L40+8
+ 672 00e6 3046     		mov	r0, r6
+ 673 00e8 FFF7FEFF 		bl	sprintf
+ 674              	.LVL120:
+ 322:navigation.c  ****             UART_1_PutString(output);
+ 675              		.loc 1 322 0
+ 676 00ec 3046     		mov	r0, r6
+ 677 00ee FFF7FEFF 		bl	UART_1_PutString
+ 678              	.LVL121:
+ 679              	.L36:
+ 308:navigation.c  ****             count_left = Motor_Left_Decoder_GetCounter();
+ 680              		.loc 1 308 0
+ 681 00f2 87EAE773 		eor	r3, r7, r7, asr #31
+ 682 00f6 A3EBE773 		sub	r3, r3, r7, asr #31
+ 683 00fa 9D42     		cmp	r5, r3
+ 684 00fc E3DB     		blt	.L38
+ 685              	.L37:
+ 323:navigation.c  ****         }
+ 324:navigation.c  ****     }
+ 325:navigation.c  ****     
+ 326:navigation.c  ****     //sprintf(output, "left motor: %d \n", count_left);       
+ 327:navigation.c  ****     //UART_1_PutString(output);
+ 328:navigation.c  ****     //sprintf(output, "right motor: %d \n", count_right);      
+ 329:navigation.c  ****     //UART_1_PutString(output);
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 19
+
+
+ 330:navigation.c  ****         
+ 331:navigation.c  ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
+ 686              		.loc 1 331 0
+ 687 00fe 0020     		movs	r0, #0
+ 688 0100 FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
+ 689              	.LVL122:
+ 332:navigation.c  ****     Motor_Right_Decoder_SetCounter(0);   
+ 690              		.loc 1 332 0
+ 691 0104 0020     		movs	r0, #0
+ 692 0106 FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
+ 693              	.LVL123:
+ 333:navigation.c  ****     
+ 334:navigation.c  ****     Motor_Left_Driver_Sleep();              // Puts motors to sleep 
+ 694              		.loc 1 334 0
+ 695 010a FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 696              	.LVL124:
+ 335:navigation.c  ****     Motor_Right_Driver_Sleep();
+ 697              		.loc 1 335 0
+ 698 010e FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 699              	.LVL125:
+ 700 0112 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 701              	.LVL126:
+ 702              	.L41:
+ 703 0116 00BF     		.align	2
+ 704              	.L40:
+ 705 0118 00000000 		.word	ultrasonic_distances_mm
+ 706 011c 00000000 		.word	output
+ 707 0120 00000000 		.word	.LC0
+ 708              		.cfi_endproc
+ 709              	.LFE67:
+ 710              		.size	moveUntil, .-moveUntil
+ 711              		.section	.text.locatePucks,"ax",%progbits
+ 712              		.align	2
+ 713              		.global	locatePucks
+ 714              		.thumb
+ 715              		.thumb_func
+ 716              		.type	locatePucks, %function
+ 717              	locatePucks:
+ 718              	.LFB68:
+ 336:navigation.c  ****    
+ 337:navigation.c  ****     
+ 338:navigation.c  **** }
+ 339:navigation.c  **** 
+ 340:navigation.c  **** void locatePucks(void)
+ 341:navigation.c  **** {
+ 719              		.loc 1 341 0
+ 720              		.cfi_startproc
+ 721              		@ args = 0, pretend = 0, frame = 0
+ 722              		@ frame_needed = 0, uses_anonymous_args = 0
+ 723              		@ link register save eliminated.
+ 724 0000 7047     		bx	lr
+ 725              		.cfi_endproc
+ 726              	.LFE68:
+ 727              		.size	locatePucks, .-locatePucks
+ 728              		.comm	ultrasonic_flag,4,4
+ 729              		.comm	initialisation,4,4
+ 730              		.comm	output,32,4
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 20
+
+
+ 731              		.comm	turningRightFlag,2,2
+ 732              		.comm	turningLeftFlag,2,2
+ 733              		.comm	drivingBackwardFlag,2,2
+ 734              		.comm	drivingForwardFlag,2,2
+ 735              		.comm	puckPileLocation,4,4
+ 736              		.comm	block_edge_location,16,4
+ 737              		.comm	sweeping,4,4
+ 738              		.comm	puckRackOffsetsFromWest,20,4
+ 739              		.comm	puckRackColours,20,4
+ 740              		.comm	currentPuckRackScanningIndex,4,4
+ 741              		.comm	driveStraightEnable,4,4
+ 742 0002 00BF     		.section	.rodata.str1.4,"aMS",%progbits,1
+ 743              		.align	2
+ 744              	.LC0:
+ 745 0000 25642009 		.ascii	"%d \011\000"
+ 745      00
+ 746 0005 000000   		.space	3
+ 747              	.LC1:
+ 748 0008 64696666 		.ascii	"difference = %d, \012\000"
+ 748      6572656E 
+ 748      6365203D 
+ 748      2025642C 
+ 748      200A00
+ 749 001b 00       		.space	1
+ 750              	.LC2:
+ 751 001c 25642C20 		.ascii	"%d, %d \012\000"
+ 751      2564200A 
+ 751      00
+ 752 0025 000000   		.space	3
+ 753              	.LC3:
+ 754 0028 20256420 		.ascii	" %d , %d \011\000"
+ 754      2C202564 
+ 754      200900
+ 755 0033 00       		.space	1
+ 756              	.LC4:
+ 757 0034 6469663A 		.ascii	"dif: %d, \012\000"
+ 757      2025642C 
+ 757      200A00
+ 758              		.text
+ 759              	.Letext0:
+ 760              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 761              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 762              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 763              		.file 5 "ultrasonic.h"
+ 764              		.file 6 "main.h"
+ 765              		.file 7 "navigation.h"
+ 766              		.file 8 "servo.h"
+ 767              		.file 9 "colour.h"
+ 768              		.file 10 "Generated_Source\\PSoC5/Motor_Left_Control.h"
+ 769              		.file 11 "Generated_Source\\PSoC5/Motor_Right_Control.h"
+ 770              		.file 12 "Generated_Source\\PSoC5/Motor_Left_Driver.h"
+ 771              		.file 13 "Generated_Source\\PSoC5/Motor_Right_Driver.h"
+ 772              		.file 14 "Generated_Source\\PSoC5/CyLib.h"
+ 773              		.file 15 "Generated_Source\\PSoC5/Motor_Left_Decoder.h"
+ 774              		.file 16 "Generated_Source\\PSoC5/Motor_Right_Decoder.h"
+ 775              		.file 17 "mishamotor.h"
+ 776              		.file 18 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 21
+
+
+ 777              		.file 19 "Generated_Source\\PSoC5/UART_1.h"
+ 778              		.section	.debug_info,"",%progbits
+ 779              	.Ldebug_info0:
+ 780 0000 2C0B0000 		.4byte	0xb2c
+ 781 0004 0400     		.2byte	0x4
+ 782 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 783 000a 04       		.byte	0x4
+ 784 000b 01       		.uleb128 0x1
+ 785 000c 80040000 		.4byte	.LASF76
+ 786 0010 0C       		.byte	0xc
+ 787 0011 94000000 		.4byte	.LASF77
+ 788 0015 22050000 		.4byte	.LASF78
+ 789 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 790 001d 00000000 		.4byte	0
+ 791 0021 00000000 		.4byte	.Ldebug_line0
+ 792 0025 02       		.uleb128 0x2
+ 793 0026 01       		.byte	0x1
+ 794 0027 06       		.byte	0x6
+ 795 0028 B6020000 		.4byte	.LASF0
+ 796 002c 02       		.uleb128 0x2
+ 797 002d 01       		.byte	0x1
+ 798 002e 08       		.byte	0x8
+ 799 002f 96020000 		.4byte	.LASF1
+ 800 0033 02       		.uleb128 0x2
+ 801 0034 02       		.byte	0x2
+ 802 0035 05       		.byte	0x5
+ 803 0036 8A000000 		.4byte	.LASF2
+ 804 003a 02       		.uleb128 0x2
+ 805 003b 02       		.byte	0x2
+ 806 003c 07       		.byte	0x7
+ 807 003d 1C030000 		.4byte	.LASF3
+ 808 0041 03       		.uleb128 0x3
+ 809 0042 0E040000 		.4byte	.LASF9
+ 810 0046 02       		.byte	0x2
+ 811 0047 3F       		.byte	0x3f
+ 812 0048 4C000000 		.4byte	0x4c
+ 813 004c 02       		.uleb128 0x2
+ 814 004d 04       		.byte	0x4
+ 815 004e 05       		.byte	0x5
+ 816 004f E1010000 		.4byte	.LASF4
+ 817 0053 02       		.uleb128 0x2
+ 818 0054 04       		.byte	0x4
+ 819 0055 07       		.byte	0x7
+ 820 0056 A0030000 		.4byte	.LASF5
+ 821 005a 02       		.uleb128 0x2
+ 822 005b 08       		.byte	0x8
+ 823 005c 05       		.byte	0x5
+ 824 005d BA010000 		.4byte	.LASF6
+ 825 0061 02       		.uleb128 0x2
+ 826 0062 08       		.byte	0x8
+ 827 0063 07       		.byte	0x7
+ 828 0064 D6020000 		.4byte	.LASF7
+ 829 0068 04       		.uleb128 0x4
+ 830 0069 04       		.byte	0x4
+ 831 006a 05       		.byte	0x5
+ 832 006b 696E7400 		.ascii	"int\000"
+ 833 006f 02       		.uleb128 0x2
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 22
+
+
+ 834 0070 04       		.byte	0x4
+ 835 0071 07       		.byte	0x7
+ 836 0072 ED020000 		.4byte	.LASF8
+ 837 0076 03       		.uleb128 0x3
+ 838 0077 52030000 		.4byte	.LASF10
+ 839 007b 03       		.byte	0x3
+ 840 007c 2C       		.byte	0x2c
+ 841 007d 41000000 		.4byte	0x41
+ 842 0081 02       		.uleb128 0x2
+ 843 0082 04       		.byte	0x4
+ 844 0083 04       		.byte	0x4
+ 845 0084 A7010000 		.4byte	.LASF11
+ 846 0088 02       		.uleb128 0x2
+ 847 0089 08       		.byte	0x8
+ 848 008a 04       		.byte	0x4
+ 849 008b BE030000 		.4byte	.LASF12
+ 850 008f 02       		.uleb128 0x2
+ 851 0090 01       		.byte	0x1
+ 852 0091 08       		.byte	0x8
+ 853 0092 3E030000 		.4byte	.LASF13
+ 854 0096 02       		.uleb128 0x2
+ 855 0097 08       		.byte	0x8
+ 856 0098 04       		.byte	0x4
+ 857 0099 E8000000 		.4byte	.LASF14
+ 858 009d 02       		.uleb128 0x2
+ 859 009e 04       		.byte	0x4
+ 860 009f 07       		.byte	0x7
+ 861 00a0 32040000 		.4byte	.LASF15
+ 862 00a4 05       		.uleb128 0x5
+ 863 00a5 AC020000 		.4byte	.LASF18
+ 864 00a9 01       		.byte	0x1
+ 865 00aa 1F       		.byte	0x1f
+ 866 00ab 00000000 		.4byte	.LFB64
+ 867 00af 44000000 		.4byte	.LFE64-.LFB64
+ 868 00b3 01       		.uleb128 0x1
+ 869 00b4 9C       		.byte	0x9c
+ 870 00b5 16010000 		.4byte	0x116
+ 871 00b9 06       		.uleb128 0x6
+ 872 00ba 93030000 		.4byte	.LASF16
+ 873 00be 01       		.byte	0x1
+ 874 00bf 21       		.byte	0x21
+ 875 00c0 68000000 		.4byte	0x68
+ 876 00c4 00000000 		.4byte	.LLST0
+ 877 00c8 06       		.uleb128 0x6
+ 878 00c9 04040000 		.4byte	.LASF17
+ 879 00cd 01       		.byte	0x1
+ 880 00ce 22       		.byte	0x22
+ 881 00cf 68000000 		.4byte	0x68
+ 882 00d3 1F000000 		.4byte	.LLST1
+ 883 00d7 07       		.uleb128 0x7
+ 884 00d8 0E000000 		.4byte	.LVL1
+ 885 00dc 5E0A0000 		.4byte	0xa5e
+ 886 00e0 EA000000 		.4byte	0xea
+ 887 00e4 08       		.uleb128 0x8
+ 888 00e5 01       		.uleb128 0x1
+ 889 00e6 50       		.byte	0x50
+ 890 00e7 01       		.uleb128 0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 23
+
+
+ 891 00e8 33       		.byte	0x33
+ 892 00e9 00       		.byte	0
+ 893 00ea 07       		.uleb128 0x7
+ 894 00eb 18000000 		.4byte	.LVL3
+ 895 00ef 5E0A0000 		.4byte	0xa5e
+ 896 00f3 FD000000 		.4byte	0xfd
+ 897 00f7 08       		.uleb128 0x8
+ 898 00f8 01       		.uleb128 0x1
+ 899 00f9 50       		.byte	0x50
+ 900 00fa 01       		.uleb128 0x1
+ 901 00fb 31       		.byte	0x31
+ 902 00fc 00       		.byte	0
+ 903 00fd 09       		.uleb128 0x9
+ 904 00fe 1C000000 		.4byte	.LVL4
+ 905 0102 690A0000 		.4byte	0xa69
+ 906 0106 0A       		.uleb128 0xa
+ 907 0107 24000000 		.4byte	.LVL7
+ 908 010b 5E0A0000 		.4byte	0xa5e
+ 909 010f 08       		.uleb128 0x8
+ 910 0110 01       		.uleb128 0x1
+ 911 0111 50       		.byte	0x50
+ 912 0112 01       		.uleb128 0x1
+ 913 0113 33       		.byte	0x33
+ 914 0114 00       		.byte	0
+ 915 0115 00       		.byte	0
+ 916 0116 05       		.uleb128 0x5
+ 917 0117 88020000 		.4byte	.LASF19
+ 918 011b 01       		.byte	0x1
+ 919 011c 54       		.byte	0x54
+ 920 011d 00000000 		.4byte	.LFB65
+ 921 0121 60000000 		.4byte	.LFE65-.LFB65
+ 922 0125 01       		.uleb128 0x1
+ 923 0126 9C       		.byte	0x9c
+ 924 0127 04020000 		.4byte	0x204
+ 925 012b 06       		.uleb128 0x6
+ 926 012c 73030000 		.4byte	.LASF20
+ 927 0130 01       		.byte	0x1
+ 928 0131 55       		.byte	0x55
+ 929 0132 68000000 		.4byte	0x68
+ 930 0136 3D000000 		.4byte	.LLST2
+ 931 013a 07       		.uleb128 0x7
+ 932 013b 08000000 		.4byte	.LVL11
+ 933 013f 740A0000 		.4byte	0xa74
+ 934 0143 4D010000 		.4byte	0x14d
+ 935 0147 08       		.uleb128 0x8
+ 936 0148 01       		.uleb128 0x1
+ 937 0149 50       		.byte	0x50
+ 938 014a 01       		.uleb128 0x1
+ 939 014b 30       		.byte	0x30
+ 940 014c 00       		.byte	0
+ 941 014d 07       		.uleb128 0x7
+ 942 014e 0E000000 		.4byte	.LVL12
+ 943 0152 7F0A0000 		.4byte	0xa7f
+ 944 0156 60010000 		.4byte	0x160
+ 945 015a 08       		.uleb128 0x8
+ 946 015b 01       		.uleb128 0x1
+ 947 015c 50       		.byte	0x50
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 24
+
+
+ 948 015d 01       		.uleb128 0x1
+ 949 015e 30       		.byte	0x30
+ 950 015f 00       		.byte	0
+ 951 0160 09       		.uleb128 0x9
+ 952 0161 12000000 		.4byte	.LVL13
+ 953 0165 8A0A0000 		.4byte	0xa8a
+ 954 0169 07       		.uleb128 0x7
+ 955 016a 18000000 		.4byte	.LVL14
+ 956 016e 950A0000 		.4byte	0xa95
+ 957 0172 7D010000 		.4byte	0x17d
+ 958 0176 08       		.uleb128 0x8
+ 959 0177 01       		.uleb128 0x1
+ 960 0178 50       		.byte	0x50
+ 961 0179 02       		.uleb128 0x2
+ 962 017a 09       		.byte	0x9
+ 963 017b AA       		.byte	0xaa
+ 964 017c 00       		.byte	0
+ 965 017d 09       		.uleb128 0x9
+ 966 017e 1C000000 		.4byte	.LVL15
+ 967 0182 A00A0000 		.4byte	0xaa0
+ 968 0186 07       		.uleb128 0x7
+ 969 0187 22000000 		.4byte	.LVL16
+ 970 018b AB0A0000 		.4byte	0xaab
+ 971 018f 9A010000 		.4byte	0x19a
+ 972 0193 08       		.uleb128 0x8
+ 973 0194 01       		.uleb128 0x1
+ 974 0195 50       		.byte	0x50
+ 975 0196 02       		.uleb128 0x2
+ 976 0197 09       		.byte	0x9
+ 977 0198 AA       		.byte	0xaa
+ 978 0199 00       		.byte	0
+ 979 019a 09       		.uleb128 0x9
+ 980 019b 30000000 		.4byte	.LVL18
+ 981 019f 690A0000 		.4byte	0xa69
+ 982 01a3 07       		.uleb128 0x7
+ 983 01a4 38000000 		.4byte	.LVL21
+ 984 01a8 B60A0000 		.4byte	0xab6
+ 985 01ac B6010000 		.4byte	0x1b6
+ 986 01b0 08       		.uleb128 0x8
+ 987 01b1 01       		.uleb128 0x1
+ 988 01b2 50       		.byte	0x50
+ 989 01b3 01       		.uleb128 0x1
+ 990 01b4 3A       		.byte	0x3a
+ 991 01b5 00       		.byte	0
+ 992 01b6 07       		.uleb128 0x7
+ 993 01b7 42000000 		.4byte	.LVL22
+ 994 01bb C10A0000 		.4byte	0xac1
+ 995 01bf C9010000 		.4byte	0x1c9
+ 996 01c3 08       		.uleb128 0x8
+ 997 01c4 01       		.uleb128 0x1
+ 998 01c5 50       		.byte	0x50
+ 999 01c6 01       		.uleb128 0x1
+ 1000 01c7 30       		.byte	0x30
+ 1001 01c8 00       		.byte	0
+ 1002 01c9 07       		.uleb128 0x7
+ 1003 01ca 48000000 		.4byte	.LVL23
+ 1004 01ce CC0A0000 		.4byte	0xacc
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 25
+
+
+ 1005 01d2 DC010000 		.4byte	0x1dc
+ 1006 01d6 08       		.uleb128 0x8
+ 1007 01d7 01       		.uleb128 0x1
+ 1008 01d8 50       		.byte	0x50
+ 1009 01d9 01       		.uleb128 0x1
+ 1010 01da 30       		.byte	0x30
+ 1011 01db 00       		.byte	0
+ 1012 01dc 09       		.uleb128 0x9
+ 1013 01dd 4C000000 		.4byte	.LVL24
+ 1014 01e1 D70A0000 		.4byte	0xad7
+ 1015 01e5 09       		.uleb128 0x9
+ 1016 01e6 50000000 		.4byte	.LVL25
+ 1017 01ea E20A0000 		.4byte	0xae2
+ 1018 01ee 0A       		.uleb128 0xa
+ 1019 01ef 58000000 		.4byte	.LVL26
+ 1020 01f3 ED0A0000 		.4byte	0xaed
+ 1021 01f7 08       		.uleb128 0x8
+ 1022 01f8 01       		.uleb128 0x1
+ 1023 01f9 50       		.byte	0x50
+ 1024 01fa 01       		.uleb128 0x1
+ 1025 01fb 4E       		.byte	0x4e
+ 1026 01fc 08       		.uleb128 0x8
+ 1027 01fd 01       		.uleb128 0x1
+ 1028 01fe 51       		.byte	0x51
+ 1029 01ff 02       		.uleb128 0x2
+ 1030 0200 08       		.byte	0x8
+ 1031 0201 AA       		.byte	0xaa
+ 1032 0202 00       		.byte	0
+ 1033 0203 00       		.byte	0
+ 1034 0204 05       		.uleb128 0x5
+ 1035 0205 43030000 		.4byte	.LASF21
+ 1036 0209 01       		.byte	0x1
+ 1037 020a 72       		.byte	0x72
+ 1038 020b 00000000 		.4byte	.LFB66
+ 1039 020f D0010000 		.4byte	.LFE66-.LFB66
+ 1040 0213 01       		.uleb128 0x1
+ 1041 0214 9C       		.byte	0x9c
+ 1042 0215 32060000 		.4byte	0x632
+ 1043 0219 0B       		.uleb128 0xb
+ 1044 021a C7000000 		.4byte	.LASF22
+ 1045 021e 01       		.byte	0x1
+ 1046 021f 74       		.byte	0x74
+ 1047 0220 68000000 		.4byte	0x68
+ 1048 0224 0B       		.uleb128 0xb
+ 1049 0225 D2000000 		.4byte	.LASF23
+ 1050 0229 01       		.byte	0x1
+ 1051 022a 75       		.byte	0x75
+ 1052 022b 68000000 		.4byte	0x68
+ 1053 022f 06       		.uleb128 0x6
+ 1054 0230 BC000000 		.4byte	.LASF24
+ 1055 0234 01       		.byte	0x1
+ 1056 0235 76       		.byte	0x76
+ 1057 0236 68000000 		.4byte	0x68
+ 1058 023a 72000000 		.4byte	.LLST3
+ 1059 023e 0C       		.uleb128 0xc
+ 1060 023f 32000000 		.4byte	.LASF25
+ 1061 0243 01       		.byte	0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 26
+
+
+ 1062 0244 77       		.byte	0x77
+ 1063 0245 68000000 		.4byte	0x68
+ 1064 0249 03       		.byte	0x3
+ 1065 024a 0B       		.uleb128 0xb
+ 1066 024b 3C000000 		.4byte	.LASF26
+ 1067 024f 01       		.byte	0x1
+ 1068 0250 8C       		.byte	0x8c
+ 1069 0251 68000000 		.4byte	0x68
+ 1070 0255 0B       		.uleb128 0xb
+ 1071 0256 8B050000 		.4byte	.LASF27
+ 1072 025a 01       		.byte	0x1
+ 1073 025b 8D       		.byte	0x8d
+ 1074 025c 68000000 		.4byte	0x68
+ 1075 0260 07       		.uleb128 0x7
+ 1076 0261 0E000000 		.4byte	.LVL30
+ 1077 0265 F80A0000 		.4byte	0xaf8
+ 1078 0269 73020000 		.4byte	0x273
+ 1079 026d 08       		.uleb128 0x8
+ 1080 026e 01       		.uleb128 0x1
+ 1081 026f 50       		.byte	0x50
+ 1082 0270 01       		.uleb128 0x1
+ 1083 0271 30       		.byte	0x30
+ 1084 0272 00       		.byte	0
+ 1085 0273 07       		.uleb128 0x7
+ 1086 0274 14000000 		.4byte	.LVL31
+ 1087 0278 B60A0000 		.4byte	0xab6
+ 1088 027c 87020000 		.4byte	0x287
+ 1089 0280 08       		.uleb128 0x8
+ 1090 0281 01       		.uleb128 0x1
+ 1091 0282 50       		.byte	0x50
+ 1092 0283 02       		.uleb128 0x2
+ 1093 0284 08       		.byte	0x8
+ 1094 0285 32       		.byte	0x32
+ 1095 0286 00       		.byte	0
+ 1096 0287 07       		.uleb128 0x7
+ 1097 0288 24000000 		.4byte	.LVL33
+ 1098 028c 030B0000 		.4byte	0xb03
+ 1099 0290 A1020000 		.4byte	0x2a1
+ 1100 0294 08       		.uleb128 0x8
+ 1101 0295 01       		.uleb128 0x1
+ 1102 0296 50       		.byte	0x50
+ 1103 0297 02       		.uleb128 0x2
+ 1104 0298 75       		.byte	0x75
+ 1105 0299 00       		.sleb128 0
+ 1106 029a 08       		.uleb128 0x8
+ 1107 029b 01       		.uleb128 0x1
+ 1108 029c 51       		.byte	0x51
+ 1109 029d 02       		.uleb128 0x2
+ 1110 029e 74       		.byte	0x74
+ 1111 029f 00       		.sleb128 0
+ 1112 02a0 00       		.byte	0
+ 1113 02a1 07       		.uleb128 0x7
+ 1114 02a2 2A000000 		.4byte	.LVL34
+ 1115 02a6 0E0B0000 		.4byte	0xb0e
+ 1116 02aa B5020000 		.4byte	0x2b5
+ 1117 02ae 08       		.uleb128 0x8
+ 1118 02af 01       		.uleb128 0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 27
+
+
+ 1119 02b0 50       		.byte	0x50
+ 1120 02b1 02       		.uleb128 0x2
+ 1121 02b2 75       		.byte	0x75
+ 1122 02b3 00       		.sleb128 0
+ 1123 02b4 00       		.byte	0
+ 1124 02b5 07       		.uleb128 0x7
+ 1125 02b6 30000000 		.4byte	.LVL35
+ 1126 02ba F80A0000 		.4byte	0xaf8
+ 1127 02be C8020000 		.4byte	0x2c8
+ 1128 02c2 08       		.uleb128 0x8
+ 1129 02c3 01       		.uleb128 0x1
+ 1130 02c4 50       		.byte	0x50
+ 1131 02c5 01       		.uleb128 0x1
+ 1132 02c6 31       		.byte	0x31
+ 1133 02c7 00       		.byte	0
+ 1134 02c8 07       		.uleb128 0x7
+ 1135 02c9 36000000 		.4byte	.LVL36
+ 1136 02cd B60A0000 		.4byte	0xab6
+ 1137 02d1 DC020000 		.4byte	0x2dc
+ 1138 02d5 08       		.uleb128 0x8
+ 1139 02d6 01       		.uleb128 0x1
+ 1140 02d7 50       		.byte	0x50
+ 1141 02d8 02       		.uleb128 0x2
+ 1142 02d9 08       		.byte	0x8
+ 1143 02da 32       		.byte	0x32
+ 1144 02db 00       		.byte	0
+ 1145 02dc 07       		.uleb128 0x7
+ 1146 02dd 40000000 		.4byte	.LVL37
+ 1147 02e1 030B0000 		.4byte	0xb03
+ 1148 02e5 F6020000 		.4byte	0x2f6
+ 1149 02e9 08       		.uleb128 0x8
+ 1150 02ea 01       		.uleb128 0x1
+ 1151 02eb 50       		.byte	0x50
+ 1152 02ec 02       		.uleb128 0x2
+ 1153 02ed 75       		.byte	0x75
+ 1154 02ee 00       		.sleb128 0
+ 1155 02ef 08       		.uleb128 0x8
+ 1156 02f0 01       		.uleb128 0x1
+ 1157 02f1 51       		.byte	0x51
+ 1158 02f2 02       		.uleb128 0x2
+ 1159 02f3 74       		.byte	0x74
+ 1160 02f4 00       		.sleb128 0
+ 1161 02f5 00       		.byte	0
+ 1162 02f6 07       		.uleb128 0x7
+ 1163 02f7 46000000 		.4byte	.LVL38
+ 1164 02fb 0E0B0000 		.4byte	0xb0e
+ 1165 02ff 0A030000 		.4byte	0x30a
+ 1166 0303 08       		.uleb128 0x8
+ 1167 0304 01       		.uleb128 0x1
+ 1168 0305 50       		.byte	0x50
+ 1169 0306 02       		.uleb128 0x2
+ 1170 0307 75       		.byte	0x75
+ 1171 0308 00       		.sleb128 0
+ 1172 0309 00       		.byte	0
+ 1173 030a 07       		.uleb128 0x7
+ 1174 030b 56000000 		.4byte	.LVL40
+ 1175 030f 030B0000 		.4byte	0xb03
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 28
+
+
+ 1176 0313 2D030000 		.4byte	0x32d
+ 1177 0317 08       		.uleb128 0x8
+ 1178 0318 01       		.uleb128 0x1
+ 1179 0319 50       		.byte	0x50
+ 1180 031a 02       		.uleb128 0x2
+ 1181 031b 75       		.byte	0x75
+ 1182 031c 00       		.sleb128 0
+ 1183 031d 08       		.uleb128 0x8
+ 1184 031e 01       		.uleb128 0x1
+ 1185 031f 51       		.byte	0x51
+ 1186 0320 05       		.uleb128 0x5
+ 1187 0321 03       		.byte	0x3
+ 1188 0322 08000000 		.4byte	.LC1
+ 1189 0326 08       		.uleb128 0x8
+ 1190 0327 01       		.uleb128 0x1
+ 1191 0328 52       		.byte	0x52
+ 1192 0329 02       		.uleb128 0x2
+ 1193 032a 74       		.byte	0x74
+ 1194 032b 00       		.sleb128 0
+ 1195 032c 00       		.byte	0
+ 1196 032d 07       		.uleb128 0x7
+ 1197 032e 5C000000 		.4byte	.LVL41
+ 1198 0332 0E0B0000 		.4byte	0xb0e
+ 1199 0336 41030000 		.4byte	0x341
+ 1200 033a 08       		.uleb128 0x8
+ 1201 033b 01       		.uleb128 0x1
+ 1202 033c 50       		.byte	0x50
+ 1203 033d 02       		.uleb128 0x2
+ 1204 033e 75       		.byte	0x75
+ 1205 033f 00       		.sleb128 0
+ 1206 0340 00       		.byte	0
+ 1207 0341 07       		.uleb128 0x7
+ 1208 0342 72000000 		.4byte	.LVL42
+ 1209 0346 740A0000 		.4byte	0xa74
+ 1210 034a 54030000 		.4byte	0x354
+ 1211 034e 08       		.uleb128 0x8
+ 1212 034f 01       		.uleb128 0x1
+ 1213 0350 50       		.byte	0x50
+ 1214 0351 01       		.uleb128 0x1
+ 1215 0352 30       		.byte	0x30
+ 1216 0353 00       		.byte	0
+ 1217 0354 07       		.uleb128 0x7
+ 1218 0355 78000000 		.4byte	.LVL43
+ 1219 0359 7F0A0000 		.4byte	0xa7f
+ 1220 035d 67030000 		.4byte	0x367
+ 1221 0361 08       		.uleb128 0x8
+ 1222 0362 01       		.uleb128 0x1
+ 1223 0363 50       		.byte	0x50
+ 1224 0364 01       		.uleb128 0x1
+ 1225 0365 31       		.byte	0x31
+ 1226 0366 00       		.byte	0
+ 1227 0367 09       		.uleb128 0x9
+ 1228 0368 7E000000 		.4byte	.LVL45
+ 1229 036c 8A0A0000 		.4byte	0xa8a
+ 1230 0370 07       		.uleb128 0x7
+ 1231 0371 84000000 		.4byte	.LVL46
+ 1232 0375 950A0000 		.4byte	0xa95
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 29
+
+
+ 1233 0379 83030000 		.4byte	0x383
+ 1234 037d 08       		.uleb128 0x8
+ 1235 037e 01       		.uleb128 0x1
+ 1236 037f 50       		.byte	0x50
+ 1237 0380 01       		.uleb128 0x1
+ 1238 0381 49       		.byte	0x49
+ 1239 0382 00       		.byte	0
+ 1240 0383 09       		.uleb128 0x9
+ 1241 0384 88000000 		.4byte	.LVL47
+ 1242 0388 A00A0000 		.4byte	0xaa0
+ 1243 038c 07       		.uleb128 0x7
+ 1244 038d 8E000000 		.4byte	.LVL48
+ 1245 0391 AB0A0000 		.4byte	0xaab
+ 1246 0395 9F030000 		.4byte	0x39f
+ 1247 0399 08       		.uleb128 0x8
+ 1248 039a 01       		.uleb128 0x1
+ 1249 039b 50       		.byte	0x50
+ 1250 039c 01       		.uleb128 0x1
+ 1251 039d 49       		.byte	0x49
+ 1252 039e 00       		.byte	0
+ 1253 039f 07       		.uleb128 0x7
+ 1254 03a0 94000000 		.4byte	.LVL49
+ 1255 03a4 F80A0000 		.4byte	0xaf8
+ 1256 03a8 B2030000 		.4byte	0x3b2
+ 1257 03ac 08       		.uleb128 0x8
+ 1258 03ad 01       		.uleb128 0x1
+ 1259 03ae 50       		.byte	0x50
+ 1260 03af 01       		.uleb128 0x1
+ 1261 03b0 30       		.byte	0x30
+ 1262 03b1 00       		.byte	0
+ 1263 03b2 07       		.uleb128 0x7
+ 1264 03b3 9A000000 		.4byte	.LVL50
+ 1265 03b7 B60A0000 		.4byte	0xab6
+ 1266 03bb C6030000 		.4byte	0x3c6
+ 1267 03bf 08       		.uleb128 0x8
+ 1268 03c0 01       		.uleb128 0x1
+ 1269 03c1 50       		.byte	0x50
+ 1270 03c2 02       		.uleb128 0x2
+ 1271 03c3 08       		.byte	0x8
+ 1272 03c4 32       		.byte	0x32
+ 1273 03c5 00       		.byte	0
+ 1274 03c6 07       		.uleb128 0x7
+ 1275 03c7 A0000000 		.4byte	.LVL51
+ 1276 03cb F80A0000 		.4byte	0xaf8
+ 1277 03cf D9030000 		.4byte	0x3d9
+ 1278 03d3 08       		.uleb128 0x8
+ 1279 03d4 01       		.uleb128 0x1
+ 1280 03d5 50       		.byte	0x50
+ 1281 03d6 01       		.uleb128 0x1
+ 1282 03d7 31       		.byte	0x31
+ 1283 03d8 00       		.byte	0
+ 1284 03d9 07       		.uleb128 0x7
+ 1285 03da A6000000 		.4byte	.LVL52
+ 1286 03de B60A0000 		.4byte	0xab6
+ 1287 03e2 ED030000 		.4byte	0x3ed
+ 1288 03e6 08       		.uleb128 0x8
+ 1289 03e7 01       		.uleb128 0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 30
+
+
+ 1290 03e8 50       		.byte	0x50
+ 1291 03e9 02       		.uleb128 0x2
+ 1292 03ea 08       		.byte	0x8
+ 1293 03eb 32       		.byte	0x32
+ 1294 03ec 00       		.byte	0
+ 1295 03ed 07       		.uleb128 0x7
+ 1296 03ee B8000000 		.4byte	.LVL54
+ 1297 03f2 030B0000 		.4byte	0xb03
+ 1298 03f6 0A040000 		.4byte	0x40a
+ 1299 03fa 08       		.uleb128 0x8
+ 1300 03fb 01       		.uleb128 0x1
+ 1301 03fc 50       		.byte	0x50
+ 1302 03fd 02       		.uleb128 0x2
+ 1303 03fe 75       		.byte	0x75
+ 1304 03ff 00       		.sleb128 0
+ 1305 0400 08       		.uleb128 0x8
+ 1306 0401 01       		.uleb128 0x1
+ 1307 0402 51       		.byte	0x51
+ 1308 0403 05       		.uleb128 0x5
+ 1309 0404 03       		.byte	0x3
+ 1310 0405 1C000000 		.4byte	.LC2
+ 1311 0409 00       		.byte	0
+ 1312 040a 07       		.uleb128 0x7
+ 1313 040b BE000000 		.4byte	.LVL55
+ 1314 040f 0E0B0000 		.4byte	0xb0e
+ 1315 0413 1E040000 		.4byte	0x41e
+ 1316 0417 08       		.uleb128 0x8
+ 1317 0418 01       		.uleb128 0x1
+ 1318 0419 50       		.byte	0x50
+ 1319 041a 02       		.uleb128 0x2
+ 1320 041b 75       		.byte	0x75
+ 1321 041c 00       		.sleb128 0
+ 1322 041d 00       		.byte	0
+ 1323 041e 07       		.uleb128 0x7
+ 1324 041f C8000000 		.4byte	.LVL56
+ 1325 0423 030B0000 		.4byte	0xb03
+ 1326 0427 41040000 		.4byte	0x441
+ 1327 042b 08       		.uleb128 0x8
+ 1328 042c 01       		.uleb128 0x1
+ 1329 042d 50       		.byte	0x50
+ 1330 042e 02       		.uleb128 0x2
+ 1331 042f 75       		.byte	0x75
+ 1332 0430 00       		.sleb128 0
+ 1333 0431 08       		.uleb128 0x8
+ 1334 0432 01       		.uleb128 0x1
+ 1335 0433 51       		.byte	0x51
+ 1336 0434 05       		.uleb128 0x5
+ 1337 0435 03       		.byte	0x3
+ 1338 0436 08000000 		.4byte	.LC1
+ 1339 043a 08       		.uleb128 0x8
+ 1340 043b 01       		.uleb128 0x1
+ 1341 043c 52       		.byte	0x52
+ 1342 043d 02       		.uleb128 0x2
+ 1343 043e 74       		.byte	0x74
+ 1344 043f 00       		.sleb128 0
+ 1345 0440 00       		.byte	0
+ 1346 0441 07       		.uleb128 0x7
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 31
+
+
+ 1347 0442 CE000000 		.4byte	.LVL57
+ 1348 0446 0E0B0000 		.4byte	0xb0e
+ 1349 044a 55040000 		.4byte	0x455
+ 1350 044e 08       		.uleb128 0x8
+ 1351 044f 01       		.uleb128 0x1
+ 1352 0450 50       		.byte	0x50
+ 1353 0451 02       		.uleb128 0x2
+ 1354 0452 75       		.byte	0x75
+ 1355 0453 00       		.sleb128 0
+ 1356 0454 00       		.byte	0
+ 1357 0455 07       		.uleb128 0x7
+ 1358 0456 EA000000 		.4byte	.LVL60
+ 1359 045a 740A0000 		.4byte	0xa74
+ 1360 045e 68040000 		.4byte	0x468
+ 1361 0462 08       		.uleb128 0x8
+ 1362 0463 01       		.uleb128 0x1
+ 1363 0464 50       		.byte	0x50
+ 1364 0465 01       		.uleb128 0x1
+ 1365 0466 31       		.byte	0x31
+ 1366 0467 00       		.byte	0
+ 1367 0468 07       		.uleb128 0x7
+ 1368 0469 F0000000 		.4byte	.LVL61
+ 1369 046d 7F0A0000 		.4byte	0xa7f
+ 1370 0471 7B040000 		.4byte	0x47b
+ 1371 0475 08       		.uleb128 0x8
+ 1372 0476 01       		.uleb128 0x1
+ 1373 0477 50       		.byte	0x50
+ 1374 0478 01       		.uleb128 0x1
+ 1375 0479 30       		.byte	0x30
+ 1376 047a 00       		.byte	0
+ 1377 047b 09       		.uleb128 0x9
+ 1378 047c F6000000 		.4byte	.LVL63
+ 1379 0480 8A0A0000 		.4byte	0xa8a
+ 1380 0484 07       		.uleb128 0x7
+ 1381 0485 FC000000 		.4byte	.LVL64
+ 1382 0489 950A0000 		.4byte	0xa95
+ 1383 048d 97040000 		.4byte	0x497
+ 1384 0491 08       		.uleb128 0x8
+ 1385 0492 01       		.uleb128 0x1
+ 1386 0493 50       		.byte	0x50
+ 1387 0494 01       		.uleb128 0x1
+ 1388 0495 49       		.byte	0x49
+ 1389 0496 00       		.byte	0
+ 1390 0497 09       		.uleb128 0x9
+ 1391 0498 00010000 		.4byte	.LVL65
+ 1392 049c A00A0000 		.4byte	0xaa0
+ 1393 04a0 07       		.uleb128 0x7
+ 1394 04a1 06010000 		.4byte	.LVL66
+ 1395 04a5 AB0A0000 		.4byte	0xaab
+ 1396 04a9 B3040000 		.4byte	0x4b3
+ 1397 04ad 08       		.uleb128 0x8
+ 1398 04ae 01       		.uleb128 0x1
+ 1399 04af 50       		.byte	0x50
+ 1400 04b0 01       		.uleb128 0x1
+ 1401 04b1 49       		.byte	0x49
+ 1402 04b2 00       		.byte	0
+ 1403 04b3 07       		.uleb128 0x7
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 32
+
+
+ 1404 04b4 0C010000 		.4byte	.LVL67
+ 1405 04b8 F80A0000 		.4byte	0xaf8
+ 1406 04bc C6040000 		.4byte	0x4c6
+ 1407 04c0 08       		.uleb128 0x8
+ 1408 04c1 01       		.uleb128 0x1
+ 1409 04c2 50       		.byte	0x50
+ 1410 04c3 01       		.uleb128 0x1
+ 1411 04c4 30       		.byte	0x30
+ 1412 04c5 00       		.byte	0
+ 1413 04c6 07       		.uleb128 0x7
+ 1414 04c7 12010000 		.4byte	.LVL68
+ 1415 04cb B60A0000 		.4byte	0xab6
+ 1416 04cf DA040000 		.4byte	0x4da
+ 1417 04d3 08       		.uleb128 0x8
+ 1418 04d4 01       		.uleb128 0x1
+ 1419 04d5 50       		.byte	0x50
+ 1420 04d6 02       		.uleb128 0x2
+ 1421 04d7 08       		.byte	0x8
+ 1422 04d8 32       		.byte	0x32
+ 1423 04d9 00       		.byte	0
+ 1424 04da 07       		.uleb128 0x7
+ 1425 04db 18010000 		.4byte	.LVL69
+ 1426 04df F80A0000 		.4byte	0xaf8
+ 1427 04e3 ED040000 		.4byte	0x4ed
+ 1428 04e7 08       		.uleb128 0x8
+ 1429 04e8 01       		.uleb128 0x1
+ 1430 04e9 50       		.byte	0x50
+ 1431 04ea 01       		.uleb128 0x1
+ 1432 04eb 31       		.byte	0x31
+ 1433 04ec 00       		.byte	0
+ 1434 04ed 07       		.uleb128 0x7
+ 1435 04ee 1E010000 		.4byte	.LVL70
+ 1436 04f2 B60A0000 		.4byte	0xab6
+ 1437 04f6 01050000 		.4byte	0x501
+ 1438 04fa 08       		.uleb128 0x8
+ 1439 04fb 01       		.uleb128 0x1
+ 1440 04fc 50       		.byte	0x50
+ 1441 04fd 02       		.uleb128 0x2
+ 1442 04fe 08       		.byte	0x8
+ 1443 04ff 32       		.byte	0x32
+ 1444 0500 00       		.byte	0
+ 1445 0501 07       		.uleb128 0x7
+ 1446 0502 30010000 		.4byte	.LVL72
+ 1447 0506 030B0000 		.4byte	0xb03
+ 1448 050a 1E050000 		.4byte	0x51e
+ 1449 050e 08       		.uleb128 0x8
+ 1450 050f 01       		.uleb128 0x1
+ 1451 0510 50       		.byte	0x50
+ 1452 0511 02       		.uleb128 0x2
+ 1453 0512 75       		.byte	0x75
+ 1454 0513 00       		.sleb128 0
+ 1455 0514 08       		.uleb128 0x8
+ 1456 0515 01       		.uleb128 0x1
+ 1457 0516 51       		.byte	0x51
+ 1458 0517 05       		.uleb128 0x5
+ 1459 0518 03       		.byte	0x3
+ 1460 0519 28000000 		.4byte	.LC3
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 33
+
+
+ 1461 051d 00       		.byte	0
+ 1462 051e 07       		.uleb128 0x7
+ 1463 051f 36010000 		.4byte	.LVL73
+ 1464 0523 0E0B0000 		.4byte	0xb0e
+ 1465 0527 32050000 		.4byte	0x532
+ 1466 052b 08       		.uleb128 0x8
+ 1467 052c 01       		.uleb128 0x1
+ 1468 052d 50       		.byte	0x50
+ 1469 052e 02       		.uleb128 0x2
+ 1470 052f 75       		.byte	0x75
+ 1471 0530 00       		.sleb128 0
+ 1472 0531 00       		.byte	0
+ 1473 0532 07       		.uleb128 0x7
+ 1474 0533 40010000 		.4byte	.LVL74
+ 1475 0537 030B0000 		.4byte	0xb03
+ 1476 053b 55050000 		.4byte	0x555
+ 1477 053f 08       		.uleb128 0x8
+ 1478 0540 01       		.uleb128 0x1
+ 1479 0541 50       		.byte	0x50
+ 1480 0542 02       		.uleb128 0x2
+ 1481 0543 75       		.byte	0x75
+ 1482 0544 00       		.sleb128 0
+ 1483 0545 08       		.uleb128 0x8
+ 1484 0546 01       		.uleb128 0x1
+ 1485 0547 51       		.byte	0x51
+ 1486 0548 05       		.uleb128 0x5
+ 1487 0549 03       		.byte	0x3
+ 1488 054a 34000000 		.4byte	.LC4
+ 1489 054e 08       		.uleb128 0x8
+ 1490 054f 01       		.uleb128 0x1
+ 1491 0550 52       		.byte	0x52
+ 1492 0551 02       		.uleb128 0x2
+ 1493 0552 74       		.byte	0x74
+ 1494 0553 00       		.sleb128 0
+ 1495 0554 00       		.byte	0
+ 1496 0555 07       		.uleb128 0x7
+ 1497 0556 46010000 		.4byte	.LVL75
+ 1498 055a 0E0B0000 		.4byte	0xb0e
+ 1499 055e 69050000 		.4byte	0x569
+ 1500 0562 08       		.uleb128 0x8
+ 1501 0563 01       		.uleb128 0x1
+ 1502 0564 50       		.byte	0x50
+ 1503 0565 02       		.uleb128 0x2
+ 1504 0566 75       		.byte	0x75
+ 1505 0567 00       		.sleb128 0
+ 1506 0568 00       		.byte	0
+ 1507 0569 07       		.uleb128 0x7
+ 1508 056a 60010000 		.4byte	.LVL78
+ 1509 056e F80A0000 		.4byte	0xaf8
+ 1510 0572 7C050000 		.4byte	0x57c
+ 1511 0576 08       		.uleb128 0x8
+ 1512 0577 01       		.uleb128 0x1
+ 1513 0578 50       		.byte	0x50
+ 1514 0579 01       		.uleb128 0x1
+ 1515 057a 30       		.byte	0x30
+ 1516 057b 00       		.byte	0
+ 1517 057c 07       		.uleb128 0x7
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 34
+
+
+ 1518 057d 66010000 		.4byte	.LVL79
+ 1519 0581 B60A0000 		.4byte	0xab6
+ 1520 0585 90050000 		.4byte	0x590
+ 1521 0589 08       		.uleb128 0x8
+ 1522 058a 01       		.uleb128 0x1
+ 1523 058b 50       		.byte	0x50
+ 1524 058c 02       		.uleb128 0x2
+ 1525 058d 08       		.byte	0x8
+ 1526 058e 32       		.byte	0x32
+ 1527 058f 00       		.byte	0
+ 1528 0590 07       		.uleb128 0x7
+ 1529 0591 6C010000 		.4byte	.LVL80
+ 1530 0595 F80A0000 		.4byte	0xaf8
+ 1531 0599 A3050000 		.4byte	0x5a3
+ 1532 059d 08       		.uleb128 0x8
+ 1533 059e 01       		.uleb128 0x1
+ 1534 059f 50       		.byte	0x50
+ 1535 05a0 01       		.uleb128 0x1
+ 1536 05a1 31       		.byte	0x31
+ 1537 05a2 00       		.byte	0
+ 1538 05a3 07       		.uleb128 0x7
+ 1539 05a4 72010000 		.4byte	.LVL81
+ 1540 05a8 B60A0000 		.4byte	0xab6
+ 1541 05ac B7050000 		.4byte	0x5b7
+ 1542 05b0 08       		.uleb128 0x8
+ 1543 05b1 01       		.uleb128 0x1
+ 1544 05b2 50       		.byte	0x50
+ 1545 05b3 02       		.uleb128 0x2
+ 1546 05b4 08       		.byte	0x8
+ 1547 05b5 32       		.byte	0x32
+ 1548 05b6 00       		.byte	0
+ 1549 05b7 07       		.uleb128 0x7
+ 1550 05b8 84010000 		.4byte	.LVL83
+ 1551 05bc 030B0000 		.4byte	0xb03
+ 1552 05c0 D4050000 		.4byte	0x5d4
+ 1553 05c4 08       		.uleb128 0x8
+ 1554 05c5 01       		.uleb128 0x1
+ 1555 05c6 50       		.byte	0x50
+ 1556 05c7 02       		.uleb128 0x2
+ 1557 05c8 75       		.byte	0x75
+ 1558 05c9 00       		.sleb128 0
+ 1559 05ca 08       		.uleb128 0x8
+ 1560 05cb 01       		.uleb128 0x1
+ 1561 05cc 51       		.byte	0x51
+ 1562 05cd 05       		.uleb128 0x5
+ 1563 05ce 03       		.byte	0x3
+ 1564 05cf 1C000000 		.4byte	.LC2
+ 1565 05d3 00       		.byte	0
+ 1566 05d4 07       		.uleb128 0x7
+ 1567 05d5 8A010000 		.4byte	.LVL84
+ 1568 05d9 0E0B0000 		.4byte	0xb0e
+ 1569 05dd E8050000 		.4byte	0x5e8
+ 1570 05e1 08       		.uleb128 0x8
+ 1571 05e2 01       		.uleb128 0x1
+ 1572 05e3 50       		.byte	0x50
+ 1573 05e4 02       		.uleb128 0x2
+ 1574 05e5 75       		.byte	0x75
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 35
+
+
+ 1575 05e6 00       		.sleb128 0
+ 1576 05e7 00       		.byte	0
+ 1577 05e8 07       		.uleb128 0x7
+ 1578 05e9 94010000 		.4byte	.LVL85
+ 1579 05ed 030B0000 		.4byte	0xb03
+ 1580 05f1 0B060000 		.4byte	0x60b
+ 1581 05f5 08       		.uleb128 0x8
+ 1582 05f6 01       		.uleb128 0x1
+ 1583 05f7 50       		.byte	0x50
+ 1584 05f8 02       		.uleb128 0x2
+ 1585 05f9 75       		.byte	0x75
+ 1586 05fa 00       		.sleb128 0
+ 1587 05fb 08       		.uleb128 0x8
+ 1588 05fc 01       		.uleb128 0x1
+ 1589 05fd 51       		.byte	0x51
+ 1590 05fe 05       		.uleb128 0x5
+ 1591 05ff 03       		.byte	0x3
+ 1592 0600 08000000 		.4byte	.LC1
+ 1593 0604 08       		.uleb128 0x8
+ 1594 0605 01       		.uleb128 0x1
+ 1595 0606 52       		.byte	0x52
+ 1596 0607 02       		.uleb128 0x2
+ 1597 0608 74       		.byte	0x74
+ 1598 0609 00       		.sleb128 0
+ 1599 060a 00       		.byte	0
+ 1600 060b 07       		.uleb128 0x7
+ 1601 060c 9A010000 		.4byte	.LVL86
+ 1602 0610 0E0B0000 		.4byte	0xb0e
+ 1603 0614 1F060000 		.4byte	0x61f
+ 1604 0618 08       		.uleb128 0x8
+ 1605 0619 01       		.uleb128 0x1
+ 1606 061a 50       		.byte	0x50
+ 1607 061b 02       		.uleb128 0x2
+ 1608 061c 75       		.byte	0x75
+ 1609 061d 00       		.sleb128 0
+ 1610 061e 00       		.byte	0
+ 1611 061f 09       		.uleb128 0x9
+ 1612 0620 AC010000 		.4byte	.LVL87
+ 1613 0624 D70A0000 		.4byte	0xad7
+ 1614 0628 09       		.uleb128 0x9
+ 1615 0629 B0010000 		.4byte	.LVL88
+ 1616 062d E20A0000 		.4byte	0xae2
+ 1617 0631 00       		.byte	0
+ 1618 0632 05       		.uleb128 0x5
+ 1619 0633 28040000 		.4byte	.LASF28
+ 1620 0637 01       		.byte	0x1
+ 1621 0638 F5       		.byte	0xf5
+ 1622 0639 00000000 		.4byte	.LFB67
+ 1623 063d 24010000 		.4byte	.LFE67-.LFB67
+ 1624 0641 01       		.uleb128 0x1
+ 1625 0642 9C       		.byte	0x9c
+ 1626 0643 E1080000 		.4byte	0x8e1
+ 1627 0647 0D       		.uleb128 0xd
+ 1628 0648 AD010000 		.4byte	.LASF29
+ 1629 064c 01       		.byte	0x1
+ 1630 064d F5       		.byte	0xf5
+ 1631 064e 68000000 		.4byte	0x68
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 36
+
+
+ 1632 0652 02010000 		.4byte	.LLST4
+ 1633 0656 0D       		.uleb128 0xd
+ 1634 0657 DE000000 		.4byte	.LASF30
+ 1635 065b 01       		.byte	0x1
+ 1636 065c F5       		.byte	0xf5
+ 1637 065d 68000000 		.4byte	0x68
+ 1638 0661 2E010000 		.4byte	.LLST5
+ 1639 0665 0D       		.uleb128 0xd
+ 1640 0666 00030000 		.4byte	.LASF31
+ 1641 066a 01       		.byte	0x1
+ 1642 066b F5       		.byte	0xf5
+ 1643 066c 68000000 		.4byte	0x68
+ 1644 0670 5A010000 		.4byte	.LLST6
+ 1645 0674 0D       		.uleb128 0xd
+ 1646 0675 00000000 		.4byte	.LASF32
+ 1647 0679 01       		.byte	0x1
+ 1648 067a F5       		.byte	0xf5
+ 1649 067b 68000000 		.4byte	0x68
+ 1650 067f 86010000 		.4byte	.LLST7
+ 1651 0683 0D       		.uleb128 0xd
+ 1652 0684 FA020000 		.4byte	.LASF33
+ 1653 0688 01       		.byte	0x1
+ 1654 0689 F5       		.byte	0xf5
+ 1655 068a 68000000 		.4byte	0x68
+ 1656 068e B2010000 		.4byte	.LLST8
+ 1657 0692 0B       		.uleb128 0xb
+ 1658 0693 EA010000 		.4byte	.LASF34
+ 1659 0697 01       		.byte	0x1
+ 1660 0698 FA       		.byte	0xfa
+ 1661 0699 68000000 		.4byte	0x68
+ 1662 069d 0B       		.uleb128 0xb
+ 1663 069e 16050000 		.4byte	.LASF35
+ 1664 06a2 01       		.byte	0x1
+ 1665 06a3 FB       		.byte	0xfb
+ 1666 06a4 68000000 		.4byte	0x68
+ 1667 06a8 06       		.uleb128 0x6
+ 1668 06a9 3C000000 		.4byte	.LASF26
+ 1669 06ad 01       		.byte	0x1
+ 1670 06ae FC       		.byte	0xfc
+ 1671 06af 68000000 		.4byte	0x68
+ 1672 06b3 D2010000 		.4byte	.LLST9
+ 1673 06b7 06       		.uleb128 0x6
+ 1674 06b8 8B050000 		.4byte	.LASF27
+ 1675 06bc 01       		.byte	0x1
+ 1676 06bd FD       		.byte	0xfd
+ 1677 06be 68000000 		.4byte	0x68
+ 1678 06c2 D2010000 		.4byte	.LLST9
+ 1679 06c6 0B       		.uleb128 0xb
+ 1680 06c7 B4000000 		.4byte	.LASF36
+ 1681 06cb 01       		.byte	0x1
+ 1682 06cc FE       		.byte	0xfe
+ 1683 06cd 68000000 		.4byte	0x68
+ 1684 06d1 0E       		.uleb128 0xe
+ 1685 06d2 F4000000 		.4byte	.LASF37
+ 1686 06d6 01       		.byte	0x1
+ 1687 06d7 0001     		.2byte	0x100
+ 1688 06d9 68000000 		.4byte	0x68
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 37
+
+
+ 1689 06dd E6010000 		.4byte	.LLST11
+ 1690 06e1 07       		.uleb128 0x7
+ 1691 06e2 16000000 		.4byte	.LVL93
+ 1692 06e6 740A0000 		.4byte	0xa74
+ 1693 06ea F4060000 		.4byte	0x6f4
+ 1694 06ee 08       		.uleb128 0x8
+ 1695 06ef 01       		.uleb128 0x1
+ 1696 06f0 50       		.byte	0x50
+ 1697 06f1 01       		.uleb128 0x1
+ 1698 06f2 30       		.byte	0x30
+ 1699 06f3 00       		.byte	0
+ 1700 06f4 07       		.uleb128 0x7
+ 1701 06f5 1C000000 		.4byte	.LVL94
+ 1702 06f9 7F0A0000 		.4byte	0xa7f
+ 1703 06fd 07070000 		.4byte	0x707
+ 1704 0701 08       		.uleb128 0x8
+ 1705 0702 01       		.uleb128 0x1
+ 1706 0703 50       		.byte	0x50
+ 1707 0704 01       		.uleb128 0x1
+ 1708 0705 30       		.byte	0x30
+ 1709 0706 00       		.byte	0
+ 1710 0707 07       		.uleb128 0x7
+ 1711 0708 24000000 		.4byte	.LVL95
+ 1712 070c 740A0000 		.4byte	0xa74
+ 1713 0710 1A070000 		.4byte	0x71a
+ 1714 0714 08       		.uleb128 0x8
+ 1715 0715 01       		.uleb128 0x1
+ 1716 0716 50       		.byte	0x50
+ 1717 0717 01       		.uleb128 0x1
+ 1718 0718 31       		.byte	0x31
+ 1719 0719 00       		.byte	0
+ 1720 071a 07       		.uleb128 0x7
+ 1721 071b 2A000000 		.4byte	.LVL96
+ 1722 071f 7F0A0000 		.4byte	0xa7f
+ 1723 0723 2D070000 		.4byte	0x72d
+ 1724 0727 08       		.uleb128 0x8
+ 1725 0728 01       		.uleb128 0x1
+ 1726 0729 50       		.byte	0x50
+ 1727 072a 01       		.uleb128 0x1
+ 1728 072b 31       		.byte	0x31
+ 1729 072c 00       		.byte	0
+ 1730 072d 07       		.uleb128 0x7
+ 1731 072e 3C000000 		.4byte	.LVL98
+ 1732 0732 F80A0000 		.4byte	0xaf8
+ 1733 0736 41070000 		.4byte	0x741
+ 1734 073a 08       		.uleb128 0x8
+ 1735 073b 01       		.uleb128 0x1
+ 1736 073c 50       		.byte	0x50
+ 1737 073d 02       		.uleb128 0x2
+ 1738 073e 74       		.byte	0x74
+ 1739 073f 00       		.sleb128 0
+ 1740 0740 00       		.byte	0
+ 1741 0741 07       		.uleb128 0x7
+ 1742 0742 42000000 		.4byte	.LVL99
+ 1743 0746 B60A0000 		.4byte	0xab6
+ 1744 074a 55070000 		.4byte	0x755
+ 1745 074e 08       		.uleb128 0x8
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 38
+
+
+ 1746 074f 01       		.uleb128 0x1
+ 1747 0750 50       		.byte	0x50
+ 1748 0751 02       		.uleb128 0x2
+ 1749 0752 08       		.byte	0x8
+ 1750 0753 32       		.byte	0x32
+ 1751 0754 00       		.byte	0
+ 1752 0755 07       		.uleb128 0x7
+ 1753 0756 54000000 		.4byte	.LVL101
+ 1754 075a 030B0000 		.4byte	0xb03
+ 1755 075e 78070000 		.4byte	0x778
+ 1756 0762 08       		.uleb128 0x8
+ 1757 0763 01       		.uleb128 0x1
+ 1758 0764 50       		.byte	0x50
+ 1759 0765 02       		.uleb128 0x2
+ 1760 0766 76       		.byte	0x76
+ 1761 0767 00       		.sleb128 0
+ 1762 0768 08       		.uleb128 0x8
+ 1763 0769 01       		.uleb128 0x1
+ 1764 076a 51       		.byte	0x51
+ 1765 076b 05       		.uleb128 0x5
+ 1766 076c 03       		.byte	0x3
+ 1767 076d 00000000 		.4byte	.LC0
+ 1768 0771 08       		.uleb128 0x8
+ 1769 0772 01       		.uleb128 0x1
+ 1770 0773 52       		.byte	0x52
+ 1771 0774 02       		.uleb128 0x2
+ 1772 0775 75       		.byte	0x75
+ 1773 0776 00       		.sleb128 0
+ 1774 0777 00       		.byte	0
+ 1775 0778 07       		.uleb128 0x7
+ 1776 0779 5A000000 		.4byte	.LVL102
+ 1777 077d 0E0B0000 		.4byte	0xb0e
+ 1778 0781 8C070000 		.4byte	0x78c
+ 1779 0785 08       		.uleb128 0x8
+ 1780 0786 01       		.uleb128 0x1
+ 1781 0787 50       		.byte	0x50
+ 1782 0788 02       		.uleb128 0x2
+ 1783 0789 76       		.byte	0x76
+ 1784 078a 00       		.sleb128 0
+ 1785 078b 00       		.byte	0
+ 1786 078c 09       		.uleb128 0x9
+ 1787 078d 6A000000 		.4byte	.LVL103
+ 1788 0791 8A0A0000 		.4byte	0xa8a
+ 1789 0795 07       		.uleb128 0x7
+ 1790 0796 74000000 		.4byte	.LVL104
+ 1791 079a 950A0000 		.4byte	0xa95
+ 1792 079e A9070000 		.4byte	0x7a9
+ 1793 07a2 08       		.uleb128 0x8
+ 1794 07a3 01       		.uleb128 0x1
+ 1795 07a4 50       		.byte	0x50
+ 1796 07a5 02       		.uleb128 0x2
+ 1797 07a6 76       		.byte	0x76
+ 1798 07a7 00       		.sleb128 0
+ 1799 07a8 00       		.byte	0
+ 1800 07a9 09       		.uleb128 0x9
+ 1801 07aa 78000000 		.4byte	.LVL105
+ 1802 07ae A00A0000 		.4byte	0xaa0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 39
+
+
+ 1803 07b2 07       		.uleb128 0x7
+ 1804 07b3 7E000000 		.4byte	.LVL106
+ 1805 07b7 AB0A0000 		.4byte	0xaab
+ 1806 07bb C6070000 		.4byte	0x7c6
+ 1807 07bf 08       		.uleb128 0x8
+ 1808 07c0 01       		.uleb128 0x1
+ 1809 07c1 50       		.byte	0x50
+ 1810 07c2 02       		.uleb128 0x2
+ 1811 07c3 76       		.byte	0x76
+ 1812 07c4 00       		.sleb128 0
+ 1813 07c5 00       		.byte	0
+ 1814 07c6 09       		.uleb128 0x9
+ 1815 07c7 8A000000 		.4byte	.LVL108
+ 1816 07cb 190B0000 		.4byte	0xb19
+ 1817 07cf 09       		.uleb128 0x9
+ 1818 07d0 8E000000 		.4byte	.LVL109
+ 1819 07d4 240B0000 		.4byte	0xb24
+ 1820 07d8 07       		.uleb128 0x7
+ 1821 07d9 94000000 		.4byte	.LVL110
+ 1822 07dd F80A0000 		.4byte	0xaf8
+ 1823 07e1 EC070000 		.4byte	0x7ec
+ 1824 07e5 08       		.uleb128 0x8
+ 1825 07e6 01       		.uleb128 0x1
+ 1826 07e7 50       		.byte	0x50
+ 1827 07e8 02       		.uleb128 0x2
+ 1828 07e9 74       		.byte	0x74
+ 1829 07ea 00       		.sleb128 0
+ 1830 07eb 00       		.byte	0
+ 1831 07ec 07       		.uleb128 0x7
+ 1832 07ed 9A000000 		.4byte	.LVL111
+ 1833 07f1 B60A0000 		.4byte	0xab6
+ 1834 07f5 00080000 		.4byte	0x800
+ 1835 07f9 08       		.uleb128 0x8
+ 1836 07fa 01       		.uleb128 0x1
+ 1837 07fb 50       		.byte	0x50
+ 1838 07fc 02       		.uleb128 0x2
+ 1839 07fd 08       		.byte	0x8
+ 1840 07fe 32       		.byte	0x32
+ 1841 07ff 00       		.byte	0
+ 1842 0800 07       		.uleb128 0x7
+ 1843 0801 AC000000 		.4byte	.LVL113
+ 1844 0805 030B0000 		.4byte	0xb03
+ 1845 0809 23080000 		.4byte	0x823
+ 1846 080d 08       		.uleb128 0x8
+ 1847 080e 01       		.uleb128 0x1
+ 1848 080f 50       		.byte	0x50
+ 1849 0810 02       		.uleb128 0x2
+ 1850 0811 76       		.byte	0x76
+ 1851 0812 00       		.sleb128 0
+ 1852 0813 08       		.uleb128 0x8
+ 1853 0814 01       		.uleb128 0x1
+ 1854 0815 51       		.byte	0x51
+ 1855 0816 05       		.uleb128 0x5
+ 1856 0817 03       		.byte	0x3
+ 1857 0818 00000000 		.4byte	.LC0
+ 1858 081c 08       		.uleb128 0x8
+ 1859 081d 01       		.uleb128 0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 40
+
+
+ 1860 081e 52       		.byte	0x52
+ 1861 081f 02       		.uleb128 0x2
+ 1862 0820 75       		.byte	0x75
+ 1863 0821 00       		.sleb128 0
+ 1864 0822 00       		.byte	0
+ 1865 0823 07       		.uleb128 0x7
+ 1866 0824 B2000000 		.4byte	.LVL114
+ 1867 0828 0E0B0000 		.4byte	0xb0e
+ 1868 082c 37080000 		.4byte	0x837
+ 1869 0830 08       		.uleb128 0x8
+ 1870 0831 01       		.uleb128 0x1
+ 1871 0832 50       		.byte	0x50
+ 1872 0833 02       		.uleb128 0x2
+ 1873 0834 76       		.byte	0x76
+ 1874 0835 00       		.sleb128 0
+ 1875 0836 00       		.byte	0
+ 1876 0837 09       		.uleb128 0x9
+ 1877 0838 CA000000 		.4byte	.LVL115
+ 1878 083c 190B0000 		.4byte	0xb19
+ 1879 0840 09       		.uleb128 0x9
+ 1880 0841 CE000000 		.4byte	.LVL116
+ 1881 0845 240B0000 		.4byte	0xb24
+ 1882 0849 07       		.uleb128 0x7
+ 1883 084a D4000000 		.4byte	.LVL117
+ 1884 084e F80A0000 		.4byte	0xaf8
+ 1885 0852 5D080000 		.4byte	0x85d
+ 1886 0856 08       		.uleb128 0x8
+ 1887 0857 01       		.uleb128 0x1
+ 1888 0858 50       		.byte	0x50
+ 1889 0859 02       		.uleb128 0x2
+ 1890 085a 74       		.byte	0x74
+ 1891 085b 00       		.sleb128 0
+ 1892 085c 00       		.byte	0
+ 1893 085d 07       		.uleb128 0x7
+ 1894 085e DA000000 		.4byte	.LVL118
+ 1895 0862 B60A0000 		.4byte	0xab6
+ 1896 0866 71080000 		.4byte	0x871
+ 1897 086a 08       		.uleb128 0x8
+ 1898 086b 01       		.uleb128 0x1
+ 1899 086c 50       		.byte	0x50
+ 1900 086d 02       		.uleb128 0x2
+ 1901 086e 08       		.byte	0x8
+ 1902 086f 32       		.byte	0x32
+ 1903 0870 00       		.byte	0
+ 1904 0871 07       		.uleb128 0x7
+ 1905 0872 EC000000 		.4byte	.LVL120
+ 1906 0876 030B0000 		.4byte	0xb03
+ 1907 087a 94080000 		.4byte	0x894
+ 1908 087e 08       		.uleb128 0x8
+ 1909 087f 01       		.uleb128 0x1
+ 1910 0880 50       		.byte	0x50
+ 1911 0881 02       		.uleb128 0x2
+ 1912 0882 76       		.byte	0x76
+ 1913 0883 00       		.sleb128 0
+ 1914 0884 08       		.uleb128 0x8
+ 1915 0885 01       		.uleb128 0x1
+ 1916 0886 51       		.byte	0x51
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 41
+
+
+ 1917 0887 05       		.uleb128 0x5
+ 1918 0888 03       		.byte	0x3
+ 1919 0889 00000000 		.4byte	.LC0
+ 1920 088d 08       		.uleb128 0x8
+ 1921 088e 01       		.uleb128 0x1
+ 1922 088f 52       		.byte	0x52
+ 1923 0890 02       		.uleb128 0x2
+ 1924 0891 75       		.byte	0x75
+ 1925 0892 00       		.sleb128 0
+ 1926 0893 00       		.byte	0
+ 1927 0894 07       		.uleb128 0x7
+ 1928 0895 F2000000 		.4byte	.LVL121
+ 1929 0899 0E0B0000 		.4byte	0xb0e
+ 1930 089d A8080000 		.4byte	0x8a8
+ 1931 08a1 08       		.uleb128 0x8
+ 1932 08a2 01       		.uleb128 0x1
+ 1933 08a3 50       		.byte	0x50
+ 1934 08a4 02       		.uleb128 0x2
+ 1935 08a5 76       		.byte	0x76
+ 1936 08a6 00       		.sleb128 0
+ 1937 08a7 00       		.byte	0
+ 1938 08a8 07       		.uleb128 0x7
+ 1939 08a9 04010000 		.4byte	.LVL122
+ 1940 08ad C10A0000 		.4byte	0xac1
+ 1941 08b1 BB080000 		.4byte	0x8bb
+ 1942 08b5 08       		.uleb128 0x8
+ 1943 08b6 01       		.uleb128 0x1
+ 1944 08b7 50       		.byte	0x50
+ 1945 08b8 01       		.uleb128 0x1
+ 1946 08b9 30       		.byte	0x30
+ 1947 08ba 00       		.byte	0
+ 1948 08bb 07       		.uleb128 0x7
+ 1949 08bc 0A010000 		.4byte	.LVL123
+ 1950 08c0 CC0A0000 		.4byte	0xacc
+ 1951 08c4 CE080000 		.4byte	0x8ce
+ 1952 08c8 08       		.uleb128 0x8
+ 1953 08c9 01       		.uleb128 0x1
+ 1954 08ca 50       		.byte	0x50
+ 1955 08cb 01       		.uleb128 0x1
+ 1956 08cc 30       		.byte	0x30
+ 1957 08cd 00       		.byte	0
+ 1958 08ce 09       		.uleb128 0x9
+ 1959 08cf 0E010000 		.4byte	.LVL124
+ 1960 08d3 D70A0000 		.4byte	0xad7
+ 1961 08d7 09       		.uleb128 0x9
+ 1962 08d8 12010000 		.4byte	.LVL125
+ 1963 08dc E20A0000 		.4byte	0xae2
+ 1964 08e0 00       		.byte	0
+ 1965 08e1 0F       		.uleb128 0xf
+ 1966 08e2 B2030000 		.4byte	.LASF79
+ 1967 08e6 01       		.byte	0x1
+ 1968 08e7 5401     		.2byte	0x154
+ 1969 08e9 00000000 		.4byte	.LFB68
+ 1970 08ed 02000000 		.4byte	.LFE68-.LFB68
+ 1971 08f1 01       		.uleb128 0x1
+ 1972 08f2 9C       		.byte	0x9c
+ 1973 08f3 10       		.uleb128 0x10
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 42
+
+
+ 1974 08f4 73040000 		.4byte	.LASF38
+ 1975 08f8 04       		.byte	0x4
+ 1976 08f9 1207     		.2byte	0x712
+ 1977 08fb FF080000 		.4byte	0x8ff
+ 1978 08ff 11       		.uleb128 0x11
+ 1979 0900 76000000 		.4byte	0x76
+ 1980 0904 12       		.uleb128 0x12
+ 1981 0905 7F030000 		.4byte	.LASF39
+ 1982 0909 05       		.byte	0x5
+ 1983 090a 1E       		.byte	0x1e
+ 1984 090b 68000000 		.4byte	0x68
+ 1985 090f 05       		.uleb128 0x5
+ 1986 0910 03       		.byte	0x3
+ 1987 0911 00000000 		.4byte	driveStraightEnable
+ 1988 0915 12       		.uleb128 0x12
+ 1989 0916 39020000 		.4byte	.LASF40
+ 1990 091a 05       		.byte	0x5
+ 1991 091b 20       		.byte	0x20
+ 1992 091c 68000000 		.4byte	0x68
+ 1993 0920 05       		.uleb128 0x5
+ 1994 0921 03       		.byte	0x3
+ 1995 0922 00000000 		.4byte	currentPuckRackScanningIndex
+ 1996 0926 13       		.uleb128 0x13
+ 1997 0927 68000000 		.4byte	0x68
+ 1998 092b 36090000 		.4byte	0x936
+ 1999 092f 14       		.uleb128 0x14
+ 2000 0930 9D000000 		.4byte	0x9d
+ 2001 0934 04       		.byte	0x4
+ 2002 0935 00       		.byte	0
+ 2003 0936 12       		.uleb128 0x12
+ 2004 0937 18040000 		.4byte	.LASF41
+ 2005 093b 05       		.byte	0x5
+ 2006 093c 21       		.byte	0x21
+ 2007 093d 26090000 		.4byte	0x926
+ 2008 0941 05       		.uleb128 0x5
+ 2009 0942 03       		.byte	0x3
+ 2010 0943 00000000 		.4byte	puckRackColours
+ 2011 0947 12       		.uleb128 0x12
+ 2012 0948 3D010000 		.4byte	.LASF42
+ 2013 094c 05       		.byte	0x5
+ 2014 094d 22       		.byte	0x22
+ 2015 094e 26090000 		.4byte	0x926
+ 2016 0952 05       		.uleb128 0x5
+ 2017 0953 03       		.byte	0x3
+ 2018 0954 00000000 		.4byte	puckRackOffsetsFromWest
+ 2019 0958 12       		.uleb128 0x12
+ 2020 0959 73010000 		.4byte	.LASF43
+ 2021 095d 05       		.byte	0x5
+ 2022 095e 23       		.byte	0x23
+ 2023 095f 68000000 		.4byte	0x68
+ 2024 0963 05       		.uleb128 0x5
+ 2025 0964 03       		.byte	0x3
+ 2026 0965 00000000 		.4byte	sweeping
+ 2027 0969 13       		.uleb128 0x13
+ 2028 096a 81000000 		.4byte	0x81
+ 2029 096e 79090000 		.4byte	0x979
+ 2030 0972 14       		.uleb128 0x14
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 43
+
+
+ 2031 0973 9D000000 		.4byte	0x9d
+ 2032 0977 03       		.byte	0x3
+ 2033 0978 00       		.byte	0
+ 2034 0979 12       		.uleb128 0x12
+ 2035 097a C2020000 		.4byte	.LASF44
+ 2036 097e 05       		.byte	0x5
+ 2037 097f 24       		.byte	0x24
+ 2038 0980 69090000 		.4byte	0x969
+ 2039 0984 05       		.uleb128 0x5
+ 2040 0985 03       		.byte	0x3
+ 2041 0986 00000000 		.4byte	block_edge_location
+ 2042 098a 12       		.uleb128 0x12
+ 2043 098b 28020000 		.4byte	.LASF45
+ 2044 098f 06       		.byte	0x6
+ 2045 0990 86       		.byte	0x86
+ 2046 0991 81000000 		.4byte	0x81
+ 2047 0995 05       		.uleb128 0x5
+ 2048 0996 03       		.byte	0x3
+ 2049 0997 00000000 		.4byte	puckPileLocation
+ 2050 099b 12       		.uleb128 0x12
+ 2051 099c A1000000 		.4byte	.LASF46
+ 2052 09a0 05       		.byte	0x5
+ 2053 09a1 26       		.byte	0x26
+ 2054 09a2 33000000 		.4byte	0x33
+ 2055 09a6 05       		.uleb128 0x5
+ 2056 09a7 03       		.byte	0x3
+ 2057 09a8 00000000 		.4byte	drivingForwardFlag
+ 2058 09ac 12       		.uleb128 0x12
+ 2059 09ad F5010000 		.4byte	.LASF47
+ 2060 09b1 05       		.byte	0x5
+ 2061 09b2 27       		.byte	0x27
+ 2062 09b3 33000000 		.4byte	0x33
+ 2063 09b7 05       		.uleb128 0x5
+ 2064 09b8 03       		.byte	0x3
+ 2065 09b9 00000000 		.4byte	drivingBackwardFlag
+ 2066 09bd 12       		.uleb128 0x12
+ 2067 09be 5B000000 		.4byte	.LASF48
+ 2068 09c2 05       		.byte	0x5
+ 2069 09c3 28       		.byte	0x28
+ 2070 09c4 33000000 		.4byte	0x33
+ 2071 09c8 05       		.uleb128 0x5
+ 2072 09c9 03       		.byte	0x3
+ 2073 09ca 00000000 		.4byte	turningLeftFlag
+ 2074 09ce 12       		.uleb128 0x12
+ 2075 09cf 96010000 		.4byte	.LASF49
+ 2076 09d3 05       		.byte	0x5
+ 2077 09d4 29       		.byte	0x29
+ 2078 09d5 33000000 		.4byte	0x33
+ 2079 09d9 05       		.uleb128 0x5
+ 2080 09da 03       		.byte	0x3
+ 2081 09db 00000000 		.4byte	turningRightFlag
+ 2082 09df 12       		.uleb128 0x12
+ 2083 09e0 97050000 		.4byte	.LASF50
+ 2084 09e4 05       		.byte	0x5
+ 2085 09e5 2C       		.byte	0x2c
+ 2086 09e6 68000000 		.4byte	0x68
+ 2087 09ea 05       		.uleb128 0x5
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 44
+
+
+ 2088 09eb 03       		.byte	0x3
+ 2089 09ec 00000000 		.4byte	initialisation
+ 2090 09f0 13       		.uleb128 0x13
+ 2091 09f1 8F000000 		.4byte	0x8f
+ 2092 09f5 000A0000 		.4byte	0xa00
+ 2093 09f9 14       		.uleb128 0x14
+ 2094 09fa 9D000000 		.4byte	0x9d
+ 2095 09fe 1F       		.byte	0x1f
+ 2096 09ff 00       		.byte	0
+ 2097 0a00 12       		.uleb128 0x12
+ 2098 0a01 3B040000 		.4byte	.LASF51
+ 2099 0a05 05       		.byte	0x5
+ 2100 0a06 2A       		.byte	0x2a
+ 2101 0a07 F0090000 		.4byte	0x9f0
+ 2102 0a0b 05       		.uleb128 0x5
+ 2103 0a0c 03       		.byte	0x3
+ 2104 0a0d 00000000 		.4byte	output
+ 2105 0a11 15       		.uleb128 0x15
+ 2106 0a12 04010000 		.4byte	.LASF52
+ 2107 0a16 06       		.byte	0x6
+ 2108 0a17 A4       		.byte	0xa4
+ 2109 0a18 26090000 		.4byte	0x926
+ 2110 0a1c 12       		.uleb128 0x12
+ 2111 0a1d 1C010000 		.4byte	.LASF53
+ 2112 0a21 05       		.byte	0x5
+ 2113 0a22 2E       		.byte	0x2e
+ 2114 0a23 68000000 		.4byte	0x68
+ 2115 0a27 05       		.uleb128 0x5
+ 2116 0a28 03       		.byte	0x3
+ 2117 0a29 00000000 		.4byte	ultrasonic_flag
+ 2118 0a2d 13       		.uleb128 0x13
+ 2119 0a2e 68000000 		.4byte	0x68
+ 2120 0a32 3D0A0000 		.4byte	0xa3d
+ 2121 0a36 14       		.uleb128 0x14
+ 2122 0a37 9D000000 		.4byte	0x9d
+ 2123 0a3b 02       		.byte	0x2
+ 2124 0a3c 00       		.byte	0
+ 2125 0a3d 15       		.uleb128 0x15
+ 2126 0a3e D6030000 		.4byte	.LASF54
+ 2127 0a42 07       		.byte	0x7
+ 2128 0a43 14       		.byte	0x14
+ 2129 0a44 2D0A0000 		.4byte	0xa2d
+ 2130 0a48 15       		.uleb128 0x15
+ 2131 0a49 0E030000 		.4byte	.LASF55
+ 2132 0a4d 07       		.byte	0x7
+ 2133 0a4e 15       		.byte	0x15
+ 2134 0a4f 68000000 		.4byte	0x68
+ 2135 0a53 15       		.uleb128 0x15
+ 2136 0a54 5A030000 		.4byte	.LASF56
+ 2137 0a58 07       		.byte	0x7
+ 2138 0a59 16       		.byte	0x16
+ 2139 0a5a 68000000 		.4byte	0x68
+ 2140 0a5e 16       		.uleb128 0x16
+ 2141 0a5f 42040000 		.4byte	.LASF57
+ 2142 0a63 42040000 		.4byte	.LASF57
+ 2143 0a67 08       		.byte	0x8
+ 2144 0a68 0F       		.byte	0xf
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 45
+
+
+ 2145 0a69 16       		.uleb128 0x16
+ 2146 0a6a 47000000 		.4byte	.LASF58
+ 2147 0a6e 47000000 		.4byte	.LASF58
+ 2148 0a72 09       		.byte	0x9
+ 2149 0a73 1C       		.byte	0x1c
+ 2150 0a74 16       		.uleb128 0x16
+ 2151 0a75 EB030000 		.4byte	.LASF59
+ 2152 0a79 EB030000 		.4byte	.LASF59
+ 2153 0a7d 0A       		.byte	0xa
+ 2154 0a7e 2F       		.byte	0x2f
+ 2155 0a7f 16       		.uleb128 0x16
+ 2156 0a80 7C010000 		.4byte	.LASF60
+ 2157 0a84 7C010000 		.4byte	.LASF60
+ 2158 0a88 0B       		.byte	0xb
+ 2159 0a89 2F       		.byte	0x2f
+ 2160 0a8a 16       		.uleb128 0x16
+ 2161 0a8b C5050000 		.4byte	.LASF61
+ 2162 0a8f C5050000 		.4byte	.LASF61
+ 2163 0a93 0C       		.byte	0xc
+ 2164 0a94 DD       		.byte	0xdd
+ 2165 0a95 16       		.uleb128 0x16
+ 2166 0a96 A6050000 		.4byte	.LASF62
+ 2167 0a9a A6050000 		.4byte	.LASF62
+ 2168 0a9e 0C       		.byte	0xc
+ 2169 0a9f C3       		.byte	0xc3
+ 2170 0aa0 16       		.uleb128 0x16
+ 2171 0aa1 56020000 		.4byte	.LASF63
+ 2172 0aa5 56020000 		.4byte	.LASF63
+ 2173 0aa9 0D       		.byte	0xd
+ 2174 0aaa DD       		.byte	0xdd
+ 2175 0aab 16       		.uleb128 0x16
+ 2176 0aac 12000000 		.4byte	.LASF64
+ 2177 0ab0 12000000 		.4byte	.LASF64
+ 2178 0ab4 0D       		.byte	0xd
+ 2179 0ab5 C3       		.byte	0xc3
+ 2180 0ab6 16       		.uleb128 0x16
+ 2181 0ab7 0E050000 		.4byte	.LASF65
+ 2182 0abb 0E050000 		.4byte	.LASF65
+ 2183 0abf 0E       		.byte	0xe
+ 2184 0ac0 76       		.byte	0x76
+ 2185 0ac1 16       		.uleb128 0x16
+ 2186 0ac2 55010000 		.4byte	.LASF66
+ 2187 0ac6 55010000 		.4byte	.LASF66
+ 2188 0aca 0F       		.byte	0xf
+ 2189 0acb 4F       		.byte	0x4f
+ 2190 0acc 16       		.uleb128 0x16
+ 2191 0acd 09020000 		.4byte	.LASF67
+ 2192 0ad1 09020000 		.4byte	.LASF67
+ 2193 0ad5 10       		.byte	0x10
+ 2194 0ad6 4F       		.byte	0x4f
+ 2195 0ad7 16       		.uleb128 0x16
+ 2196 0ad8 70020000 		.4byte	.LASF68
+ 2197 0adc 70020000 		.4byte	.LASF68
+ 2198 0ae0 0C       		.byte	0xc
+ 2199 0ae1 DC       		.byte	0xdc
+ 2200 0ae2 16       		.uleb128 0x16
+ 2201 0ae3 C8010000 		.4byte	.LASF69
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 46
+
+
+ 2202 0ae7 C8010000 		.4byte	.LASF69
+ 2203 0aeb 0D       		.byte	0xd
+ 2204 0aec DC       		.byte	0xdc
+ 2205 0aed 16       		.uleb128 0x16
+ 2206 0aee 2C010000 		.4byte	.LASF70
+ 2207 0af2 2C010000 		.4byte	.LASF70
+ 2208 0af6 11       		.byte	0x11
+ 2209 0af7 0E       		.byte	0xe
+ 2210 0af8 16       		.uleb128 0x16
+ 2211 0af9 2F030000 		.4byte	.LASF71
+ 2212 0afd 2F030000 		.4byte	.LASF71
+ 2213 0b01 05       		.byte	0x5
+ 2214 0b02 16       		.byte	0x16
+ 2215 0b03 16       		.uleb128 0x16
+ 2216 0b04 A4020000 		.4byte	.LASF72
+ 2217 0b08 A4020000 		.4byte	.LASF72
+ 2218 0b0c 12       		.byte	0x12
+ 2219 0b0d E7       		.byte	0xe7
+ 2220 0b0e 16       		.uleb128 0x16
+ 2221 0b0f C5030000 		.4byte	.LASF73
+ 2222 0b13 C5030000 		.4byte	.LASF73
+ 2223 0b17 13       		.byte	0x13
+ 2224 0b18 8B       		.byte	0x8b
+ 2225 0b19 16       		.uleb128 0x16
+ 2226 0b1a 55040000 		.4byte	.LASF74
+ 2227 0b1e 55040000 		.4byte	.LASF74
+ 2228 0b22 0F       		.byte	0xf
+ 2229 0b23 4E       		.byte	0x4e
+ 2230 0b24 16       		.uleb128 0x16
+ 2231 0b25 6B000000 		.4byte	.LASF75
+ 2232 0b29 6B000000 		.4byte	.LASF75
+ 2233 0b2d 10       		.byte	0x10
+ 2234 0b2e 4E       		.byte	0x4e
+ 2235 0b2f 00       		.byte	0
+ 2236              		.section	.debug_abbrev,"",%progbits
+ 2237              	.Ldebug_abbrev0:
+ 2238 0000 01       		.uleb128 0x1
+ 2239 0001 11       		.uleb128 0x11
+ 2240 0002 01       		.byte	0x1
+ 2241 0003 25       		.uleb128 0x25
+ 2242 0004 0E       		.uleb128 0xe
+ 2243 0005 13       		.uleb128 0x13
+ 2244 0006 0B       		.uleb128 0xb
+ 2245 0007 03       		.uleb128 0x3
+ 2246 0008 0E       		.uleb128 0xe
+ 2247 0009 1B       		.uleb128 0x1b
+ 2248 000a 0E       		.uleb128 0xe
+ 2249 000b 55       		.uleb128 0x55
+ 2250 000c 17       		.uleb128 0x17
+ 2251 000d 11       		.uleb128 0x11
+ 2252 000e 01       		.uleb128 0x1
+ 2253 000f 10       		.uleb128 0x10
+ 2254 0010 17       		.uleb128 0x17
+ 2255 0011 00       		.byte	0
+ 2256 0012 00       		.byte	0
+ 2257 0013 02       		.uleb128 0x2
+ 2258 0014 24       		.uleb128 0x24
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 47
+
+
+ 2259 0015 00       		.byte	0
+ 2260 0016 0B       		.uleb128 0xb
+ 2261 0017 0B       		.uleb128 0xb
+ 2262 0018 3E       		.uleb128 0x3e
+ 2263 0019 0B       		.uleb128 0xb
+ 2264 001a 03       		.uleb128 0x3
+ 2265 001b 0E       		.uleb128 0xe
+ 2266 001c 00       		.byte	0
+ 2267 001d 00       		.byte	0
+ 2268 001e 03       		.uleb128 0x3
+ 2269 001f 16       		.uleb128 0x16
+ 2270 0020 00       		.byte	0
+ 2271 0021 03       		.uleb128 0x3
+ 2272 0022 0E       		.uleb128 0xe
+ 2273 0023 3A       		.uleb128 0x3a
+ 2274 0024 0B       		.uleb128 0xb
+ 2275 0025 3B       		.uleb128 0x3b
+ 2276 0026 0B       		.uleb128 0xb
+ 2277 0027 49       		.uleb128 0x49
+ 2278 0028 13       		.uleb128 0x13
+ 2279 0029 00       		.byte	0
+ 2280 002a 00       		.byte	0
+ 2281 002b 04       		.uleb128 0x4
+ 2282 002c 24       		.uleb128 0x24
+ 2283 002d 00       		.byte	0
+ 2284 002e 0B       		.uleb128 0xb
+ 2285 002f 0B       		.uleb128 0xb
+ 2286 0030 3E       		.uleb128 0x3e
+ 2287 0031 0B       		.uleb128 0xb
+ 2288 0032 03       		.uleb128 0x3
+ 2289 0033 08       		.uleb128 0x8
+ 2290 0034 00       		.byte	0
+ 2291 0035 00       		.byte	0
+ 2292 0036 05       		.uleb128 0x5
+ 2293 0037 2E       		.uleb128 0x2e
+ 2294 0038 01       		.byte	0x1
+ 2295 0039 3F       		.uleb128 0x3f
+ 2296 003a 19       		.uleb128 0x19
+ 2297 003b 03       		.uleb128 0x3
+ 2298 003c 0E       		.uleb128 0xe
+ 2299 003d 3A       		.uleb128 0x3a
+ 2300 003e 0B       		.uleb128 0xb
+ 2301 003f 3B       		.uleb128 0x3b
+ 2302 0040 0B       		.uleb128 0xb
+ 2303 0041 27       		.uleb128 0x27
+ 2304 0042 19       		.uleb128 0x19
+ 2305 0043 11       		.uleb128 0x11
+ 2306 0044 01       		.uleb128 0x1
+ 2307 0045 12       		.uleb128 0x12
+ 2308 0046 06       		.uleb128 0x6
+ 2309 0047 40       		.uleb128 0x40
+ 2310 0048 18       		.uleb128 0x18
+ 2311 0049 9742     		.uleb128 0x2117
+ 2312 004b 19       		.uleb128 0x19
+ 2313 004c 01       		.uleb128 0x1
+ 2314 004d 13       		.uleb128 0x13
+ 2315 004e 00       		.byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 48
+
+
+ 2316 004f 00       		.byte	0
+ 2317 0050 06       		.uleb128 0x6
+ 2318 0051 34       		.uleb128 0x34
+ 2319 0052 00       		.byte	0
+ 2320 0053 03       		.uleb128 0x3
+ 2321 0054 0E       		.uleb128 0xe
+ 2322 0055 3A       		.uleb128 0x3a
+ 2323 0056 0B       		.uleb128 0xb
+ 2324 0057 3B       		.uleb128 0x3b
+ 2325 0058 0B       		.uleb128 0xb
+ 2326 0059 49       		.uleb128 0x49
+ 2327 005a 13       		.uleb128 0x13
+ 2328 005b 02       		.uleb128 0x2
+ 2329 005c 17       		.uleb128 0x17
+ 2330 005d 00       		.byte	0
+ 2331 005e 00       		.byte	0
+ 2332 005f 07       		.uleb128 0x7
+ 2333 0060 898201   		.uleb128 0x4109
+ 2334 0063 01       		.byte	0x1
+ 2335 0064 11       		.uleb128 0x11
+ 2336 0065 01       		.uleb128 0x1
+ 2337 0066 31       		.uleb128 0x31
+ 2338 0067 13       		.uleb128 0x13
+ 2339 0068 01       		.uleb128 0x1
+ 2340 0069 13       		.uleb128 0x13
+ 2341 006a 00       		.byte	0
+ 2342 006b 00       		.byte	0
+ 2343 006c 08       		.uleb128 0x8
+ 2344 006d 8A8201   		.uleb128 0x410a
+ 2345 0070 00       		.byte	0
+ 2346 0071 02       		.uleb128 0x2
+ 2347 0072 18       		.uleb128 0x18
+ 2348 0073 9142     		.uleb128 0x2111
+ 2349 0075 18       		.uleb128 0x18
+ 2350 0076 00       		.byte	0
+ 2351 0077 00       		.byte	0
+ 2352 0078 09       		.uleb128 0x9
+ 2353 0079 898201   		.uleb128 0x4109
+ 2354 007c 00       		.byte	0
+ 2355 007d 11       		.uleb128 0x11
+ 2356 007e 01       		.uleb128 0x1
+ 2357 007f 31       		.uleb128 0x31
+ 2358 0080 13       		.uleb128 0x13
+ 2359 0081 00       		.byte	0
+ 2360 0082 00       		.byte	0
+ 2361 0083 0A       		.uleb128 0xa
+ 2362 0084 898201   		.uleb128 0x4109
+ 2363 0087 01       		.byte	0x1
+ 2364 0088 11       		.uleb128 0x11
+ 2365 0089 01       		.uleb128 0x1
+ 2366 008a 31       		.uleb128 0x31
+ 2367 008b 13       		.uleb128 0x13
+ 2368 008c 00       		.byte	0
+ 2369 008d 00       		.byte	0
+ 2370 008e 0B       		.uleb128 0xb
+ 2371 008f 34       		.uleb128 0x34
+ 2372 0090 00       		.byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 49
+
+
+ 2373 0091 03       		.uleb128 0x3
+ 2374 0092 0E       		.uleb128 0xe
+ 2375 0093 3A       		.uleb128 0x3a
+ 2376 0094 0B       		.uleb128 0xb
+ 2377 0095 3B       		.uleb128 0x3b
+ 2378 0096 0B       		.uleb128 0xb
+ 2379 0097 49       		.uleb128 0x49
+ 2380 0098 13       		.uleb128 0x13
+ 2381 0099 00       		.byte	0
+ 2382 009a 00       		.byte	0
+ 2383 009b 0C       		.uleb128 0xc
+ 2384 009c 34       		.uleb128 0x34
+ 2385 009d 00       		.byte	0
+ 2386 009e 03       		.uleb128 0x3
+ 2387 009f 0E       		.uleb128 0xe
+ 2388 00a0 3A       		.uleb128 0x3a
+ 2389 00a1 0B       		.uleb128 0xb
+ 2390 00a2 3B       		.uleb128 0x3b
+ 2391 00a3 0B       		.uleb128 0xb
+ 2392 00a4 49       		.uleb128 0x49
+ 2393 00a5 13       		.uleb128 0x13
+ 2394 00a6 1C       		.uleb128 0x1c
+ 2395 00a7 0B       		.uleb128 0xb
+ 2396 00a8 00       		.byte	0
+ 2397 00a9 00       		.byte	0
+ 2398 00aa 0D       		.uleb128 0xd
+ 2399 00ab 05       		.uleb128 0x5
+ 2400 00ac 00       		.byte	0
+ 2401 00ad 03       		.uleb128 0x3
+ 2402 00ae 0E       		.uleb128 0xe
+ 2403 00af 3A       		.uleb128 0x3a
+ 2404 00b0 0B       		.uleb128 0xb
+ 2405 00b1 3B       		.uleb128 0x3b
+ 2406 00b2 0B       		.uleb128 0xb
+ 2407 00b3 49       		.uleb128 0x49
+ 2408 00b4 13       		.uleb128 0x13
+ 2409 00b5 02       		.uleb128 0x2
+ 2410 00b6 17       		.uleb128 0x17
+ 2411 00b7 00       		.byte	0
+ 2412 00b8 00       		.byte	0
+ 2413 00b9 0E       		.uleb128 0xe
+ 2414 00ba 34       		.uleb128 0x34
+ 2415 00bb 00       		.byte	0
+ 2416 00bc 03       		.uleb128 0x3
+ 2417 00bd 0E       		.uleb128 0xe
+ 2418 00be 3A       		.uleb128 0x3a
+ 2419 00bf 0B       		.uleb128 0xb
+ 2420 00c0 3B       		.uleb128 0x3b
+ 2421 00c1 05       		.uleb128 0x5
+ 2422 00c2 49       		.uleb128 0x49
+ 2423 00c3 13       		.uleb128 0x13
+ 2424 00c4 02       		.uleb128 0x2
+ 2425 00c5 17       		.uleb128 0x17
+ 2426 00c6 00       		.byte	0
+ 2427 00c7 00       		.byte	0
+ 2428 00c8 0F       		.uleb128 0xf
+ 2429 00c9 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 50
+
+
+ 2430 00ca 00       		.byte	0
+ 2431 00cb 3F       		.uleb128 0x3f
+ 2432 00cc 19       		.uleb128 0x19
+ 2433 00cd 03       		.uleb128 0x3
+ 2434 00ce 0E       		.uleb128 0xe
+ 2435 00cf 3A       		.uleb128 0x3a
+ 2436 00d0 0B       		.uleb128 0xb
+ 2437 00d1 3B       		.uleb128 0x3b
+ 2438 00d2 05       		.uleb128 0x5
+ 2439 00d3 27       		.uleb128 0x27
+ 2440 00d4 19       		.uleb128 0x19
+ 2441 00d5 11       		.uleb128 0x11
+ 2442 00d6 01       		.uleb128 0x1
+ 2443 00d7 12       		.uleb128 0x12
+ 2444 00d8 06       		.uleb128 0x6
+ 2445 00d9 40       		.uleb128 0x40
+ 2446 00da 18       		.uleb128 0x18
+ 2447 00db 9742     		.uleb128 0x2117
+ 2448 00dd 19       		.uleb128 0x19
+ 2449 00de 00       		.byte	0
+ 2450 00df 00       		.byte	0
+ 2451 00e0 10       		.uleb128 0x10
+ 2452 00e1 34       		.uleb128 0x34
+ 2453 00e2 00       		.byte	0
+ 2454 00e3 03       		.uleb128 0x3
+ 2455 00e4 0E       		.uleb128 0xe
+ 2456 00e5 3A       		.uleb128 0x3a
+ 2457 00e6 0B       		.uleb128 0xb
+ 2458 00e7 3B       		.uleb128 0x3b
+ 2459 00e8 05       		.uleb128 0x5
+ 2460 00e9 49       		.uleb128 0x49
+ 2461 00ea 13       		.uleb128 0x13
+ 2462 00eb 3F       		.uleb128 0x3f
+ 2463 00ec 19       		.uleb128 0x19
+ 2464 00ed 3C       		.uleb128 0x3c
+ 2465 00ee 19       		.uleb128 0x19
+ 2466 00ef 00       		.byte	0
+ 2467 00f0 00       		.byte	0
+ 2468 00f1 11       		.uleb128 0x11
+ 2469 00f2 35       		.uleb128 0x35
+ 2470 00f3 00       		.byte	0
+ 2471 00f4 49       		.uleb128 0x49
+ 2472 00f5 13       		.uleb128 0x13
+ 2473 00f6 00       		.byte	0
+ 2474 00f7 00       		.byte	0
+ 2475 00f8 12       		.uleb128 0x12
+ 2476 00f9 34       		.uleb128 0x34
+ 2477 00fa 00       		.byte	0
+ 2478 00fb 03       		.uleb128 0x3
+ 2479 00fc 0E       		.uleb128 0xe
+ 2480 00fd 3A       		.uleb128 0x3a
+ 2481 00fe 0B       		.uleb128 0xb
+ 2482 00ff 3B       		.uleb128 0x3b
+ 2483 0100 0B       		.uleb128 0xb
+ 2484 0101 49       		.uleb128 0x49
+ 2485 0102 13       		.uleb128 0x13
+ 2486 0103 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 51
+
+
+ 2487 0104 19       		.uleb128 0x19
+ 2488 0105 02       		.uleb128 0x2
+ 2489 0106 18       		.uleb128 0x18
+ 2490 0107 00       		.byte	0
+ 2491 0108 00       		.byte	0
+ 2492 0109 13       		.uleb128 0x13
+ 2493 010a 01       		.uleb128 0x1
+ 2494 010b 01       		.byte	0x1
+ 2495 010c 49       		.uleb128 0x49
+ 2496 010d 13       		.uleb128 0x13
+ 2497 010e 01       		.uleb128 0x1
+ 2498 010f 13       		.uleb128 0x13
+ 2499 0110 00       		.byte	0
+ 2500 0111 00       		.byte	0
+ 2501 0112 14       		.uleb128 0x14
+ 2502 0113 21       		.uleb128 0x21
+ 2503 0114 00       		.byte	0
+ 2504 0115 49       		.uleb128 0x49
+ 2505 0116 13       		.uleb128 0x13
+ 2506 0117 2F       		.uleb128 0x2f
+ 2507 0118 0B       		.uleb128 0xb
+ 2508 0119 00       		.byte	0
+ 2509 011a 00       		.byte	0
+ 2510 011b 15       		.uleb128 0x15
+ 2511 011c 34       		.uleb128 0x34
+ 2512 011d 00       		.byte	0
+ 2513 011e 03       		.uleb128 0x3
+ 2514 011f 0E       		.uleb128 0xe
+ 2515 0120 3A       		.uleb128 0x3a
+ 2516 0121 0B       		.uleb128 0xb
+ 2517 0122 3B       		.uleb128 0x3b
+ 2518 0123 0B       		.uleb128 0xb
+ 2519 0124 49       		.uleb128 0x49
+ 2520 0125 13       		.uleb128 0x13
+ 2521 0126 3F       		.uleb128 0x3f
+ 2522 0127 19       		.uleb128 0x19
+ 2523 0128 3C       		.uleb128 0x3c
+ 2524 0129 19       		.uleb128 0x19
+ 2525 012a 00       		.byte	0
+ 2526 012b 00       		.byte	0
+ 2527 012c 16       		.uleb128 0x16
+ 2528 012d 2E       		.uleb128 0x2e
+ 2529 012e 00       		.byte	0
+ 2530 012f 3F       		.uleb128 0x3f
+ 2531 0130 19       		.uleb128 0x19
+ 2532 0131 3C       		.uleb128 0x3c
+ 2533 0132 19       		.uleb128 0x19
+ 2534 0133 6E       		.uleb128 0x6e
+ 2535 0134 0E       		.uleb128 0xe
+ 2536 0135 03       		.uleb128 0x3
+ 2537 0136 0E       		.uleb128 0xe
+ 2538 0137 3A       		.uleb128 0x3a
+ 2539 0138 0B       		.uleb128 0xb
+ 2540 0139 3B       		.uleb128 0x3b
+ 2541 013a 0B       		.uleb128 0xb
+ 2542 013b 00       		.byte	0
+ 2543 013c 00       		.byte	0
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 52
+
+
+ 2544 013d 00       		.byte	0
+ 2545              		.section	.debug_loc,"",%progbits
+ 2546              	.Ldebug_loc0:
+ 2547              	.LLST0:
+ 2548 0000 02000000 		.4byte	.LVL0
+ 2549 0004 12000000 		.4byte	.LVL2
+ 2550 0008 0200     		.2byte	0x2
+ 2551 000a 30       		.byte	0x30
+ 2552 000b 9F       		.byte	0x9f
+ 2553 000c 12000000 		.4byte	.LVL2
+ 2554 0010 3A000000 		.4byte	.LVL9
+ 2555 0014 0100     		.2byte	0x1
+ 2556 0016 55       		.byte	0x55
+ 2557 0017 00000000 		.4byte	0
+ 2558 001b 00000000 		.4byte	0
+ 2559              	.LLST1:
+ 2560 001f 1E000000 		.4byte	.LVL5
+ 2561 0023 20000000 		.4byte	.LVL6
+ 2562 0027 0100     		.2byte	0x1
+ 2563 0029 50       		.byte	0x50
+ 2564 002a 20000000 		.4byte	.LVL6
+ 2565 002e 34000000 		.4byte	.LVL8
+ 2566 0032 0100     		.2byte	0x1
+ 2567 0034 54       		.byte	0x54
+ 2568 0035 00000000 		.4byte	0
+ 2569 0039 00000000 		.4byte	0
+ 2570              	.LLST2:
+ 2571 003d 02000000 		.4byte	.LVL10
+ 2572 0041 2C000000 		.4byte	.LVL17
+ 2573 0045 0200     		.2byte	0x2
+ 2574 0047 30       		.byte	0x30
+ 2575 0048 9F       		.byte	0x9f
+ 2576 0049 2C000000 		.4byte	.LVL17
+ 2577 004d 32000000 		.4byte	.LVL19
+ 2578 0051 0100     		.2byte	0x1
+ 2579 0053 54       		.byte	0x54
+ 2580 0054 32000000 		.4byte	.LVL19
+ 2581 0058 34000000 		.4byte	.LVL20
+ 2582 005c 0100     		.2byte	0x1
+ 2583 005e 50       		.byte	0x50
+ 2584 005f 34000000 		.4byte	.LVL20
+ 2585 0063 5A000000 		.4byte	.LVL27
+ 2586 0067 0100     		.2byte	0x1
+ 2587 0069 54       		.byte	0x54
+ 2588 006a 00000000 		.4byte	0
+ 2589 006e 00000000 		.4byte	0
+ 2590              	.LLST3:
+ 2591 0072 02000000 		.4byte	.LVL28
+ 2592 0076 08000000 		.4byte	.LVL29
+ 2593 007a 0400     		.2byte	0x4
+ 2594 007c 0A       		.byte	0xa
+ 2595 007d 2C01     		.2byte	0x12c
+ 2596 007f 9F       		.byte	0x9f
+ 2597 0080 08000000 		.4byte	.LVL29
+ 2598 0084 18000000 		.4byte	.LVL32
+ 2599 0088 0100     		.2byte	0x1
+ 2600 008a 54       		.byte	0x54
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 53
+
+
+ 2601 008b 4C000000 		.4byte	.LVL39
+ 2602 008f 7A000000 		.4byte	.LVL44
+ 2603 0093 0100     		.2byte	0x1
+ 2604 0095 54       		.byte	0x54
+ 2605 0096 7A000000 		.4byte	.LVL44
+ 2606 009a AE000000 		.4byte	.LVL53
+ 2607 009e 0400     		.2byte	0x4
+ 2608 00a0 74       		.byte	0x74
+ 2609 00a1 B97E     		.sleb128 -199
+ 2610 00a3 9F       		.byte	0x9f
+ 2611 00a4 AE000000 		.4byte	.LVL53
+ 2612 00a8 DC000000 		.4byte	.LVL58
+ 2613 00ac 0100     		.2byte	0x1
+ 2614 00ae 54       		.byte	0x54
+ 2615 00af DC000000 		.4byte	.LVL58
+ 2616 00b3 E4000000 		.4byte	.LVL59
+ 2617 00b7 0400     		.2byte	0x4
+ 2618 00b9 74       		.byte	0x74
+ 2619 00ba B97E     		.sleb128 -199
+ 2620 00bc 9F       		.byte	0x9f
+ 2621 00bd E4000000 		.4byte	.LVL59
+ 2622 00c1 F2000000 		.4byte	.LVL62
+ 2623 00c5 0100     		.2byte	0x1
+ 2624 00c7 54       		.byte	0x54
+ 2625 00c8 F2000000 		.4byte	.LVL62
+ 2626 00cc 26010000 		.4byte	.LVL71
+ 2627 00d0 0400     		.2byte	0x4
+ 2628 00d2 74       		.byte	0x74
+ 2629 00d3 B97E     		.sleb128 -199
+ 2630 00d5 9F       		.byte	0x9f
+ 2631 00d6 26010000 		.4byte	.LVL71
+ 2632 00da 54010000 		.4byte	.LVL76
+ 2633 00de 0100     		.2byte	0x1
+ 2634 00e0 54       		.byte	0x54
+ 2635 00e1 54010000 		.4byte	.LVL76
+ 2636 00e5 5A010000 		.4byte	.LVL77
+ 2637 00e9 0400     		.2byte	0x4
+ 2638 00eb 74       		.byte	0x74
+ 2639 00ec B97E     		.sleb128 -199
+ 2640 00ee 9F       		.byte	0x9f
+ 2641 00ef 7A010000 		.4byte	.LVL82
+ 2642 00f3 B2010000 		.4byte	.LVL89
+ 2643 00f7 0100     		.2byte	0x1
+ 2644 00f9 54       		.byte	0x54
+ 2645 00fa 00000000 		.4byte	0
+ 2646 00fe 00000000 		.4byte	0
+ 2647              	.LLST4:
+ 2648 0102 00000000 		.4byte	.LVL90
+ 2649 0106 12000000 		.4byte	.LVL92
+ 2650 010a 0100     		.2byte	0x1
+ 2651 010c 50       		.byte	0x50
+ 2652 010d 12000000 		.4byte	.LVL92
+ 2653 0111 16010000 		.4byte	.LVL126
+ 2654 0115 0100     		.2byte	0x1
+ 2655 0117 57       		.byte	0x57
+ 2656 0118 16010000 		.4byte	.LVL126
+ 2657 011c 24010000 		.4byte	.LFE67
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 54
+
+
+ 2658 0120 0400     		.2byte	0x4
+ 2659 0122 F3       		.byte	0xf3
+ 2660 0123 01       		.uleb128 0x1
+ 2661 0124 50       		.byte	0x50
+ 2662 0125 9F       		.byte	0x9f
+ 2663 0126 00000000 		.4byte	0
+ 2664 012a 00000000 		.4byte	0
+ 2665              	.LLST5:
+ 2666 012e 00000000 		.4byte	.LVL90
+ 2667 0132 15000000 		.4byte	.LVL93-1
+ 2668 0136 0100     		.2byte	0x1
+ 2669 0138 51       		.byte	0x51
+ 2670 0139 15000000 		.4byte	.LVL93-1
+ 2671 013d 36000000 		.4byte	.LVL97
+ 2672 0141 0100     		.2byte	0x1
+ 2673 0143 56       		.byte	0x56
+ 2674 0144 36000000 		.4byte	.LVL97
+ 2675 0148 24010000 		.4byte	.LFE67
+ 2676 014c 0400     		.2byte	0x4
+ 2677 014e F3       		.byte	0xf3
+ 2678 014f 01       		.uleb128 0x1
+ 2679 0150 51       		.byte	0x51
+ 2680 0151 9F       		.byte	0x9f
+ 2681 0152 00000000 		.4byte	0
+ 2682 0156 00000000 		.4byte	0
+ 2683              	.LLST6:
+ 2684 015a 00000000 		.4byte	.LVL90
+ 2685 015e 15000000 		.4byte	.LVL93-1
+ 2686 0162 0100     		.2byte	0x1
+ 2687 0164 52       		.byte	0x52
+ 2688 0165 15000000 		.4byte	.LVL93-1
+ 2689 0169 16010000 		.4byte	.LVL126
+ 2690 016d 0100     		.2byte	0x1
+ 2691 016f 58       		.byte	0x58
+ 2692 0170 16010000 		.4byte	.LVL126
+ 2693 0174 24010000 		.4byte	.LFE67
+ 2694 0178 0400     		.2byte	0x4
+ 2695 017a F3       		.byte	0xf3
+ 2696 017b 01       		.uleb128 0x1
+ 2697 017c 52       		.byte	0x52
+ 2698 017d 9F       		.byte	0x9f
+ 2699 017e 00000000 		.4byte	0
+ 2700 0182 00000000 		.4byte	0
+ 2701              	.LLST7:
+ 2702 0186 00000000 		.4byte	.LVL90
+ 2703 018a 15000000 		.4byte	.LVL93-1
+ 2704 018e 0100     		.2byte	0x1
+ 2705 0190 53       		.byte	0x53
+ 2706 0191 15000000 		.4byte	.LVL93-1
+ 2707 0195 16010000 		.4byte	.LVL126
+ 2708 0199 0100     		.2byte	0x1
+ 2709 019b 54       		.byte	0x54
+ 2710 019c 16010000 		.4byte	.LVL126
+ 2711 01a0 24010000 		.4byte	.LFE67
+ 2712 01a4 0400     		.2byte	0x4
+ 2713 01a6 F3       		.byte	0xf3
+ 2714 01a7 01       		.uleb128 0x1
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 55
+
+
+ 2715 01a8 53       		.byte	0x53
+ 2716 01a9 9F       		.byte	0x9f
+ 2717 01aa 00000000 		.4byte	0
+ 2718 01ae 00000000 		.4byte	0
+ 2719              	.LLST8:
+ 2720 01b2 00000000 		.4byte	.LVL90
+ 2721 01b6 16010000 		.4byte	.LVL126
+ 2722 01ba 0200     		.2byte	0x2
+ 2723 01bc 91       		.byte	0x91
+ 2724 01bd 00       		.sleb128 0
+ 2725 01be 16010000 		.4byte	.LVL126
+ 2726 01c2 24010000 		.4byte	.LFE67
+ 2727 01c6 0200     		.2byte	0x2
+ 2728 01c8 7D       		.byte	0x7d
+ 2729 01c9 00       		.sleb128 0
+ 2730 01ca 00000000 		.4byte	0
+ 2731 01ce 00000000 		.4byte	0
+ 2732              	.LLST9:
+ 2733 01d2 0C000000 		.4byte	.LVL91
+ 2734 01d6 86000000 		.4byte	.LVL107
+ 2735 01da 0200     		.2byte	0x2
+ 2736 01dc 91       		.byte	0x91
+ 2737 01dd 00       		.sleb128 0
+ 2738 01de 00000000 		.4byte	0
+ 2739 01e2 00000000 		.4byte	0
+ 2740              	.LLST11:
+ 2741 01e6 36000000 		.4byte	.LVL97
+ 2742 01ea 16010000 		.4byte	.LVL126
+ 2743 01ee 0100     		.2byte	0x1
+ 2744 01f0 55       		.byte	0x55
+ 2745 01f1 00000000 		.4byte	0
+ 2746 01f5 00000000 		.4byte	0
+ 2747              		.section	.debug_aranges,"",%progbits
+ 2748 0000 3C000000 		.4byte	0x3c
+ 2749 0004 0200     		.2byte	0x2
+ 2750 0006 00000000 		.4byte	.Ldebug_info0
+ 2751 000a 04       		.byte	0x4
+ 2752 000b 00       		.byte	0
+ 2753 000c 0000     		.2byte	0
+ 2754 000e 0000     		.2byte	0
+ 2755 0010 00000000 		.4byte	.LFB64
+ 2756 0014 44000000 		.4byte	.LFE64-.LFB64
+ 2757 0018 00000000 		.4byte	.LFB65
+ 2758 001c 60000000 		.4byte	.LFE65-.LFB65
+ 2759 0020 00000000 		.4byte	.LFB66
+ 2760 0024 D0010000 		.4byte	.LFE66-.LFB66
+ 2761 0028 00000000 		.4byte	.LFB67
+ 2762 002c 24010000 		.4byte	.LFE67-.LFB67
+ 2763 0030 00000000 		.4byte	.LFB68
+ 2764 0034 02000000 		.4byte	.LFE68-.LFB68
+ 2765 0038 00000000 		.4byte	0
+ 2766 003c 00000000 		.4byte	0
+ 2767              		.section	.debug_ranges,"",%progbits
+ 2768              	.Ldebug_ranges0:
+ 2769 0000 00000000 		.4byte	.LFB64
+ 2770 0004 44000000 		.4byte	.LFE64
+ 2771 0008 00000000 		.4byte	.LFB65
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 56
+
+
+ 2772 000c 60000000 		.4byte	.LFE65
+ 2773 0010 00000000 		.4byte	.LFB66
+ 2774 0014 D0010000 		.4byte	.LFE66
+ 2775 0018 00000000 		.4byte	.LFB67
+ 2776 001c 24010000 		.4byte	.LFE67
+ 2777 0020 00000000 		.4byte	.LFB68
+ 2778 0024 02000000 		.4byte	.LFE68
+ 2779 0028 00000000 		.4byte	0
+ 2780 002c 00000000 		.4byte	0
+ 2781              		.section	.debug_line,"",%progbits
+ 2782              	.Ldebug_line0:
+ 2783 0000 B4030000 		.section	.debug_str,"MS",%progbits,1
+ 2783      0200B102 
+ 2783      00000201 
+ 2783      FB0E0D00 
+ 2783      01010101 
+ 2784              	.LASF32:
+ 2785 0000 756C7472 		.ascii	"ultrasonic_sensor\000"
+ 2785      61736F6E 
+ 2785      69635F73 
+ 2785      656E736F 
+ 2785      7200
+ 2786              	.LASF64:
+ 2787 0012 4D6F746F 		.ascii	"Motor_Right_Driver_WriteCompare\000"
+ 2787      725F5269 
+ 2787      6768745F 
+ 2787      44726976 
+ 2787      65725F57 
+ 2788              	.LASF25:
+ 2789 0032 746F6C65 		.ascii	"tolerance\000"
+ 2789      72616E63 
+ 2789      6500
+ 2790              	.LASF26:
+ 2791 003c 73706565 		.ascii	"speed_left\000"
+ 2791      645F6C65 
+ 2791      667400
+ 2792              	.LASF58:
+ 2793 0047 636F6C6F 		.ascii	"colourSensingOutput\000"
+ 2793      75725365 
+ 2793      6E73696E 
+ 2793      674F7574 
+ 2793      70757400 
+ 2794              	.LASF48:
+ 2795 005b 7475726E 		.ascii	"turningLeftFlag\000"
+ 2795      696E674C 
+ 2795      65667446 
+ 2795      6C616700 
+ 2796              	.LASF75:
+ 2797 006b 4D6F746F 		.ascii	"Motor_Right_Decoder_GetCounter\000"
+ 2797      725F5269 
+ 2797      6768745F 
+ 2797      4465636F 
+ 2797      6465725F 
+ 2798              	.LASF2:
+ 2799 008a 73686F72 		.ascii	"short int\000"
+ 2799      7420696E 
+ 2799      7400
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 57
+
+
+ 2800              	.LASF77:
+ 2801 0094 6E617669 		.ascii	"navigation.c\000"
+ 2801      67617469 
+ 2801      6F6E2E63 
+ 2801      00
+ 2802              	.LASF46:
+ 2803 00a1 64726976 		.ascii	"drivingForwardFlag\000"
+ 2803      696E6746 
+ 2803      6F727761 
+ 2803      7264466C 
+ 2803      616700
+ 2804              	.LASF36:
+ 2805 00b4 636F6D70 		.ascii	"compare\000"
+ 2805      61726500 
+ 2806              	.LASF24:
+ 2807 00bc 64696666 		.ascii	"difference\000"
+ 2807      6572656E 
+ 2807      636500
+ 2808              	.LASF22:
+ 2809 00c7 66726F6E 		.ascii	"front_left\000"
+ 2809      745F6C65 
+ 2809      667400
+ 2810              	.LASF23:
+ 2811 00d2 66726F6E 		.ascii	"front_right\000"
+ 2811      745F7269 
+ 2811      67687400 
+ 2812              	.LASF30:
+ 2813 00de 64697265 		.ascii	"direction\000"
+ 2813      6374696F 
+ 2813      6E00
+ 2814              	.LASF14:
+ 2815 00e8 6C6F6E67 		.ascii	"long double\000"
+ 2815      20646F75 
+ 2815      626C6500 
+ 2816              	.LASF37:
+ 2817 00f4 64697374 		.ascii	"distance_sensor\000"
+ 2817      616E6365 
+ 2817      5F73656E 
+ 2817      736F7200 
+ 2818              	.LASF52:
+ 2819 0104 756C7472 		.ascii	"ultrasonic_distances_mm\000"
+ 2819      61736F6E 
+ 2819      69635F64 
+ 2819      69737461 
+ 2819      6E636573 
+ 2820              	.LASF53:
+ 2821 011c 756C7472 		.ascii	"ultrasonic_flag\000"
+ 2821      61736F6E 
+ 2821      69635F66 
+ 2821      6C616700 
+ 2822              	.LASF70:
+ 2823 012c 6D697368 		.ascii	"mishaMoveDynamic\000"
+ 2823      614D6F76 
+ 2823      6544796E 
+ 2823      616D6963 
+ 2823      00
+ 2824              	.LASF42:
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 58
+
+
+ 2825 013d 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 2825      5261636B 
+ 2825      4F666673 
+ 2825      65747346 
+ 2825      726F6D57 
+ 2826              	.LASF66:
+ 2827 0155 4D6F746F 		.ascii	"Motor_Left_Decoder_SetCounter\000"
+ 2827      725F4C65 
+ 2827      66745F44 
+ 2827      65636F64 
+ 2827      65725F53 
+ 2828              	.LASF43:
+ 2829 0173 73776565 		.ascii	"sweeping\000"
+ 2829      70696E67 
+ 2829      00
+ 2830              	.LASF60:
+ 2831 017c 4D6F746F 		.ascii	"Motor_Right_Control_Write\000"
+ 2831      725F5269 
+ 2831      6768745F 
+ 2831      436F6E74 
+ 2831      726F6C5F 
+ 2832              	.LASF49:
+ 2833 0196 7475726E 		.ascii	"turningRightFlag\000"
+ 2833      696E6752 
+ 2833      69676874 
+ 2833      466C6167 
+ 2833      00
+ 2834              	.LASF11:
+ 2835 01a7 666C6F61 		.ascii	"float\000"
+ 2835      7400
+ 2836              	.LASF29:
+ 2837 01ad 64697374 		.ascii	"distance_set\000"
+ 2837      616E6365 
+ 2837      5F736574 
+ 2837      00
+ 2838              	.LASF6:
+ 2839 01ba 6C6F6E67 		.ascii	"long long int\000"
+ 2839      206C6F6E 
+ 2839      6720696E 
+ 2839      7400
+ 2840              	.LASF69:
+ 2841 01c8 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
+ 2841      725F5269 
+ 2841      6768745F 
+ 2841      44726976 
+ 2841      65725F53 
+ 2842              	.LASF4:
+ 2843 01e1 6C6F6E67 		.ascii	"long int\000"
+ 2843      20696E74 
+ 2843      00
+ 2844              	.LASF34:
+ 2845 01ea 636F756E 		.ascii	"count_left\000"
+ 2845      745F6C65 
+ 2845      667400
+ 2846              	.LASF47:
+ 2847 01f5 64726976 		.ascii	"drivingBackwardFlag\000"
+ 2847      696E6742 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 59
+
+
+ 2847      61636B77 
+ 2847      61726446 
+ 2847      6C616700 
+ 2848              	.LASF67:
+ 2849 0209 4D6F746F 		.ascii	"Motor_Right_Decoder_SetCounter\000"
+ 2849      725F5269 
+ 2849      6768745F 
+ 2849      4465636F 
+ 2849      6465725F 
+ 2850              	.LASF45:
+ 2851 0228 7075636B 		.ascii	"puckPileLocation\000"
+ 2851      50696C65 
+ 2851      4C6F6361 
+ 2851      74696F6E 
+ 2851      00
+ 2852              	.LASF40:
+ 2853 0239 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 2853      656E7450 
+ 2853      75636B52 
+ 2853      61636B53 
+ 2853      63616E6E 
+ 2854              	.LASF63:
+ 2855 0256 4D6F746F 		.ascii	"Motor_Right_Driver_Wakeup\000"
+ 2855      725F5269 
+ 2855      6768745F 
+ 2855      44726976 
+ 2855      65725F57 
+ 2856              	.LASF68:
+ 2857 0270 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
+ 2857      725F4C65 
+ 2857      66745F44 
+ 2857      72697665 
+ 2857      725F536C 
+ 2858              	.LASF19:
+ 2859 0288 6D6F7665 		.ascii	"moveUntilPuck\000"
+ 2859      556E7469 
+ 2859      6C507563 
+ 2859      6B00
+ 2860              	.LASF1:
+ 2861 0296 756E7369 		.ascii	"unsigned char\000"
+ 2861      676E6564 
+ 2861      20636861 
+ 2861      7200
+ 2862              	.LASF72:
+ 2863 02a4 73707269 		.ascii	"sprintf\000"
+ 2863      6E746600 
+ 2864              	.LASF18:
+ 2865 02ac 61726D4D 		.ascii	"armMoving\000"
+ 2865      6F76696E 
+ 2865      6700
+ 2866              	.LASF0:
+ 2867 02b6 7369676E 		.ascii	"signed char\000"
+ 2867      65642063 
+ 2867      68617200 
+ 2868              	.LASF44:
+ 2869 02c2 626C6F63 		.ascii	"block_edge_location\000"
+ 2869      6B5F6564 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 60
+
+
+ 2869      67655F6C 
+ 2869      6F636174 
+ 2869      696F6E00 
+ 2870              	.LASF7:
+ 2871 02d6 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2871      206C6F6E 
+ 2871      6720756E 
+ 2871      7369676E 
+ 2871      65642069 
+ 2872              	.LASF8:
+ 2873 02ed 756E7369 		.ascii	"unsigned int\000"
+ 2873      676E6564 
+ 2873      20696E74 
+ 2873      00
+ 2874              	.LASF33:
+ 2875 02fa 73706565 		.ascii	"speed\000"
+ 2875      6400
+ 2876              	.LASF31:
+ 2877 0300 6C657373 		.ascii	"less_or_great\000"
+ 2877      5F6F725F 
+ 2877      67726561 
+ 2877      7400
+ 2878              	.LASF55:
+ 2879 030e 63757272 		.ascii	"current_stage\000"
+ 2879      656E745F 
+ 2879      73746167 
+ 2879      6500
+ 2880              	.LASF3:
+ 2881 031c 73686F72 		.ascii	"short unsigned int\000"
+ 2881      7420756E 
+ 2881      7369676E 
+ 2881      65642069 
+ 2881      6E7400
+ 2882              	.LASF71:
+ 2883 032f 64697374 		.ascii	"distanceSensor\000"
+ 2883      616E6365 
+ 2883      53656E73 
+ 2883      6F7200
+ 2884              	.LASF13:
+ 2885 033e 63686172 		.ascii	"char\000"
+ 2885      00
+ 2886              	.LASF21:
+ 2887 0343 73747261 		.ascii	"straightAdjust\000"
+ 2887      69676874 
+ 2887      41646A75 
+ 2887      737400
+ 2888              	.LASF10:
+ 2889 0352 696E7433 		.ascii	"int32_t\000"
+ 2889      325F7400 
+ 2890              	.LASF56:
+ 2891 035a 636F6C6F 		.ascii	"colour_sensing_algorithm\000"
+ 2891      75725F73 
+ 2891      656E7369 
+ 2891      6E675F61 
+ 2891      6C676F72 
+ 2892              	.LASF20:
+ 2893 0373 7075636B 		.ascii	"puck_detect\000"
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 61
+
+
+ 2893      5F646574 
+ 2893      65637400 
+ 2894              	.LASF39:
+ 2895 037f 64726976 		.ascii	"driveStraightEnable\000"
+ 2895      65537472 
+ 2895      61696768 
+ 2895      74456E61 
+ 2895      626C6500 
+ 2896              	.LASF16:
+ 2897 0393 7075636B 		.ascii	"puck_correct\000"
+ 2897      5F636F72 
+ 2897      72656374 
+ 2897      00
+ 2898              	.LASF5:
+ 2899 03a0 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2899      20756E73 
+ 2899      69676E65 
+ 2899      6420696E 
+ 2899      7400
+ 2900              	.LASF79:
+ 2901 03b2 6C6F6361 		.ascii	"locatePucks\000"
+ 2901      74655075 
+ 2901      636B7300 
+ 2902              	.LASF12:
+ 2903 03be 646F7562 		.ascii	"double\000"
+ 2903      6C6500
+ 2904              	.LASF73:
+ 2905 03c5 55415254 		.ascii	"UART_1_PutString\000"
+ 2905      5F315F50 
+ 2905      75745374 
+ 2905      72696E67 
+ 2905      00
+ 2906              	.LASF54:
+ 2907 03d6 7075636B 		.ascii	"puckConstructionPlan\000"
+ 2907      436F6E73 
+ 2907      74727563 
+ 2907      74696F6E 
+ 2907      506C616E 
+ 2908              	.LASF59:
+ 2909 03eb 4D6F746F 		.ascii	"Motor_Left_Control_Write\000"
+ 2909      725F4C65 
+ 2909      66745F43 
+ 2909      6F6E7472 
+ 2909      6F6C5F57 
+ 2910              	.LASF17:
+ 2911 0404 7075636B 		.ascii	"puck_scan\000"
+ 2911      5F736361 
+ 2911      6E00
+ 2912              	.LASF9:
+ 2913 040e 5F5F696E 		.ascii	"__int32_t\000"
+ 2913      7433325F 
+ 2913      7400
+ 2914              	.LASF41:
+ 2915 0418 7075636B 		.ascii	"puckRackColours\000"
+ 2915      5261636B 
+ 2915      436F6C6F 
+ 2915      75727300 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 62
+
+
+ 2916              	.LASF28:
+ 2917 0428 6D6F7665 		.ascii	"moveUntil\000"
+ 2917      556E7469 
+ 2917      6C00
+ 2918              	.LASF15:
+ 2919 0432 73697A65 		.ascii	"sizetype\000"
+ 2919      74797065 
+ 2919      00
+ 2920              	.LASF51:
+ 2921 043b 6F757470 		.ascii	"output\000"
+ 2921      757400
+ 2922              	.LASF57:
+ 2923 0442 6368616E 		.ascii	"changeHeightToPuck\000"
+ 2923      67654865 
+ 2923      69676874 
+ 2923      546F5075 
+ 2923      636B00
+ 2924              	.LASF74:
+ 2925 0455 4D6F746F 		.ascii	"Motor_Left_Decoder_GetCounter\000"
+ 2925      725F4C65 
+ 2925      66745F44 
+ 2925      65636F64 
+ 2925      65725F47 
+ 2926              	.LASF38:
+ 2927 0473 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2927      52784275 
+ 2927      66666572 
+ 2927      00
+ 2928              	.LASF76:
+ 2929 0480 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2929      43313120 
+ 2929      352E342E 
+ 2929      31203230 
+ 2929      31363036 
+ 2930 04b3 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2930      20726576 
+ 2930      6973696F 
+ 2930      6E203233 
+ 2930      37373135 
+ 2931 04e6 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2931      66756E63 
+ 2931      74696F6E 
+ 2931      2D736563 
+ 2931      74696F6E 
+ 2932              	.LASF65:
+ 2933 050e 43794465 		.ascii	"CyDelay\000"
+ 2933      6C617900 
+ 2934              	.LASF35:
+ 2935 0516 636F756E 		.ascii	"count_right\000"
+ 2935      745F7269 
+ 2935      67687400 
+ 2936              	.LASF78:
+ 2937 0522 5C5C6164 		.ascii	"\\\\ad.monash.edu\\home\\User026\\bamcg3\\Documents"
+ 2937      2E6D6F6E 
+ 2937      6173682E 
+ 2937      6564755C 
+ 2937      686F6D65 
+ARM GAS  C:\Users\bamcg3\AppData\Local\Temp\ccnndDLf.s 			page 63
+
+
+ 2938 054f 5C476974 		.ascii	"\\GitHub\\ECE3091_Group17\\Group17RobotReal\\Group1"
+ 2938      4875625C 
+ 2938      45434533 
+ 2938      3039315F 
+ 2938      47726F75 
+ 2939 057e 37526F62 		.ascii	"7Robot.cydsn\000"
+ 2939      6F742E63 
+ 2939      7964736E 
+ 2939      00
+ 2940              	.LASF27:
+ 2941 058b 73706565 		.ascii	"speed_right\000"
+ 2941      645F7269 
+ 2941      67687400 
+ 2942              	.LASF50:
+ 2943 0597 696E6974 		.ascii	"initialisation\000"
+ 2943      69616C69 
+ 2943      73617469 
+ 2943      6F6E00
+ 2944              	.LASF62:
+ 2945 05a6 4D6F746F 		.ascii	"Motor_Left_Driver_WriteCompare\000"
+ 2945      725F4C65 
+ 2945      66745F44 
+ 2945      72697665 
+ 2945      725F5772 
+ 2946              	.LASF61:
+ 2947 05c5 4D6F746F 		.ascii	"Motor_Left_Driver_Wakeup\000"
+ 2947      725F4C65 
+ 2947      66745F44 
+ 2947      72697665 
+ 2947      725F5761 
+ 2948              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

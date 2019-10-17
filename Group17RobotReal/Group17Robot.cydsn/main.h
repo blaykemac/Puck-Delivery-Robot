@@ -11,14 +11,7 @@
  * ========================================
 */
 
-// In case we change the number of ultrasonic sensors used
-#define TOTAL_SONIC_SENSORS 5
-
 //Constants in main for dcmotor function
-#define TRUE 1
-#define FALSE 0
-#define EAST_DIRECTION 0 //This is just to remind us that we have our east as zero and
-//angle increases counterclockwise (so toward the north of the arena will be 90)
 #define CM_PER_COUNT 0.0187 //0.0175*1.06849 cm per encoder count
 #define DEGREES_PER_COUNT 0.105 //11.465 cm per deg*0.0187 cm per count (equal to CM_PER_COUNT)
 #define DRIFT_CORRECT_FREQ 10
@@ -38,16 +31,6 @@
 #define STATE_DEPOSIT_PUCK 5
 #define STATE_PARK_HOME 6
 
-// Hard-coded distances from the west for where each puck may sit in the construction plan.
-#define PUCK_RACK_0_WEST_DISTANCE 720
-#define PUCK_RACK_1_WEST_DISTANCE 660
-#define PUCK_RACK_2_WEST_DISTANCE 600
-#define PUCK_RACK_3_WEST_DISTANCE 540
-#define PUCK_RACK_4_WEST_DISTANCE 480
-
-#define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
-
-
 // Cardinal Directions. North faces the pucks from the home base
 #define NORTH 0
 #define EAST 1
@@ -60,6 +43,7 @@
 #define SOUTH_ANGLE 270
 #define WEST_ANGLE 180
 
+#define EAST_DIRECTION 0 //This is just to remind us that we have our east as zero and angle increases counterclockwise (so toward the north of the arena will be 90)
 
 // * ARENA CONSTRAINTS IN MM !* //
 #define BLOCK_ZONE_SOUTH 500
@@ -79,50 +63,67 @@
 #define HOME_BASE_WEST_EDGE (ARENA_WIDTH - HOME_EDGE_LENGTH) / 2   // Measure arena to find this edge
 #define HOME_BASE_EAST_EDGE (HOME_BASE_WEST_EDGE + HOME_EDGE_LENGTH)
 #define HOME_MIDPOINT (ARENA_WIDTH / 2)
-#define HOME_PARKING_DISTANCE 30
+#define HOME_PARKING_DISTANCE 40
 
 #define CONSTRUCTION_BASE_NORTH_EDGE CONSTRUCTION_EDGE_LENGTH
 #define CONSTRUCTION_BASE_SOUTH_EDGE 0
 #define CONSTRUCTION_BASE_WEST_EDGE 200 // Measure arena to find this edge
 #define CONSTRUCTION_BASE_EAST_EDGE (CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_EDGE_LENGTH)
 #define CONSTRUCTION_MIDPOINT ((CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_BASE_EAST_EDGE + CONSTRUCTION_EDGE_LENGTH) / 2)
-#define CONSTRUCTION_DISTANCE_FROM_WALL 50 // How far we should put the front of the robot to the wall when depositing hte puck
+#define CONSTRUCTION_DISTANCE_FROM_WALL 80 // How far we should put the front of the robot to the wall when depositing hte puck
+#define CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK 210 // How far we should reverse from constructio stack before attempting to turn.
 
 #define DISTANCE_PUCKS_FROM_NORTH 280 // Where the southmost part of the pucks can extend to from the north wall
+#define PUCK_RACK_0_WEST_DISTANCE 720
+#define PUCK_RACK_1_WEST_DISTANCE 660
+#define PUCK_RACK_2_WEST_DISTANCE 600
+#define PUCK_RACK_3_WEST_DISTANCE 540
+#define PUCK_RACK_4_WEST_DISTANCE 480
+#define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
 
 
-// Robot Body Orientation Constants
+//* Robot Body Constants *//
+
+// Indices of ultrasonic sensors
+
 #define SIDE_LEFT 2          //0     
 #define FRONT_LEFT 0         //1
 #define FRONT_RIGHT 1        //2
 #define SIDE_RIGHT 3         //3
 #define BACK 4               //4
 
-#define SIDE_SENSORS_WIDTH 25
+#define TOTAL_SONIC_SENSORS 5
 
-// Miscellaneous Constants
-#define SAFETY_MARGIN 100 // The margin we will enforce be kept around us clear at all times.
+// Distance offsets on bot body (eg. side sensor to center)
+
+#define SIDE_SENSORS_WIDTH 250 // Delete this when block & puck locating code implemented
 #define WIDTH_SENSOR_TO_SENSOR 220 // The distance measured from the very outer edge of each side ultrasonic sensor.
 #define WIDTH_SENSOR_TO_CENTER 110 // WIDTH_SENSOR_TO_SENSOR / 2
-#define BLOCK_TOLERANCE 100 // Used for sweeping block location. This affects sensitivity in detecting block.
-#define SIDE_SENSOR_OFFSET_FROM_BACK 150 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
-#define FRONT_CLAW_DISTANCE_FROM_CENTRE
-#define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 #define CLEARANCE_RADIUS_CENTER_TO_BACK 24 // Smallest circle centered about turning point enclosing the back half of robot. Make larger for larger tolerance
 #define CLEARANCE_RADIUS_CENTER_TO_FRONT 13 // Smallest circle centered about turning point enclosing the front half of robot
+#define SIDE_SENSOR_OFFSET_FROM_BACK 150 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
+#define FRONT_CLAW_DISTANCE_FROM_CENTER 110 // Distance from the absolute front extending part of robot to center turning point.
+#define DISTANCE_FRONT_SENSOR_FROM_CENTER 50 // Distance from front ultrasonic sensor to the turning center
 
-#define DISTANCE_STOPPED_FROM_PUCK 5 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
+// Tolerances and thresholds
+#define SAFETY_MARGIN 100 // The margin we will enforce be kept around us clear at all times.
+#define BLOCK_TOLERANCE 100 // Used for sweeping block location. This affects sensitivity in detecting block.
+#define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
+#define DISTANCE_STOPPED_FROM_PUCK 50 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
+#define SENSOR_DELAY_MIN 60
 
+// Miscellaneous
 #define ADJUST 2
 #define BACKWARD 0
 #define FORWARD 1
 #define LESS_THAN 0
 #define GREATER_THAN 1
 
-#define SENSOR_DELAY_MIN 60
+#define TRUE 1
+#define FALSE 0
 
+/* Variables to be shared / imported */
 
-// Variables to be shared / imported
 extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
 int driveStraightEnable;
 int currentPuckRackScanningIndex;
@@ -161,5 +162,3 @@ extern int motor2EncoderCounts; //track of how many turns the motors have spun
 extern char output[32];
 
 extern int ultrasonic_distances_mm[5];
-
-

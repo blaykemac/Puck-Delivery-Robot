@@ -417,9 +417,10 @@ int main(void)
         }    
 
         // Manual state set for testing
-        state = STATE_GO_TO_PUCKS;
-        
-        
+        state = STATE_DEPOSIT_PUCK;
+        currentPuckStackSize = 2;
+        current_stage = 3;
+         
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
             while(0){
@@ -609,15 +610,15 @@ int main(void)
             
             if (pathPastBlock == WEST){
                 if (pathToPucks != WEST) {
-                    moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN, EAST_ANGLE); // Take us to NW corner and then face EAST in preparation for finding the pucks
+                    moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN, EAST_ANGLE); // Take us to NW corner and then face EAST in preparation for finding the pucks
                 }
-                else {moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NW corner
+                else {moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NW corner
             }
             else {
                 if (pathToPucks != EAST) {
-                    moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN, WEST_ANGLE); // Take us to NE corner and then face WEST in preparation for finding the pucks
+                    moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN, WEST_ANGLE); // Take us to NE corner and then face WEST in preparation for finding the pucks
                 }
-                else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NE corner
+                else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NE corner
             }
             
             // Now depending on if the pucks are in the corner or not, 
@@ -826,21 +827,34 @@ int main(void)
             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
             changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack
             moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
-
-            
-            lowerAndOpen(current_stage);
-            changeHeightToPuck(current_stage + 1); // Lift claw above stack to avoid hitting the stack
-            
-            current_stage++;
-            
-            if (current_stage == 3){state = STATE_PARK_HOME;}        // Returns to home 
             */
             
+            //lowerAndOpen(current_stage);
+            changeHeightToPuck(current_stage - 1); // Lift claw above stack to avoid hitting the stack
+            armOpen();
+            
+            changeHeightToPuck(current_stage);
+            
+            moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
+            
+            if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
+            else {current_stage++;}
+
         }
         
         if (state == STATE_PARK_HOME){
             
-            //moveAndAngle(HOME_MIDPOINT, HOME_PARKING_DISTANCE, NORTH_ANGLE); // Should reverse into the spot to fit properly
+            // When we enter this state we can assume that we have just deposited the final puck onto the stack.
+            // Thus we are facing the stack.
+            
+            
+            mishaSwivel(90, SPEED);
+            straightAdjust();
+            moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED);
+            mishaSwivel(90, SPEED);
+            moveUntil(HOME_PARKING_DISTANCE , BACKWARD, LESS_THAN, BACK, SPEED);
+    
+            while(1) {}
             
             // Run code to stop robot entirely.
         }
