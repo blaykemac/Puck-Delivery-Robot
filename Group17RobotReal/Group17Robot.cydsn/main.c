@@ -155,7 +155,7 @@ int main(void)
     int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
     int servo_testing = FALSE;                  // Do the servos need to be tested?      
     int motor_testing = FALSE;
-    int ultrasonic_testing = TRUE;  
+    int ultrasonic_testing = FALSE;  
     
     
     // IDAC initialisation: 
@@ -195,6 +195,24 @@ int main(void)
     Motor_Right_Decoder_Start();
     
     // Ultrasonic Initialisation: 
+    
+    for (int i = 0; i < 5; i++)
+    {
+        distanceSensor(i);
+        CyDelay(100);
+        sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+        UART_1_PutString(output);
+    }
+    UART_1_PutString("\n");
+    
+    for (int i = 0; i < 5; i++)
+    {
+        distanceSensor(i);
+        CyDelay(100);
+        sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+        UART_1_PutString(output);
+    }
+    UART_1_PutString("\n");
     
         
     // Timer and ISR instantiation
@@ -244,192 +262,208 @@ int main(void)
         //colour_sensing_algorithm = 1;
         //control_photodiode_Write(1);
         //state = STATE_FIND_REQUIRED_PUCK;
+        
+        // Colour Calibration: 
+        if (colour_calibration)
+        {
+            int lock = FALSE;   
+            do 
+                {   
+                    if (lock == FALSE) 
+                    {
+                        
+                        control_photodiode_Write(1);    // Claw
+                        changeHeightToPuck(0);
+
+                        UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
+                        for (int i = 0; i < 50; i++)
+                        {
+                        sprintf(output, "%d \t", i);
+                        UART_1_PutString(output);
+                        colourSensingCalibration(); 
+                        UART_1_PutString("\n");
+                        }         
+                        lock = TRUE;    
+                    }
+            } while (lock == TRUE);    
+        }
+        
+        // Servo Testing:
+        if (servo_testing) 
+        {
+            int lock = FALSE;
+            do 
+                {   
+                    if (lock == FALSE) 
+                    {
+                        UART_1_PutString("Servo Testing: ");
+                        
+                        armMoving();
+                        
+                        
+                        for(int i = 0; i < 4; i++)
+                        {
+                            changeHeightToPuck(i);
+                            CyDelay(1000);
+                        }
+
+                        lock = TRUE;    
+                    }
+            } while (lock == TRUE);    
+        }    
+                
+        // Motor Testing: 
+        if (motor_testing)
+        {
+            int lock = FALSE;
+            do 
+                {   
+                    if (lock == FALSE) 
+                    {
+                        UART_1_PutString("Motor Testing: \n");
+
+                        //mishaMoveForward();
+                        //mishaMoveBackward();
+                        //mishaMoveDynamic(-300);
+                        
+                        mishaSwivel(-180);
+                        
+                        lock = TRUE;    
+                    }
+            } while (lock == TRUE);    
+        }    
+        
+        // Ultrasonic Testing:
+        
+        if (ultrasonic_testing) 
+        {
+            int lock = FALSE;
+            do 
+                {   
+                    if (lock == FALSE) 
+                    {
+                        UART_1_PutString("Ultrasonic Testing: \n");
+                        
+                        //armMoving();
+                        //straightAdjust();
+                        
+                        int dick = 2;
+                        while(0) {
+                            distanceSensor(dick);
+                            CyDelay(500);
+                            sprintf(output, "%d \t %d \t %d \t %d \t %d \n", ultrasonic_distances_mm[0], 
+                                                     ultrasonic_distances_mm[1],
+                                                     ultrasonic_distances_mm[2],
+                                                        ultrasonic_distances_mm[3],
+                                                        ultrasonic_distances_mm[4]);
+                            UART_1_PutString(output);
+                        }
+                        // 0 gave front left    // front left
+                        // 1 gave front right   // front right 
+                        // 2 gave back sensor   // side left now??? 
+                        // 3 gave side right    // side right 
+                        // 4 gave back sensor   // back sensor
+                        
+                        while(0) {
+                            for (int i = 0; i < 5; i++)
+                            {
+                                distanceSensor(i);
+                                CyDelay(100);
+                                sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+                                UART_1_PutString(output);
+                            }
+                            UART_1_PutString("\n");
+                        }
+                        
+                        
+                        
+                        
+                        // TEST FIRING
+                        for (int i = 0; i < 5; i++)
+                            {
+                                distanceSensor(i);
+                                CyDelay(100);
+                                sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+                                UART_1_PutString(output);
+                            }
+                        UART_1_PutString("\n");
+                        
+                        
+                        moveUntil(-150);              // should keep moving until we approach 50mm wall
+                        straightAdjust();
+                        
+                        
+                        /*
+                        for (int i = 0; i < 5; i++)
+                        {
+                            sprintf(output, "%d: \t", i);       
+                            UART_1_PutString(output);
+                        }
+                        UART_1_PutString("\n");   
+                        
+                        
+                        for (int i = 0; i < 50; i++) {
+                        distanceCheck();
+                        CyDelay(200);
+                        }
+                        
+                        */
+                        
+                        //straightAdjust();
+                        
+                        
+                        lock = TRUE;    
+                    }
+            } while (lock == TRUE);    
+        }    
+        
+                   
+        // MOVEMENT TESTING:
+        
+        //mishaMoveDynamic(850);
+        //mishaMoveDynamic(-850);
+        
+        //mishaMoveDynamic(230);
+        //while(1) {};  
 
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
-            // Colour Calibration: 
-            if (colour_calibration)
-            {
-                int lock = FALSE;   
-                do 
-                    {   
-                        if (lock == FALSE) 
-                        {
-                            
-                            control_photodiode_Write(1);    // Claw
-                            changeHeightToPuck(0);
-
-                            UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
-                            for (int i = 0; i < 50; i++)
-                            {
-                            sprintf(output, "%d \t", i);
-                            UART_1_PutString(output);
-                            colourSensingCalibration(); 
-                            UART_1_PutString("\n");
-                            }         
-                            lock = TRUE;    
-                        }
-                } while (lock == TRUE);    
-            }
-            
-            // Servo Testing:
-            if (servo_testing) 
-            {
-                int lock = FALSE;
-                do 
-                    {   
-                        if (lock == FALSE) 
-                        {
-                            UART_1_PutString("Servo Testing: ");
-                            
-                            armMoving();
-                            
-                            
-                            for(int i = 0; i < 4; i++)
-                            {
-                                changeHeightToPuck(i);
-                                CyDelay(1000);
-                            }
-
-                            lock = TRUE;    
-                        }
-                } while (lock == TRUE);    
-            }    
-                
-            // Motor Testing: 
-            if (motor_testing)
-            {
-                int lock = FALSE;
-                do 
-                    {   
-                        if (lock == FALSE) 
-                        {
-                            UART_1_PutString("Motor Testing: \n");
-
-                            //mishaMoveForward();
-                            //mishaMoveBackward();
-                            //mishaMoveDynamic(-300);
-                            
-                            mishaSwivel(-180);
-                            
-                            lock = TRUE;    
-                        }
-                } while (lock == TRUE);    
-            }    
-            
-            // Ultrasonic Testing:
-            
-            if (ultrasonic_testing) 
-            {
-                int lock = FALSE;
-                do 
-                    {   
-                        if (lock == FALSE) 
-                        {
-                            UART_1_PutString("Ultrasonic Testing: \n");
-                            
-                            //armMoving();
-                            //straightAdjust();
-                            
-                            int dick = 2;
-                            while(0) {
-                                distanceSensor(dick);
-                                CyDelay(500);
-                                sprintf(output, "%d \t %d \t %d \t %d \t %d \n", ultrasonic_distances_mm[0], 
-                                                         ultrasonic_distances_mm[1],
-                                                         ultrasonic_distances_mm[2],
-                                                            ultrasonic_distances_mm[3],
-                                                            ultrasonic_distances_mm[4]);
-                                UART_1_PutString(output);
-                            }
-                            // 0 gave front left    // front left
-                            // 1 gave front right   // front right 
-                            // 2 gave back sensor   // side left now??? 
-                            // 3 gave side right    // side right 
-                            // 4 gave back sensor   // back sensor
-                            
-                            while(0) {
-                                for (int i = 0; i < 5; i++)
-                                {
-                                    distanceSensor(i);
-                                    CyDelay(100);
-                                    sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
-                                    UART_1_PutString(output);
-                                }
-                                UART_1_PutString("\n");
-                            }
-                            
-                            
-                            
-                            
-                            // TEST FIRING
-                            for (int i = 0; i < 5; i++)
-                                {
-                                    distanceSensor(i);
-                                    CyDelay(100);
-                                    sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
-                                    UART_1_PutString(output);
-                                }
-                            UART_1_PutString("\n");
-                            
-                            
-                            moveUntil(-150);              // should keep moving until we approach 50mm wall
-                            straightAdjust();
-                            
-                            
-                            /*
-                            for (int i = 0; i < 5; i++)
-                            {
-                                sprintf(output, "%d: \t", i);       
-                                UART_1_PutString(output);
-                            }
-                            UART_1_PutString("\n");   
-                            
-                            
-                            for (int i = 0; i < 50; i++) {
-                            distanceCheck();
-                            CyDelay(200);
-                            }
-                            
-                            */
-                            
-                            //straightAdjust();
-                            
-                            
-                            lock = TRUE;    
-                        }
-                } while (lock == TRUE);    
-            }    
-            
-                       
-            // MOVEMENT TESTING:
-            
-            //mishaMoveDynamic(850);
-            //mishaMoveDynamic(-850);
-            
-            mishaMoveDynamic(230);
-            while(1) {};
-            
-            
-            
-            mishaMoveDynamic(-300);
+            while(0){
+            moveUntil(400);
+            mishaMoveDynamic(-450);
             CyDelay(500);
-            colourSensingInitialise();      
+            colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
             CyDelay(500);
-            mishaMoveDynamic(120);
+            mishaMoveDynamic(170);
             CyDelay(500);
             
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {                       // scan each of the pucks 
                 puckRackColours[i] = colourSensingOutput();
                 CyDelay(500);
                 mishaMoveDynamic(61);
                 CyDelay(500);
             }
+            }
+            
+            straightAdjust();
+            moveUntil(-100);
+            colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
+                        
+            for (int i = 0; i < 5; i++) { 
+                // scan each of the pucks 
+                moveUntil(puckRackOffsetsFromWest[i]);
+                puckRackColours[i] = colourSensingOutput();
+                CyDelay(500);
+                                
+            
+            
+            //straightAdjust();
+            }
                        
             UART_1_PutString("Found Colours: \n");
             for (int i = 0; i < 5; i++) 
             {
-                sprintf(output, "%i \n", puckRackColours[i]);       
+                sprintf(output, "%i \n", puckRackColours[i]);    // updates UART showing values of scanned pucks    
                 UART_1_PutString(output);
             }
             
@@ -470,10 +504,6 @@ int main(void)
             }
 
             
-            
-            
-            
-
             */
         }
         
@@ -487,10 +517,6 @@ int main(void)
             mishaMoveDynamic(200);
             mishaSwivel(90);
             mishaMoveDynamic(500);
-            
-            
-            
-            
             
             
             // Finding where the boundaries of the block are
@@ -521,7 +547,7 @@ int main(void)
 /*
         if (state == STATE_GO_TO_PUCKS){
             
-            /*
+            
             if (pathPastBlock == WEST){
                 if (pathToPucks != WEST) {
                     moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTRE - SAFETY_MARGIN, EAST_ANGLE); // Take us to NW corner and then face EAST in preparation for finding the pucks
@@ -538,7 +564,7 @@ int main(void)
             // Now depending on if the pucks are in the corner or not, 
             
             // We are now in front of the pucks
-            */
+            
             
             state = STATE_FIND_REQUIRED_PUCK;
         }
@@ -548,10 +574,11 @@ int main(void)
         #define CLEARANCE_RADIUS_CENTER_TO_BACK 24 // Smallest circle centered about turning point enclosing the back half of robot. Make larger for larger tolerance
         #define CLEARANCE_RADIUS_CENTER_TO_FRONT 13 // Smallest circle centered about turning point enclosing the front half of robot
         #define FRONT 0
-        #define BACK 1
-        #define LEFT 0
-        #define RIGHT 1
+        //#define BACK 1
+        //#define LEFT 0
+        //#define RIGHT 1
         
+        /*
         // Ensure that we are @ east wall facing east at a minimum verticaldistance so we can turn left without hitting bottom wall
         if (state == STATE_GO_TO_PUCKS){
             
@@ -598,6 +625,7 @@ int main(void)
             
             
         }
+        */
         
         
         if (state == STATE_FIND_REQUIRED_PUCK)

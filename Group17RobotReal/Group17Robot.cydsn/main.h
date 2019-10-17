@@ -39,11 +39,11 @@
 #define STATE_PARK_HOME 6
 
 // Hard-coded distances from the west for where each puck may sit in the construction plan.
-#define PUCK_RACK_0_WEST_DISTANCE 72
-#define PUCK_RACK_1_WEST_DISTANCE 66
-#define PUCK_RACK_2_WEST_DISTANCE 60
-#define PUCK_RACK_3_WEST_DISTANCE 54
-#define PUCK_RACK_4_WEST_DISTANCE 48
+#define PUCK_RACK_0_WEST_DISTANCE 720
+#define PUCK_RACK_1_WEST_DISTANCE 660
+#define PUCK_RACK_2_WEST_DISTANCE 600
+#define PUCK_RACK_3_WEST_DISTANCE 540
+#define PUCK_RACK_4_WEST_DISTANCE 480
 
 #define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
 
