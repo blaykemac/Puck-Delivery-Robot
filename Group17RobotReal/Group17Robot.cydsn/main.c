@@ -194,6 +194,8 @@ int main(void)
     
     Motor_Left_Decoder_Start();
     Motor_Right_Decoder_Start();
+    
+    internal_orientation = EAST;                // robot initial starts in the East direction
    
     // Timer and ISR instantiation
     Timer_1_Start();
@@ -417,7 +419,7 @@ int main(void)
         }    
 
         // Manual state set for testing
-        state = STATE_GO_TO_PUCKS;
+        //state = STATE_GO_TO_PUCKS;
         
         
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
@@ -440,20 +442,12 @@ int main(void)
             
             }
 
+            
+            changeOrientation(SOUTH, SPEED);
+            CyDelay(1000);
+            changeOrientation(EAST, SPEED);
+            
             while(1) {}
-
-            while(1){
-            
-            int move = 400;
-            mishaMoveDynamic(move, SPEED);
-            mishaMoveDynamic(-move, SPEED);
-            
-            mishaMoveDynamic(move, SPEED);
-            straightAdjust();
-            mishaMoveDynamic(-move, SPEED);
-                
-            }
-            
             
             straightAdjust();
             moveUntil(-100, BACKWARD, LESS_THAN, BACK, SPEED);

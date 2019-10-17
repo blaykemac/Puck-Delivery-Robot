@@ -47,12 +47,13 @@
 
 #define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
 
-
 // Cardinal Directions. North faces the pucks from the home base
 #define NORTH 0
 #define EAST 1
 #define SOUTH 2
 #define WEST 3
+
+int internal_orientation;   // this is the robots internal orientation
 
 // These are the numbers that represent the angle we are facing taken from the CCW vector pointing east
 #define NORTH_ANGLE 90
@@ -110,6 +111,7 @@
 #define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 #define CLEARANCE_RADIUS_CENTER_TO_BACK 24 // Smallest circle centered about turning point enclosing the back half of robot. Make larger for larger tolerance
 #define CLEARANCE_RADIUS_CENTER_TO_FRONT 13 // Smallest circle centered about turning point enclosing the front half of robot
+#define WIDTH_WHEEL_TO_WHEEL 214
 
 #define DISTANCE_STOPPED_FROM_PUCK 5 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
 
