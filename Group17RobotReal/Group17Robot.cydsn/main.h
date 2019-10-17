@@ -31,8 +31,6 @@
 #define STATE_DEPOSIT_PUCK 5
 #define STATE_PARK_HOME 6
 
-<<<<<<< HEAD
-=======
 // Hard-coded distances from the west for where each puck may sit in the construction plan.
 #define PUCK_RACK_0_WEST_DISTANCE 720
 #define PUCK_RACK_1_WEST_DISTANCE 660
@@ -42,7 +40,6 @@
 
 #define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
 
->>>>>>> 43f63c8a9e8b878c8e2eedec6e73ca6054b7b41d
 // Cardinal Directions. North faces the pucks from the home base
 #define NORTH 0
 #define EAST 1
@@ -56,6 +53,8 @@ int internal_orientation;   // this is the robots internal orientation
 #define EAST_ANGLE 0
 #define SOUTH_ANGLE 270
 #define WEST_ANGLE 180
+
+int internal_orientation;
 
 #define EAST_DIRECTION 0 //This is just to remind us that we have our east as zero and angle increases counterclockwise (so toward the north of the arena will be 90)
 
@@ -115,16 +114,13 @@ int internal_orientation;   // this is the robots internal orientation
 #define WIDTH_SENSOR_TO_CENTER 110 // WIDTH_SENSOR_TO_SENSOR / 2
 #define CLEARANCE_RADIUS_CENTER_TO_BACK 24 // Smallest circle centered about turning point enclosing the back half of robot. Make larger for larger tolerance
 #define CLEARANCE_RADIUS_CENTER_TO_FRONT 13 // Smallest circle centered about turning point enclosing the front half of robot
-<<<<<<< HEAD
 #define SIDE_SENSOR_OFFSET_FROM_BACK 150 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
 #define FRONT_CLAW_DISTANCE_FROM_CENTER 110 // Distance from the absolute front extending part of robot to center turning point.
 #define DISTANCE_FRONT_SENSOR_FROM_CENTER 50 // Distance from front ultrasonic sensor to the turning center
-=======
 #define WIDTH_WHEEL_TO_WHEEL 214
->>>>>>> 43f63c8a9e8b878c8e2eedec6e73ca6054b7b41d
 
 // Tolerances and thresholds
-#define SAFETY_MARGIN 100 // The margin we will enforce be kept around us clear at all times.
+#define SAFETY_MARGIN 75 // The margin we will enforce be kept around us clear at all times.
 #define BLOCK_TOLERANCE 100 // Used for sweeping block location. This affects sensitivity in detecting block.
 #define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 #define DISTANCE_STOPPED_FROM_PUCK 50 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
@@ -134,11 +130,27 @@ int internal_orientation;   // this is the robots internal orientation
 #define ADJUST 2
 #define BACKWARD 0
 #define FORWARD 1
+#define LEFT 2
+#define RIGHT 3
 #define LESS_THAN 0
 #define GREATER_THAN 1
 
 #define TRUE 1
 #define FALSE 0
+
+// Colour Sensing:
+#define CLAW_SENSING 1
+#define WALL_SENSING 0
+
+#define WALL_ALGORITHM 0
+#define CLAW_GROUND_ALGORITHM 3
+#define CLAW_1_ALGORITHM 1
+
+// Servo:
+#define GROUND 0
+#define ABOVE_1_PUCK 1
+#define ABOVE_2_PUCK 2
+#define ABOVE_3_PUCK 3
 
 /* Variables to be shared / imported */
 
@@ -164,19 +176,7 @@ extern void closeAndRaise(int puck_stack_position);
 char output[32];
 
 extern float ultrasonic_distances[5];
-
-extern int M1_FD; //The four values shown here will be the duty cycles of the motors
-extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-extern int M2_BD; //known variable
-extern short int motor1Enable; //These two will be on if the motors are on
-extern short int motor2Enable;
-extern int M1_FD; //The four values shown here will be the duty cycles of the motors
-extern int M1_BD; //There are times when parts of the code (such as the driftCorrect function)
-extern int M2_FD; //need to know about the duty cycles. So we make the duty cycles a globally 
-extern int M2_BD; //known variable
-extern int motor1EncoderCounts; //These two variables will allow the entire program to keep 
-extern int motor2EncoderCounts; //track of how many turns the motors have spun 
 extern char output[32];
 
 extern int ultrasonic_distances_mm[5];
+

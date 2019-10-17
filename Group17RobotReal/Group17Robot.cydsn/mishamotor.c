@@ -31,10 +31,14 @@
 
 
 
-void mishaMoveDynamic(int distance, int speed){
+void mishaMoveDynamic(int distance, int speed, int safety_overide){
     int count_left;
     int count_right;
     int compare;
+    int direction;
+    int old_count = -SAFETY_MARGIN*ENCODER_MULTIPLIER;   // used in the old failsafe to check how much distance has passed 
+                                                        // will enter the failsafe straight away due to this
+    int emergency_exit = FALSE;
     
     // FAILSAFE if you give a speed greater than it can handle 
     int speed_left = speed;
@@ -46,19 +50,19 @@ void mishaMoveDynamic(int distance, int speed){
     
     // The distance is in millimetres 
     // Is the distance negative or positive? 
-    if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); }
-    else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1);}
+    if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); direction = FORWARD;}
+    else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1); direction = BACKWARD;}
     
     Motor_Left_Driver_Wakeup();
     Motor_Left_Driver_WriteCompare(speed_left);
     Motor_Right_Driver_Wakeup();
     Motor_Right_Driver_WriteCompare(speed_right);
     
-    compare = round(distance*5.29);
+    compare = round(distance*ENCODER_MULTIPLIER);
     count_left = Motor_Left_Decoder_GetCounter();
     count_right = Motor_Right_Decoder_GetCounter();
     
-    while (count_right != compare) {
+    while (count_right != compare && emergency_exit == FALSE) {
         count_left = Motor_Left_Decoder_GetCounter();
         count_right = Motor_Right_Decoder_GetCounter();
         if (count_left > count_right) {
@@ -67,6 +71,13 @@ void mishaMoveDynamic(int distance, int speed){
         if (count_right > count_left) {
         speed_right -= ADJUST; 
         }
+        
+        // FAILSAFE:
+        if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100)){
+            emergency_exit = failsafe(direction);
+            old_count = count_left;
+        }
+        
     }
     
     sprintf(output, "left motor: %d \n", count_left);       
@@ -108,7 +119,7 @@ void mishaSwivel(int degrees, int speed) {
     Motor_Right_Driver_Wakeup();
     Motor_Right_Driver_WriteCompare(speed_right);
     
-    distance = WIDTH_WHEEL_TO_WHEEL*degrees;            // based on the arclength the wheels need to travel
+    distance = (WIDTH_WHEEL_TO_WHEEL/2)*degrees;            // based on the arclength the wheels need to travel
     compare = round((distance*3.14*5.29)/180);
     count_left = Motor_Left_Decoder_GetCounter();
     count_right = Motor_Right_Decoder_GetCounter();
@@ -144,12 +155,11 @@ void mishaSwivel(int degrees, int speed) {
     
 }
 
-void translateMoveDynamic(int distance) {
-    distance = 0;
-    
-    
-    
-    
+void translateMoveDynamic(int distance, int degree, int speed) {
+    mishaSwivel(-degree, speed);
+    mishaMoveDynamic(distance, speed);
+    mishaSwivel(degree, speed);
+    mishaMoveDynamic(distance, speed);
 }
 
 

@@ -56,6 +56,13 @@ int beginNavigation = 0; // Allow us to break out of the intial phase when power
 
 int pathToPucks; // This will give us a corridor that we should initially take when trying to go to the pucks
 int pathPastBlock;
+int block_location[4] = {0,0,0,0};      // The block location values
+                                        //#define NORTH 0
+                                        //#define EAST 1
+                                        //#define SOUTH 2
+                                        //#define WEST 3
+
+int safety_override = FALSE;            
 
 // These block clearance variables are only true if we have enough room either side of the block to fully fit the robot through within a safety tolerance
 // And only true for the puck clearance variables if there is enough room to be able to turn at the far wall to face the pucks.
@@ -273,7 +280,7 @@ int main(void)
                     if (lock == FALSE) 
                     {
                         
-                        control_photodiode_Write(1);    // Claw
+                        control_photodiode_Write(CLAW_SENSING); 
                         changeHeightToPuck(0);
 
                         UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
@@ -418,17 +425,39 @@ int main(void)
             } while (lock == TRUE);    
         }    
 
-        // Manual state set for testing
-<<<<<<< HEAD
-        state = STATE_DEPOSIT_PUCK;
-        currentPuckStackSize = 2;
-        current_stage = 3;
-         
-=======
+        // FORCING STATE:
         //state = STATE_GO_TO_PUCKS;
         
+        safety_override = TRUE;     
         
->>>>>>> 43f63c8a9e8b878c8e2eedec6e73ca6054b7b41d
+        changeHeightToPuck(GROUND);      // arm lowers to ground
+        //armClose();
+        //changeHeightToPuck(1);
+        moveUntilPuck(CLAW_GROUND_ALGORITHM);
+        //mishaMoveDynamic(60);       // robot moves forward
+        armClose();                 // claw closes on puck
+        changeHeightToPuck(3);      // arm lifts up to highest position
+        mishaMoveDynamic(-60, SPEED);       // robot moves back away from puck area 
+        
+        safety_override = FALSE;
+        
+        moveUntil(500, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED);   // this will move backwards until it hits the block 
+        
+        while(1) {};
+        
+        state = STATE_LOCATE_BLOCK_AND_PUCKS;;
+        
+        UART_1_PutString("hI");
+        
+        //changeOrientation(NORTH, SPEED);
+        //changeOrientation(WEST, SPEED);
+                
+        //state = STATE_DEPOSIT_PUCK;
+        //currentPuckStackSize = 2;
+        //current_stage = 3;
+         
+
+        
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
             while(0){
@@ -449,12 +478,7 @@ int main(void)
             
             }
 
-            
-            changeOrientation(SOUTH, SPEED);
-            CyDelay(1000);
-            changeOrientation(EAST, SPEED);
-            
-            while(1) {}
+
             
             straightAdjust();
             moveUntil(-100, BACKWARD, LESS_THAN, BACK, SPEED);
@@ -518,21 +542,18 @@ int main(void)
             
             
             // move away from home base 
+            /*
             mishaSwivel(-45, SPEED);  
             mishaMoveDynamic(-150, SPEED);
             mishaSwivel(45, SPEED);
             mishaMoveDynamic(200, SPEED);
             mishaSwivel(90, SPEED);
             mishaMoveDynamic(500, SPEED);
-            
+            */
             
             // Move until construction zone            
             moveUntil(100, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
-            control_led_Write(1);
-            CyDelay(1000);
-            control_led_Write(0);
-            CyDelay(500);
-            //straightAdjust();
+            straightAdjust();
             
             // SCAN FOR BLOCKS:
             
@@ -544,38 +565,78 @@ int main(void)
             
             int block_check = 500;
             
-            while(0) {
-            distanceSensor(SIDE_RIGHT);
+            distanceSensor(SIDE_LEFT);
             CyDelay(SENSOR_DELAY_MIN);
-            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_RIGHT]);
+            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_LEFT]);
             UART_1_PutString(output);
-            }
-
             
             moveUntil(block_check, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED);   // this will move backwards until it hits the block 
-                        
-            CyDelay(2000);
             
-            mishaMoveDynamic(-200, SPEED);
+            
+            // FAILSAFE if the block is at the very end of west wall:
+            distanceSensor(BACK);
+            CyDelay(60);
+            if (ultrasonic_distances_mm[BACK] < SAFETY_MARGIN + 50) {
+                // block is " | " this orientation, and close to the side wall
+                // don't move back 
+            }
+            if (ultrasonic_distances_mm[BACK] < BLOCK_LENGTH + 50) {
+                // block is " -- " this orientation, and close to the side wall 
+                // don't move back
+            }
+            
+            
+            
+            
+            straightAdjust();
+            
+            CyDelay(1000);                      // To show it ended at the correct spot
+            distanceSensor(FRONT_LEFT);
+            CyDelay(60);
+            distanceSensor(FRONT_RIGHT);        // might run some code to see if theres a difference between the two          
+            CyDelay(60);
+            distanceSensor(SIDE_LEFT);        // might run some code to see if theres a difference between the two          
+            CyDelay(60);
+            
+            block_location[NORTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+            block_location[EAST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_FROM_CENTER; 
+            CyDelay(1000);         
+            
+            mishaMoveDynamic(-200, SPEED);  // this should exit if it gets too close to the wall
             
             distanceSensor(SIDE_RIGHT);
             CyDelay(50);
             
             int check = ultrasonic_distances_mm[SIDE_RIGHT];
-            if (check > 500) {                                  // GREEN if no block there
+            if (check < 500) {                                  // GREEN if block detected
                 control_led_Write(2);
                 CyDelay(1000);
                 control_led_Write(0);
                 CyDelay(500);
                 
+                block_location[WEST] = block_location[EAST] + BLOCK_LENGTH;
+                block_location[SOUTH] = block_location[NORTH] + BLOCK_LENGTH;  
             }
-            else {                                              // RED if block there 
+            else {                                              // RED if block  not there 
                 control_led_Write(1);
                 CyDelay(1000);
                 control_led_Write(0);
                 CyDelay(500);
+                
+                block_location[WEST] = block_location[EAST] + BLOCK_WIDTH; 
+                block_location[SOUTH] = block_location[NORTH] + BLOCK_WIDTH; 
+                block_location[SOUTH] = 0;      // This needs to be written
             }
-
+            
+            
+            // Start moving forward to find the location of the PUCKS:
+            
+            
+            
+            
+            
+            
+            
             moveUntil(100, BACKWARD, LESS_THAN, BACK, SPEED);
             mishaSwivel(90, SPEED);
             moveUntil(300, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
@@ -713,7 +774,7 @@ int main(void)
         // Picking Up puck from pile:
         changeHeightToPuck(0);      // arm lowers to ground
         //changeHeightToPuck(1);
-        moveUntilPuck();
+        moveUntilPuck(CLAW_GROUND_ALGORITHM);
         //mishaMoveDynamic(60);       // robot moves forward
         armClose();                 // claw closes on puck
         changeHeightToPuck(3);      // arm lifts up to highest position
