@@ -196,23 +196,7 @@ int main(void)
     
     // Ultrasonic Initialisation: 
     
-    for (int i = 0; i < 5; i++)
-    {
-        distanceSensor(i);
-        CyDelay(100);
-        sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
-        UART_1_PutString(output);
-    }
-    UART_1_PutString("\n");
-    
-    for (int i = 0; i < 5; i++)
-    {
-        distanceSensor(i);
-        CyDelay(100);
-        sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
-        UART_1_PutString(output);
-    }
-    UART_1_PutString("\n");
+
     
         
     // Timer and ISR instantiation
@@ -246,6 +230,26 @@ int main(void)
         
     for(;;)
     {   
+        // Ultrasonic Calibration:
+            // The ultrasonics take several test measurements to ensure they are working
+        
+        UART_1_PutString("Ultrasonic Calibration tests: \n");
+        for(int j = 0; j < 3; j++) 
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                distanceSensor(i);
+                CyDelay(100);
+                sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+                UART_1_PutString(output);
+            }
+            UART_1_PutString("\n\n");
+        }
+
+        
+        
+        
+        
         // Start button is pressed so quit sensing
 
         /*
@@ -326,7 +330,7 @@ int main(void)
                         //mishaMoveBackward();
                         //mishaMoveDynamic(-300);
                         
-                        mishaSwivel(-180);
+                        mishaSwivel(-180, SPEED);
                         
                         lock = TRUE;    
                     }
@@ -389,7 +393,7 @@ int main(void)
                         UART_1_PutString("\n");
                         
                         
-                        moveUntil(-150);              // should keep moving until we approach 50mm wall
+                        moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);              // should keep moving until we approach 50mm wall
                         straightAdjust();
                         
                         
@@ -429,29 +433,100 @@ int main(void)
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
             while(0){
-            moveUntil(400);
-            mishaMoveDynamic(-450);
-            CyDelay(500);
-            colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
-            CyDelay(500);
-            mishaMoveDynamic(170);
-            CyDelay(500);
+                moveUntil(400, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                mishaMoveDynamic(-450, SPEED);
+                CyDelay(500);   
+                colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
+                CyDelay(500);
+                mishaMoveDynamic(170, SPEED);
+                CyDelay(500);
+                
+                for (int i = 0; i < 5; i++) {                       // scan each of the pucks 
+                    puckRackColours[i] = colourSensingOutput();
+                    CyDelay(500);
+                    mishaMoveDynamic(61, SPEED);
+                    CyDelay(500);
+                }
             
-            for (int i = 0; i < 5; i++) {                       // scan each of the pucks 
-                puckRackColours[i] = colourSensingOutput();
+            }
+            
+            
+            // TESTING block finding: 
+            
+            moveUntil(100, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+            control_led_Write(1);
+            CyDelay(1000);
+            control_led_Write(0);
+            CyDelay(500);
+            //straightAdjust();
+            
+            //distanceSensor(SIDE_LEFT);  // takes how far we are away from home base wall
+            //int block_check = ARENA_WIDTH - BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR - ultrasonic_distances_mm[SIDE_LEFT] + 50;    
+                // TAKES our distance from north wall, 
+                // takes distance from arena, takes away 
+                // minus 50 is a tolerance
+            
+            int block_check = 500;
+            
+            while(0) {
+            distanceSensor(SIDE_RIGHT);
+            CyDelay(SENSOR_DELAY_MIN);
+            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_RIGHT]);
+            UART_1_PutString(output);
+            }
+
+            
+            moveUntil(block_check, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED);   // this will move backwards until it hits the block 
+                        
+            CyDelay(2000);
+            
+            mishaMoveDynamic(-200, SPEED);
+            
+            distanceSensor(SIDE_RIGHT);
+            CyDelay(50);
+            
+            int check = ultrasonic_distances_mm[SIDE_RIGHT];
+            if (check > 500) {                                  // GREEN if no block there
+                control_led_Write(2);
+                CyDelay(1000);
+                control_led_Write(0);
                 CyDelay(500);
-                mishaMoveDynamic(61);
+                
+            }
+            else {                                              // RED if block there 
+                control_led_Write(1);
+                CyDelay(1000);
+                control_led_Write(0);
                 CyDelay(500);
             }
+
+            moveUntil(100, BACKWARD, LESS_THAN, BACK, SPEED);
+            mishaSwivel(90, SPEED);
+            moveUntil(300, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+            
+            while(1) {}
+            
+            
+            while(1){
+            
+            int move = 400;
+            mishaMoveDynamic(move, SPEED);
+            mishaMoveDynamic(-move, SPEED);
+            
+            mishaMoveDynamic(move, SPEED);
+            straightAdjust();
+            mishaMoveDynamic(-move, SPEED);
+                
             }
+            
             
             straightAdjust();
-            moveUntil(-100);
+            moveUntil(-100, BACKWARD, LESS_THAN, BACK, SPEED);
             colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
                         
             for (int i = 0; i < 5; i++) { 
                 // scan each of the pucks 
-                moveUntil(puckRackOffsetsFromWest[i]);
+                //moveUntil(puckRackOffsetsFromWest[i]);
                 puckRackColours[i] = colourSensingOutput();
                 CyDelay(500);
                                 
@@ -511,13 +586,27 @@ int main(void)
 
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
-            mishaSwivel(-45);  
-            mishaMoveDynamic(-150);
-            mishaSwivel(45);
-            mishaMoveDynamic(200);
-            mishaSwivel(90);
-            mishaMoveDynamic(500);
             
+            // move away from home base 
+            mishaSwivel(-45, SPEED);  
+            mishaMoveDynamic(-150, SPEED);
+            mishaSwivel(45, SPEED);
+            mishaMoveDynamic(200, SPEED);
+            mishaSwivel(90, SPEED);
+            mishaMoveDynamic(500, SPEED);
+            
+            // Move until contstruction zone
+            moveUntil(100, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);    
+            straightAdjust();
+            
+            distanceSensor(SIDE_LEFT);  // takes how far we are away from home base wall
+            int block_check = ARENA_WIDTH - BLOCK_ZONE_NORTH - WIDTH_SENSOR_TO_SENSOR - ultrasonic_distances_mm[SIDE_LEFT] - (BLOCK_WIDTH/2); 
+                // TAKES our distance from north wall, 
+                // takes distance from arena, takes away 
+            
+            distanceSensor(SIDE_RIGHT);
+            
+
             
             // Finding where the boundaries of the block are
     		// Sweep across WEST to EAST until discrepancy
@@ -627,12 +716,11 @@ int main(void)
         }
         */
         
-        
         if (state == STATE_FIND_REQUIRED_PUCK)
         {
             
             
-        SPEED = 70;    
+        //SPEED = 70;               // need to be able to dynamically change speed of mishaMoveDynamic
         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
         int puck_scan;
         
@@ -643,12 +731,12 @@ int main(void)
 
         while (puck_correct == FALSE) 
         {
-            mishaMoveDynamic(50);  // robot moves forward towards puck
+            mishaMoveDynamic(50, SPEED);  // robot moves forward towards puck
                                     // could replace this with the distance gathered from the ultrasonic 
             changeHeightToPuck(1);  // arm lowers onto robot
             puck_scan = colourSensingOutput();  // colour sensor takes a scan
             changeHeightToPuck(3);  // arm returns to high position
-            mishaMoveDynamic(-50);   // robot moves backwards
+            mishaMoveDynamic(-50, SPEED);   // robot moves backwards
             if (puck_scan == puckConstructionPlan[1]) {puck_correct = TRUE;}
                                     // if colour == true:
                 
@@ -666,7 +754,7 @@ int main(void)
         //mishaMoveDynamic(60);       // robot moves forward
         armClose();                 // claw closes on puck
         changeHeightToPuck(3);      // arm lifts up to highest position
-        mishaMoveDynamic(-60);       // robot moves back away from puck area 
+        mishaMoveDynamic(-60, SPEED);       // robot moves back away from puck area 
         
             
         while(1) {};           
@@ -878,7 +966,7 @@ void moveUntilPuck(void) {
     Motor_Left_Driver_Sleep();
     Motor_Right_Driver_Sleep();
     
-    mishaMoveDynamic(30);
+    mishaMoveDynamic(30, SPEED);
     
 }
 
@@ -909,8 +997,8 @@ void straightAdjust(void) {
     }
     
     
-    int speed_left = 30;        // slow speed
-    int speed_right = 30;
+    int speed_left = 25;        // slow speed
+    int speed_right = 25;
     
     do {
         if (difference > 0)             // This means we need to move it right
@@ -1015,65 +1103,85 @@ void straightAdjust(void) {
 }
 
 
-void moveUntil(int distance_set) {
+void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed) {
     // distance_set is in millimeteres
     // will check the front two ultrasonics 
     // will move until distance specified in function 
     
     int count_left;                 // counts the encoder values
     int count_right;
-    int speed_left = SPEED;         // the set speed of the motors
-    int speed_right = SPEED;
+    int speed_left = speed;         // the set speed of the motors
+    int speed_right = speed;
     int compare;                    
-    int ultrasonic_sensor;          // the ultrasonic sensor we will be using 
+                                  // the ultrasonic sensor we will be using 
     int distance_sensor;            // the measured distance of the sensor
-    
-    
-    
     
     // The distance is in millimetres 
     // Is the distance negative or positive? 
-    if (distance_set > 0) { 
+    if (direction == FORWARD) { 
         Motor_Left_Control_Write(0); 
         Motor_Right_Control_Write(0); 
-        ultrasonic_sensor = FRONT_LEFT;       // use the back ultrasonic to test our distance
+        //ultrasonic_sensor = FRONT_LEFT;       // use the back ultrasonic to test our distance
                                         // THIS CHECKS THE FRONT LEFT SENSOR, for some reason?
         compare = 32000;                // max compare value
     }
-    else {
+    if (direction == BACKWARD) {
         Motor_Left_Control_Write(1); 
         Motor_Right_Control_Write(1);
-        ultrasonic_sensor = BACK; // We just use one ultrasonic front sensor
+        //ultrasonic_sensor = BACK; // We just use one ultrasonic front sensor
         compare = -32000;               // min compare value
+    }
+    
+    ultrasonic_distances_mm[ultrasonic_sensor] = ARENA_WIDTH + 100;             // So it will enter the while loop
+    while (ultrasonic_distances_mm[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
+        distanceSensor(ultrasonic_sensor);
+        CyDelay(50);
+        distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the   
+        sprintf(output, "%d \t", distance_sensor);       
+        UART_1_PutString(output);
     }
     
     Motor_Left_Driver_Wakeup();
     Motor_Left_Driver_WriteCompare(speed_left);
     Motor_Right_Driver_Wakeup();
     Motor_Right_Driver_WriteCompare(speed_right);
-    
-    count_left = Motor_Left_Decoder_GetCounter();       
-    count_right = Motor_Right_Decoder_GetCounter();     
-    //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
-    distanceSensor(ultrasonic_sensor);
-    CyDelay(50);
-    distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
-    
-    while (distance_sensor > abs(distance_set)) {                // This adjusts for drift 
-        count_left = Motor_Left_Decoder_GetCounter();
-        count_right = Motor_Right_Decoder_GetCounter();
-        if (count_left > count_right) {
-        speed_left -= 2;
+        
+    if (less_or_great == LESS_THAN) {                                         // if distance_set is positive, it will move until the sensors are greater than set value 
+        while (distance_sensor > abs(distance_set)) {                // This adjusts for drift 
+            count_left = Motor_Left_Decoder_GetCounter();
+            count_right = Motor_Right_Decoder_GetCounter();
+            if (count_left > count_right) {
+            speed_left -= ADJUST;
+            }
+            if (count_right > count_left) {
+            speed_right -= ADJUST; 
+            }
+            distanceSensor(ultrasonic_sensor);
+            CyDelay(50);
+            //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
+            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+            sprintf(output, "%d \t", distance_sensor);       
+            UART_1_PutString(output);
         }
-        if (count_right > count_left) {
-        speed_right -=2; 
+    }
+    
+    if (less_or_great == GREATER_THAN){                                         // if distance_set is negatve, it will move until the sensors are less than set value
+        while (distance_sensor < abs(distance_set)) {                // This adjusts for drift 
+            count_left = Motor_Left_Decoder_GetCounter();
+            count_right = Motor_Right_Decoder_GetCounter();
+            if (count_left > count_right) {
+            speed_left -= ADJUST;
+            }
+            if (count_right > count_left) {
+            speed_right -= ADJUST; 
+            }
+            distanceSensor(ultrasonic_sensor);
+            CyDelay(50);
+            //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
+            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+            sprintf(output, "%d \t", distance_sensor);       
+            UART_1_PutString(output);
         }
-        distanceSensor(ultrasonic_sensor);
-        CyDelay(50);
-        //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
-        distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
-        sprintf(output, "%d \t", distance_sensor);       
-        UART_1_PutString(output);
     }
     
     //sprintf(output, "left motor: %d \n", count_left);       
@@ -1089,6 +1197,19 @@ void moveUntil(int distance_set) {
    
     
 }
+
+void locatePucks(void)
+{
+    
+    
+    
+    
+}
+
+
+
+
+
 
 
 

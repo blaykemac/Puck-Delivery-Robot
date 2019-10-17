@@ -61,34 +61,34 @@
 #define WEST_ANGLE 180
 
 
-// * ARENA CONSTRAINTS IN CM !* //
-#define MIN_OBJECT_SOUTH 50
-#define MAX_OBJECT_NORTH 70
+// * ARENA CONSTRAINTS IN MM !* //
+#define BLOCK_ZONE_SOUTH 500
+#define BLOCK_ZONE_NORTH 700
 
-#define ARENA_WIDTH 120
-#define ARENA_LENGTH 120
+#define ARENA_WIDTH 1200
+#define ARENA_LENGTH 1200
 
-#define BLOCK_LENGTH 25
-#define BLOCK_WIDTH 9
+#define BLOCK_LENGTH 250
+#define BLOCK_WIDTH 90
 
-#define HOME_EDGE_LENGTH 25
-#define CONSTRUCTION_EDGE_LENGTH 10
+#define HOME_EDGE_LENGTH 250
+#define CONSTRUCTION_EDGE_LENGTH 100
 
 #define HOME_BASE_NORTH_EDGE HOME_EDGE_LENGTH
 #define HOME_BASE_SOUTH_EDGE 0
 #define HOME_BASE_WEST_EDGE (ARENA_WIDTH - HOME_EDGE_LENGTH) / 2   // Measure arena to find this edge
 #define HOME_BASE_EAST_EDGE (HOME_BASE_WEST_EDGE + HOME_EDGE_LENGTH)
 #define HOME_MIDPOINT (ARENA_WIDTH / 2)
-#define HOME_PARKING_DISTANCE 3
+#define HOME_PARKING_DISTANCE 30
 
 #define CONSTRUCTION_BASE_NORTH_EDGE CONSTRUCTION_EDGE_LENGTH
 #define CONSTRUCTION_BASE_SOUTH_EDGE 0
-#define CONSTRUCTION_BASE_WEST_EDGE 20 // Measure arena to find this edge
+#define CONSTRUCTION_BASE_WEST_EDGE 200 // Measure arena to find this edge
 #define CONSTRUCTION_BASE_EAST_EDGE (CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_EDGE_LENGTH)
 #define CONSTRUCTION_MIDPOINT ((CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_BASE_EAST_EDGE + CONSTRUCTION_EDGE_LENGTH) / 2)
-#define CONSTRUCTION_DISTANCE_FROM_WALL 5 // How far we should put the front of the robot to the wall when depositing hte puck
+#define CONSTRUCTION_DISTANCE_FROM_WALL 50 // How far we should put the front of the robot to the wall when depositing hte puck
 
-#define DISTANCE_PUCKS_FROM_NORTH 28 // Where the southmost part of the pucks can extend to from the north wall
+#define DISTANCE_PUCKS_FROM_NORTH 280 // Where the southmost part of the pucks can extend to from the north wall
 
 
 // Robot Body Orientation Constants
@@ -101,14 +101,13 @@
 #define SIDE_SENSORS_WIDTH 25
 
 // Miscellaneous Constants
-#define SAFETY_MARGIN 10 // The margin we will enforce be kept around us clear at all times.
-#define WIDTH_SENSOR_TO_SENSOR 22 // The distance measured from the very outer edge of each side ultrasonic sensor.
-#define WIDTH_SENSOR_TO_CENTER 11 // WIDTH_SENSOR_TO_SENSOR / 2
-#define DISPLACE_DISTANCE_NW_PUCK_CHECK_CM 3
-#define BLOCK_TOLERANCE 10 // Used for sweeping block location. This affects sensitivity in detecting block.
-#define SIDE_SENSOR_OFFSET_FROM_BACK 15 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
+#define SAFETY_MARGIN 100 // The margin we will enforce be kept around us clear at all times.
+#define WIDTH_SENSOR_TO_SENSOR 220 // The distance measured from the very outer edge of each side ultrasonic sensor.
+#define WIDTH_SENSOR_TO_CENTER 110 // WIDTH_SENSOR_TO_SENSOR / 2
+#define BLOCK_TOLERANCE 100 // Used for sweeping block location. This affects sensitivity in detecting block.
+#define SIDE_SENSOR_OFFSET_FROM_BACK 150 // Distance of the midpoint of the side ultrasonic sensors to the far rear sensor edge
 #define FRONT_CLAW_DISTANCE_FROM_CENTRE
-#define PUCK_TOLERANCE 15 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
+#define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 
 #define DISTANCE_STOPPED_FROM_PUCK 5 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
 
@@ -150,13 +149,18 @@ extern int motor1EncoderCounts; //These two variables will allow the entire prog
 extern int motor2EncoderCounts; //track of how many turns the motors have spun 
 extern char output[32];
 
-
-extern int SPEED;
 extern int ultrasonic_distances_mm[5];
 
 void armMoving(void);
 void moveUntilPuck(void);
 void straightAdjust(void);
-void moveUntil(int distance);           // incorporates the ultrasonics
+void moveUntil(int distance, int direction, int less_or_great, int ultrasonic_sensor, int speed);           // incorporates the ultrasonics
+void locatePucks(void);
 
+#define ADJUST 2
+#define BACKWARD 0
+#define FORWARD 1
+#define LESS_THAN 0
+#define GREATER_THAN 1
 
+#define SENSOR_DELAY_MIN 60

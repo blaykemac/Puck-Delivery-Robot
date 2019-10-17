@@ -28,44 +28,20 @@
 
 // Variables:
 
-int SPEED = 130;                   // DO NOT PUT ABOVE 200
-#define DELAY 500
 
 
-void mishaMoveForward(){
-    int count_left;
-    int count_right;
-    
-    Motor_Left_Control_Write(0);
-    Motor_Right_Control_Write(0);
-    
-    Motor_Left_Driver_Wakeup();
-    Motor_Left_Driver_WriteCompare(SPEED);
-    Motor_Right_Driver_Wakeup();
-    Motor_Right_Driver_WriteCompare(SPEED);
-    CyDelay(DELAY);
-    
-    count_left = Motor_Left_Decoder_GetCounter();
-    count_right = Motor_Right_Decoder_GetCounter();
-    
-    sprintf(output, "left motor: %d \n", count_left);       
-    UART_1_PutString(output);
-    sprintf(output, "right motor: %d \n", count_right);      
-    UART_1_PutString(output);
-    
-    Motor_Left_Driver_Sleep();
-    Motor_Right_Driver_Sleep();
-}
-
-void mishaMoveBackward(){
-}
-
-void mishaMoveDynamic(int distance){
+void mishaMoveDynamic(int distance, int speed){
     int count_left;
     int count_right;
     int compare;
-    int speed_left = SPEED;
-    int speed_right = SPEED;
+    
+    // FAILSAFE if you give a speed greater than it can handle 
+    int speed_left = speed;
+    int speed_right = speed;
+    if (speed > SPEED_MAX) {
+        speed_left = SPEED;         
+        speed_right = SPEED;
+    }
     
     // The distance is in millimetres 
     // Is the distance negative or positive? 
@@ -85,10 +61,10 @@ void mishaMoveDynamic(int distance){
         count_left = Motor_Left_Decoder_GetCounter();
         count_right = Motor_Right_Decoder_GetCounter();
         if (count_left > count_right) {
-        speed_left -= 2;
+        speed_left -= ADJUST;
         }
         if (count_right > count_left) {
-        speed_right -=2; 
+        speed_right -= ADJUST; 
         }
     }
     
@@ -106,13 +82,19 @@ void mishaMoveDynamic(int distance){
     
 }
 
-void mishaSwivel(int degrees) {
+void mishaSwivel(int degrees, int speed) {
     int count_left;
     int count_right;
     int compare;
     int distance;
-    int speed_left = SPEED;
-    int speed_right = SPEED;
+    int speed_left = speed;
+    int speed_right = speed;
+    
+    // FAILSAFE if you give a speed greater than it can handle:
+    if (speed > SPEED_MAX) {
+        speed_left = SPEED;         
+        speed_right = SPEED;
+    }
     
     // Is the degrees negative or positive? 
         // positive = right hand turn: left wheel goes forward, right wheel goes backward 
@@ -156,21 +138,19 @@ void mishaSwivel(int degrees) {
     
     Motor_Left_Driver_Sleep();
     Motor_Right_Driver_Sleep();
-   
+    
+    
+}
+
+void translateMoveDynamic(int distance) {
+    distance = 0;
+    
     
     
     
 }
 
 
-void swivelIndefinitely(void) {
-    
-    
-    
-    
-    
-    
-}
 
 
 
