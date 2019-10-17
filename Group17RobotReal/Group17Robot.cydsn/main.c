@@ -487,6 +487,7 @@ int main(void)
         if (state == STATE_GO_TO_PUCKS){
             
             if (blockEastClearance && puckEastClearance){
+                
                 moveBackwardUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT,FRONT);
                 faceDirection(NORTH_ANGLE);
                 moveForwardUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT,FRONT);
@@ -502,6 +503,18 @@ int main(void)
             }
             
             else if (blockWestClearance && puckWestClearance){
+                
+                moveBackwardUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT,FRONT);
+                faceDirection(NORTH_ANGLE);
+                moveForwardUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT,FRONT);
+                //displaceLeft(); Repeatedly call this if below function not implemented
+                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
+                faceDirection(WEST_ANGLE);
+                //displaceLeft();
+                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
+                moveForwardUntil(DISTANCE_STOPPED_FROM_PUCK,FRONT); // Can change 10 to any value really. 
+                // Now front sensor 10cm away from puck, ready to pick up puck
+                moveForward(DISTANCE_STOPPED_FROM_PUCK + 3); // Adding 3 should move the claw enough into the puck for picking up
                 
             }
             
