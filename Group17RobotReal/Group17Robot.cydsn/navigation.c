@@ -113,111 +113,7 @@ void moveUntilPuck(int algorithm) {
     mishaMoveDynamic(37, 100);
 }
 
-void straightAdjust(void) {
-       
-    int front_left;
-    int front_right;
-    int difference = 300;
-    int tolerance = 3;
-    int max_difference = 800;
-       
-    while (abs(difference) > max_difference) {              // ensures the initial readings are accurate
-        distanceSensor(FRONT_LEFT);
-        CyDelay(50);                        // 50ms might not be enough ???
-        sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_LEFT]);
-        UART_1_PutString(output);
-        
-        distanceSensor(FRONT_RIGHT);
-        CyDelay(50);
-        sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_RIGHT]);
-        UART_1_PutString(output);
-        
-        difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
-        sprintf(output, "difference = %d, \n", difference);       
-        UART_1_PutString(output);
-    }
-        
-    int speed_left = 25;        // slow speed
-    int speed_right = 25;
-    
-    do {
-        if (difference > 0)             // This means we need to move it right
-        {
-            Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
-            while (abs(difference) > tolerance 
-                && difference > 0
-                && abs(difference) < max_difference)     // ensures working correctly
-            {
-            Motor_Left_Driver_Wakeup();
-            Motor_Left_Driver_WriteCompare(speed_left);
-            Motor_Right_Driver_Wakeup();
-            Motor_Right_Driver_WriteCompare(speed_right);
 
-            distanceSensor(FRONT_LEFT);
-            CyDelay(50);
-            distanceSensor(FRONT_RIGHT);
-            CyDelay(50);
-                      
-            difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
-            
-            sprintf(output, "%d, %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
-            UART_1_PutString(output);
-            
-            sprintf(output, "difference = %d, \n", difference);       
-            UART_1_PutString(output);
-            
-            
-            }
-            
-        }
-        else {
-            Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
-            while (abs(difference) > tolerance 
-                        && difference > 0
-                        && abs(difference) < max_difference) 
-            {
-            Motor_Left_Driver_Wakeup();
-            Motor_Left_Driver_WriteCompare(speed_left);
-            Motor_Right_Driver_Wakeup();
-            Motor_Right_Driver_WriteCompare(speed_right); 
-            
-            distanceSensor(FRONT_LEFT);
-            CyDelay(50);
-            distanceSensor(FRONT_RIGHT);
-            CyDelay(50);
-                      
-            difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
-                       
-            sprintf(output, " %d , %d \t", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
-            UART_1_PutString(output);
-            
-            sprintf(output, "dif: %d, \n", difference);       
-            UART_1_PutString(output);
-            
-            }
-            
-        }
-        
-        
-        // CHECKS one more time to ensure the difference is accurate: 
-            // consider putting in a for loop to get new readings
-        distanceSensor(FRONT_LEFT);
-        CyDelay(50);
-        distanceSensor(FRONT_RIGHT);
-        CyDelay(50);
-                      
-        difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
-        sprintf(output, "%d, %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
-        UART_1_PutString(output);
-        sprintf(output, "difference = %d, \n", difference);       
-        UART_1_PutString(output);
-        
-    } while (abs(difference) > 10);        // This ensures that the turning worked correctly
-    
-    Motor_Left_Driver_Sleep();
-    Motor_Right_Driver_Sleep();
-       
-}
 
 void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed) {
        
@@ -538,14 +434,150 @@ void puckZoneFinding(void) {
 }
 
 
-void straightAdjustBack(void) {
+void straightAdjust(void) {
+       
+    int front_left;
+    int front_right;
+    int difference = 300;
+    int tolerance = 3;
+    int max_difference = 800;
+       
+    while (abs(difference) > max_difference) {              // ensures the initial readings are accurate
+        distanceSensor(FRONT_LEFT);
+        CyDelay(50);                        // 50ms might not be enough ???
+        sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_LEFT]);
+        UART_1_PutString(output);
+        
+        distanceSensor(FRONT_RIGHT);
+        CyDelay(50);
+        sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_RIGHT]);
+        UART_1_PutString(output);
+        
+        difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+        sprintf(output, "difference = %d, \n", difference);       
+        UART_1_PutString(output);
+    }
+        
+    int speed_left = 25;        // slow speed
+    int speed_right = 25;
     
+    do {
+        if (difference > 0)             // This means we need to move it right
+        {
+            Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
+            while (abs(difference) > tolerance 
+                && difference > 0
+                && abs(difference) < max_difference)     // ensures working correctly
+            {
+            Motor_Left_Driver_Wakeup();
+            Motor_Left_Driver_WriteCompare(speed_left);
+            Motor_Right_Driver_Wakeup();
+            Motor_Right_Driver_WriteCompare(speed_right);
+
+            distanceSensor(FRONT_LEFT);
+            CyDelay(50);
+            distanceSensor(FRONT_RIGHT);
+            CyDelay(50);
+                      
+            difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+            
+            sprintf(output, "%d, %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
+            UART_1_PutString(output);
+            
+            sprintf(output, "difference = %d, \n", difference);       
+            UART_1_PutString(output);
+            
+            
+            }
+            
+        }
+        else {      // HERE we are turning right
+            Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
+            while (abs(difference) > tolerance 
+                        && difference > 0
+                        && abs(difference) < max_difference) 
+            {
+            Motor_Left_Driver_Wakeup();
+            Motor_Left_Driver_WriteCompare(speed_left);
+            Motor_Right_Driver_Wakeup();
+            Motor_Right_Driver_WriteCompare(speed_right); 
+            
+            distanceSensor(FRONT_LEFT);
+            CyDelay(50);
+            distanceSensor(FRONT_RIGHT);
+            CyDelay(50);
+                      
+            difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+                       
+            sprintf(output, " %d , %d \t", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
+            UART_1_PutString(output);
+            
+            sprintf(output, "dif: %d, \n", difference);       
+            UART_1_PutString(output);
+            
+            }
+            
+        }
+        
+        
+        // CHECKS one more time to ensure the difference is accurate: 
+            // consider putting in a for loop to get new readings
+        distanceSensor(FRONT_LEFT);
+        CyDelay(50);
+        distanceSensor(FRONT_RIGHT);
+        CyDelay(50);
+                      
+        difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+        sprintf(output, "%d, %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
+        UART_1_PutString(output);
+        sprintf(output, "difference = %d, \n", difference);       
+        UART_1_PutString(output);
+        
+    } while (abs(difference) > 10);        // This ensures that the turning worked correctly
     
-    
-    
+    Motor_Left_Driver_Sleep();
+    Motor_Right_Driver_Sleep();
+       
 }
 
 
+void straightAdjustBack(void) {
+    // Move left, if number gets bigger, then move right
+    // keep moving left & right until a minimum distance is found 
+        // should we add another sensor to the back of the robot??? 
+        //  will adding another sensor affect anything? 
+    int distance_check;
+    int distance_previous = 0;  // ensures we will enter the while loop
+    int direction = LEFT;       // start off turning left first 
+                                
+        
+    distanceSensor(BACK);
+    CyDelay(DELAY);
+    
+    distance_check = ultrasonic_distances_mm[BACK];
+    
+    while(distance_previous != distance_check) {
+        if (direction == LEFT) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); }
+        else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(0); }
+        
+        while (distance_previous < distance_check) {
+            // this will run while:
+                // new distance values are getting smaller           
+            
+            // Updating the distance values: 
+            distance_previous = distance_check;
+            distanceSensor(BACK);
+            CyDelay(DELAY);
+            distance_check = ultrasonic_distances_mm[BACK];
+        }
+        if (direction == LEFT) {direction = RIGHT; }        // This changes the directions
+        else {direction = LEFT; }
+        
+        // This may enter an infinite loop where it can't decide if it is correct 
+    }
+    
+    
+}
 
 void locatePucks(void)
 {

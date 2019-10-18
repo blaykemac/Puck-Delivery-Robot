@@ -727,7 +727,6 @@ int main(void)
         
         if (state == STATE_FIND_REQUIRED_PUCK){
         
-            
         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
         int puck_scan;
         
