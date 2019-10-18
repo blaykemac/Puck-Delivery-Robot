@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 1
 
 
    1              		.syntax unified
@@ -54,11 +54,11 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
   24:main.c        **** #include "colour.h"
   25:main.c        **** #include "ultrasonic.h" 
   26:main.c        **** #include "servo.h"
-  27:main.c        **** #include "mishamotor.h"
+  27:main.c        **** #include "motor.h"
   28:main.c        **** #include "customMath.h"
   29:main.c        **** #include "navigation.h"
   30:main.c        **** 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 2
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 2
 
 
   31:main.c        **** 
@@ -81,60 +81,62 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
   48:main.c        ****                                 PUCK_RACK_3_WEST_DISTANCE,
   49:main.c        ****                                 PUCK_RACK_4_WEST_DISTANCE };
   50:main.c        **** 
-  51:main.c        **** float horizontalPuckGrid = 0;
+  51:main.c        **** int puckColoursTempPile[2] = {BLANK,BLANK}; // Index 0 refers to east home base edge, 1 refers to w
   52:main.c        **** 
-  53:main.c        **** // * NAVIGATION AND POSITION VARIABLES * //
+  53:main.c        **** float horizontalPuckGrid = 0;
   54:main.c        **** 
-  55:main.c        **** int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
-  56:main.c        **** int pathToPucks; // This will give us a corridor that we should initially take when trying to go to
-  57:main.c        **** int pathPastBlock;
-  58:main.c        **** int block_location[4] = {0,0,0,0};      // The block location values
-  59:main.c        ****                                         //#define NORTH 0
-  60:main.c        ****                                         //#define EAST 1
-  61:main.c        ****                                         //#define SOUTH 2
-  62:main.c        ****                                         //#define WEST 3
-  63:main.c        **** int puck_location[4] = {0,0,0,0};       // The block location values
-  64:main.c        ****                                         //#define NORTH 0
-  65:main.c        ****                                         //#define EAST 1
-  66:main.c        ****                                         //#define SOUTH 2
-  67:main.c        ****                                         //#define WEST 3
-  68:main.c        **** 
-  69:main.c        **** int safety_override = FALSE;            
+  55:main.c        **** // * NAVIGATION AND POSITION VARIABLES * //
+  56:main.c        **** 
+  57:main.c        **** int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
+  58:main.c        **** int pathToPucks; // This will give us a corridor that we should initially take when trying to go to
+  59:main.c        **** int pathPastBlock;
+  60:main.c        **** int block_location[4] = {0,0,0,0};      // The block location values
+  61:main.c        ****                                         //#define NORTH 0
+  62:main.c        ****                                         //#define EAST 1
+  63:main.c        ****                                         //#define SOUTH 2
+  64:main.c        ****                                         //#define WEST 3
+  65:main.c        **** int puck_location[4] = {0,0,0,0};       // The block location values
+  66:main.c        ****                                         //#define NORTH 0
+  67:main.c        ****                                         //#define EAST 1
+  68:main.c        ****                                         //#define SOUTH 2
+  69:main.c        ****                                         //#define WEST 3
   70:main.c        **** 
-  71:main.c        **** // These block clearance variables are only true if we have enough room either side of the block to
-  72:main.c        **** // And only true for the puck clearance variables if there is enough room to be able to turn at the
-  73:main.c        **** short int blockEastClearance = 0;
-  74:main.c        **** short int blockWestClearance = 0;
-  75:main.c        **** short int puckEastClearance = 0;
-  76:main.c        **** short int puckWestClearance = 0;
-  77:main.c        **** 
-  78:main.c        **** // * COLOUR VARIABLES * //
+  71:main.c        **** int safety_override = FALSE;            
+  72:main.c        **** 
+  73:main.c        **** // These block clearance variables are only true if we have enough room either side of the block to
+  74:main.c        **** // And only true for the puck clearance variables if there is enough room to be able to turn at the
+  75:main.c        **** short int blockEastClearance = 0;
+  76:main.c        **** short int blockWestClearance = 0;
+  77:main.c        **** short int puckEastClearance = 0;
+  78:main.c        **** short int puckWestClearance = 0;
   79:main.c        **** 
-  80:main.c        **** int idac_value = 0;  
-  81:main.c        **** int colour_flag = 1;                    // sets which photodiode to use 
-  82:main.c        **** int colour_sensing_algorithm = 0;      // Determines which colour sensing algorithm to use:
-  83:main.c        ****                                                 // 0: Wall algorithm
-  84:main.c        ****                                             // 1: Claw algorithm
-  85:main.c        ****                                                 // 2: old algorithm
-  86:main.c        **** 
-  87:main.c        **** int moving = 0; // Temp to stop while loop from repeated runs of scanning plan code
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 3
+  80:main.c        **** // * COLOUR VARIABLES * //
+  81:main.c        **** 
+  82:main.c        **** int idac_value = 0;  
+  83:main.c        **** int colour_flag = 1;                    // sets which photodiode to use 
+  84:main.c        **** int colour_sensing_algorithm = 0;      // Determines which colour sensing algorithm to use:
+  85:main.c        ****                                                 // 0: Wall algorithm
+  86:main.c        ****                                             // 1: Claw algorithm
+  87:main.c        ****                                                 // 2: old algorithm
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 3
 
 
   88:main.c        **** 
-  89:main.c        **** const int PLAN_SCAN_VERTICAL = 10; // Set to ultrasonic distance at the home base 
+  89:main.c        **** int moving = 0; // Temp to stop while loop from repeated runs of scanning plan code
   90:main.c        **** 
-  91:main.c        **** int current_stage = 1;      // There are 3 stages, we start at 1
+  91:main.c        **** const int PLAN_SCAN_VERTICAL = 10; // Set to ultrasonic distance at the home base 
   92:main.c        **** 
-  93:main.c        **** 
-  94:main.c        **** // GLOBAL VARIABLE
-  95:main.c        **** int distance_returned_global;
-  96:main.c        **** 
-  97:main.c        **** 
-  98:main.c        **** // * INTERRUPT HANDLING * // 
-  99:main.c        **** CY_ISR(TIH)                             // Ultrasonic ISR Definition
- 100:main.c        **** {
-  28              		.loc 1 100 0
+  93:main.c        **** int current_stage = 1;      // There are 3 stages, we start at 1
+  94:main.c        **** 
+  95:main.c        **** 
+  96:main.c        **** // GLOBAL VARIABLE
+  97:main.c        **** int distance_returned_global;
+  98:main.c        **** 
+  99:main.c        **** 
+ 100:main.c        **** // * INTERRUPT HANDLING * // 
+ 101:main.c        **** CY_ISR(TIH)                             // Ultrasonic ISR Definition
+ 102:main.c        **** {
+  28              		.loc 1 102 0
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 0
   31              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -142,8 +144,8 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
   33              		.cfi_def_cfa_offset 8
   34              		.cfi_offset 3, -8
   35              		.cfi_offset 14, -4
- 101:main.c        ****     ultrasonicInterruptHandler();
-  36              		.loc 1 101 0
+ 103:main.c        ****     ultrasonicInterruptHandler();
+  36              		.loc 1 103 0
   37 0002 FFF7FEFF 		bl	ultrasonicInterruptHandler
   38              	.LVL0:
   39 0006 08BD     		pop	{r3, pc}
@@ -158,11 +160,11 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
   48              		.type	StartIH, %function
   49              	StartIH:
   50              	.LFB65:
- 102:main.c        **** }
- 103:main.c        **** 
- 104:main.c        **** CY_ISR(StartIH)                             // Ultrasonic ISR Definition
- 105:main.c        **** {
-  51              		.loc 1 105 0
+ 104:main.c        **** }
+ 105:main.c        **** 
+ 106:main.c        **** CY_ISR(StartIH)                             // Ultrasonic ISR Definition
+ 107:main.c        **** {
+  51              		.loc 1 107 0
   52              		.cfi_startproc
   53              		@ args = 0, pretend = 0, frame = 0
   54              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -170,22 +172,22 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
   56              		.cfi_def_cfa_offset 8
   57              		.cfi_offset 3, -8
   58              		.cfi_offset 14, -4
- 106:main.c        ****     CyDelay(100);
-  59              		.loc 1 106 0
+ 108:main.c        ****     CyDelay(100);
+  59              		.loc 1 108 0
   60 0002 6420     		movs	r0, #100
   61 0004 FFF7FEFF 		bl	CyDelay
   62              	.LVL1:
- 107:main.c        ****     
- 108:main.c        ****     beginNavigation = 1;
-  63              		.loc 1 108 0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 4
+ 109:main.c        ****     
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 4
 
 
+ 110:main.c        ****     beginNavigation = 1;
+  63              		.loc 1 110 0
   64 0008 0122     		movs	r2, #1
   65 000a 034B     		ldr	r3, .L5
   66 000c 1A60     		str	r2, [r3]
- 109:main.c        ****     colour_flag = 0; 
-  67              		.loc 1 109 0
+ 111:main.c        ****     colour_flag = 0; 
+  67              		.loc 1 111 0
   68 000e 0022     		movs	r2, #0
   69 0010 024B     		ldr	r3, .L5+4
   70 0012 1A60     		str	r2, [r3]
@@ -206,342 +208,342 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
   85              		.type	main, %function
   86              	main:
   87              	.LFB66:
- 110:main.c        **** }
- 111:main.c        ****  
- 112:main.c        **** //Interrupt service routines for dcmotor function
- 113:main.c        **** /*
- 114:main.c        **** CY_ISR(Encoder_Counts_1_IH){
- 115:main.c        ****     stopMotor1AndUpdate();
- 116:main.c        **** }
- 117:main.c        **** 
- 118:main.c        **** CY_ISR(Encoder_Counts_2_IH){
- 119:main.c        ****     stopMotor2AndUpdate();
- 120:main.c        **** }
- 121:main.c        **** 
- 122:main.c        **** CY_ISR(Drift_Check_IH){    
- 123:main.c        ****     Drift_Check_Timer_ReadStatusRegister(); //Clears the interrupt
- 124:main.c        ****     Drift_Check_Timer_Stop(); //Stops the timer
- 125:main.c        ****     motor1EncoderCounts = Motor_1_Encoder_Counts_ReadCounter();
- 126:main.c        ****     motor2EncoderCounts = Motor_2_Encoder_Counts_ReadCounter();
- 127:main.c        ****     driftCorrect(); //Does checking
- 128:main.c        **** }
- 129:main.c        **** */
- 130:main.c        **** 
- 131:main.c        **** int main(void)
- 132:main.c        **** {
-  88              		.loc 1 132 0
+ 112:main.c        **** }
+ 113:main.c        ****  
+ 114:main.c        **** //Interrupt service routines for dcmotor function
+ 115:main.c        **** /*
+ 116:main.c        **** CY_ISR(Encoder_Counts_1_IH){
+ 117:main.c        ****     stopMotor1AndUpdate();
+ 118:main.c        **** }
+ 119:main.c        **** 
+ 120:main.c        **** CY_ISR(Encoder_Counts_2_IH){
+ 121:main.c        ****     stopMotor2AndUpdate();
+ 122:main.c        **** }
+ 123:main.c        **** 
+ 124:main.c        **** CY_ISR(Drift_Check_IH){    
+ 125:main.c        ****     Drift_Check_Timer_ReadStatusRegister(); //Clears the interrupt
+ 126:main.c        ****     Drift_Check_Timer_Stop(); //Stops the timer
+ 127:main.c        ****     motor1EncoderCounts = Motor_1_Encoder_Counts_ReadCounter();
+ 128:main.c        ****     motor2EncoderCounts = Motor_2_Encoder_Counts_ReadCounter();
+ 129:main.c        ****     driftCorrect(); //Does checking
+ 130:main.c        **** }
+ 131:main.c        **** */
+ 132:main.c        **** 
+ 133:main.c        **** int main(void)
+ 134:main.c        **** {
+  88              		.loc 1 134 0
   89              		.cfi_startproc
   90              		@ args = 0, pretend = 0, frame = 0
   91              		@ frame_needed = 0, uses_anonymous_args = 0
   92 0000 F0B5     		push	{r4, r5, r6, r7, lr}
   93              		.cfi_def_cfa_offset 20
   94              		.cfi_offset 4, -20
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 5
+
+
   95              		.cfi_offset 5, -16
   96              		.cfi_offset 6, -12
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 5
-
-
   97              		.cfi_offset 7, -8
   98              		.cfi_offset 14, -4
   99 0002 83B0     		sub	sp, sp, #12
  100              		.cfi_def_cfa_offset 32
- 133:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
- 101              		.loc 1 133 0
+ 135:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 101              		.loc 1 135 0
  102              		.syntax unified
- 103              	@ 133 "main.c" 1
+ 103              	@ 135 "main.c" 1
  104 0004 62B6     		CPSIE   i
  105              	@ 0 "" 2
- 134:main.c        **** 
- 135:main.c        ****     
- 136:main.c        ****     TIA_1_Start();
- 106              		.loc 1 136 0
+ 136:main.c        **** 
+ 137:main.c        ****     
+ 138:main.c        ****     TIA_1_Start();
+ 106              		.loc 1 138 0
  107              		.thumb
  108              		.syntax unified
  109 0006 FFF7FEFF 		bl	TIA_1_Start
  110              	.LVL2:
- 137:main.c        ****     UART_1_Start();
- 111              		.loc 1 137 0
+ 139:main.c        ****     UART_1_Start();
+ 111              		.loc 1 139 0
  112 000a FFF7FEFF 		bl	UART_1_Start
  113              	.LVL3:
- 138:main.c        ****     UART_1_PutString("UART commencing... \n");
- 114              		.loc 1 138 0
+ 140:main.c        ****     UART_1_PutString("UART commencing... \n");
+ 114              		.loc 1 140 0
  115 000e 4148     		ldr	r0, .L10
  116 0010 FFF7FEFF 		bl	UART_1_PutString
  117              	.LVL4:
- 139:main.c        ****     ADC_Start();
- 118              		.loc 1 139 0
+ 141:main.c        ****     ADC_Start();
+ 118              		.loc 1 141 0
  119 0014 FFF7FEFF 		bl	ADC_Start
  120              	.LVL5:
- 140:main.c        ****     IDAC8_1_Start();
- 121              		.loc 1 140 0
+ 142:main.c        ****     IDAC8_1_Start();
+ 121              		.loc 1 142 0
  122 0018 FFF7FEFF 		bl	IDAC8_1_Start
  123              	.LVL6:
- 141:main.c        ****     
- 142:main.c        ****     // DEBUGGING:
- 143:main.c        ****     int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
- 144:main.c        ****     int servo_testing = FALSE;                  // Do the servos need to be tested?      
- 145:main.c        ****     int motor_testing = FALSE;
- 146:main.c        ****     int ultrasonic_testing = FALSE;  
- 147:main.c        ****     
- 148:main.c        ****     
- 149:main.c        ****     // IDAC initialisation: 
- 150:main.c        ****     IDAC8_1_SetRange(IDAC8_1_RANGE_32uA);       // Sets the range between 0 and 32uA
- 124              		.loc 1 150 0
+ 143:main.c        ****     
+ 144:main.c        ****     // DEBUGGING:
+ 145:main.c        ****     int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
+ 146:main.c        ****     int servo_testing = FALSE;                  // Do the servos need to be tested?      
+ 147:main.c        ****     int motor_testing = FALSE;
+ 148:main.c        ****     int ultrasonic_testing = FALSE;  
+ 149:main.c        ****     
+ 150:main.c        ****     
+ 151:main.c        ****     // IDAC initialisation: 
+ 152:main.c        ****     IDAC8_1_SetRange(IDAC8_1_RANGE_32uA);       // Sets the range between 0 and 32uA
+ 124              		.loc 1 152 0
  125 001c 0020     		movs	r0, #0
  126 001e FFF7FEFF 		bl	IDAC8_1_SetRange
  127              	.LVL7:
- 151:main.c        ****     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
- 128              		.loc 1 151 0
+ 153:main.c        ****     IDAC8_1_SetValue(idac_value);               // set a value between 0 and 255
+ 128              		.loc 1 153 0
  129 0022 3D4C     		ldr	r4, .L10+4
  130 0024 2079     		ldrb	r0, [r4, #4]	@ zero_extendqisi2
  131 0026 FFF7FEFF 		bl	IDAC8_1_SetValue
  132              	.LVL8:
- 152:main.c        ****     
- 153:main.c        ****     // Colour Sensing Initialisation & Debugging:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 6
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 6
 
 
- 154:main.c        ****     colour_sensing_algorithm = 0;
- 133              		.loc 1 154 0
+ 154:main.c        ****     
+ 155:main.c        ****     // Colour Sensing Initialisation & Debugging:
+ 156:main.c        ****     colour_sensing_algorithm = 0;
+ 133              		.loc 1 156 0
  134 002a 0025     		movs	r5, #0
  135 002c A560     		str	r5, [r4, #8]
- 155:main.c        ****     control_photodiode_Write(colour_sensing_algorithm);            // controls which photodiode is 
- 136              		.loc 1 155 0
+ 157:main.c        ****     control_photodiode_Write(colour_sensing_algorithm);            // controls which photodiode is 
+ 136              		.loc 1 157 0
  137 002e 2846     		mov	r0, r5
  138 0030 FFF7FEFF 		bl	control_photodiode_Write
  139              	.LVL9:
- 156:main.c        ****                                                 // 0: wall
- 157:main.c        ****                                                 // 1: claw
- 158:main.c        ****     control_led_Write(1);   CyDelay(500);  // Ensures all the RGBs are working
- 140              		.loc 1 158 0
+ 158:main.c        ****                                                 // 0: wall
+ 159:main.c        ****                                                 // 1: claw
+ 160:main.c        ****     control_led_Write(1);   CyDelay(500);  // Ensures all the RGBs are working
+ 140              		.loc 1 160 0
  141 0034 0120     		movs	r0, #1
  142 0036 FFF7FEFF 		bl	control_led_Write
  143              	.LVL10:
  144 003a 4FF4FA70 		mov	r0, #500
  145 003e FFF7FEFF 		bl	CyDelay
  146              	.LVL11:
- 159:main.c        ****     control_led_Write(2);   CyDelay(500);
- 147              		.loc 1 159 0
+ 161:main.c        ****     control_led_Write(2);   CyDelay(500);
+ 147              		.loc 1 161 0
  148 0042 0220     		movs	r0, #2
  149 0044 FFF7FEFF 		bl	control_led_Write
  150              	.LVL12:
  151 0048 4FF4FA70 		mov	r0, #500
  152 004c FFF7FEFF 		bl	CyDelay
  153              	.LVL13:
- 160:main.c        ****     control_led_Write(3);   CyDelay(500);
- 154              		.loc 1 160 0
+ 162:main.c        ****     control_led_Write(3);   CyDelay(500);
+ 154              		.loc 1 162 0
  155 0050 0320     		movs	r0, #3
  156 0052 FFF7FEFF 		bl	control_led_Write
  157              	.LVL14:
  158 0056 4FF4FA70 		mov	r0, #500
  159 005a FFF7FEFF 		bl	CyDelay
  160              	.LVL15:
- 161:main.c        ****     control_led_Write(0);   CyDelay(500);
- 161              		.loc 1 161 0
+ 163:main.c        ****     control_led_Write(0);   CyDelay(500);
+ 161              		.loc 1 163 0
  162 005e 2846     		mov	r0, r5
  163 0060 FFF7FEFF 		bl	control_led_Write
  164              	.LVL16:
  165 0064 4FF4FA70 		mov	r0, #500
  166 0068 FFF7FEFF 		bl	CyDelay
  167              	.LVL17:
- 162:main.c        ****     colourSensingInitialise();                  // Initialises the colour sensor
- 168              		.loc 1 162 0
+ 164:main.c        ****     colourSensingInitialise();                  // Initialises the colour sensor
+ 168              		.loc 1 164 0
  169 006c FFF7FEFF 		bl	colourSensingInitialise
  170              	.LVL18:
- 163:main.c        ****     
- 164:main.c        **** 
- 165:main.c        ****     //Servos for the arm instatination
- 166:main.c        ****     Rack_Servo_PWM_Start();
- 171              		.loc 1 166 0
+ 165:main.c        ****     
+ 166:main.c        **** 
+ 167:main.c        ****     //Servos for the arm instatination
+ 168:main.c        ****     Rack_Servo_PWM_Start();
+ 171              		.loc 1 168 0
  172 0070 FFF7FEFF 		bl	Rack_Servo_PWM_Start
  173              	.LVL19:
- 167:main.c        ****     Rack_Servo_PWM_WriteCompare(1000);          // BRINGs rack to highest position, so not to mess 
- 174              		.loc 1 167 0
+ 169:main.c        ****     Rack_Servo_PWM_WriteCompare(1000);          // BRINGs rack to highest position, so not to mess 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 7
+
+
+ 174              		.loc 1 169 0
  175 0074 4FF47A70 		mov	r0, #1000
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 7
-
-
  176 0078 FFF7FEFF 		bl	Rack_Servo_PWM_WriteCompare
  177              	.LVL20:
- 168:main.c        ****     CyDelay(500);
- 178              		.loc 1 168 0
+ 170:main.c        ****     CyDelay(500);
+ 178              		.loc 1 170 0
  179 007c 4FF4FA70 		mov	r0, #500
  180 0080 FFF7FEFF 		bl	CyDelay
  181              	.LVL21:
- 169:main.c        ****     Rack_Servo_PWM_Sleep();
- 182              		.loc 1 169 0
+ 171:main.c        ****     Rack_Servo_PWM_Sleep();
+ 182              		.loc 1 171 0
  183 0084 FFF7FEFF 		bl	Rack_Servo_PWM_Sleep
  184              	.LVL22:
- 170:main.c        ****     
- 171:main.c        ****     Gripper_Servo_PWM_Start();
- 185              		.loc 1 171 0
+ 172:main.c        ****     
+ 173:main.c        ****     Gripper_Servo_PWM_Start();
+ 185              		.loc 1 173 0
  186 0088 FFF7FEFF 		bl	Gripper_Servo_PWM_Start
  187              	.LVL23:
- 172:main.c        ****     Gripper_Servo_PWM_WriteCompare(1120);       //This is the open gripper position
- 188              		.loc 1 172 0
+ 174:main.c        ****     Gripper_Servo_PWM_WriteCompare(1120);       //This is the open gripper position
+ 188              		.loc 1 174 0
  189 008c 4FF48C60 		mov	r0, #1120
  190 0090 FFF7FEFF 		bl	Gripper_Servo_PWM_WriteCompare
  191              	.LVL24:
- 173:main.c        ****     CyDelay(500);
- 192              		.loc 1 173 0
+ 175:main.c        ****     CyDelay(500);
+ 192              		.loc 1 175 0
  193 0094 4FF4FA70 		mov	r0, #500
  194 0098 FFF7FEFF 		bl	CyDelay
  195              	.LVL25:
- 174:main.c        ****     Gripper_Servo_PWM_Sleep();
- 196              		.loc 1 174 0
+ 176:main.c        ****     Gripper_Servo_PWM_Sleep();
+ 196              		.loc 1 176 0
  197 009c FFF7FEFF 		bl	Gripper_Servo_PWM_Sleep
  198              	.LVL26:
- 175:main.c        ****     
- 176:main.c        ****     // Misha Motors Initialisation:
- 177:main.c        ****     Motor_Left_Driver_Start();
- 199              		.loc 1 177 0
+ 177:main.c        ****     
+ 178:main.c        ****     // Motors Initialisation:
+ 179:main.c        ****     Motor_Left_Driver_Start();
+ 199              		.loc 1 179 0
  200 00a0 FFF7FEFF 		bl	Motor_Left_Driver_Start
  201              	.LVL27:
- 178:main.c        ****     Motor_Left_Driver_Sleep();                  // Puts motor to sleep
- 202              		.loc 1 178 0
+ 180:main.c        ****     Motor_Left_Driver_Sleep();                  // Puts motor to sleep
+ 202              		.loc 1 180 0
  203 00a4 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
  204              	.LVL28:
- 179:main.c        ****     Motor_Right_Driver_Start();
- 205              		.loc 1 179 0
+ 181:main.c        ****     Motor_Right_Driver_Start();
+ 205              		.loc 1 181 0
  206 00a8 FFF7FEFF 		bl	Motor_Right_Driver_Start
  207              	.LVL29:
- 180:main.c        ****     Motor_Right_Driver_Sleep();                 // Puts motor to sleep
- 208              		.loc 1 180 0
+ 182:main.c        ****     Motor_Right_Driver_Sleep();                 // Puts motor to sleep
+ 208              		.loc 1 182 0
  209 00ac FFF7FEFF 		bl	Motor_Right_Driver_Sleep
  210              	.LVL30:
- 181:main.c        ****     
- 182:main.c        ****     Motor_Left_Decoder_Start();
- 211              		.loc 1 182 0
+ 183:main.c        ****     
+ 184:main.c        ****     Motor_Left_Decoder_Start();
+ 211              		.loc 1 184 0
  212 00b0 FFF7FEFF 		bl	Motor_Left_Decoder_Start
  213              	.LVL31:
- 183:main.c        ****     Motor_Right_Decoder_Start();
- 214              		.loc 1 183 0
+ 185:main.c        ****     Motor_Right_Decoder_Start();
+ 214              		.loc 1 185 0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 8
+
+
  215 00b4 FFF7FEFF 		bl	Motor_Right_Decoder_Start
  216              	.LVL32:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 8
-
-
- 184:main.c        ****     
- 185:main.c        ****     internal_orientation = WEST;                // robot initial starts in the East direction
- 217              		.loc 1 185 0
+ 186:main.c        ****     
+ 187:main.c        ****     internal_orientation = WEST;                // robot initial starts in the East direction
+ 217              		.loc 1 187 0
  218 00b8 184F     		ldr	r7, .L10+8
  219 00ba 0326     		movs	r6, #3
  220 00bc 3E60     		str	r6, [r7]
- 186:main.c        ****    
- 187:main.c        ****     // Timer and ISR instantiation
- 188:main.c        ****     Timer_1_Start();                
- 221              		.loc 1 188 0
+ 188:main.c        ****     
+ 189:main.c        ****     // Timer and ISR instantiation
+ 190:main.c        ****     Timer_1_Start();                
+ 221              		.loc 1 190 0
  222 00be FFF7FEFF 		bl	Timer_1_Start
  223              	.LVL33:
- 189:main.c        ****     Timer_1_ReadStatusRegister();
- 224              		.loc 1 189 0
+ 191:main.c        ****     Timer_1_ReadStatusRegister();
+ 224              		.loc 1 191 0
  225 00c2 FFF7FEFF 		bl	Timer_1_ReadStatusRegister
  226              	.LVL34:
- 190:main.c        ****     Sonic_StartEx(TIH);
- 227              		.loc 1 190 0
+ 192:main.c        ****     Sonic_StartEx(TIH);
+ 227              		.loc 1 192 0
  228 00c6 1648     		ldr	r0, .L10+12
  229 00c8 FFF7FEFF 		bl	Sonic_StartEx
  230              	.LVL35:
- 191:main.c        ****     Start_StartEx(StartIH);
- 231              		.loc 1 191 0
+ 193:main.c        ****     Start_StartEx(StartIH);
+ 231              		.loc 1 193 0
  232 00cc 1548     		ldr	r0, .L10+16
  233 00ce FFF7FEFF 		bl	Start_StartEx
  234              	.LVL36:
- 192:main.c        ****     beginNavigation = 0;
- 235              		.loc 1 192 0
+ 194:main.c        ****     beginNavigation = 0;
+ 235              		.loc 1 194 0
  236 00d2 2560     		str	r5, [r4]
- 193:main.c        ****     
- 194:main.c        ****     // Ultrasonic Initialisation & Calibration:
- 195:main.c        ****     // The ultrasonics take several test measurements to ensure they are working
- 196:main.c        ****         
- 197:main.c        ****     UART_1_PutString("Ultrasonic Calibration tests: \n");
- 237              		.loc 1 197 0
+ 195:main.c        ****     
+ 196:main.c        ****     // Ultrasonic Initialisation & Calibration:
+ 197:main.c        ****     // The ultrasonics take several test measurements to ensure they are working
+ 198:main.c        ****         
+ 199:main.c        ****     UART_1_PutString("Ultrasonic Calibration tests: \n");
+ 237              		.loc 1 199 0
  238 00d4 1448     		ldr	r0, .L10+20
  239 00d6 FFF7FEFF 		bl	UART_1_PutString
  240              	.LVL37:
- 198:main.c        ****     safetyDistanceCheck();
- 241              		.loc 1 198 0
+ 200:main.c        ****     safetyDistanceCheck();
+ 241              		.loc 1 200 0
  242 00da FFF7FEFF 		bl	safetyDistanceCheck
  243              	.LVL38:
- 199:main.c        ****     safetyDistanceCheck();
- 244              		.loc 1 199 0
+ 201:main.c        ****     safetyDistanceCheck();
+ 244              		.loc 1 201 0
  245 00de FFF7FEFF 		bl	safetyDistanceCheck
  246              	.LVL39:
- 200:main.c        ****     safetyDistanceCheck();
- 247              		.loc 1 200 0
+ 202:main.c        ****     safetyDistanceCheck();
+ 247              		.loc 1 202 0
  248 00e2 FFF7FEFF 		bl	safetyDistanceCheck
  249              	.LVL40:
- 201:main.c        ****     
- 202:main.c        ****     /*  OLD CODE FROM NIDHIN:
- 203:main.c        ****     //Initialising DC motors
- 204:main.c        ****     Motor_1_driver_Start();
- 205:main.c        ****     Motor_2_driver_Start();
- 206:main.c        ****     motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
- 207:main.c        ****     
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 9
+ 203:main.c        ****     
+ 204:main.c        ****     /*  OLD CODE FROM NIDHIN:
+ 205:main.c        ****     //Initialising DC motors
+ 206:main.c        ****     Motor_1_driver_Start();
+ 207:main.c        ****     Motor_2_driver_Start();
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 9
 
 
- 208:main.c        ****     
- 209:main.c        ****     //Initialising counters
- 210:main.c        ****     Motor_1_Encoder_Counts_Start();
- 211:main.c        ****     Motor_2_Encoder_Counts_Start();
- 212:main.c        ****     
- 213:main.c        ****     //Initialising timers
- 214:main.c        ****     Drift_Check_Timer_Start();
- 215:main.c        ****     
- 216:main.c        ****     //Starts and enables the interrupts for the motor encoder counts
- 217:main.c        ****     Encoder_Counts_1_Interrupt_StartEx(Encoder_Counts_1_IH); 
- 218:main.c        ****     Encoder_Counts_2_Interrupt_StartEx(Encoder_Counts_2_IH);
- 219:main.c        ****     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
- 220:main.c        ****     */
- 221:main.c        **** 
- 222:main.c        ****       // FORCING STATE:
- 223:main.c        ****     // Manual state set for testing
- 224:main.c        ****     state = STATE_DEPOSIT_PUCK;
- 250              		.loc 1 224 0
+ 208:main.c        ****     motorDutyCycleUpdate(0,0,0,0);//Have the motors stand still
+ 209:main.c        ****     
+ 210:main.c        ****     
+ 211:main.c        ****     //Initialising counters
+ 212:main.c        ****     Motor_1_Encoder_Counts_Start();
+ 213:main.c        ****     Motor_2_Encoder_Counts_Start();
+ 214:main.c        ****     
+ 215:main.c        ****     //Initialising timers
+ 216:main.c        ****     Drift_Check_Timer_Start();
+ 217:main.c        ****     
+ 218:main.c        ****     //Starts and enables the interrupts for the motor encoder counts
+ 219:main.c        ****     Encoder_Counts_1_Interrupt_StartEx(Encoder_Counts_1_IH); 
+ 220:main.c        ****     Encoder_Counts_2_Interrupt_StartEx(Encoder_Counts_2_IH);
+ 221:main.c        ****     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
+ 222:main.c        ****     */
+ 223:main.c        **** 
+ 224:main.c        ****       // FORCING STATE:
+ 225:main.c        ****     // Manual state set for testing
+ 226:main.c        ****     state = STATE_DEPOSIT_PUCK;
+ 250              		.loc 1 226 0
  251 00e6 114B     		ldr	r3, .L10+24
  252 00e8 0622     		movs	r2, #6
  253 00ea 5A60     		str	r2, [r3, #4]
- 225:main.c        ****     currentPuckStackSize = 0;
- 254              		.loc 1 225 0
+ 227:main.c        ****     currentPuckStackSize = 0;
+ 254              		.loc 1 227 0
  255 00ec E560     		str	r5, [r4, #12]
- 226:main.c        ****     current_stage = 1;
- 256              		.loc 1 226 0
+ 228:main.c        ****     current_stage = 1;
+ 256              		.loc 1 228 0
  257 00ee 0121     		movs	r1, #1
  258 00f0 9960     		str	r1, [r3, #8]
- 227:main.c        ****     blockEastClearance = 0;
- 259              		.loc 1 227 0
+ 229:main.c        ****     blockEastClearance = 0;
+ 259              		.loc 1 229 0
  260 00f2 2582     		strh	r5, [r4, #16]	@ movhi
- 228:main.c        ****     blockWestClearance = 1;
- 261              		.loc 1 228 0
+ 230:main.c        ****     blockWestClearance = 1;
+ 261              		.loc 1 230 0
  262 00f4 6182     		strh	r1, [r4, #18]	@ movhi
- 229:main.c        ****     puckEastClearance = 0;
- 263              		.loc 1 229 0
+ 231:main.c        ****     puckEastClearance = 0;
+ 263              		.loc 1 231 0
  264 00f6 A582     		strh	r5, [r4, #20]	@ movhi
- 230:main.c        ****     puckWestClearance = 1;
- 265              		.loc 1 230 0
+ 232:main.c        ****     puckWestClearance = 1;
+ 265              		.loc 1 232 0
  266 00f8 E182     		strh	r1, [r4, #22]	@ movhi
  267              	.LVL41:
- 231:main.c        ****     int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the puc
- 232:main.c        ****     internal_orientation = EAST;
- 268              		.loc 1 232 0
+ 233:main.c        ****     int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the puc
+ 234:main.c        ****     internal_orientation = EAST;
+ 268              		.loc 1 234 0
  269 00fa 3960     		str	r1, [r7]
- 233:main.c        ****     puckConstructionPlan[0] = RED;
- 270              		.loc 1 233 0
+ 235:main.c        ****     puckConstructionPlan[0] = RED;
+ 270              		.loc 1 235 0
  271 00fc A161     		str	r1, [r4, #24]
- 234:main.c        ****     puckConstructionPlan[1] = GREEN;
- 272              		.loc 1 234 0
+ 236:main.c        ****     puckConstructionPlan[1] = GREEN;
+ 272              		.loc 1 236 0
  273 00fe 0223     		movs	r3, #2
  274 0100 E361     		str	r3, [r4, #28]
- 235:main.c        ****     puckConstructionPlan[2] = BLUE;
- 275              		.loc 1 235 0
+ 237:main.c        ****     puckConstructionPlan[2] = BLUE;
+ 275              		.loc 1 237 0
  276 0102 2662     		str	r6, [r4, #32]
- 236:main.c        **** 
- 237:main.c        ****     moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 10
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 10
 
 
- 277              		.loc 1 237 0
+ 238:main.c        **** 
+ 239:main.c        ****     moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+ 277              		.loc 1 239 0
  278 0104 AA23     		movs	r3, #170
  279 0106 0093     		str	r3, [sp]
  280 0108 2B46     		mov	r3, r5
@@ -582,2076 +584,2103 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 1
  315              		.comm	pathToPucks,4,4
  316              		.global	beginNavigation
  317              		.global	horizontalPuckGrid
- 318              		.global	puckConstructionPlan
- 319              		.global	currentPuckStackSize
- 320              		.global	running
- 321              		.global	state
- 322              		.comm	ultrasonic_flag,4,4
- 323              		.comm	initialisation,4,4
- 324              		.comm	output,32,4
- 325              		.comm	turningRightFlag,2,2
- 326              		.comm	turningLeftFlag,2,2
- 327              		.comm	drivingBackwardFlag,2,2
- 328              		.comm	drivingForwardFlag,2,2
- 329              		.comm	puckPileLocation,4,4
- 330              		.global	block_edge_location
- 331              		.global	sweeping
- 332              		.global	puckRackOffsetsFromWest
- 333              		.global	puckRackColours
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 11
-
-
- 334              		.global	currentPuckRackScanningIndex
- 335              		.comm	driveStraightEnable,4,4
- 336              		.comm	internal_orientation,4,4
- 337              		.section	.rodata
- 338              		.align	2
- 339              		.type	PLAN_SCAN_VERTICAL, %object
- 340              		.size	PLAN_SCAN_VERTICAL, 4
- 341              	PLAN_SCAN_VERTICAL:
- 342 0000 0A000000 		.word	10
- 343              		.data
- 344              		.align	2
- 345              		.set	.LANCHOR1,. + 0
- 346              		.type	colour_flag, %object
- 347              		.size	colour_flag, 4
- 348              	colour_flag:
- 349 0000 01000000 		.word	1
- 350              		.type	state, %object
- 351              		.size	state, 4
- 352              	state:
- 353 0004 01000000 		.word	1
- 354              		.type	current_stage, %object
- 355              		.size	current_stage, 4
- 356              	current_stage:
- 357 0008 01000000 		.word	1
- 358              		.type	running, %object
- 359              		.size	running, 4
- 360              	running:
- 361 000c 01000000 		.word	1
- 362              		.type	puckRackOffsetsFromWest, %object
- 363              		.size	puckRackOffsetsFromWest, 20
- 364              	puckRackOffsetsFromWest:
- 365 0010 D0020000 		.word	720
- 366 0014 94020000 		.word	660
- 367 0018 58020000 		.word	600
- 368 001c 1C020000 		.word	540
- 369 0020 E0010000 		.word	480
- 370              		.section	.rodata.str1.4,"aMS",%progbits,1
- 371              		.align	2
- 372              	.LC0:
- 373 0000 55415254 		.ascii	"UART commencing... \012\000"
- 373      20636F6D 
- 373      6D656E63 
- 373      696E672E 
- 373      2E2E200A 
- 374 0015 000000   		.space	3
- 375              	.LC1:
- 376 0018 556C7472 		.ascii	"Ultrasonic Calibration tests: \012\000"
- 376      61736F6E 
- 376      69632043 
- 376      616C6962 
- 376      72617469 
- 377              		.bss
- 378              		.align	2
- 379              		.set	.LANCHOR0,. + 0
- 380              		.type	beginNavigation, %object
- 381              		.size	beginNavigation, 4
- 382              	beginNavigation:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 12
-
-
- 383 0000 00000000 		.space	4
- 384              		.type	idac_value, %object
- 385              		.size	idac_value, 4
- 386              	idac_value:
- 387 0004 00000000 		.space	4
- 388              		.type	colour_sensing_algorithm, %object
- 389              		.size	colour_sensing_algorithm, 4
- 390              	colour_sensing_algorithm:
- 391 0008 00000000 		.space	4
- 392              		.type	currentPuckStackSize, %object
- 393              		.size	currentPuckStackSize, 4
- 394              	currentPuckStackSize:
- 395 000c 00000000 		.space	4
- 396              		.type	blockEastClearance, %object
- 397              		.size	blockEastClearance, 2
- 398              	blockEastClearance:
- 399 0010 0000     		.space	2
- 400              		.type	blockWestClearance, %object
- 401              		.size	blockWestClearance, 2
- 402              	blockWestClearance:
- 403 0012 0000     		.space	2
- 404              		.type	puckEastClearance, %object
- 405              		.size	puckEastClearance, 2
- 406              	puckEastClearance:
- 407 0014 0000     		.space	2
- 408              		.type	puckWestClearance, %object
- 409              		.size	puckWestClearance, 2
- 410              	puckWestClearance:
- 411 0016 0000     		.space	2
- 412              		.type	puckConstructionPlan, %object
- 413              		.size	puckConstructionPlan, 12
- 414              	puckConstructionPlan:
- 415 0018 00000000 		.space	12
- 415      00000000 
- 415      00000000 
- 416              		.type	moving, %object
- 417              		.size	moving, 4
- 418              	moving:
- 419 0024 00000000 		.space	4
- 420              		.type	safety_override, %object
- 421              		.size	safety_override, 4
- 422              	safety_override:
- 423 0028 00000000 		.space	4
- 424              		.type	puck_location, %object
- 425              		.size	puck_location, 16
- 426              	puck_location:
- 427 002c 00000000 		.space	16
- 427      00000000 
- 427      00000000 
- 427      00000000 
- 428              		.type	block_location, %object
- 429              		.size	block_location, 16
- 430              	block_location:
- 431 003c 00000000 		.space	16
- 431      00000000 
- 431      00000000 
- 431      00000000 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 13
-
-
- 432              		.type	horizontalPuckGrid, %object
- 433              		.size	horizontalPuckGrid, 4
- 434              	horizontalPuckGrid:
- 435 004c 00000000 		.space	4
- 436              		.type	block_edge_location, %object
- 437              		.size	block_edge_location, 16
- 438              	block_edge_location:
- 439 0050 00000000 		.space	16
- 439      00000000 
- 439      00000000 
- 439      00000000 
- 440              		.type	sweeping, %object
- 441              		.size	sweeping, 4
- 442              	sweeping:
- 443 0060 00000000 		.space	4
- 444              		.type	puckRackColours, %object
- 445              		.size	puckRackColours, 20
- 446              	puckRackColours:
- 447 0064 00000000 		.space	20
- 447      00000000 
- 447      00000000 
- 447      00000000 
- 447      00000000 
- 448              		.type	currentPuckRackScanningIndex, %object
- 449              		.size	currentPuckRackScanningIndex, 4
- 450              	currentPuckRackScanningIndex:
- 451 0078 00000000 		.space	4
- 452              		.text
- 453              	.Letext0:
- 454              		.file 2 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
- 455              		.file 3 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
- 456              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
- 457              		.file 5 "navigation.h"
- 458              		.file 6 "ultrasonic.h"
- 459              		.file 7 "main.h"
- 460              		.file 8 "Generated_Source\\PSoC5/CyLib.h"
- 461              		.file 9 "Generated_Source\\PSoC5/TIA_1.h"
- 462              		.file 10 "Generated_Source\\PSoC5/UART_1.h"
- 463              		.file 11 "Generated_Source\\PSoC5/ADC.h"
- 464              		.file 12 "Generated_Source\\PSoC5/IDAC8_1.h"
- 465              		.file 13 "Generated_Source\\PSoC5/control_photodiode.h"
- 466              		.file 14 "Generated_Source\\PSoC5/control_led.h"
- 467              		.file 15 "colour.h"
- 468              		.file 16 "Generated_Source\\PSoC5/Rack_Servo_PWM.h"
- 469              		.file 17 "Generated_Source\\PSoC5/Gripper_Servo_PWM.h"
- 470              		.file 18 "Generated_Source\\PSoC5/Motor_Left_Driver.h"
- 471              		.file 19 "Generated_Source\\PSoC5/Motor_Right_Driver.h"
- 472              		.file 20 "Generated_Source\\PSoC5/Motor_Left_Decoder.h"
- 473              		.file 21 "Generated_Source\\PSoC5/Motor_Right_Decoder.h"
- 474              		.file 22 "Generated_Source\\PSoC5/Timer_1.h"
- 475              		.file 23 "Generated_Source\\PSoC5/Sonic.h"
- 476              		.file 24 "Generated_Source\\PSoC5/Start.h"
- 477              		.section	.debug_info,"",%progbits
- 478              	.Ldebug_info0:
- 479 0000 C9070000 		.4byte	0x7c9
- 480 0004 0400     		.2byte	0x4
- 481 0006 00000000 		.4byte	.Ldebug_abbrev0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 14
-
-
- 482 000a 04       		.byte	0x4
- 483 000b 01       		.uleb128 0x1
- 484 000c 55060000 		.4byte	.LASF91
- 485 0010 0C       		.byte	0xc
- 486 0011 58050000 		.4byte	.LASF92
- 487 0015 73040000 		.4byte	.LASF93
- 488 0019 00000000 		.4byte	.Ldebug_ranges0+0
- 489 001d 00000000 		.4byte	0
- 490 0021 00000000 		.4byte	.Ldebug_line0
- 491 0025 02       		.uleb128 0x2
- 492 0026 01       		.byte	0x1
- 493 0027 06       		.byte	0x6
- 494 0028 AF030000 		.4byte	.LASF0
- 495 002c 02       		.uleb128 0x2
- 496 002d 01       		.byte	0x1
- 497 002e 08       		.byte	0x8
- 498 002f 2E030000 		.4byte	.LASF1
- 499 0033 02       		.uleb128 0x2
- 500 0034 02       		.byte	0x2
- 501 0035 05       		.byte	0x5
- 502 0036 23000000 		.4byte	.LASF2
- 503 003a 02       		.uleb128 0x2
- 504 003b 02       		.byte	0x2
- 505 003c 07       		.byte	0x7
- 506 003d 34050000 		.4byte	.LASF3
- 507 0041 03       		.uleb128 0x3
- 508 0042 C4050000 		.4byte	.LASF9
- 509 0046 02       		.byte	0x2
- 510 0047 3F       		.byte	0x3f
- 511 0048 4C000000 		.4byte	0x4c
- 512 004c 02       		.uleb128 0x2
- 513 004d 04       		.byte	0x4
- 514 004e 05       		.byte	0x5
- 515 004f 4A020000 		.4byte	.LASF4
- 516 0053 02       		.uleb128 0x2
- 517 0054 04       		.byte	0x4
- 518 0055 07       		.byte	0x7
- 519 0056 5F050000 		.4byte	.LASF5
- 520 005a 02       		.uleb128 0x2
- 521 005b 08       		.byte	0x8
- 522 005c 05       		.byte	0x5
- 523 005d FC010000 		.4byte	.LASF6
- 524 0061 02       		.uleb128 0x2
- 525 0062 08       		.byte	0x8
- 526 0063 07       		.byte	0x7
- 527 0064 CF030000 		.4byte	.LASF7
- 528 0068 04       		.uleb128 0x4
- 529 0069 04       		.byte	0x4
- 530 006a 05       		.byte	0x5
- 531 006b 696E7400 		.ascii	"int\000"
- 532 006f 02       		.uleb128 0x2
- 533 0070 04       		.byte	0x4
- 534 0071 07       		.byte	0x7
- 535 0072 06040000 		.4byte	.LASF8
- 536 0076 03       		.uleb128 0x3
- 537 0077 DD040000 		.4byte	.LASF10
- 538 007b 03       		.byte	0x3
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 15
-
-
- 539 007c 2C       		.byte	0x2c
- 540 007d 41000000 		.4byte	0x41
- 541 0081 02       		.uleb128 0x2
- 542 0082 04       		.byte	0x4
- 543 0083 04       		.byte	0x4
- 544 0084 E6010000 		.4byte	.LASF11
- 545 0088 02       		.uleb128 0x2
- 546 0089 08       		.byte	0x8
- 547 008a 04       		.byte	0x4
- 548 008b 7F050000 		.4byte	.LASF12
- 549 008f 02       		.uleb128 0x2
- 550 0090 01       		.byte	0x1
- 551 0091 08       		.byte	0x8
- 552 0092 6E040000 		.4byte	.LASF13
- 553 0096 02       		.uleb128 0x2
- 554 0097 08       		.byte	0x8
- 555 0098 04       		.byte	0x4
- 556 0099 BC000000 		.4byte	.LASF14
- 557 009d 02       		.uleb128 0x2
- 558 009e 04       		.byte	0x4
- 559 009f 07       		.byte	0x7
- 560 00a0 11060000 		.4byte	.LASF15
- 561 00a4 05       		.uleb128 0x5
- 562 00a5 54494800 		.ascii	"TIH\000"
- 563 00a9 01       		.byte	0x1
- 564 00aa 63       		.byte	0x63
- 565 00ab 00000000 		.4byte	.LFB64
- 566 00af 08000000 		.4byte	.LFE64-.LFB64
- 567 00b3 01       		.uleb128 0x1
- 568 00b4 9C       		.byte	0x9c
- 569 00b5 C3000000 		.4byte	0xc3
- 570 00b9 06       		.uleb128 0x6
- 571 00ba 06000000 		.4byte	.LVL0
- 572 00be 82060000 		.4byte	0x682
- 573 00c2 00       		.byte	0
- 574 00c3 07       		.uleb128 0x7
- 575 00c4 C8000000 		.4byte	.LASF16
- 576 00c8 01       		.byte	0x1
- 577 00c9 68       		.byte	0x68
- 578 00ca 00000000 		.4byte	.LFB65
- 579 00ce 20000000 		.4byte	.LFE65-.LFB65
- 580 00d2 01       		.uleb128 0x1
- 581 00d3 9C       		.byte	0x9c
- 582 00d4 E9000000 		.4byte	0xe9
- 583 00d8 08       		.uleb128 0x8
- 584 00d9 08000000 		.4byte	.LVL1
- 585 00dd 8D060000 		.4byte	0x68d
- 586 00e1 09       		.uleb128 0x9
- 587 00e2 01       		.uleb128 0x1
- 588 00e3 50       		.byte	0x50
- 589 00e4 02       		.uleb128 0x2
- 590 00e5 08       		.byte	0x8
- 591 00e6 64       		.byte	0x64
- 592 00e7 00       		.byte	0
- 593 00e8 00       		.byte	0
- 594 00e9 0A       		.uleb128 0xa
- 595 00ea D8040000 		.4byte	.LASF94
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 16
-
-
- 596 00ee 01       		.byte	0x1
- 597 00ef 83       		.byte	0x83
- 598 00f0 68000000 		.4byte	0x68
- 599 00f4 00000000 		.4byte	.LFB66
- 600 00f8 30010000 		.4byte	.LFE66-.LFB66
- 601 00fc 01       		.uleb128 0x1
- 602 00fd 9C       		.byte	0x9c
- 603 00fe 9C030000 		.4byte	0x39c
- 604 0102 0B       		.uleb128 0xb
- 605 0103 68000000 		.4byte	.LASF17
- 606 0107 01       		.byte	0x1
- 607 0108 8F       		.byte	0x8f
- 608 0109 68000000 		.4byte	0x68
- 609 010d 00       		.byte	0
- 610 010e 0B       		.uleb128 0xb
- 611 010f F8030000 		.4byte	.LASF18
- 612 0113 01       		.byte	0x1
- 613 0114 90       		.byte	0x90
- 614 0115 68000000 		.4byte	0x68
- 615 0119 00       		.byte	0
- 616 011a 0B       		.uleb128 0xb
- 617 011b 21060000 		.4byte	.LASF19
- 618 011f 01       		.byte	0x1
- 619 0120 91       		.byte	0x91
- 620 0121 68000000 		.4byte	0x68
- 621 0125 00       		.byte	0
- 622 0126 0B       		.uleb128 0xb
- 623 0127 00000000 		.4byte	.LASF20
- 624 012b 01       		.byte	0x1
- 625 012c 92       		.byte	0x92
- 626 012d 68000000 		.4byte	0x68
- 627 0131 00       		.byte	0
- 628 0132 0C       		.uleb128 0xc
- 629 0133 0A020000 		.4byte	.LASF21
- 630 0137 01       		.byte	0x1
- 631 0138 E7       		.byte	0xe7
- 632 0139 68000000 		.4byte	0x68
- 633 013d F401     		.2byte	0x1f4
- 634 013f 06       		.uleb128 0x6
- 635 0140 0A000000 		.4byte	.LVL2
- 636 0144 98060000 		.4byte	0x698
- 637 0148 06       		.uleb128 0x6
- 638 0149 0E000000 		.4byte	.LVL3
- 639 014d A3060000 		.4byte	0x6a3
- 640 0151 0D       		.uleb128 0xd
- 641 0152 14000000 		.4byte	.LVL4
- 642 0156 AE060000 		.4byte	0x6ae
- 643 015a 68010000 		.4byte	0x168
- 644 015e 09       		.uleb128 0x9
- 645 015f 01       		.uleb128 0x1
- 646 0160 50       		.byte	0x50
- 647 0161 05       		.uleb128 0x5
- 648 0162 03       		.byte	0x3
- 649 0163 00000000 		.4byte	.LC0
- 650 0167 00       		.byte	0
- 651 0168 06       		.uleb128 0x6
- 652 0169 18000000 		.4byte	.LVL5
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 17
-
-
- 653 016d B9060000 		.4byte	0x6b9
- 654 0171 06       		.uleb128 0x6
- 655 0172 1C000000 		.4byte	.LVL6
- 656 0176 C4060000 		.4byte	0x6c4
- 657 017a 0D       		.uleb128 0xd
- 658 017b 22000000 		.4byte	.LVL7
- 659 017f CF060000 		.4byte	0x6cf
- 660 0183 8D010000 		.4byte	0x18d
- 661 0187 09       		.uleb128 0x9
- 662 0188 01       		.uleb128 0x1
- 663 0189 50       		.byte	0x50
- 664 018a 01       		.uleb128 0x1
- 665 018b 30       		.byte	0x30
- 666 018c 00       		.byte	0
- 667 018d 06       		.uleb128 0x6
- 668 018e 2A000000 		.4byte	.LVL8
- 669 0192 DA060000 		.4byte	0x6da
- 670 0196 0D       		.uleb128 0xd
- 671 0197 34000000 		.4byte	.LVL9
- 672 019b E5060000 		.4byte	0x6e5
- 673 019f AA010000 		.4byte	0x1aa
- 674 01a3 09       		.uleb128 0x9
- 675 01a4 01       		.uleb128 0x1
- 676 01a5 50       		.byte	0x50
- 677 01a6 02       		.uleb128 0x2
- 678 01a7 75       		.byte	0x75
- 679 01a8 00       		.sleb128 0
- 680 01a9 00       		.byte	0
- 681 01aa 0D       		.uleb128 0xd
- 682 01ab 3A000000 		.4byte	.LVL10
- 683 01af F0060000 		.4byte	0x6f0
- 684 01b3 BD010000 		.4byte	0x1bd
- 685 01b7 09       		.uleb128 0x9
- 686 01b8 01       		.uleb128 0x1
- 687 01b9 50       		.byte	0x50
- 688 01ba 01       		.uleb128 0x1
- 689 01bb 31       		.byte	0x31
- 690 01bc 00       		.byte	0
- 691 01bd 0D       		.uleb128 0xd
- 692 01be 42000000 		.4byte	.LVL11
- 693 01c2 8D060000 		.4byte	0x68d
- 694 01c6 D2010000 		.4byte	0x1d2
- 695 01ca 09       		.uleb128 0x9
- 696 01cb 01       		.uleb128 0x1
- 697 01cc 50       		.byte	0x50
- 698 01cd 03       		.uleb128 0x3
- 699 01ce 0A       		.byte	0xa
- 700 01cf F401     		.2byte	0x1f4
- 701 01d1 00       		.byte	0
- 702 01d2 0D       		.uleb128 0xd
- 703 01d3 48000000 		.4byte	.LVL12
- 704 01d7 F0060000 		.4byte	0x6f0
- 705 01db E5010000 		.4byte	0x1e5
- 706 01df 09       		.uleb128 0x9
- 707 01e0 01       		.uleb128 0x1
- 708 01e1 50       		.byte	0x50
- 709 01e2 01       		.uleb128 0x1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 18
-
-
- 710 01e3 32       		.byte	0x32
- 711 01e4 00       		.byte	0
- 712 01e5 0D       		.uleb128 0xd
- 713 01e6 50000000 		.4byte	.LVL13
- 714 01ea 8D060000 		.4byte	0x68d
- 715 01ee FA010000 		.4byte	0x1fa
- 716 01f2 09       		.uleb128 0x9
- 717 01f3 01       		.uleb128 0x1
- 718 01f4 50       		.byte	0x50
- 719 01f5 03       		.uleb128 0x3
- 720 01f6 0A       		.byte	0xa
- 721 01f7 F401     		.2byte	0x1f4
- 722 01f9 00       		.byte	0
- 723 01fa 0D       		.uleb128 0xd
- 724 01fb 56000000 		.4byte	.LVL14
- 725 01ff F0060000 		.4byte	0x6f0
- 726 0203 0D020000 		.4byte	0x20d
- 727 0207 09       		.uleb128 0x9
- 728 0208 01       		.uleb128 0x1
- 729 0209 50       		.byte	0x50
- 730 020a 01       		.uleb128 0x1
- 731 020b 33       		.byte	0x33
- 732 020c 00       		.byte	0
- 733 020d 0D       		.uleb128 0xd
- 734 020e 5E000000 		.4byte	.LVL15
- 735 0212 8D060000 		.4byte	0x68d
- 736 0216 22020000 		.4byte	0x222
- 737 021a 09       		.uleb128 0x9
- 738 021b 01       		.uleb128 0x1
- 739 021c 50       		.byte	0x50
- 740 021d 03       		.uleb128 0x3
- 741 021e 0A       		.byte	0xa
- 742 021f F401     		.2byte	0x1f4
- 743 0221 00       		.byte	0
- 744 0222 0D       		.uleb128 0xd
- 745 0223 64000000 		.4byte	.LVL16
- 746 0227 F0060000 		.4byte	0x6f0
- 747 022b 36020000 		.4byte	0x236
- 748 022f 09       		.uleb128 0x9
- 749 0230 01       		.uleb128 0x1
- 750 0231 50       		.byte	0x50
- 751 0232 02       		.uleb128 0x2
- 752 0233 75       		.byte	0x75
- 753 0234 00       		.sleb128 0
- 754 0235 00       		.byte	0
- 755 0236 0D       		.uleb128 0xd
- 756 0237 6C000000 		.4byte	.LVL17
- 757 023b 8D060000 		.4byte	0x68d
- 758 023f 4B020000 		.4byte	0x24b
- 759 0243 09       		.uleb128 0x9
- 760 0244 01       		.uleb128 0x1
- 761 0245 50       		.byte	0x50
- 762 0246 03       		.uleb128 0x3
- 763 0247 0A       		.byte	0xa
- 764 0248 F401     		.2byte	0x1f4
- 765 024a 00       		.byte	0
- 766 024b 06       		.uleb128 0x6
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 19
-
-
- 767 024c 70000000 		.4byte	.LVL18
- 768 0250 FB060000 		.4byte	0x6fb
- 769 0254 06       		.uleb128 0x6
- 770 0255 74000000 		.4byte	.LVL19
- 771 0259 06070000 		.4byte	0x706
- 772 025d 0D       		.uleb128 0xd
- 773 025e 7C000000 		.4byte	.LVL20
- 774 0262 11070000 		.4byte	0x711
- 775 0266 72020000 		.4byte	0x272
- 776 026a 09       		.uleb128 0x9
- 777 026b 01       		.uleb128 0x1
- 778 026c 50       		.byte	0x50
- 779 026d 03       		.uleb128 0x3
- 780 026e 0A       		.byte	0xa
- 781 026f E803     		.2byte	0x3e8
- 782 0271 00       		.byte	0
- 783 0272 0D       		.uleb128 0xd
- 784 0273 84000000 		.4byte	.LVL21
- 785 0277 8D060000 		.4byte	0x68d
- 786 027b 87020000 		.4byte	0x287
- 787 027f 09       		.uleb128 0x9
- 788 0280 01       		.uleb128 0x1
- 789 0281 50       		.byte	0x50
- 790 0282 03       		.uleb128 0x3
- 791 0283 0A       		.byte	0xa
- 792 0284 F401     		.2byte	0x1f4
- 793 0286 00       		.byte	0
- 794 0287 06       		.uleb128 0x6
- 795 0288 88000000 		.4byte	.LVL22
- 796 028c 1C070000 		.4byte	0x71c
- 797 0290 06       		.uleb128 0x6
- 798 0291 8C000000 		.4byte	.LVL23
- 799 0295 27070000 		.4byte	0x727
- 800 0299 0D       		.uleb128 0xd
- 801 029a 94000000 		.4byte	.LVL24
- 802 029e 32070000 		.4byte	0x732
- 803 02a2 AE020000 		.4byte	0x2ae
- 804 02a6 09       		.uleb128 0x9
- 805 02a7 01       		.uleb128 0x1
- 806 02a8 50       		.byte	0x50
- 807 02a9 03       		.uleb128 0x3
- 808 02aa 0A       		.byte	0xa
- 809 02ab 6004     		.2byte	0x460
- 810 02ad 00       		.byte	0
- 811 02ae 0D       		.uleb128 0xd
- 812 02af 9C000000 		.4byte	.LVL25
- 813 02b3 8D060000 		.4byte	0x68d
- 814 02b7 C3020000 		.4byte	0x2c3
- 815 02bb 09       		.uleb128 0x9
- 816 02bc 01       		.uleb128 0x1
- 817 02bd 50       		.byte	0x50
- 818 02be 03       		.uleb128 0x3
- 819 02bf 0A       		.byte	0xa
- 820 02c0 F401     		.2byte	0x1f4
- 821 02c2 00       		.byte	0
- 822 02c3 06       		.uleb128 0x6
- 823 02c4 A0000000 		.4byte	.LVL26
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 20
-
-
- 824 02c8 3D070000 		.4byte	0x73d
- 825 02cc 06       		.uleb128 0x6
- 826 02cd A4000000 		.4byte	.LVL27
- 827 02d1 48070000 		.4byte	0x748
- 828 02d5 06       		.uleb128 0x6
- 829 02d6 A8000000 		.4byte	.LVL28
- 830 02da 53070000 		.4byte	0x753
- 831 02de 06       		.uleb128 0x6
- 832 02df AC000000 		.4byte	.LVL29
- 833 02e3 5E070000 		.4byte	0x75e
- 834 02e7 06       		.uleb128 0x6
- 835 02e8 B0000000 		.4byte	.LVL30
- 836 02ec 69070000 		.4byte	0x769
- 837 02f0 06       		.uleb128 0x6
- 838 02f1 B4000000 		.4byte	.LVL31
- 839 02f5 74070000 		.4byte	0x774
- 840 02f9 06       		.uleb128 0x6
- 841 02fa B8000000 		.4byte	.LVL32
- 842 02fe 7F070000 		.4byte	0x77f
- 843 0302 06       		.uleb128 0x6
- 844 0303 C2000000 		.4byte	.LVL33
- 845 0307 8A070000 		.4byte	0x78a
- 846 030b 06       		.uleb128 0x6
- 847 030c C6000000 		.4byte	.LVL34
- 848 0310 95070000 		.4byte	0x795
- 849 0314 0D       		.uleb128 0xd
- 850 0315 CC000000 		.4byte	.LVL35
- 851 0319 A0070000 		.4byte	0x7a0
- 852 031d 2B030000 		.4byte	0x32b
- 853 0321 09       		.uleb128 0x9
- 854 0322 01       		.uleb128 0x1
- 855 0323 50       		.byte	0x50
- 856 0324 05       		.uleb128 0x5
- 857 0325 03       		.byte	0x3
- 858 0326 00000000 		.4byte	TIH
- 859 032a 00       		.byte	0
- 860 032b 0D       		.uleb128 0xd
- 861 032c D2000000 		.4byte	.LVL36
- 862 0330 AB070000 		.4byte	0x7ab
- 863 0334 42030000 		.4byte	0x342
- 864 0338 09       		.uleb128 0x9
- 865 0339 01       		.uleb128 0x1
- 866 033a 50       		.byte	0x50
- 867 033b 05       		.uleb128 0x5
- 868 033c 03       		.byte	0x3
- 869 033d 00000000 		.4byte	StartIH
- 870 0341 00       		.byte	0
- 871 0342 0D       		.uleb128 0xd
- 872 0343 DA000000 		.4byte	.LVL37
- 873 0347 AE060000 		.4byte	0x6ae
- 874 034b 59030000 		.4byte	0x359
- 875 034f 09       		.uleb128 0x9
- 876 0350 01       		.uleb128 0x1
- 877 0351 50       		.byte	0x50
- 878 0352 05       		.uleb128 0x5
- 879 0353 03       		.byte	0x3
- 880 0354 18000000 		.4byte	.LC1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 21
-
-
- 881 0358 00       		.byte	0
- 882 0359 06       		.uleb128 0x6
- 883 035a DE000000 		.4byte	.LVL38
- 884 035e B6070000 		.4byte	0x7b6
- 885 0362 06       		.uleb128 0x6
- 886 0363 E2000000 		.4byte	.LVL39
- 887 0367 B6070000 		.4byte	0x7b6
- 888 036b 06       		.uleb128 0x6
- 889 036c E6000000 		.4byte	.LVL40
- 890 0370 B6070000 		.4byte	0x7b6
- 891 0374 08       		.uleb128 0x8
- 892 0375 12010000 		.4byte	.LVL42
- 893 0379 C1070000 		.4byte	0x7c1
- 894 037d 09       		.uleb128 0x9
- 895 037e 01       		.uleb128 0x1
- 896 037f 50       		.byte	0x50
- 897 0380 02       		.uleb128 0x2
- 898 0381 08       		.byte	0x8
- 899 0382 82       		.byte	0x82
- 900 0383 09       		.uleb128 0x9
- 901 0384 01       		.uleb128 0x1
- 902 0385 51       		.byte	0x51
- 903 0386 01       		.uleb128 0x1
- 904 0387 31       		.byte	0x31
- 905 0388 09       		.uleb128 0x9
- 906 0389 01       		.uleb128 0x1
- 907 038a 52       		.byte	0x52
- 908 038b 01       		.uleb128 0x1
- 909 038c 34       		.byte	0x34
- 910 038d 09       		.uleb128 0x9
- 911 038e 01       		.uleb128 0x1
- 912 038f 53       		.byte	0x53
- 913 0390 02       		.uleb128 0x2
- 914 0391 75       		.byte	0x75
- 915 0392 00       		.sleb128 0
- 916 0393 09       		.uleb128 0x9
- 917 0394 02       		.uleb128 0x2
- 918 0395 7D       		.byte	0x7d
- 919 0396 00       		.sleb128 0
- 920 0397 02       		.uleb128 0x2
- 921 0398 08       		.byte	0x8
- 922 0399 AA       		.byte	0xaa
- 923 039a 00       		.byte	0
- 924 039b 00       		.byte	0
- 925 039c 0E       		.uleb128 0xe
- 926 039d 48060000 		.4byte	.LASF22
- 927 03a1 04       		.byte	0x4
- 928 03a2 1207     		.2byte	0x712
- 929 03a4 A8030000 		.4byte	0x3a8
- 930 03a8 0F       		.uleb128 0xf
- 931 03a9 76000000 		.4byte	0x76
- 932 03ad 10       		.uleb128 0x10
- 933 03ae 53020000 		.4byte	.LASF23
- 934 03b2 05       		.byte	0x5
- 935 03b3 1B       		.byte	0x1b
- 936 03b4 68000000 		.4byte	0x68
- 937 03b8 05       		.uleb128 0x5
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 22
-
-
- 938 03b9 03       		.byte	0x3
- 939 03ba 00000000 		.4byte	internal_orientation
- 940 03be 10       		.uleb128 0x10
- 941 03bf 50010000 		.4byte	.LASF24
- 942 03c3 06       		.byte	0x6
- 943 03c4 1D       		.byte	0x1d
- 944 03c5 68000000 		.4byte	0x68
- 945 03c9 05       		.uleb128 0x5
- 946 03ca 03       		.byte	0x3
- 947 03cb 00000000 		.4byte	driveStraightEnable
- 948 03cf 10       		.uleb128 0x10
- 949 03d0 E2020000 		.4byte	.LASF25
- 950 03d4 01       		.byte	0x1
- 951 03d5 2C       		.byte	0x2c
- 952 03d6 68000000 		.4byte	0x68
- 953 03da 05       		.uleb128 0x5
- 954 03db 03       		.byte	0x3
- 955 03dc 00000000 		.4byte	currentPuckRackScanningIndex
- 956 03e0 11       		.uleb128 0x11
- 957 03e1 68000000 		.4byte	0x68
- 958 03e5 F0030000 		.4byte	0x3f0
- 959 03e9 12       		.uleb128 0x12
- 960 03ea 9D000000 		.4byte	0x9d
- 961 03ee 04       		.byte	0x4
- 962 03ef 00       		.byte	0
- 963 03f0 10       		.uleb128 0x10
- 964 03f1 EC010000 		.4byte	.LASF26
- 965 03f5 01       		.byte	0x1
- 966 03f6 2A       		.byte	0x2a
- 967 03f7 E0030000 		.4byte	0x3e0
- 968 03fb 05       		.uleb128 0x5
- 969 03fc 03       		.byte	0x3
- 970 03fd 00000000 		.4byte	puckRackColours
- 971 0401 10       		.uleb128 0x10
- 972 0402 A4000000 		.4byte	.LASF27
- 973 0406 01       		.byte	0x1
- 974 0407 2D       		.byte	0x2d
- 975 0408 E0030000 		.4byte	0x3e0
- 976 040c 05       		.uleb128 0x5
- 977 040d 03       		.byte	0x3
- 978 040e 00000000 		.4byte	puckRackOffsetsFromWest
- 979 0412 10       		.uleb128 0x10
- 980 0413 65040000 		.4byte	.LASF28
- 981 0417 01       		.byte	0x1
- 982 0418 25       		.byte	0x25
- 983 0419 68000000 		.4byte	0x68
- 984 041d 05       		.uleb128 0x5
- 985 041e 03       		.byte	0x3
- 986 041f 00000000 		.4byte	sweeping
- 987 0423 11       		.uleb128 0x11
- 988 0424 81000000 		.4byte	0x81
- 989 0428 33040000 		.4byte	0x433
- 990 042c 12       		.uleb128 0x12
- 991 042d 9D000000 		.4byte	0x9d
- 992 0431 03       		.byte	0x3
- 993 0432 00       		.byte	0
- 994 0433 10       		.uleb128 0x10
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 23
-
-
- 995 0434 BB030000 		.4byte	.LASF29
- 996 0438 01       		.byte	0x1
- 997 0439 26       		.byte	0x26
- 998 043a 23040000 		.4byte	0x423
- 999 043e 05       		.uleb128 0x5
- 1000 043f 03       		.byte	0x3
- 1001 0440 00000000 		.4byte	block_edge_location
- 1002 0444 10       		.uleb128 0x10
- 1003 0445 BD020000 		.4byte	.LASF30
- 1004 0449 07       		.byte	0x7
- 1005 044a B2       		.byte	0xb2
- 1006 044b 81000000 		.4byte	0x81
- 1007 044f 05       		.uleb128 0x5
- 1008 0450 03       		.byte	0x3
- 1009 0451 00000000 		.4byte	puckPileLocation
- 1010 0455 10       		.uleb128 0x10
- 1011 0456 2D000000 		.4byte	.LASF31
- 1012 045a 06       		.byte	0x6
- 1013 045b 25       		.byte	0x25
- 1014 045c 33000000 		.4byte	0x33
- 1015 0460 05       		.uleb128 0x5
- 1016 0461 03       		.byte	0x3
- 1017 0462 00000000 		.4byte	drivingForwardFlag
- 1018 0466 10       		.uleb128 0x10
- 1019 0467 CE020000 		.4byte	.LASF32
- 1020 046b 06       		.byte	0x6
- 1021 046c 26       		.byte	0x26
- 1022 046d 33000000 		.4byte	0x33
- 1023 0471 05       		.uleb128 0x5
- 1024 0472 03       		.byte	0x3
- 1025 0473 00000000 		.4byte	drivingBackwardFlag
- 1026 0477 10       		.uleb128 0x10
- 1027 0478 13000000 		.4byte	.LASF33
- 1028 047c 06       		.byte	0x6
- 1029 047d 27       		.byte	0x27
- 1030 047e 33000000 		.4byte	0x33
- 1031 0482 05       		.uleb128 0x5
- 1032 0483 03       		.byte	0x3
- 1033 0484 00000000 		.4byte	turningLeftFlag
- 1034 0488 10       		.uleb128 0x10
- 1035 0489 D5010000 		.4byte	.LASF34
- 1036 048d 06       		.byte	0x6
- 1037 048e 28       		.byte	0x28
- 1038 048f 33000000 		.4byte	0x33
- 1039 0493 05       		.uleb128 0x5
- 1040 0494 03       		.byte	0x3
- 1041 0495 00000000 		.4byte	turningRightFlag
- 1042 0499 10       		.uleb128 0x10
- 1043 049a F7060000 		.4byte	.LASF35
- 1044 049e 06       		.byte	0x6
- 1045 049f 2B       		.byte	0x2b
- 1046 04a0 68000000 		.4byte	0x68
- 1047 04a4 05       		.uleb128 0x5
- 1048 04a5 03       		.byte	0x3
- 1049 04a6 00000000 		.4byte	initialisation
- 1050 04aa 11       		.uleb128 0x11
- 1051 04ab 8F000000 		.4byte	0x8f
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 24
-
-
- 1052 04af BA040000 		.4byte	0x4ba
- 1053 04b3 12       		.uleb128 0x12
- 1054 04b4 9D000000 		.4byte	0x9d
- 1055 04b8 1F       		.byte	0x1f
- 1056 04b9 00       		.byte	0
- 1057 04ba 10       		.uleb128 0x10
- 1058 04bb 1A060000 		.4byte	.LASF36
- 1059 04bf 01       		.byte	0x1
- 1060 04c0 20       		.byte	0x20
- 1061 04c1 AA040000 		.4byte	0x4aa
- 1062 04c5 05       		.uleb128 0x5
- 1063 04c6 03       		.byte	0x3
- 1064 04c7 00000000 		.4byte	output
- 1065 04cb 13       		.uleb128 0x13
- 1066 04cc D0000000 		.4byte	.LASF37
- 1067 04d0 07       		.byte	0x7
- 1068 04d1 C3       		.byte	0xc3
- 1069 04d2 E0030000 		.4byte	0x3e0
- 1070 04d6 10       		.uleb128 0x10
- 1071 04d7 3C030000 		.4byte	.LASF38
- 1072 04db 01       		.byte	0x1
- 1073 04dc 51       		.byte	0x51
- 1074 04dd 68000000 		.4byte	0x68
- 1075 04e1 05       		.uleb128 0x5
- 1076 04e2 03       		.byte	0x3
- 1077 04e3 00000000 		.4byte	colour_flag
- 1078 04e7 10       		.uleb128 0x10
- 1079 04e8 1B030000 		.4byte	.LASF39
- 1080 04ec 01       		.byte	0x1
- 1081 04ed 23       		.byte	0x23
- 1082 04ee 68000000 		.4byte	0x68
- 1083 04f2 05       		.uleb128 0x5
- 1084 04f3 03       		.byte	0x3
- 1085 04f4 00000000 		.4byte	state
- 1086 04f8 10       		.uleb128 0x10
- 1087 04f9 11050000 		.4byte	.LASF40
- 1088 04fd 01       		.byte	0x1
- 1089 04fe 57       		.byte	0x57
- 1090 04ff 68000000 		.4byte	0x68
- 1091 0503 05       		.uleb128 0x5
- 1092 0504 03       		.byte	0x3
- 1093 0505 00000000 		.4byte	moving
- 1094 0509 10       		.uleb128 0x10
- 1095 050a E8000000 		.4byte	.LASF41
- 1096 050e 06       		.byte	0x6
- 1097 050f 2D       		.byte	0x2d
- 1098 0510 68000000 		.4byte	0x68
- 1099 0514 05       		.uleb128 0x5
- 1100 0515 03       		.byte	0x3
- 1101 0516 00000000 		.4byte	ultrasonic_flag
- 1102 051a 11       		.uleb128 0x11
- 1103 051b 68000000 		.4byte	0x68
- 1104 051f 2A050000 		.4byte	0x52a
- 1105 0523 12       		.uleb128 0x12
- 1106 0524 9D000000 		.4byte	0x9d
- 1107 0528 02       		.byte	0x2
- 1108 0529 00       		.byte	0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 25
-
-
- 1109 052a 10       		.uleb128 0x10
- 1110 052b 97050000 		.4byte	.LASF42
- 1111 052f 01       		.byte	0x1
- 1112 0530 2B       		.byte	0x2b
- 1113 0531 1A050000 		.4byte	0x51a
- 1114 0535 05       		.uleb128 0x5
- 1115 0536 03       		.byte	0x3
- 1116 0537 00000000 		.4byte	puckConstructionPlan
- 1117 053b 10       		.uleb128 0x10
- 1118 053c 2C040000 		.4byte	.LASF43
- 1119 0540 01       		.byte	0x1
- 1120 0541 5B       		.byte	0x5b
- 1121 0542 68000000 		.4byte	0x68
- 1122 0546 05       		.uleb128 0x5
- 1123 0547 03       		.byte	0x3
- 1124 0548 00000000 		.4byte	current_stage
- 1125 054c 10       		.uleb128 0x10
- 1126 054d F8040000 		.4byte	.LASF44
- 1127 0551 01       		.byte	0x1
- 1128 0552 52       		.byte	0x52
- 1129 0553 68000000 		.4byte	0x68
- 1130 0557 05       		.uleb128 0x5
- 1131 0558 03       		.byte	0x3
- 1132 0559 00000000 		.4byte	colour_sensing_algorithm
- 1133 055d 10       		.uleb128 0x10
- 1134 055e 9A020000 		.4byte	.LASF45
- 1135 0562 01       		.byte	0x1
- 1136 0563 45       		.byte	0x45
- 1137 0564 68000000 		.4byte	0x68
- 1138 0568 05       		.uleb128 0x5
- 1139 0569 03       		.byte	0x3
- 1140 056a 00000000 		.4byte	safety_override
- 1141 056e 10       		.uleb128 0x10
- 1142 056f 79010000 		.4byte	.LASF46
- 1143 0573 01       		.byte	0x1
- 1144 0574 24       		.byte	0x24
- 1145 0575 68000000 		.4byte	0x68
- 1146 0579 05       		.uleb128 0x5
- 1147 057a 03       		.byte	0x3
- 1148 057b 00000000 		.4byte	running
- 1149 057f 10       		.uleb128 0x10
- 1150 0580 64010000 		.4byte	.LASF47
- 1151 0584 01       		.byte	0x1
- 1152 0585 29       		.byte	0x29
- 1153 0586 68000000 		.4byte	0x68
- 1154 058a 05       		.uleb128 0x5
- 1155 058b 03       		.byte	0x3
- 1156 058c 00000000 		.4byte	currentPuckStackSize
- 1157 0590 10       		.uleb128 0x10
- 1158 0591 0D010000 		.4byte	.LASF48
- 1159 0595 01       		.byte	0x1
- 1160 0596 33       		.byte	0x33
- 1161 0597 81000000 		.4byte	0x81
- 1162 059b 05       		.uleb128 0x5
- 1163 059c 03       		.byte	0x3
- 1164 059d 00000000 		.4byte	horizontalPuckGrid
- 1165 05a1 10       		.uleb128 0x10
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 26
-
-
- 1166 05a2 7B000000 		.4byte	.LASF49
- 1167 05a6 01       		.byte	0x1
- 1168 05a7 37       		.byte	0x37
- 1169 05a8 68000000 		.4byte	0x68
- 1170 05ac 05       		.uleb128 0x5
- 1171 05ad 03       		.byte	0x3
- 1172 05ae 00000000 		.4byte	beginNavigation
- 1173 05b2 10       		.uleb128 0x10
- 1174 05b3 EB060000 		.4byte	.LASF50
- 1175 05b7 01       		.byte	0x1
- 1176 05b8 38       		.byte	0x38
- 1177 05b9 68000000 		.4byte	0x68
- 1178 05bd 05       		.uleb128 0x5
- 1179 05be 03       		.byte	0x3
- 1180 05bf 00000000 		.4byte	pathToPucks
- 1181 05c3 10       		.uleb128 0x10
- 1182 05c4 26050000 		.4byte	.LASF51
- 1183 05c8 01       		.byte	0x1
- 1184 05c9 39       		.byte	0x39
- 1185 05ca 68000000 		.4byte	0x68
- 1186 05ce 05       		.uleb128 0x5
- 1187 05cf 03       		.byte	0x3
- 1188 05d0 00000000 		.4byte	pathPastBlock
- 1189 05d4 11       		.uleb128 0x11
- 1190 05d5 68000000 		.4byte	0x68
- 1191 05d9 E4050000 		.4byte	0x5e4
- 1192 05dd 12       		.uleb128 0x12
- 1193 05de 9D000000 		.4byte	0x9d
- 1194 05e2 03       		.byte	0x3
- 1195 05e3 00       		.byte	0
- 1196 05e4 10       		.uleb128 0x10
- 1197 05e5 81010000 		.4byte	.LASF52
- 1198 05e9 01       		.byte	0x1
- 1199 05ea 3A       		.byte	0x3a
- 1200 05eb D4050000 		.4byte	0x5d4
- 1201 05ef 05       		.uleb128 0x5
- 1202 05f0 03       		.byte	0x3
- 1203 05f1 00000000 		.4byte	block_location
- 1204 05f5 10       		.uleb128 0x10
- 1205 05f6 78030000 		.4byte	.LASF53
- 1206 05fa 01       		.byte	0x1
- 1207 05fb 3F       		.byte	0x3f
- 1208 05fc D4050000 		.4byte	0x5d4
- 1209 0600 05       		.uleb128 0x5
- 1210 0601 03       		.byte	0x3
- 1211 0602 00000000 		.4byte	puck_location
- 1212 0606 10       		.uleb128 0x10
- 1213 0607 AA020000 		.4byte	.LASF54
- 1214 060b 01       		.byte	0x1
- 1215 060c 49       		.byte	0x49
- 1216 060d 33000000 		.4byte	0x33
- 1217 0611 05       		.uleb128 0x5
- 1218 0612 03       		.byte	0x3
- 1219 0613 00000000 		.4byte	blockEastClearance
- 1220 0617 10       		.uleb128 0x10
- 1221 0618 CE050000 		.4byte	.LASF55
- 1222 061c 01       		.byte	0x1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 27
-
-
- 1223 061d 4A       		.byte	0x4a
- 1224 061e 33000000 		.4byte	0x33
- 1225 0622 05       		.uleb128 0x5
- 1226 0623 03       		.byte	0x3
- 1227 0624 00000000 		.4byte	blockWestClearance
- 1228 0628 10       		.uleb128 0x10
- 1229 0629 F5050000 		.4byte	.LASF56
- 1230 062d 01       		.byte	0x1
- 1231 062e 4B       		.byte	0x4b
- 1232 062f 33000000 		.4byte	0x33
- 1233 0633 05       		.uleb128 0x5
- 1234 0634 03       		.byte	0x3
- 1235 0635 00000000 		.4byte	puckEastClearance
- 1236 0639 10       		.uleb128 0x10
- 1237 063a A8010000 		.4byte	.LASF57
- 1238 063e 01       		.byte	0x1
- 1239 063f 4C       		.byte	0x4c
- 1240 0640 33000000 		.4byte	0x33
- 1241 0644 05       		.uleb128 0x5
- 1242 0645 03       		.byte	0x3
- 1243 0646 00000000 		.4byte	puckWestClearance
- 1244 064a 10       		.uleb128 0x10
- 1245 064b 13040000 		.4byte	.LASF58
- 1246 064f 01       		.byte	0x1
- 1247 0650 50       		.byte	0x50
- 1248 0651 68000000 		.4byte	0x68
- 1249 0655 05       		.uleb128 0x5
- 1250 0656 03       		.byte	0x3
- 1251 0657 00000000 		.4byte	idac_value
- 1252 065b 10       		.uleb128 0x10
- 1253 065c E5040000 		.4byte	.LASF59
- 1254 0660 01       		.byte	0x1
- 1255 0661 59       		.byte	0x59
- 1256 0662 6C060000 		.4byte	0x66c
- 1257 0666 05       		.uleb128 0x5
- 1258 0667 03       		.byte	0x3
- 1259 0668 00000000 		.4byte	PLAN_SCAN_VERTICAL
- 1260 066c 14       		.uleb128 0x14
- 1261 066d 68000000 		.4byte	0x68
- 1262 0671 10       		.uleb128 0x10
- 1263 0672 2F060000 		.4byte	.LASF60
- 1264 0676 01       		.byte	0x1
- 1265 0677 5F       		.byte	0x5f
- 1266 0678 68000000 		.4byte	0x68
- 1267 067c 05       		.uleb128 0x5
- 1268 067d 03       		.byte	0x3
- 1269 067e 00000000 		.4byte	distance_returned_global
- 1270 0682 15       		.uleb128 0x15
- 1271 0683 BA010000 		.4byte	.LASF61
- 1272 0687 BA010000 		.4byte	.LASF61
- 1273 068b 06       		.byte	0x6
- 1274 068c 19       		.byte	0x19
- 1275 068d 15       		.uleb128 0x15
- 1276 068e E3060000 		.4byte	.LASF62
- 1277 0692 E3060000 		.4byte	.LASF62
- 1278 0696 08       		.byte	0x8
- 1279 0697 76       		.byte	0x76
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 28
-
-
- 1280 0698 15       		.uleb128 0x15
- 1281 0699 59040000 		.4byte	.LASF63
- 1282 069d 59040000 		.4byte	.LASF63
- 1283 06a1 09       		.byte	0x9
- 1284 06a2 3D       		.byte	0x3d
- 1285 06a3 15       		.uleb128 0x15
- 1286 06a4 21030000 		.4byte	.LASF64
- 1287 06a8 21030000 		.4byte	.LASF64
- 1288 06ac 0A       		.byte	0xa
- 1289 06ad 54       		.byte	0x54
- 1290 06ae 15       		.uleb128 0x15
- 1291 06af 86050000 		.4byte	.LASF65
- 1292 06b3 86050000 		.4byte	.LASF65
- 1293 06b7 0A       		.byte	0xa
- 1294 06b8 8B       		.byte	0x8b
- 1295 06b9 15       		.uleb128 0x15
- 1296 06ba 40020000 		.4byte	.LASF66
- 1297 06be 40020000 		.4byte	.LASF66
- 1298 06c2 0B       		.byte	0xb
- 1299 06c3 3A       		.byte	0x3a
- 1300 06c4 15       		.uleb128 0x15
- 1301 06c5 1E040000 		.4byte	.LASF67
- 1302 06c9 1E040000 		.4byte	.LASF67
- 1303 06cd 0C       		.byte	0xc
- 1304 06ce 3C       		.byte	0x3c
- 1305 06cf 15       		.uleb128 0x15
- 1306 06d0 9E030000 		.4byte	.LASF68
- 1307 06d4 9E030000 		.4byte	.LASF68
- 1308 06d8 0C       		.byte	0xc
- 1309 06d9 40       		.byte	0x40
- 1310 06da 15       		.uleb128 0x15
- 1311 06db 47050000 		.4byte	.LASF69
- 1312 06df 47050000 		.4byte	.LASF69
- 1313 06e3 0C       		.byte	0xc
- 1314 06e4 41       		.byte	0x41
- 1315 06e5 15       		.uleb128 0x15
- 1316 06e6 81020000 		.4byte	.LASF70
- 1317 06ea 81020000 		.4byte	.LASF70
- 1318 06ee 0D       		.byte	0xd
- 1319 06ef 2F       		.byte	0x2f
- 1320 06f0 15       		.uleb128 0x15
- 1321 06f1 E6030000 		.4byte	.LASF71
- 1322 06f5 E6030000 		.4byte	.LASF71
- 1323 06f9 0E       		.byte	0xe
- 1324 06fa 2F       		.byte	0x2f
- 1325 06fb 15       		.uleb128 0x15
- 1326 06fc 86030000 		.4byte	.LASF72
- 1327 0700 86030000 		.4byte	.LASF72
- 1328 0704 0F       		.byte	0xf
- 1329 0705 19       		.byte	0x19
- 1330 0706 15       		.uleb128 0x15
- 1331 0707 3B010000 		.4byte	.LASF73
- 1332 070b 3B010000 		.4byte	.LASF73
- 1333 070f 10       		.byte	0x10
- 1334 0710 92       		.byte	0x92
- 1335 0711 15       		.uleb128 0x15
- 1336 0712 FF020000 		.4byte	.LASF74
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 29
-
-
- 1337 0716 FF020000 		.4byte	.LASF74
- 1338 071a 10       		.byte	0x10
- 1339 071b C3       		.byte	0xc3
- 1340 071c 15       		.uleb128 0x15
- 1341 071d F8000000 		.4byte	.LASF75
- 1342 0721 F8000000 		.4byte	.LASF75
- 1343 0725 10       		.byte	0x10
- 1344 0726 DC       		.byte	0xdc
- 1345 0727 15       		.uleb128 0x15
- 1346 0728 90010000 		.4byte	.LASF76
- 1347 072c 90010000 		.4byte	.LASF76
- 1348 0730 11       		.byte	0x11
- 1349 0731 92       		.byte	0x92
- 1350 0732 15       		.uleb128 0x15
- 1351 0733 3A040000 		.4byte	.LASF77
- 1352 0737 3A040000 		.4byte	.LASF77
- 1353 073b 11       		.byte	0x11
- 1354 073c C3       		.byte	0xc3
- 1355 073d 15       		.uleb128 0x15
- 1356 073e AC050000 		.4byte	.LASF78
- 1357 0742 AC050000 		.4byte	.LASF78
- 1358 0746 11       		.byte	0x11
- 1359 0747 DC       		.byte	0xdc
- 1360 0748 15       		.uleb128 0x15
- 1361 0749 60030000 		.4byte	.LASF79
- 1362 074d 60030000 		.4byte	.LASF79
- 1363 0751 12       		.byte	0x12
- 1364 0752 92       		.byte	0x92
- 1365 0753 15       		.uleb128 0x15
- 1366 0754 48030000 		.4byte	.LASF80
- 1367 0758 48030000 		.4byte	.LASF80
- 1368 075c 12       		.byte	0x12
- 1369 075d DC       		.byte	0xdc
- 1370 075e 15       		.uleb128 0x15
- 1371 075f 68020000 		.4byte	.LASF81
- 1372 0763 68020000 		.4byte	.LASF81
- 1373 0767 13       		.byte	0x13
- 1374 0768 92       		.byte	0x92
- 1375 0769 15       		.uleb128 0x15
- 1376 076a 27020000 		.4byte	.LASF82
- 1377 076e 27020000 		.4byte	.LASF82
- 1378 0772 13       		.byte	0x13
- 1379 0773 DC       		.byte	0xdc
- 1380 0774 15       		.uleb128 0x15
- 1381 0775 8B000000 		.4byte	.LASF83
- 1382 0779 8B000000 		.4byte	.LASF83
- 1383 077d 14       		.byte	0x14
- 1384 077e 48       		.byte	0x48
- 1385 077f 15       		.uleb128 0x15
- 1386 0780 4E000000 		.4byte	.LASF84
- 1387 0784 4E000000 		.4byte	.LASF84
- 1388 0788 15       		.byte	0x15
- 1389 0789 48       		.byte	0x48
- 1390 078a 15       		.uleb128 0x15
- 1391 078b 18050000 		.4byte	.LASF85
- 1392 078f 18050000 		.4byte	.LASF85
- 1393 0793 16       		.byte	0x16
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 30
-
-
- 1394 0794 5A       		.byte	0x5a
- 1395 0795 15       		.uleb128 0x15
- 1396 0796 20010000 		.4byte	.LASF86
- 1397 079a 20010000 		.4byte	.LASF86
- 1398 079e 16       		.byte	0x16
- 1399 079f 5E       		.byte	0x5e
- 1400 07a0 15       		.uleb128 0x15
- 1401 07a1 40000000 		.4byte	.LASF87
- 1402 07a5 40000000 		.4byte	.LASF87
- 1403 07a9 17       		.byte	0x17
- 1404 07aa 18       		.byte	0x18
- 1405 07ab 15       		.uleb128 0x15
- 1406 07ac 71050000 		.4byte	.LASF88
- 1407 07b0 71050000 		.4byte	.LASF88
- 1408 07b4 18       		.byte	0x18
- 1409 07b5 18       		.byte	0x18
- 1410 07b6 15       		.uleb128 0x15
- 1411 07b7 E1050000 		.4byte	.LASF89
- 1412 07bb E1050000 		.4byte	.LASF89
- 1413 07bf 06       		.byte	0x6
- 1414 07c0 1A       		.byte	0x1a
- 1415 07c1 15       		.uleb128 0x15
- 1416 07c2 07060000 		.4byte	.LASF90
- 1417 07c6 07060000 		.4byte	.LASF90
- 1418 07ca 05       		.byte	0x5
- 1419 07cb 12       		.byte	0x12
- 1420 07cc 00       		.byte	0
- 1421              		.section	.debug_abbrev,"",%progbits
- 1422              	.Ldebug_abbrev0:
- 1423 0000 01       		.uleb128 0x1
- 1424 0001 11       		.uleb128 0x11
- 1425 0002 01       		.byte	0x1
- 1426 0003 25       		.uleb128 0x25
- 1427 0004 0E       		.uleb128 0xe
- 1428 0005 13       		.uleb128 0x13
- 1429 0006 0B       		.uleb128 0xb
- 1430 0007 03       		.uleb128 0x3
- 1431 0008 0E       		.uleb128 0xe
- 1432 0009 1B       		.uleb128 0x1b
- 1433 000a 0E       		.uleb128 0xe
- 1434 000b 55       		.uleb128 0x55
- 1435 000c 17       		.uleb128 0x17
- 1436 000d 11       		.uleb128 0x11
- 1437 000e 01       		.uleb128 0x1
- 1438 000f 10       		.uleb128 0x10
- 1439 0010 17       		.uleb128 0x17
- 1440 0011 00       		.byte	0
- 1441 0012 00       		.byte	0
- 1442 0013 02       		.uleb128 0x2
- 1443 0014 24       		.uleb128 0x24
- 1444 0015 00       		.byte	0
- 1445 0016 0B       		.uleb128 0xb
- 1446 0017 0B       		.uleb128 0xb
- 1447 0018 3E       		.uleb128 0x3e
- 1448 0019 0B       		.uleb128 0xb
- 1449 001a 03       		.uleb128 0x3
- 1450 001b 0E       		.uleb128 0xe
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 31
-
-
- 1451 001c 00       		.byte	0
- 1452 001d 00       		.byte	0
- 1453 001e 03       		.uleb128 0x3
- 1454 001f 16       		.uleb128 0x16
- 1455 0020 00       		.byte	0
- 1456 0021 03       		.uleb128 0x3
- 1457 0022 0E       		.uleb128 0xe
- 1458 0023 3A       		.uleb128 0x3a
- 1459 0024 0B       		.uleb128 0xb
- 1460 0025 3B       		.uleb128 0x3b
- 1461 0026 0B       		.uleb128 0xb
- 1462 0027 49       		.uleb128 0x49
- 1463 0028 13       		.uleb128 0x13
- 1464 0029 00       		.byte	0
- 1465 002a 00       		.byte	0
- 1466 002b 04       		.uleb128 0x4
- 1467 002c 24       		.uleb128 0x24
- 1468 002d 00       		.byte	0
- 1469 002e 0B       		.uleb128 0xb
- 1470 002f 0B       		.uleb128 0xb
- 1471 0030 3E       		.uleb128 0x3e
- 1472 0031 0B       		.uleb128 0xb
- 1473 0032 03       		.uleb128 0x3
- 1474 0033 08       		.uleb128 0x8
- 1475 0034 00       		.byte	0
- 1476 0035 00       		.byte	0
- 1477 0036 05       		.uleb128 0x5
- 1478 0037 2E       		.uleb128 0x2e
- 1479 0038 01       		.byte	0x1
- 1480 0039 3F       		.uleb128 0x3f
- 1481 003a 19       		.uleb128 0x19
- 1482 003b 03       		.uleb128 0x3
- 1483 003c 08       		.uleb128 0x8
- 1484 003d 3A       		.uleb128 0x3a
- 1485 003e 0B       		.uleb128 0xb
- 1486 003f 3B       		.uleb128 0x3b
- 1487 0040 0B       		.uleb128 0xb
- 1488 0041 27       		.uleb128 0x27
- 1489 0042 19       		.uleb128 0x19
- 1490 0043 11       		.uleb128 0x11
- 1491 0044 01       		.uleb128 0x1
- 1492 0045 12       		.uleb128 0x12
- 1493 0046 06       		.uleb128 0x6
- 1494 0047 40       		.uleb128 0x40
- 1495 0048 18       		.uleb128 0x18
- 1496 0049 9742     		.uleb128 0x2117
- 1497 004b 19       		.uleb128 0x19
- 1498 004c 01       		.uleb128 0x1
- 1499 004d 13       		.uleb128 0x13
- 1500 004e 00       		.byte	0
- 1501 004f 00       		.byte	0
- 1502 0050 06       		.uleb128 0x6
- 1503 0051 898201   		.uleb128 0x4109
- 1504 0054 00       		.byte	0
- 1505 0055 11       		.uleb128 0x11
- 1506 0056 01       		.uleb128 0x1
- 1507 0057 31       		.uleb128 0x31
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 32
-
-
- 1508 0058 13       		.uleb128 0x13
- 1509 0059 00       		.byte	0
- 1510 005a 00       		.byte	0
- 1511 005b 07       		.uleb128 0x7
- 1512 005c 2E       		.uleb128 0x2e
- 1513 005d 01       		.byte	0x1
- 1514 005e 3F       		.uleb128 0x3f
- 1515 005f 19       		.uleb128 0x19
- 1516 0060 03       		.uleb128 0x3
- 1517 0061 0E       		.uleb128 0xe
- 1518 0062 3A       		.uleb128 0x3a
- 1519 0063 0B       		.uleb128 0xb
- 1520 0064 3B       		.uleb128 0x3b
- 1521 0065 0B       		.uleb128 0xb
- 1522 0066 27       		.uleb128 0x27
- 1523 0067 19       		.uleb128 0x19
- 1524 0068 11       		.uleb128 0x11
- 1525 0069 01       		.uleb128 0x1
- 1526 006a 12       		.uleb128 0x12
- 1527 006b 06       		.uleb128 0x6
- 1528 006c 40       		.uleb128 0x40
- 1529 006d 18       		.uleb128 0x18
- 1530 006e 9742     		.uleb128 0x2117
- 1531 0070 19       		.uleb128 0x19
- 1532 0071 01       		.uleb128 0x1
- 1533 0072 13       		.uleb128 0x13
- 1534 0073 00       		.byte	0
- 1535 0074 00       		.byte	0
- 1536 0075 08       		.uleb128 0x8
- 1537 0076 898201   		.uleb128 0x4109
- 1538 0079 01       		.byte	0x1
- 1539 007a 11       		.uleb128 0x11
- 1540 007b 01       		.uleb128 0x1
- 1541 007c 31       		.uleb128 0x31
- 1542 007d 13       		.uleb128 0x13
- 1543 007e 00       		.byte	0
- 1544 007f 00       		.byte	0
- 1545 0080 09       		.uleb128 0x9
- 1546 0081 8A8201   		.uleb128 0x410a
- 1547 0084 00       		.byte	0
- 1548 0085 02       		.uleb128 0x2
- 1549 0086 18       		.uleb128 0x18
- 1550 0087 9142     		.uleb128 0x2111
- 1551 0089 18       		.uleb128 0x18
- 1552 008a 00       		.byte	0
- 1553 008b 00       		.byte	0
- 1554 008c 0A       		.uleb128 0xa
- 1555 008d 2E       		.uleb128 0x2e
- 1556 008e 01       		.byte	0x1
- 1557 008f 3F       		.uleb128 0x3f
- 1558 0090 19       		.uleb128 0x19
- 1559 0091 03       		.uleb128 0x3
- 1560 0092 0E       		.uleb128 0xe
- 1561 0093 3A       		.uleb128 0x3a
- 1562 0094 0B       		.uleb128 0xb
- 1563 0095 3B       		.uleb128 0x3b
- 1564 0096 0B       		.uleb128 0xb
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 33
-
-
- 1565 0097 27       		.uleb128 0x27
- 1566 0098 19       		.uleb128 0x19
- 1567 0099 49       		.uleb128 0x49
- 1568 009a 13       		.uleb128 0x13
- 1569 009b 8701     		.uleb128 0x87
- 1570 009d 19       		.uleb128 0x19
- 1571 009e 11       		.uleb128 0x11
- 1572 009f 01       		.uleb128 0x1
- 1573 00a0 12       		.uleb128 0x12
- 1574 00a1 06       		.uleb128 0x6
- 1575 00a2 40       		.uleb128 0x40
- 1576 00a3 18       		.uleb128 0x18
- 1577 00a4 9742     		.uleb128 0x2117
- 1578 00a6 19       		.uleb128 0x19
- 1579 00a7 01       		.uleb128 0x1
- 1580 00a8 13       		.uleb128 0x13
- 1581 00a9 00       		.byte	0
- 1582 00aa 00       		.byte	0
- 1583 00ab 0B       		.uleb128 0xb
- 1584 00ac 34       		.uleb128 0x34
- 1585 00ad 00       		.byte	0
- 1586 00ae 03       		.uleb128 0x3
- 1587 00af 0E       		.uleb128 0xe
- 1588 00b0 3A       		.uleb128 0x3a
- 1589 00b1 0B       		.uleb128 0xb
- 1590 00b2 3B       		.uleb128 0x3b
- 1591 00b3 0B       		.uleb128 0xb
- 1592 00b4 49       		.uleb128 0x49
- 1593 00b5 13       		.uleb128 0x13
- 1594 00b6 1C       		.uleb128 0x1c
- 1595 00b7 0B       		.uleb128 0xb
- 1596 00b8 00       		.byte	0
- 1597 00b9 00       		.byte	0
- 1598 00ba 0C       		.uleb128 0xc
- 1599 00bb 34       		.uleb128 0x34
- 1600 00bc 00       		.byte	0
- 1601 00bd 03       		.uleb128 0x3
- 1602 00be 0E       		.uleb128 0xe
- 1603 00bf 3A       		.uleb128 0x3a
- 1604 00c0 0B       		.uleb128 0xb
- 1605 00c1 3B       		.uleb128 0x3b
- 1606 00c2 0B       		.uleb128 0xb
- 1607 00c3 49       		.uleb128 0x49
- 1608 00c4 13       		.uleb128 0x13
- 1609 00c5 1C       		.uleb128 0x1c
- 1610 00c6 05       		.uleb128 0x5
- 1611 00c7 00       		.byte	0
- 1612 00c8 00       		.byte	0
- 1613 00c9 0D       		.uleb128 0xd
- 1614 00ca 898201   		.uleb128 0x4109
- 1615 00cd 01       		.byte	0x1
- 1616 00ce 11       		.uleb128 0x11
- 1617 00cf 01       		.uleb128 0x1
- 1618 00d0 31       		.uleb128 0x31
- 1619 00d1 13       		.uleb128 0x13
- 1620 00d2 01       		.uleb128 0x1
- 1621 00d3 13       		.uleb128 0x13
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 34
-
-
- 1622 00d4 00       		.byte	0
- 1623 00d5 00       		.byte	0
- 1624 00d6 0E       		.uleb128 0xe
- 1625 00d7 34       		.uleb128 0x34
- 1626 00d8 00       		.byte	0
- 1627 00d9 03       		.uleb128 0x3
- 1628 00da 0E       		.uleb128 0xe
- 1629 00db 3A       		.uleb128 0x3a
- 1630 00dc 0B       		.uleb128 0xb
- 1631 00dd 3B       		.uleb128 0x3b
- 1632 00de 05       		.uleb128 0x5
- 1633 00df 49       		.uleb128 0x49
- 1634 00e0 13       		.uleb128 0x13
- 1635 00e1 3F       		.uleb128 0x3f
- 1636 00e2 19       		.uleb128 0x19
- 1637 00e3 3C       		.uleb128 0x3c
- 1638 00e4 19       		.uleb128 0x19
- 1639 00e5 00       		.byte	0
- 1640 00e6 00       		.byte	0
- 1641 00e7 0F       		.uleb128 0xf
- 1642 00e8 35       		.uleb128 0x35
- 1643 00e9 00       		.byte	0
- 1644 00ea 49       		.uleb128 0x49
- 1645 00eb 13       		.uleb128 0x13
- 1646 00ec 00       		.byte	0
- 1647 00ed 00       		.byte	0
- 1648 00ee 10       		.uleb128 0x10
- 1649 00ef 34       		.uleb128 0x34
- 1650 00f0 00       		.byte	0
- 1651 00f1 03       		.uleb128 0x3
- 1652 00f2 0E       		.uleb128 0xe
- 1653 00f3 3A       		.uleb128 0x3a
- 1654 00f4 0B       		.uleb128 0xb
- 1655 00f5 3B       		.uleb128 0x3b
- 1656 00f6 0B       		.uleb128 0xb
- 1657 00f7 49       		.uleb128 0x49
- 1658 00f8 13       		.uleb128 0x13
- 1659 00f9 3F       		.uleb128 0x3f
- 1660 00fa 19       		.uleb128 0x19
- 1661 00fb 02       		.uleb128 0x2
- 1662 00fc 18       		.uleb128 0x18
- 1663 00fd 00       		.byte	0
- 1664 00fe 00       		.byte	0
- 1665 00ff 11       		.uleb128 0x11
- 1666 0100 01       		.uleb128 0x1
- 1667 0101 01       		.byte	0x1
- 1668 0102 49       		.uleb128 0x49
- 1669 0103 13       		.uleb128 0x13
- 1670 0104 01       		.uleb128 0x1
- 1671 0105 13       		.uleb128 0x13
- 1672 0106 00       		.byte	0
- 1673 0107 00       		.byte	0
- 1674 0108 12       		.uleb128 0x12
- 1675 0109 21       		.uleb128 0x21
- 1676 010a 00       		.byte	0
- 1677 010b 49       		.uleb128 0x49
- 1678 010c 13       		.uleb128 0x13
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 35
-
-
- 1679 010d 2F       		.uleb128 0x2f
- 1680 010e 0B       		.uleb128 0xb
- 1681 010f 00       		.byte	0
- 1682 0110 00       		.byte	0
- 1683 0111 13       		.uleb128 0x13
- 1684 0112 34       		.uleb128 0x34
- 1685 0113 00       		.byte	0
- 1686 0114 03       		.uleb128 0x3
- 1687 0115 0E       		.uleb128 0xe
- 1688 0116 3A       		.uleb128 0x3a
- 1689 0117 0B       		.uleb128 0xb
- 1690 0118 3B       		.uleb128 0x3b
- 1691 0119 0B       		.uleb128 0xb
- 1692 011a 49       		.uleb128 0x49
- 1693 011b 13       		.uleb128 0x13
- 1694 011c 3F       		.uleb128 0x3f
- 1695 011d 19       		.uleb128 0x19
- 1696 011e 3C       		.uleb128 0x3c
- 1697 011f 19       		.uleb128 0x19
- 1698 0120 00       		.byte	0
- 1699 0121 00       		.byte	0
- 1700 0122 14       		.uleb128 0x14
- 1701 0123 26       		.uleb128 0x26
- 1702 0124 00       		.byte	0
- 1703 0125 49       		.uleb128 0x49
- 1704 0126 13       		.uleb128 0x13
- 1705 0127 00       		.byte	0
- 1706 0128 00       		.byte	0
- 1707 0129 15       		.uleb128 0x15
- 1708 012a 2E       		.uleb128 0x2e
- 1709 012b 00       		.byte	0
- 1710 012c 3F       		.uleb128 0x3f
- 1711 012d 19       		.uleb128 0x19
- 1712 012e 3C       		.uleb128 0x3c
- 1713 012f 19       		.uleb128 0x19
- 1714 0130 6E       		.uleb128 0x6e
- 1715 0131 0E       		.uleb128 0xe
- 1716 0132 03       		.uleb128 0x3
- 1717 0133 0E       		.uleb128 0xe
- 1718 0134 3A       		.uleb128 0x3a
- 1719 0135 0B       		.uleb128 0xb
- 1720 0136 3B       		.uleb128 0x3b
- 1721 0137 0B       		.uleb128 0xb
- 1722 0138 00       		.byte	0
- 1723 0139 00       		.byte	0
- 1724 013a 00       		.byte	0
- 1725              		.section	.debug_aranges,"",%progbits
- 1726 0000 2C000000 		.4byte	0x2c
- 1727 0004 0200     		.2byte	0x2
- 1728 0006 00000000 		.4byte	.Ldebug_info0
- 1729 000a 04       		.byte	0x4
- 1730 000b 00       		.byte	0
- 1731 000c 0000     		.2byte	0
- 1732 000e 0000     		.2byte	0
- 1733 0010 00000000 		.4byte	.LFB64
- 1734 0014 08000000 		.4byte	.LFE64-.LFB64
- 1735 0018 00000000 		.4byte	.LFB65
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 36
-
-
- 1736 001c 20000000 		.4byte	.LFE65-.LFB65
- 1737 0020 00000000 		.4byte	.LFB66
- 1738 0024 30010000 		.4byte	.LFE66-.LFB66
- 1739 0028 00000000 		.4byte	0
- 1740 002c 00000000 		.4byte	0
- 1741              		.section	.debug_ranges,"",%progbits
- 1742              	.Ldebug_ranges0:
- 1743 0000 00000000 		.4byte	.LFB64
- 1744 0004 08000000 		.4byte	.LFE64
- 1745 0008 00000000 		.4byte	.LFB65
- 1746 000c 20000000 		.4byte	.LFE65
- 1747 0010 00000000 		.4byte	.LFB66
- 1748 0014 30010000 		.4byte	.LFE66
- 1749 0018 00000000 		.4byte	0
- 1750 001c 00000000 		.4byte	0
- 1751              		.section	.debug_line,"",%progbits
- 1752              	.Ldebug_line0:
- 1753 0000 F3020000 		.section	.debug_str,"MS",%progbits,1
- 1753      02008202 
- 1753      00000201 
- 1753      FB0E0D00 
- 1753      01010101 
- 1754              	.LASF20:
- 1755 0000 756C7472 		.ascii	"ultrasonic_testing\000"
- 1755      61736F6E 
- 1755      69635F74 
- 1755      65737469 
- 1755      6E6700
- 1756              	.LASF33:
- 1757 0013 7475726E 		.ascii	"turningLeftFlag\000"
- 1757      696E674C 
- 1757      65667446 
- 1757      6C616700 
- 1758              	.LASF2:
- 1759 0023 73686F72 		.ascii	"short int\000"
- 1759      7420696E 
- 1759      7400
- 1760              	.LASF31:
- 1761 002d 64726976 		.ascii	"drivingForwardFlag\000"
- 1761      696E6746 
- 1761      6F727761 
- 1761      7264466C 
- 1761      616700
- 1762              	.LASF87:
- 1763 0040 536F6E69 		.ascii	"Sonic_StartEx\000"
- 1763      635F5374 
- 1763      61727445 
- 1763      7800
- 1764              	.LASF84:
- 1765 004e 4D6F746F 		.ascii	"Motor_Right_Decoder_Start\000"
- 1765      725F5269 
- 1765      6768745F 
- 1765      4465636F 
- 1765      6465725F 
- 1766              	.LASF17:
- 1767 0068 636F6C6F 		.ascii	"colour_calibration\000"
- 1767      75725F63 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 37
-
-
- 1767      616C6962 
- 1767      72617469 
- 1767      6F6E00
- 1768              	.LASF49:
- 1769 007b 62656769 		.ascii	"beginNavigation\000"
- 1769      6E4E6176 
- 1769      69676174 
- 1769      696F6E00 
- 1770              	.LASF83:
- 1771 008b 4D6F746F 		.ascii	"Motor_Left_Decoder_Start\000"
- 1771      725F4C65 
- 1771      66745F44 
- 1771      65636F64 
- 1771      65725F53 
- 1772              	.LASF27:
- 1773 00a4 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
- 1773      5261636B 
- 1773      4F666673 
- 1773      65747346 
- 1773      726F6D57 
- 1774              	.LASF14:
- 1775 00bc 6C6F6E67 		.ascii	"long double\000"
- 1775      20646F75 
- 1775      626C6500 
- 1776              	.LASF16:
- 1777 00c8 53746172 		.ascii	"StartIH\000"
- 1777      74494800 
- 1778              	.LASF37:
- 1779 00d0 756C7472 		.ascii	"ultrasonic_distances_mm\000"
- 1779      61736F6E 
- 1779      69635F64 
- 1779      69737461 
- 1779      6E636573 
- 1780              	.LASF41:
- 1781 00e8 756C7472 		.ascii	"ultrasonic_flag\000"
- 1781      61736F6E 
- 1781      69635F66 
- 1781      6C616700 
- 1782              	.LASF75:
- 1783 00f8 5261636B 		.ascii	"Rack_Servo_PWM_Sleep\000"
- 1783      5F536572 
- 1783      766F5F50 
- 1783      574D5F53 
- 1783      6C656570 
- 1784              	.LASF48:
- 1785 010d 686F7269 		.ascii	"horizontalPuckGrid\000"
- 1785      7A6F6E74 
- 1785      616C5075 
- 1785      636B4772 
- 1785      696400
- 1786              	.LASF86:
- 1787 0120 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
- 1787      725F315F 
- 1787      52656164 
- 1787      53746174 
- 1787      75735265 
- 1788              	.LASF73:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 38
-
-
- 1789 013b 5261636B 		.ascii	"Rack_Servo_PWM_Start\000"
- 1789      5F536572 
- 1789      766F5F50 
- 1789      574D5F53 
- 1789      74617274 
- 1790              	.LASF24:
- 1791 0150 64726976 		.ascii	"driveStraightEnable\000"
- 1791      65537472 
- 1791      61696768 
- 1791      74456E61 
- 1791      626C6500 
- 1792              	.LASF47:
- 1793 0164 63757272 		.ascii	"currentPuckStackSize\000"
- 1793      656E7450 
- 1793      75636B53 
- 1793      7461636B 
- 1793      53697A65 
- 1794              	.LASF46:
- 1795 0179 72756E6E 		.ascii	"running\000"
- 1795      696E6700 
- 1796              	.LASF52:
- 1797 0181 626C6F63 		.ascii	"block_location\000"
- 1797      6B5F6C6F 
- 1797      63617469 
- 1797      6F6E00
- 1798              	.LASF76:
- 1799 0190 47726970 		.ascii	"Gripper_Servo_PWM_Start\000"
- 1799      7065725F 
- 1799      53657276 
- 1799      6F5F5057 
- 1799      4D5F5374 
- 1800              	.LASF57:
- 1801 01a8 7075636B 		.ascii	"puckWestClearance\000"
- 1801      57657374 
- 1801      436C6561 
- 1801      72616E63 
- 1801      6500
- 1802              	.LASF61:
- 1803 01ba 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
- 1803      61736F6E 
- 1803      6963496E 
- 1803      74657272 
- 1803      75707448 
- 1804              	.LASF34:
- 1805 01d5 7475726E 		.ascii	"turningRightFlag\000"
- 1805      696E6752 
- 1805      69676874 
- 1805      466C6167 
- 1805      00
- 1806              	.LASF11:
- 1807 01e6 666C6F61 		.ascii	"float\000"
- 1807      7400
- 1808              	.LASF26:
- 1809 01ec 7075636B 		.ascii	"puckRackColours\000"
- 1809      5261636B 
- 1809      436F6C6F 
- 1809      75727300 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 39
-
-
- 1810              	.LASF6:
- 1811 01fc 6C6F6E67 		.ascii	"long long int\000"
- 1811      206C6F6E 
- 1811      6720696E 
- 1811      7400
- 1812              	.LASF21:
- 1813 020a 626C6F63 		.ascii	"block_and_puck_edge_midpoint\000"
- 1813      6B5F616E 
- 1813      645F7075 
- 1813      636B5F65 
- 1813      6467655F 
- 1814              	.LASF82:
- 1815 0227 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
- 1815      725F5269 
- 1815      6768745F 
- 1815      44726976 
- 1815      65725F53 
- 1816              	.LASF66:
- 1817 0240 4144435F 		.ascii	"ADC_Start\000"
- 1817      53746172 
- 1817      7400
- 1818              	.LASF4:
- 1819 024a 6C6F6E67 		.ascii	"long int\000"
- 1819      20696E74 
- 1819      00
- 1820              	.LASF23:
- 1821 0253 696E7465 		.ascii	"internal_orientation\000"
- 1821      726E616C 
- 1821      5F6F7269 
- 1821      656E7461 
- 1821      74696F6E 
- 1822              	.LASF81:
- 1823 0268 4D6F746F 		.ascii	"Motor_Right_Driver_Start\000"
- 1823      725F5269 
- 1823      6768745F 
- 1823      44726976 
- 1823      65725F53 
- 1824              	.LASF70:
- 1825 0281 636F6E74 		.ascii	"control_photodiode_Write\000"
- 1825      726F6C5F 
- 1825      70686F74 
- 1825      6F64696F 
- 1825      64655F57 
- 1826              	.LASF45:
- 1827 029a 73616665 		.ascii	"safety_override\000"
- 1827      74795F6F 
- 1827      76657272 
- 1827      69646500 
- 1828              	.LASF54:
- 1829 02aa 626C6F63 		.ascii	"blockEastClearance\000"
- 1829      6B456173 
- 1829      74436C65 
- 1829      6172616E 
- 1829      636500
- 1830              	.LASF30:
- 1831 02bd 7075636B 		.ascii	"puckPileLocation\000"
- 1831      50696C65 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 40
-
-
- 1831      4C6F6361 
- 1831      74696F6E 
- 1831      00
- 1832              	.LASF32:
- 1833 02ce 64726976 		.ascii	"drivingBackwardFlag\000"
- 1833      696E6742 
- 1833      61636B77 
- 1833      61726446 
- 1833      6C616700 
- 1834              	.LASF25:
- 1835 02e2 63757272 		.ascii	"currentPuckRackScanningIndex\000"
- 1835      656E7450 
- 1835      75636B52 
- 1835      61636B53 
- 1835      63616E6E 
- 1836              	.LASF74:
- 1837 02ff 5261636B 		.ascii	"Rack_Servo_PWM_WriteCompare\000"
- 1837      5F536572 
- 1837      766F5F50 
- 1837      574D5F57 
- 1837      72697465 
- 1838              	.LASF39:
- 1839 031b 73746174 		.ascii	"state\000"
- 1839      6500
- 1840              	.LASF64:
- 1841 0321 55415254 		.ascii	"UART_1_Start\000"
- 1841      5F315F53 
- 1841      74617274 
- 1841      00
- 1842              	.LASF1:
- 1843 032e 756E7369 		.ascii	"unsigned char\000"
- 1843      676E6564 
- 1843      20636861 
- 1843      7200
- 1844              	.LASF38:
- 1845 033c 636F6C6F 		.ascii	"colour_flag\000"
- 1845      75725F66 
- 1845      6C616700 
- 1846              	.LASF80:
- 1847 0348 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
- 1847      725F4C65 
- 1847      66745F44 
- 1847      72697665 
- 1847      725F536C 
- 1848              	.LASF79:
- 1849 0360 4D6F746F 		.ascii	"Motor_Left_Driver_Start\000"
- 1849      725F4C65 
- 1849      66745F44 
- 1849      72697665 
- 1849      725F5374 
- 1850              	.LASF53:
- 1851 0378 7075636B 		.ascii	"puck_location\000"
- 1851      5F6C6F63 
- 1851      6174696F 
- 1851      6E00
- 1852              	.LASF72:
- 1853 0386 636F6C6F 		.ascii	"colourSensingInitialise\000"
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 41
-
-
- 1853      75725365 
- 1853      6E73696E 
- 1853      67496E69 
- 1853      7469616C 
- 1854              	.LASF68:
- 1855 039e 49444143 		.ascii	"IDAC8_1_SetRange\000"
- 1855      385F315F 
- 1855      53657452 
- 1855      616E6765 
- 1855      00
- 1856              	.LASF0:
- 1857 03af 7369676E 		.ascii	"signed char\000"
- 1857      65642063 
- 1857      68617200 
- 1858              	.LASF29:
- 1859 03bb 626C6F63 		.ascii	"block_edge_location\000"
- 1859      6B5F6564 
- 1859      67655F6C 
- 1859      6F636174 
- 1859      696F6E00 
- 1860              	.LASF7:
- 1861 03cf 6C6F6E67 		.ascii	"long long unsigned int\000"
- 1861      206C6F6E 
- 1861      6720756E 
- 1861      7369676E 
- 1861      65642069 
- 1862              	.LASF71:
- 1863 03e6 636F6E74 		.ascii	"control_led_Write\000"
- 1863      726F6C5F 
- 1863      6C65645F 
- 1863      57726974 
- 1863      6500
- 1864              	.LASF18:
- 1865 03f8 73657276 		.ascii	"servo_testing\000"
- 1865      6F5F7465 
- 1865      7374696E 
- 1865      6700
- 1866              	.LASF8:
- 1867 0406 756E7369 		.ascii	"unsigned int\000"
- 1867      676E6564 
- 1867      20696E74 
- 1867      00
- 1868              	.LASF58:
- 1869 0413 69646163 		.ascii	"idac_value\000"
- 1869      5F76616C 
- 1869      756500
- 1870              	.LASF67:
- 1871 041e 49444143 		.ascii	"IDAC8_1_Start\000"
- 1871      385F315F 
- 1871      53746172 
- 1871      7400
- 1872              	.LASF43:
- 1873 042c 63757272 		.ascii	"current_stage\000"
- 1873      656E745F 
- 1873      73746167 
- 1873      6500
- 1874              	.LASF77:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 42
-
-
- 1875 043a 47726970 		.ascii	"Gripper_Servo_PWM_WriteCompare\000"
- 1875      7065725F 
- 1875      53657276 
- 1875      6F5F5057 
- 1875      4D5F5772 
- 1876              	.LASF63:
- 1877 0459 5449415F 		.ascii	"TIA_1_Start\000"
- 1877      315F5374 
- 1877      61727400 
- 1878              	.LASF28:
- 1879 0465 73776565 		.ascii	"sweeping\000"
- 1879      70696E67 
- 1879      00
- 1880              	.LASF13:
- 1881 046e 63686172 		.ascii	"char\000"
- 1881      00
- 1882              	.LASF93:
- 1883 0473 453A5C44 		.ascii	"E:\\Documents\\Uni S12019 Notes\\ECE3091\\Temp Clon"
- 1883      6F63756D 
- 1883      656E7473 
- 1883      5C556E69 
- 1883      20533132 
- 1884 04a2 655C4543 		.ascii	"e\\ECE3091_Group17\\Group17RobotReal\\Group17Robot."
- 1884      45333039 
- 1884      315F4772 
- 1884      6F757031 
- 1884      375C4772 
- 1885 04d2 63796473 		.ascii	"cydsn\000"
- 1885      6E00
- 1886              	.LASF94:
- 1887 04d8 6D61696E 		.ascii	"main\000"
+ 318              		.global	puckColoursTempPile
+ 319              		.global	puckConstructionPlan
+ 320              		.global	currentPuckStackSize
+ 321              		.global	running
+ 322              		.global	state
+ 323              		.comm	ultrasonic_flag,4,4
+ 324              		.comm	initialisation,4,4
+ 325              		.comm	output,32,4
+ 326              		.comm	turningRightFlag,2,2
+ 327              		.comm	turningLeftFlag,2,2
+ 328              		.comm	drivingBackwardFlag,2,2
+ 329              		.comm	drivingForwardFlag,2,2
+ 330              		.comm	puckPileLocation,4,4
+ 331              		.global	block_edge_location
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 11
+
+
+ 332              		.global	sweeping
+ 333              		.global	puckRackOffsetsFromWest
+ 334              		.global	puckRackColours
+ 335              		.global	currentPuckRackScanningIndex
+ 336              		.comm	driveStraightEnable,4,4
+ 337              		.comm	internal_orientation,4,4
+ 338              		.section	.rodata
+ 339              		.align	2
+ 340              		.type	PLAN_SCAN_VERTICAL, %object
+ 341              		.size	PLAN_SCAN_VERTICAL, 4
+ 342              	PLAN_SCAN_VERTICAL:
+ 343 0000 0A000000 		.word	10
+ 344              		.data
+ 345              		.align	2
+ 346              		.set	.LANCHOR1,. + 0
+ 347              		.type	colour_flag, %object
+ 348              		.size	colour_flag, 4
+ 349              	colour_flag:
+ 350 0000 01000000 		.word	1
+ 351              		.type	state, %object
+ 352              		.size	state, 4
+ 353              	state:
+ 354 0004 01000000 		.word	1
+ 355              		.type	current_stage, %object
+ 356              		.size	current_stage, 4
+ 357              	current_stage:
+ 358 0008 01000000 		.word	1
+ 359              		.type	running, %object
+ 360              		.size	running, 4
+ 361              	running:
+ 362 000c 01000000 		.word	1
+ 363              		.type	puckRackOffsetsFromWest, %object
+ 364              		.size	puckRackOffsetsFromWest, 20
+ 365              	puckRackOffsetsFromWest:
+ 366 0010 D0020000 		.word	720
+ 367 0014 94020000 		.word	660
+ 368 0018 58020000 		.word	600
+ 369 001c 1C020000 		.word	540
+ 370 0020 E0010000 		.word	480
+ 371              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 372              		.align	2
+ 373              	.LC0:
+ 374 0000 55415254 		.ascii	"UART commencing... \012\000"
+ 374      20636F6D 
+ 374      6D656E63 
+ 374      696E672E 
+ 374      2E2E200A 
+ 375 0015 000000   		.space	3
+ 376              	.LC1:
+ 377 0018 556C7472 		.ascii	"Ultrasonic Calibration tests: \012\000"
+ 377      61736F6E 
+ 377      69632043 
+ 377      616C6962 
+ 377      72617469 
+ 378              		.bss
+ 379              		.align	2
+ 380              		.set	.LANCHOR0,. + 0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 12
+
+
+ 381              		.type	beginNavigation, %object
+ 382              		.size	beginNavigation, 4
+ 383              	beginNavigation:
+ 384 0000 00000000 		.space	4
+ 385              		.type	idac_value, %object
+ 386              		.size	idac_value, 4
+ 387              	idac_value:
+ 388 0004 00000000 		.space	4
+ 389              		.type	colour_sensing_algorithm, %object
+ 390              		.size	colour_sensing_algorithm, 4
+ 391              	colour_sensing_algorithm:
+ 392 0008 00000000 		.space	4
+ 393              		.type	currentPuckStackSize, %object
+ 394              		.size	currentPuckStackSize, 4
+ 395              	currentPuckStackSize:
+ 396 000c 00000000 		.space	4
+ 397              		.type	blockEastClearance, %object
+ 398              		.size	blockEastClearance, 2
+ 399              	blockEastClearance:
+ 400 0010 0000     		.space	2
+ 401              		.type	blockWestClearance, %object
+ 402              		.size	blockWestClearance, 2
+ 403              	blockWestClearance:
+ 404 0012 0000     		.space	2
+ 405              		.type	puckEastClearance, %object
+ 406              		.size	puckEastClearance, 2
+ 407              	puckEastClearance:
+ 408 0014 0000     		.space	2
+ 409              		.type	puckWestClearance, %object
+ 410              		.size	puckWestClearance, 2
+ 411              	puckWestClearance:
+ 412 0016 0000     		.space	2
+ 413              		.type	puckConstructionPlan, %object
+ 414              		.size	puckConstructionPlan, 12
+ 415              	puckConstructionPlan:
+ 416 0018 00000000 		.space	12
+ 416      00000000 
+ 416      00000000 
+ 417              		.type	moving, %object
+ 418              		.size	moving, 4
+ 419              	moving:
+ 420 0024 00000000 		.space	4
+ 421              		.type	safety_override, %object
+ 422              		.size	safety_override, 4
+ 423              	safety_override:
+ 424 0028 00000000 		.space	4
+ 425              		.type	puck_location, %object
+ 426              		.size	puck_location, 16
+ 427              	puck_location:
+ 428 002c 00000000 		.space	16
+ 428      00000000 
+ 428      00000000 
+ 428      00000000 
+ 429              		.type	block_location, %object
+ 430              		.size	block_location, 16
+ 431              	block_location:
+ 432 003c 00000000 		.space	16
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 13
+
+
+ 432      00000000 
+ 432      00000000 
+ 432      00000000 
+ 433              		.type	horizontalPuckGrid, %object
+ 434              		.size	horizontalPuckGrid, 4
+ 435              	horizontalPuckGrid:
+ 436 004c 00000000 		.space	4
+ 437              		.type	puckColoursTempPile, %object
+ 438              		.size	puckColoursTempPile, 8
+ 439              	puckColoursTempPile:
+ 440 0050 00000000 		.space	8
+ 440      00000000 
+ 441              		.type	block_edge_location, %object
+ 442              		.size	block_edge_location, 16
+ 443              	block_edge_location:
+ 444 0058 00000000 		.space	16
+ 444      00000000 
+ 444      00000000 
+ 444      00000000 
+ 445              		.type	sweeping, %object
+ 446              		.size	sweeping, 4
+ 447              	sweeping:
+ 448 0068 00000000 		.space	4
+ 449              		.type	puckRackColours, %object
+ 450              		.size	puckRackColours, 20
+ 451              	puckRackColours:
+ 452 006c 00000000 		.space	20
+ 452      00000000 
+ 452      00000000 
+ 452      00000000 
+ 452      00000000 
+ 453              		.type	currentPuckRackScanningIndex, %object
+ 454              		.size	currentPuckRackScanningIndex, 4
+ 455              	currentPuckRackScanningIndex:
+ 456 0080 00000000 		.space	4
+ 457              		.text
+ 458              	.Letext0:
+ 459              		.file 2 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 460              		.file 3 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
+ 461              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 462              		.file 5 "navigation.h"
+ 463              		.file 6 "ultrasonic.h"
+ 464              		.file 7 "main.h"
+ 465              		.file 8 "Generated_Source\\PSoC5/CyLib.h"
+ 466              		.file 9 "Generated_Source\\PSoC5/TIA_1.h"
+ 467              		.file 10 "Generated_Source\\PSoC5/UART_1.h"
+ 468              		.file 11 "Generated_Source\\PSoC5/ADC.h"
+ 469              		.file 12 "Generated_Source\\PSoC5/IDAC8_1.h"
+ 470              		.file 13 "Generated_Source\\PSoC5/control_photodiode.h"
+ 471              		.file 14 "Generated_Source\\PSoC5/control_led.h"
+ 472              		.file 15 "colour.h"
+ 473              		.file 16 "Generated_Source\\PSoC5/Rack_Servo_PWM.h"
+ 474              		.file 17 "Generated_Source\\PSoC5/Gripper_Servo_PWM.h"
+ 475              		.file 18 "Generated_Source\\PSoC5/Motor_Left_Driver.h"
+ 476              		.file 19 "Generated_Source\\PSoC5/Motor_Right_Driver.h"
+ 477              		.file 20 "Generated_Source\\PSoC5/Motor_Left_Decoder.h"
+ 478              		.file 21 "Generated_Source\\PSoC5/Motor_Right_Decoder.h"
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 14
+
+
+ 479              		.file 22 "Generated_Source\\PSoC5/Timer_1.h"
+ 480              		.file 23 "Generated_Source\\PSoC5/Sonic.h"
+ 481              		.file 24 "Generated_Source\\PSoC5/Start.h"
+ 482              		.section	.debug_info,"",%progbits
+ 483              	.Ldebug_info0:
+ 484 0000 EA070000 		.4byte	0x7ea
+ 485 0004 0400     		.2byte	0x4
+ 486 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 487 000a 04       		.byte	0x4
+ 488 000b 01       		.uleb128 0x1
+ 489 000c 55060000 		.4byte	.LASF92
+ 490 0010 0C       		.byte	0xc
+ 491 0011 58050000 		.4byte	.LASF93
+ 492 0015 73040000 		.4byte	.LASF94
+ 493 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 494 001d 00000000 		.4byte	0
+ 495 0021 00000000 		.4byte	.Ldebug_line0
+ 496 0025 02       		.uleb128 0x2
+ 497 0026 01       		.byte	0x1
+ 498 0027 06       		.byte	0x6
+ 499 0028 AF030000 		.4byte	.LASF0
+ 500 002c 02       		.uleb128 0x2
+ 501 002d 01       		.byte	0x1
+ 502 002e 08       		.byte	0x8
+ 503 002f 2E030000 		.4byte	.LASF1
+ 504 0033 02       		.uleb128 0x2
+ 505 0034 02       		.byte	0x2
+ 506 0035 05       		.byte	0x5
+ 507 0036 23000000 		.4byte	.LASF2
+ 508 003a 02       		.uleb128 0x2
+ 509 003b 02       		.byte	0x2
+ 510 003c 07       		.byte	0x7
+ 511 003d 34050000 		.4byte	.LASF3
+ 512 0041 03       		.uleb128 0x3
+ 513 0042 C4050000 		.4byte	.LASF9
+ 514 0046 02       		.byte	0x2
+ 515 0047 3F       		.byte	0x3f
+ 516 0048 4C000000 		.4byte	0x4c
+ 517 004c 02       		.uleb128 0x2
+ 518 004d 04       		.byte	0x4
+ 519 004e 05       		.byte	0x5
+ 520 004f 4A020000 		.4byte	.LASF4
+ 521 0053 02       		.uleb128 0x2
+ 522 0054 04       		.byte	0x4
+ 523 0055 07       		.byte	0x7
+ 524 0056 5F050000 		.4byte	.LASF5
+ 525 005a 02       		.uleb128 0x2
+ 526 005b 08       		.byte	0x8
+ 527 005c 05       		.byte	0x5
+ 528 005d FC010000 		.4byte	.LASF6
+ 529 0061 02       		.uleb128 0x2
+ 530 0062 08       		.byte	0x8
+ 531 0063 07       		.byte	0x7
+ 532 0064 CF030000 		.4byte	.LASF7
+ 533 0068 04       		.uleb128 0x4
+ 534 0069 04       		.byte	0x4
+ 535 006a 05       		.byte	0x5
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 15
+
+
+ 536 006b 696E7400 		.ascii	"int\000"
+ 537 006f 02       		.uleb128 0x2
+ 538 0070 04       		.byte	0x4
+ 539 0071 07       		.byte	0x7
+ 540 0072 06040000 		.4byte	.LASF8
+ 541 0076 03       		.uleb128 0x3
+ 542 0077 DD040000 		.4byte	.LASF10
+ 543 007b 03       		.byte	0x3
+ 544 007c 2C       		.byte	0x2c
+ 545 007d 41000000 		.4byte	0x41
+ 546 0081 02       		.uleb128 0x2
+ 547 0082 04       		.byte	0x4
+ 548 0083 04       		.byte	0x4
+ 549 0084 E6010000 		.4byte	.LASF11
+ 550 0088 02       		.uleb128 0x2
+ 551 0089 08       		.byte	0x8
+ 552 008a 04       		.byte	0x4
+ 553 008b 7F050000 		.4byte	.LASF12
+ 554 008f 02       		.uleb128 0x2
+ 555 0090 01       		.byte	0x1
+ 556 0091 08       		.byte	0x8
+ 557 0092 6E040000 		.4byte	.LASF13
+ 558 0096 02       		.uleb128 0x2
+ 559 0097 08       		.byte	0x8
+ 560 0098 04       		.byte	0x4
+ 561 0099 BC000000 		.4byte	.LASF14
+ 562 009d 02       		.uleb128 0x2
+ 563 009e 04       		.byte	0x4
+ 564 009f 07       		.byte	0x7
+ 565 00a0 11060000 		.4byte	.LASF15
+ 566 00a4 05       		.uleb128 0x5
+ 567 00a5 54494800 		.ascii	"TIH\000"
+ 568 00a9 01       		.byte	0x1
+ 569 00aa 65       		.byte	0x65
+ 570 00ab 00000000 		.4byte	.LFB64
+ 571 00af 08000000 		.4byte	.LFE64-.LFB64
+ 572 00b3 01       		.uleb128 0x1
+ 573 00b4 9C       		.byte	0x9c
+ 574 00b5 C3000000 		.4byte	0xc3
+ 575 00b9 06       		.uleb128 0x6
+ 576 00ba 06000000 		.4byte	.LVL0
+ 577 00be A3060000 		.4byte	0x6a3
+ 578 00c2 00       		.byte	0
+ 579 00c3 07       		.uleb128 0x7
+ 580 00c4 C8000000 		.4byte	.LASF16
+ 581 00c8 01       		.byte	0x1
+ 582 00c9 6A       		.byte	0x6a
+ 583 00ca 00000000 		.4byte	.LFB65
+ 584 00ce 20000000 		.4byte	.LFE65-.LFB65
+ 585 00d2 01       		.uleb128 0x1
+ 586 00d3 9C       		.byte	0x9c
+ 587 00d4 E9000000 		.4byte	0xe9
+ 588 00d8 08       		.uleb128 0x8
+ 589 00d9 08000000 		.4byte	.LVL1
+ 590 00dd AE060000 		.4byte	0x6ae
+ 591 00e1 09       		.uleb128 0x9
+ 592 00e2 01       		.uleb128 0x1
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 16
+
+
+ 593 00e3 50       		.byte	0x50
+ 594 00e4 02       		.uleb128 0x2
+ 595 00e5 08       		.byte	0x8
+ 596 00e6 64       		.byte	0x64
+ 597 00e7 00       		.byte	0
+ 598 00e8 00       		.byte	0
+ 599 00e9 0A       		.uleb128 0xa
+ 600 00ea D8040000 		.4byte	.LASF95
+ 601 00ee 01       		.byte	0x1
+ 602 00ef 85       		.byte	0x85
+ 603 00f0 68000000 		.4byte	0x68
+ 604 00f4 00000000 		.4byte	.LFB66
+ 605 00f8 30010000 		.4byte	.LFE66-.LFB66
+ 606 00fc 01       		.uleb128 0x1
+ 607 00fd 9C       		.byte	0x9c
+ 608 00fe 9C030000 		.4byte	0x39c
+ 609 0102 0B       		.uleb128 0xb
+ 610 0103 68000000 		.4byte	.LASF17
+ 611 0107 01       		.byte	0x1
+ 612 0108 91       		.byte	0x91
+ 613 0109 68000000 		.4byte	0x68
+ 614 010d 00       		.byte	0
+ 615 010e 0B       		.uleb128 0xb
+ 616 010f F8030000 		.4byte	.LASF18
+ 617 0113 01       		.byte	0x1
+ 618 0114 92       		.byte	0x92
+ 619 0115 68000000 		.4byte	0x68
+ 620 0119 00       		.byte	0
+ 621 011a 0B       		.uleb128 0xb
+ 622 011b 21060000 		.4byte	.LASF19
+ 623 011f 01       		.byte	0x1
+ 624 0120 93       		.byte	0x93
+ 625 0121 68000000 		.4byte	0x68
+ 626 0125 00       		.byte	0
+ 627 0126 0B       		.uleb128 0xb
+ 628 0127 00000000 		.4byte	.LASF20
+ 629 012b 01       		.byte	0x1
+ 630 012c 94       		.byte	0x94
+ 631 012d 68000000 		.4byte	0x68
+ 632 0131 00       		.byte	0
+ 633 0132 0C       		.uleb128 0xc
+ 634 0133 0A020000 		.4byte	.LASF21
+ 635 0137 01       		.byte	0x1
+ 636 0138 E9       		.byte	0xe9
+ 637 0139 68000000 		.4byte	0x68
+ 638 013d F401     		.2byte	0x1f4
+ 639 013f 06       		.uleb128 0x6
+ 640 0140 0A000000 		.4byte	.LVL2
+ 641 0144 B9060000 		.4byte	0x6b9
+ 642 0148 06       		.uleb128 0x6
+ 643 0149 0E000000 		.4byte	.LVL3
+ 644 014d C4060000 		.4byte	0x6c4
+ 645 0151 0D       		.uleb128 0xd
+ 646 0152 14000000 		.4byte	.LVL4
+ 647 0156 CF060000 		.4byte	0x6cf
+ 648 015a 68010000 		.4byte	0x168
+ 649 015e 09       		.uleb128 0x9
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 17
+
+
+ 650 015f 01       		.uleb128 0x1
+ 651 0160 50       		.byte	0x50
+ 652 0161 05       		.uleb128 0x5
+ 653 0162 03       		.byte	0x3
+ 654 0163 00000000 		.4byte	.LC0
+ 655 0167 00       		.byte	0
+ 656 0168 06       		.uleb128 0x6
+ 657 0169 18000000 		.4byte	.LVL5
+ 658 016d DA060000 		.4byte	0x6da
+ 659 0171 06       		.uleb128 0x6
+ 660 0172 1C000000 		.4byte	.LVL6
+ 661 0176 E5060000 		.4byte	0x6e5
+ 662 017a 0D       		.uleb128 0xd
+ 663 017b 22000000 		.4byte	.LVL7
+ 664 017f F0060000 		.4byte	0x6f0
+ 665 0183 8D010000 		.4byte	0x18d
+ 666 0187 09       		.uleb128 0x9
+ 667 0188 01       		.uleb128 0x1
+ 668 0189 50       		.byte	0x50
+ 669 018a 01       		.uleb128 0x1
+ 670 018b 30       		.byte	0x30
+ 671 018c 00       		.byte	0
+ 672 018d 06       		.uleb128 0x6
+ 673 018e 2A000000 		.4byte	.LVL8
+ 674 0192 FB060000 		.4byte	0x6fb
+ 675 0196 0D       		.uleb128 0xd
+ 676 0197 34000000 		.4byte	.LVL9
+ 677 019b 06070000 		.4byte	0x706
+ 678 019f AA010000 		.4byte	0x1aa
+ 679 01a3 09       		.uleb128 0x9
+ 680 01a4 01       		.uleb128 0x1
+ 681 01a5 50       		.byte	0x50
+ 682 01a6 02       		.uleb128 0x2
+ 683 01a7 75       		.byte	0x75
+ 684 01a8 00       		.sleb128 0
+ 685 01a9 00       		.byte	0
+ 686 01aa 0D       		.uleb128 0xd
+ 687 01ab 3A000000 		.4byte	.LVL10
+ 688 01af 11070000 		.4byte	0x711
+ 689 01b3 BD010000 		.4byte	0x1bd
+ 690 01b7 09       		.uleb128 0x9
+ 691 01b8 01       		.uleb128 0x1
+ 692 01b9 50       		.byte	0x50
+ 693 01ba 01       		.uleb128 0x1
+ 694 01bb 31       		.byte	0x31
+ 695 01bc 00       		.byte	0
+ 696 01bd 0D       		.uleb128 0xd
+ 697 01be 42000000 		.4byte	.LVL11
+ 698 01c2 AE060000 		.4byte	0x6ae
+ 699 01c6 D2010000 		.4byte	0x1d2
+ 700 01ca 09       		.uleb128 0x9
+ 701 01cb 01       		.uleb128 0x1
+ 702 01cc 50       		.byte	0x50
+ 703 01cd 03       		.uleb128 0x3
+ 704 01ce 0A       		.byte	0xa
+ 705 01cf F401     		.2byte	0x1f4
+ 706 01d1 00       		.byte	0
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 18
+
+
+ 707 01d2 0D       		.uleb128 0xd
+ 708 01d3 48000000 		.4byte	.LVL12
+ 709 01d7 11070000 		.4byte	0x711
+ 710 01db E5010000 		.4byte	0x1e5
+ 711 01df 09       		.uleb128 0x9
+ 712 01e0 01       		.uleb128 0x1
+ 713 01e1 50       		.byte	0x50
+ 714 01e2 01       		.uleb128 0x1
+ 715 01e3 32       		.byte	0x32
+ 716 01e4 00       		.byte	0
+ 717 01e5 0D       		.uleb128 0xd
+ 718 01e6 50000000 		.4byte	.LVL13
+ 719 01ea AE060000 		.4byte	0x6ae
+ 720 01ee FA010000 		.4byte	0x1fa
+ 721 01f2 09       		.uleb128 0x9
+ 722 01f3 01       		.uleb128 0x1
+ 723 01f4 50       		.byte	0x50
+ 724 01f5 03       		.uleb128 0x3
+ 725 01f6 0A       		.byte	0xa
+ 726 01f7 F401     		.2byte	0x1f4
+ 727 01f9 00       		.byte	0
+ 728 01fa 0D       		.uleb128 0xd
+ 729 01fb 56000000 		.4byte	.LVL14
+ 730 01ff 11070000 		.4byte	0x711
+ 731 0203 0D020000 		.4byte	0x20d
+ 732 0207 09       		.uleb128 0x9
+ 733 0208 01       		.uleb128 0x1
+ 734 0209 50       		.byte	0x50
+ 735 020a 01       		.uleb128 0x1
+ 736 020b 33       		.byte	0x33
+ 737 020c 00       		.byte	0
+ 738 020d 0D       		.uleb128 0xd
+ 739 020e 5E000000 		.4byte	.LVL15
+ 740 0212 AE060000 		.4byte	0x6ae
+ 741 0216 22020000 		.4byte	0x222
+ 742 021a 09       		.uleb128 0x9
+ 743 021b 01       		.uleb128 0x1
+ 744 021c 50       		.byte	0x50
+ 745 021d 03       		.uleb128 0x3
+ 746 021e 0A       		.byte	0xa
+ 747 021f F401     		.2byte	0x1f4
+ 748 0221 00       		.byte	0
+ 749 0222 0D       		.uleb128 0xd
+ 750 0223 64000000 		.4byte	.LVL16
+ 751 0227 11070000 		.4byte	0x711
+ 752 022b 36020000 		.4byte	0x236
+ 753 022f 09       		.uleb128 0x9
+ 754 0230 01       		.uleb128 0x1
+ 755 0231 50       		.byte	0x50
+ 756 0232 02       		.uleb128 0x2
+ 757 0233 75       		.byte	0x75
+ 758 0234 00       		.sleb128 0
+ 759 0235 00       		.byte	0
+ 760 0236 0D       		.uleb128 0xd
+ 761 0237 6C000000 		.4byte	.LVL17
+ 762 023b AE060000 		.4byte	0x6ae
+ 763 023f 4B020000 		.4byte	0x24b
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 19
+
+
+ 764 0243 09       		.uleb128 0x9
+ 765 0244 01       		.uleb128 0x1
+ 766 0245 50       		.byte	0x50
+ 767 0246 03       		.uleb128 0x3
+ 768 0247 0A       		.byte	0xa
+ 769 0248 F401     		.2byte	0x1f4
+ 770 024a 00       		.byte	0
+ 771 024b 06       		.uleb128 0x6
+ 772 024c 70000000 		.4byte	.LVL18
+ 773 0250 1C070000 		.4byte	0x71c
+ 774 0254 06       		.uleb128 0x6
+ 775 0255 74000000 		.4byte	.LVL19
+ 776 0259 27070000 		.4byte	0x727
+ 777 025d 0D       		.uleb128 0xd
+ 778 025e 7C000000 		.4byte	.LVL20
+ 779 0262 32070000 		.4byte	0x732
+ 780 0266 72020000 		.4byte	0x272
+ 781 026a 09       		.uleb128 0x9
+ 782 026b 01       		.uleb128 0x1
+ 783 026c 50       		.byte	0x50
+ 784 026d 03       		.uleb128 0x3
+ 785 026e 0A       		.byte	0xa
+ 786 026f E803     		.2byte	0x3e8
+ 787 0271 00       		.byte	0
+ 788 0272 0D       		.uleb128 0xd
+ 789 0273 84000000 		.4byte	.LVL21
+ 790 0277 AE060000 		.4byte	0x6ae
+ 791 027b 87020000 		.4byte	0x287
+ 792 027f 09       		.uleb128 0x9
+ 793 0280 01       		.uleb128 0x1
+ 794 0281 50       		.byte	0x50
+ 795 0282 03       		.uleb128 0x3
+ 796 0283 0A       		.byte	0xa
+ 797 0284 F401     		.2byte	0x1f4
+ 798 0286 00       		.byte	0
+ 799 0287 06       		.uleb128 0x6
+ 800 0288 88000000 		.4byte	.LVL22
+ 801 028c 3D070000 		.4byte	0x73d
+ 802 0290 06       		.uleb128 0x6
+ 803 0291 8C000000 		.4byte	.LVL23
+ 804 0295 48070000 		.4byte	0x748
+ 805 0299 0D       		.uleb128 0xd
+ 806 029a 94000000 		.4byte	.LVL24
+ 807 029e 53070000 		.4byte	0x753
+ 808 02a2 AE020000 		.4byte	0x2ae
+ 809 02a6 09       		.uleb128 0x9
+ 810 02a7 01       		.uleb128 0x1
+ 811 02a8 50       		.byte	0x50
+ 812 02a9 03       		.uleb128 0x3
+ 813 02aa 0A       		.byte	0xa
+ 814 02ab 6004     		.2byte	0x460
+ 815 02ad 00       		.byte	0
+ 816 02ae 0D       		.uleb128 0xd
+ 817 02af 9C000000 		.4byte	.LVL25
+ 818 02b3 AE060000 		.4byte	0x6ae
+ 819 02b7 C3020000 		.4byte	0x2c3
+ 820 02bb 09       		.uleb128 0x9
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 20
+
+
+ 821 02bc 01       		.uleb128 0x1
+ 822 02bd 50       		.byte	0x50
+ 823 02be 03       		.uleb128 0x3
+ 824 02bf 0A       		.byte	0xa
+ 825 02c0 F401     		.2byte	0x1f4
+ 826 02c2 00       		.byte	0
+ 827 02c3 06       		.uleb128 0x6
+ 828 02c4 A0000000 		.4byte	.LVL26
+ 829 02c8 5E070000 		.4byte	0x75e
+ 830 02cc 06       		.uleb128 0x6
+ 831 02cd A4000000 		.4byte	.LVL27
+ 832 02d1 69070000 		.4byte	0x769
+ 833 02d5 06       		.uleb128 0x6
+ 834 02d6 A8000000 		.4byte	.LVL28
+ 835 02da 74070000 		.4byte	0x774
+ 836 02de 06       		.uleb128 0x6
+ 837 02df AC000000 		.4byte	.LVL29
+ 838 02e3 7F070000 		.4byte	0x77f
+ 839 02e7 06       		.uleb128 0x6
+ 840 02e8 B0000000 		.4byte	.LVL30
+ 841 02ec 8A070000 		.4byte	0x78a
+ 842 02f0 06       		.uleb128 0x6
+ 843 02f1 B4000000 		.4byte	.LVL31
+ 844 02f5 95070000 		.4byte	0x795
+ 845 02f9 06       		.uleb128 0x6
+ 846 02fa B8000000 		.4byte	.LVL32
+ 847 02fe A0070000 		.4byte	0x7a0
+ 848 0302 06       		.uleb128 0x6
+ 849 0303 C2000000 		.4byte	.LVL33
+ 850 0307 AB070000 		.4byte	0x7ab
+ 851 030b 06       		.uleb128 0x6
+ 852 030c C6000000 		.4byte	.LVL34
+ 853 0310 B6070000 		.4byte	0x7b6
+ 854 0314 0D       		.uleb128 0xd
+ 855 0315 CC000000 		.4byte	.LVL35
+ 856 0319 C1070000 		.4byte	0x7c1
+ 857 031d 2B030000 		.4byte	0x32b
+ 858 0321 09       		.uleb128 0x9
+ 859 0322 01       		.uleb128 0x1
+ 860 0323 50       		.byte	0x50
+ 861 0324 05       		.uleb128 0x5
+ 862 0325 03       		.byte	0x3
+ 863 0326 00000000 		.4byte	TIH
+ 864 032a 00       		.byte	0
+ 865 032b 0D       		.uleb128 0xd
+ 866 032c D2000000 		.4byte	.LVL36
+ 867 0330 CC070000 		.4byte	0x7cc
+ 868 0334 42030000 		.4byte	0x342
+ 869 0338 09       		.uleb128 0x9
+ 870 0339 01       		.uleb128 0x1
+ 871 033a 50       		.byte	0x50
+ 872 033b 05       		.uleb128 0x5
+ 873 033c 03       		.byte	0x3
+ 874 033d 00000000 		.4byte	StartIH
+ 875 0341 00       		.byte	0
+ 876 0342 0D       		.uleb128 0xd
+ 877 0343 DA000000 		.4byte	.LVL37
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 21
+
+
+ 878 0347 CF060000 		.4byte	0x6cf
+ 879 034b 59030000 		.4byte	0x359
+ 880 034f 09       		.uleb128 0x9
+ 881 0350 01       		.uleb128 0x1
+ 882 0351 50       		.byte	0x50
+ 883 0352 05       		.uleb128 0x5
+ 884 0353 03       		.byte	0x3
+ 885 0354 18000000 		.4byte	.LC1
+ 886 0358 00       		.byte	0
+ 887 0359 06       		.uleb128 0x6
+ 888 035a DE000000 		.4byte	.LVL38
+ 889 035e D7070000 		.4byte	0x7d7
+ 890 0362 06       		.uleb128 0x6
+ 891 0363 E2000000 		.4byte	.LVL39
+ 892 0367 D7070000 		.4byte	0x7d7
+ 893 036b 06       		.uleb128 0x6
+ 894 036c E6000000 		.4byte	.LVL40
+ 895 0370 D7070000 		.4byte	0x7d7
+ 896 0374 08       		.uleb128 0x8
+ 897 0375 12010000 		.4byte	.LVL42
+ 898 0379 E2070000 		.4byte	0x7e2
+ 899 037d 09       		.uleb128 0x9
+ 900 037e 01       		.uleb128 0x1
+ 901 037f 50       		.byte	0x50
+ 902 0380 02       		.uleb128 0x2
+ 903 0381 08       		.byte	0x8
+ 904 0382 82       		.byte	0x82
+ 905 0383 09       		.uleb128 0x9
+ 906 0384 01       		.uleb128 0x1
+ 907 0385 51       		.byte	0x51
+ 908 0386 01       		.uleb128 0x1
+ 909 0387 31       		.byte	0x31
+ 910 0388 09       		.uleb128 0x9
+ 911 0389 01       		.uleb128 0x1
+ 912 038a 52       		.byte	0x52
+ 913 038b 01       		.uleb128 0x1
+ 914 038c 34       		.byte	0x34
+ 915 038d 09       		.uleb128 0x9
+ 916 038e 01       		.uleb128 0x1
+ 917 038f 53       		.byte	0x53
+ 918 0390 02       		.uleb128 0x2
+ 919 0391 75       		.byte	0x75
+ 920 0392 00       		.sleb128 0
+ 921 0393 09       		.uleb128 0x9
+ 922 0394 02       		.uleb128 0x2
+ 923 0395 7D       		.byte	0x7d
+ 924 0396 00       		.sleb128 0
+ 925 0397 02       		.uleb128 0x2
+ 926 0398 08       		.byte	0x8
+ 927 0399 AA       		.byte	0xaa
+ 928 039a 00       		.byte	0
+ 929 039b 00       		.byte	0
+ 930 039c 0E       		.uleb128 0xe
+ 931 039d 48060000 		.4byte	.LASF22
+ 932 03a1 04       		.byte	0x4
+ 933 03a2 1207     		.2byte	0x712
+ 934 03a4 A8030000 		.4byte	0x3a8
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 22
+
+
+ 935 03a8 0F       		.uleb128 0xf
+ 936 03a9 76000000 		.4byte	0x76
+ 937 03ad 10       		.uleb128 0x10
+ 938 03ae 53020000 		.4byte	.LASF23
+ 939 03b2 05       		.byte	0x5
+ 940 03b3 1B       		.byte	0x1b
+ 941 03b4 68000000 		.4byte	0x68
+ 942 03b8 05       		.uleb128 0x5
+ 943 03b9 03       		.byte	0x3
+ 944 03ba 00000000 		.4byte	internal_orientation
+ 945 03be 10       		.uleb128 0x10
+ 946 03bf 50010000 		.4byte	.LASF24
+ 947 03c3 06       		.byte	0x6
+ 948 03c4 1D       		.byte	0x1d
+ 949 03c5 68000000 		.4byte	0x68
+ 950 03c9 05       		.uleb128 0x5
+ 951 03ca 03       		.byte	0x3
+ 952 03cb 00000000 		.4byte	driveStraightEnable
+ 953 03cf 10       		.uleb128 0x10
+ 954 03d0 E2020000 		.4byte	.LASF25
+ 955 03d4 01       		.byte	0x1
+ 956 03d5 2C       		.byte	0x2c
+ 957 03d6 68000000 		.4byte	0x68
+ 958 03da 05       		.uleb128 0x5
+ 959 03db 03       		.byte	0x3
+ 960 03dc 00000000 		.4byte	currentPuckRackScanningIndex
+ 961 03e0 11       		.uleb128 0x11
+ 962 03e1 68000000 		.4byte	0x68
+ 963 03e5 F0030000 		.4byte	0x3f0
+ 964 03e9 12       		.uleb128 0x12
+ 965 03ea 9D000000 		.4byte	0x9d
+ 966 03ee 04       		.byte	0x4
+ 967 03ef 00       		.byte	0
+ 968 03f0 10       		.uleb128 0x10
+ 969 03f1 EC010000 		.4byte	.LASF26
+ 970 03f5 01       		.byte	0x1
+ 971 03f6 2A       		.byte	0x2a
+ 972 03f7 E0030000 		.4byte	0x3e0
+ 973 03fb 05       		.uleb128 0x5
+ 974 03fc 03       		.byte	0x3
+ 975 03fd 00000000 		.4byte	puckRackColours
+ 976 0401 10       		.uleb128 0x10
+ 977 0402 A4000000 		.4byte	.LASF27
+ 978 0406 01       		.byte	0x1
+ 979 0407 2D       		.byte	0x2d
+ 980 0408 E0030000 		.4byte	0x3e0
+ 981 040c 05       		.uleb128 0x5
+ 982 040d 03       		.byte	0x3
+ 983 040e 00000000 		.4byte	puckRackOffsetsFromWest
+ 984 0412 10       		.uleb128 0x10
+ 985 0413 65040000 		.4byte	.LASF28
+ 986 0417 01       		.byte	0x1
+ 987 0418 25       		.byte	0x25
+ 988 0419 68000000 		.4byte	0x68
+ 989 041d 05       		.uleb128 0x5
+ 990 041e 03       		.byte	0x3
+ 991 041f 00000000 		.4byte	sweeping
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 23
+
+
+ 992 0423 11       		.uleb128 0x11
+ 993 0424 81000000 		.4byte	0x81
+ 994 0428 33040000 		.4byte	0x433
+ 995 042c 12       		.uleb128 0x12
+ 996 042d 9D000000 		.4byte	0x9d
+ 997 0431 03       		.byte	0x3
+ 998 0432 00       		.byte	0
+ 999 0433 10       		.uleb128 0x10
+ 1000 0434 BB030000 		.4byte	.LASF29
+ 1001 0438 01       		.byte	0x1
+ 1002 0439 26       		.byte	0x26
+ 1003 043a 23040000 		.4byte	0x423
+ 1004 043e 05       		.uleb128 0x5
+ 1005 043f 03       		.byte	0x3
+ 1006 0440 00000000 		.4byte	block_edge_location
+ 1007 0444 10       		.uleb128 0x10
+ 1008 0445 BD020000 		.4byte	.LASF30
+ 1009 0449 07       		.byte	0x7
+ 1010 044a B2       		.byte	0xb2
+ 1011 044b 81000000 		.4byte	0x81
+ 1012 044f 05       		.uleb128 0x5
+ 1013 0450 03       		.byte	0x3
+ 1014 0451 00000000 		.4byte	puckPileLocation
+ 1015 0455 10       		.uleb128 0x10
+ 1016 0456 2D000000 		.4byte	.LASF31
+ 1017 045a 06       		.byte	0x6
+ 1018 045b 25       		.byte	0x25
+ 1019 045c 33000000 		.4byte	0x33
+ 1020 0460 05       		.uleb128 0x5
+ 1021 0461 03       		.byte	0x3
+ 1022 0462 00000000 		.4byte	drivingForwardFlag
+ 1023 0466 10       		.uleb128 0x10
+ 1024 0467 CE020000 		.4byte	.LASF32
+ 1025 046b 06       		.byte	0x6
+ 1026 046c 26       		.byte	0x26
+ 1027 046d 33000000 		.4byte	0x33
+ 1028 0471 05       		.uleb128 0x5
+ 1029 0472 03       		.byte	0x3
+ 1030 0473 00000000 		.4byte	drivingBackwardFlag
+ 1031 0477 10       		.uleb128 0x10
+ 1032 0478 13000000 		.4byte	.LASF33
+ 1033 047c 06       		.byte	0x6
+ 1034 047d 27       		.byte	0x27
+ 1035 047e 33000000 		.4byte	0x33
+ 1036 0482 05       		.uleb128 0x5
+ 1037 0483 03       		.byte	0x3
+ 1038 0484 00000000 		.4byte	turningLeftFlag
+ 1039 0488 10       		.uleb128 0x10
+ 1040 0489 D5010000 		.4byte	.LASF34
+ 1041 048d 06       		.byte	0x6
+ 1042 048e 28       		.byte	0x28
+ 1043 048f 33000000 		.4byte	0x33
+ 1044 0493 05       		.uleb128 0x5
+ 1045 0494 03       		.byte	0x3
+ 1046 0495 00000000 		.4byte	turningRightFlag
+ 1047 0499 10       		.uleb128 0x10
+ 1048 049a 0B070000 		.4byte	.LASF35
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 24
+
+
+ 1049 049e 06       		.byte	0x6
+ 1050 049f 2B       		.byte	0x2b
+ 1051 04a0 68000000 		.4byte	0x68
+ 1052 04a4 05       		.uleb128 0x5
+ 1053 04a5 03       		.byte	0x3
+ 1054 04a6 00000000 		.4byte	initialisation
+ 1055 04aa 11       		.uleb128 0x11
+ 1056 04ab 8F000000 		.4byte	0x8f
+ 1057 04af BA040000 		.4byte	0x4ba
+ 1058 04b3 12       		.uleb128 0x12
+ 1059 04b4 9D000000 		.4byte	0x9d
+ 1060 04b8 1F       		.byte	0x1f
+ 1061 04b9 00       		.byte	0
+ 1062 04ba 10       		.uleb128 0x10
+ 1063 04bb 1A060000 		.4byte	.LASF36
+ 1064 04bf 01       		.byte	0x1
+ 1065 04c0 20       		.byte	0x20
+ 1066 04c1 AA040000 		.4byte	0x4aa
+ 1067 04c5 05       		.uleb128 0x5
+ 1068 04c6 03       		.byte	0x3
+ 1069 04c7 00000000 		.4byte	output
+ 1070 04cb 13       		.uleb128 0x13
+ 1071 04cc D0000000 		.4byte	.LASF37
+ 1072 04d0 07       		.byte	0x7
+ 1073 04d1 C3       		.byte	0xc3
+ 1074 04d2 E0030000 		.4byte	0x3e0
+ 1075 04d6 10       		.uleb128 0x10
+ 1076 04d7 3C030000 		.4byte	.LASF38
+ 1077 04db 01       		.byte	0x1
+ 1078 04dc 53       		.byte	0x53
+ 1079 04dd 68000000 		.4byte	0x68
+ 1080 04e1 05       		.uleb128 0x5
+ 1081 04e2 03       		.byte	0x3
+ 1082 04e3 00000000 		.4byte	colour_flag
+ 1083 04e7 10       		.uleb128 0x10
+ 1084 04e8 1B030000 		.4byte	.LASF39
+ 1085 04ec 01       		.byte	0x1
+ 1086 04ed 23       		.byte	0x23
+ 1087 04ee 68000000 		.4byte	0x68
+ 1088 04f2 05       		.uleb128 0x5
+ 1089 04f3 03       		.byte	0x3
+ 1090 04f4 00000000 		.4byte	state
+ 1091 04f8 10       		.uleb128 0x10
+ 1092 04f9 11050000 		.4byte	.LASF40
+ 1093 04fd 01       		.byte	0x1
+ 1094 04fe 59       		.byte	0x59
+ 1095 04ff 68000000 		.4byte	0x68
+ 1096 0503 05       		.uleb128 0x5
+ 1097 0504 03       		.byte	0x3
+ 1098 0505 00000000 		.4byte	moving
+ 1099 0509 10       		.uleb128 0x10
+ 1100 050a E8000000 		.4byte	.LASF41
+ 1101 050e 06       		.byte	0x6
+ 1102 050f 2D       		.byte	0x2d
+ 1103 0510 68000000 		.4byte	0x68
+ 1104 0514 05       		.uleb128 0x5
+ 1105 0515 03       		.byte	0x3
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 25
+
+
+ 1106 0516 00000000 		.4byte	ultrasonic_flag
+ 1107 051a 11       		.uleb128 0x11
+ 1108 051b 68000000 		.4byte	0x68
+ 1109 051f 2A050000 		.4byte	0x52a
+ 1110 0523 12       		.uleb128 0x12
+ 1111 0524 9D000000 		.4byte	0x9d
+ 1112 0528 02       		.byte	0x2
+ 1113 0529 00       		.byte	0
+ 1114 052a 10       		.uleb128 0x10
+ 1115 052b 97050000 		.4byte	.LASF42
+ 1116 052f 01       		.byte	0x1
+ 1117 0530 2B       		.byte	0x2b
+ 1118 0531 1A050000 		.4byte	0x51a
+ 1119 0535 05       		.uleb128 0x5
+ 1120 0536 03       		.byte	0x3
+ 1121 0537 00000000 		.4byte	puckConstructionPlan
+ 1122 053b 10       		.uleb128 0x10
+ 1123 053c 2C040000 		.4byte	.LASF43
+ 1124 0540 01       		.byte	0x1
+ 1125 0541 5D       		.byte	0x5d
+ 1126 0542 68000000 		.4byte	0x68
+ 1127 0546 05       		.uleb128 0x5
+ 1128 0547 03       		.byte	0x3
+ 1129 0548 00000000 		.4byte	current_stage
+ 1130 054c 10       		.uleb128 0x10
+ 1131 054d F8040000 		.4byte	.LASF44
+ 1132 0551 01       		.byte	0x1
+ 1133 0552 54       		.byte	0x54
+ 1134 0553 68000000 		.4byte	0x68
+ 1135 0557 05       		.uleb128 0x5
+ 1136 0558 03       		.byte	0x3
+ 1137 0559 00000000 		.4byte	colour_sensing_algorithm
+ 1138 055d 10       		.uleb128 0x10
+ 1139 055e 9A020000 		.4byte	.LASF45
+ 1140 0562 01       		.byte	0x1
+ 1141 0563 47       		.byte	0x47
+ 1142 0564 68000000 		.4byte	0x68
+ 1143 0568 05       		.uleb128 0x5
+ 1144 0569 03       		.byte	0x3
+ 1145 056a 00000000 		.4byte	safety_override
+ 1146 056e 10       		.uleb128 0x10
+ 1147 056f 79010000 		.4byte	.LASF46
+ 1148 0573 01       		.byte	0x1
+ 1149 0574 24       		.byte	0x24
+ 1150 0575 68000000 		.4byte	0x68
+ 1151 0579 05       		.uleb128 0x5
+ 1152 057a 03       		.byte	0x3
+ 1153 057b 00000000 		.4byte	running
+ 1154 057f 10       		.uleb128 0x10
+ 1155 0580 64010000 		.4byte	.LASF47
+ 1156 0584 01       		.byte	0x1
+ 1157 0585 29       		.byte	0x29
+ 1158 0586 68000000 		.4byte	0x68
+ 1159 058a 05       		.uleb128 0x5
+ 1160 058b 03       		.byte	0x3
+ 1161 058c 00000000 		.4byte	currentPuckStackSize
+ 1162 0590 11       		.uleb128 0x11
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 26
+
+
+ 1163 0591 68000000 		.4byte	0x68
+ 1164 0595 A0050000 		.4byte	0x5a0
+ 1165 0599 12       		.uleb128 0x12
+ 1166 059a 9D000000 		.4byte	0x9d
+ 1167 059e 01       		.byte	0x1
+ 1168 059f 00       		.byte	0
+ 1169 05a0 10       		.uleb128 0x10
+ 1170 05a1 F7060000 		.4byte	.LASF48
+ 1171 05a5 01       		.byte	0x1
+ 1172 05a6 33       		.byte	0x33
+ 1173 05a7 90050000 		.4byte	0x590
+ 1174 05ab 05       		.uleb128 0x5
+ 1175 05ac 03       		.byte	0x3
+ 1176 05ad 00000000 		.4byte	puckColoursTempPile
+ 1177 05b1 10       		.uleb128 0x10
+ 1178 05b2 0D010000 		.4byte	.LASF49
+ 1179 05b6 01       		.byte	0x1
+ 1180 05b7 35       		.byte	0x35
+ 1181 05b8 81000000 		.4byte	0x81
+ 1182 05bc 05       		.uleb128 0x5
+ 1183 05bd 03       		.byte	0x3
+ 1184 05be 00000000 		.4byte	horizontalPuckGrid
+ 1185 05c2 10       		.uleb128 0x10
+ 1186 05c3 7B000000 		.4byte	.LASF50
+ 1187 05c7 01       		.byte	0x1
+ 1188 05c8 39       		.byte	0x39
+ 1189 05c9 68000000 		.4byte	0x68
+ 1190 05cd 05       		.uleb128 0x5
+ 1191 05ce 03       		.byte	0x3
+ 1192 05cf 00000000 		.4byte	beginNavigation
+ 1193 05d3 10       		.uleb128 0x10
+ 1194 05d4 EB060000 		.4byte	.LASF51
+ 1195 05d8 01       		.byte	0x1
+ 1196 05d9 3A       		.byte	0x3a
+ 1197 05da 68000000 		.4byte	0x68
+ 1198 05de 05       		.uleb128 0x5
+ 1199 05df 03       		.byte	0x3
+ 1200 05e0 00000000 		.4byte	pathToPucks
+ 1201 05e4 10       		.uleb128 0x10
+ 1202 05e5 26050000 		.4byte	.LASF52
+ 1203 05e9 01       		.byte	0x1
+ 1204 05ea 3B       		.byte	0x3b
+ 1205 05eb 68000000 		.4byte	0x68
+ 1206 05ef 05       		.uleb128 0x5
+ 1207 05f0 03       		.byte	0x3
+ 1208 05f1 00000000 		.4byte	pathPastBlock
+ 1209 05f5 11       		.uleb128 0x11
+ 1210 05f6 68000000 		.4byte	0x68
+ 1211 05fa 05060000 		.4byte	0x605
+ 1212 05fe 12       		.uleb128 0x12
+ 1213 05ff 9D000000 		.4byte	0x9d
+ 1214 0603 03       		.byte	0x3
+ 1215 0604 00       		.byte	0
+ 1216 0605 10       		.uleb128 0x10
+ 1217 0606 81010000 		.4byte	.LASF53
+ 1218 060a 01       		.byte	0x1
+ 1219 060b 3C       		.byte	0x3c
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 27
+
+
+ 1220 060c F5050000 		.4byte	0x5f5
+ 1221 0610 05       		.uleb128 0x5
+ 1222 0611 03       		.byte	0x3
+ 1223 0612 00000000 		.4byte	block_location
+ 1224 0616 10       		.uleb128 0x10
+ 1225 0617 78030000 		.4byte	.LASF54
+ 1226 061b 01       		.byte	0x1
+ 1227 061c 41       		.byte	0x41
+ 1228 061d F5050000 		.4byte	0x5f5
+ 1229 0621 05       		.uleb128 0x5
+ 1230 0622 03       		.byte	0x3
+ 1231 0623 00000000 		.4byte	puck_location
+ 1232 0627 10       		.uleb128 0x10
+ 1233 0628 AA020000 		.4byte	.LASF55
+ 1234 062c 01       		.byte	0x1
+ 1235 062d 4B       		.byte	0x4b
+ 1236 062e 33000000 		.4byte	0x33
+ 1237 0632 05       		.uleb128 0x5
+ 1238 0633 03       		.byte	0x3
+ 1239 0634 00000000 		.4byte	blockEastClearance
+ 1240 0638 10       		.uleb128 0x10
+ 1241 0639 CE050000 		.4byte	.LASF56
+ 1242 063d 01       		.byte	0x1
+ 1243 063e 4C       		.byte	0x4c
+ 1244 063f 33000000 		.4byte	0x33
+ 1245 0643 05       		.uleb128 0x5
+ 1246 0644 03       		.byte	0x3
+ 1247 0645 00000000 		.4byte	blockWestClearance
+ 1248 0649 10       		.uleb128 0x10
+ 1249 064a F5050000 		.4byte	.LASF57
+ 1250 064e 01       		.byte	0x1
+ 1251 064f 4D       		.byte	0x4d
+ 1252 0650 33000000 		.4byte	0x33
+ 1253 0654 05       		.uleb128 0x5
+ 1254 0655 03       		.byte	0x3
+ 1255 0656 00000000 		.4byte	puckEastClearance
+ 1256 065a 10       		.uleb128 0x10
+ 1257 065b A8010000 		.4byte	.LASF58
+ 1258 065f 01       		.byte	0x1
+ 1259 0660 4E       		.byte	0x4e
+ 1260 0661 33000000 		.4byte	0x33
+ 1261 0665 05       		.uleb128 0x5
+ 1262 0666 03       		.byte	0x3
+ 1263 0667 00000000 		.4byte	puckWestClearance
+ 1264 066b 10       		.uleb128 0x10
+ 1265 066c 13040000 		.4byte	.LASF59
+ 1266 0670 01       		.byte	0x1
+ 1267 0671 52       		.byte	0x52
+ 1268 0672 68000000 		.4byte	0x68
+ 1269 0676 05       		.uleb128 0x5
+ 1270 0677 03       		.byte	0x3
+ 1271 0678 00000000 		.4byte	idac_value
+ 1272 067c 10       		.uleb128 0x10
+ 1273 067d E5040000 		.4byte	.LASF60
+ 1274 0681 01       		.byte	0x1
+ 1275 0682 5B       		.byte	0x5b
+ 1276 0683 8D060000 		.4byte	0x68d
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 28
+
+
+ 1277 0687 05       		.uleb128 0x5
+ 1278 0688 03       		.byte	0x3
+ 1279 0689 00000000 		.4byte	PLAN_SCAN_VERTICAL
+ 1280 068d 14       		.uleb128 0x14
+ 1281 068e 68000000 		.4byte	0x68
+ 1282 0692 10       		.uleb128 0x10
+ 1283 0693 2F060000 		.4byte	.LASF61
+ 1284 0697 01       		.byte	0x1
+ 1285 0698 61       		.byte	0x61
+ 1286 0699 68000000 		.4byte	0x68
+ 1287 069d 05       		.uleb128 0x5
+ 1288 069e 03       		.byte	0x3
+ 1289 069f 00000000 		.4byte	distance_returned_global
+ 1290 06a3 15       		.uleb128 0x15
+ 1291 06a4 BA010000 		.4byte	.LASF62
+ 1292 06a8 BA010000 		.4byte	.LASF62
+ 1293 06ac 06       		.byte	0x6
+ 1294 06ad 19       		.byte	0x19
+ 1295 06ae 15       		.uleb128 0x15
+ 1296 06af E3060000 		.4byte	.LASF63
+ 1297 06b3 E3060000 		.4byte	.LASF63
+ 1298 06b7 08       		.byte	0x8
+ 1299 06b8 76       		.byte	0x76
+ 1300 06b9 15       		.uleb128 0x15
+ 1301 06ba 59040000 		.4byte	.LASF64
+ 1302 06be 59040000 		.4byte	.LASF64
+ 1303 06c2 09       		.byte	0x9
+ 1304 06c3 3D       		.byte	0x3d
+ 1305 06c4 15       		.uleb128 0x15
+ 1306 06c5 21030000 		.4byte	.LASF65
+ 1307 06c9 21030000 		.4byte	.LASF65
+ 1308 06cd 0A       		.byte	0xa
+ 1309 06ce 54       		.byte	0x54
+ 1310 06cf 15       		.uleb128 0x15
+ 1311 06d0 86050000 		.4byte	.LASF66
+ 1312 06d4 86050000 		.4byte	.LASF66
+ 1313 06d8 0A       		.byte	0xa
+ 1314 06d9 8B       		.byte	0x8b
+ 1315 06da 15       		.uleb128 0x15
+ 1316 06db 40020000 		.4byte	.LASF67
+ 1317 06df 40020000 		.4byte	.LASF67
+ 1318 06e3 0B       		.byte	0xb
+ 1319 06e4 3A       		.byte	0x3a
+ 1320 06e5 15       		.uleb128 0x15
+ 1321 06e6 1E040000 		.4byte	.LASF68
+ 1322 06ea 1E040000 		.4byte	.LASF68
+ 1323 06ee 0C       		.byte	0xc
+ 1324 06ef 3C       		.byte	0x3c
+ 1325 06f0 15       		.uleb128 0x15
+ 1326 06f1 9E030000 		.4byte	.LASF69
+ 1327 06f5 9E030000 		.4byte	.LASF69
+ 1328 06f9 0C       		.byte	0xc
+ 1329 06fa 40       		.byte	0x40
+ 1330 06fb 15       		.uleb128 0x15
+ 1331 06fc 47050000 		.4byte	.LASF70
+ 1332 0700 47050000 		.4byte	.LASF70
+ 1333 0704 0C       		.byte	0xc
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 29
+
+
+ 1334 0705 41       		.byte	0x41
+ 1335 0706 15       		.uleb128 0x15
+ 1336 0707 81020000 		.4byte	.LASF71
+ 1337 070b 81020000 		.4byte	.LASF71
+ 1338 070f 0D       		.byte	0xd
+ 1339 0710 2F       		.byte	0x2f
+ 1340 0711 15       		.uleb128 0x15
+ 1341 0712 E6030000 		.4byte	.LASF72
+ 1342 0716 E6030000 		.4byte	.LASF72
+ 1343 071a 0E       		.byte	0xe
+ 1344 071b 2F       		.byte	0x2f
+ 1345 071c 15       		.uleb128 0x15
+ 1346 071d 86030000 		.4byte	.LASF73
+ 1347 0721 86030000 		.4byte	.LASF73
+ 1348 0725 0F       		.byte	0xf
+ 1349 0726 19       		.byte	0x19
+ 1350 0727 15       		.uleb128 0x15
+ 1351 0728 3B010000 		.4byte	.LASF74
+ 1352 072c 3B010000 		.4byte	.LASF74
+ 1353 0730 10       		.byte	0x10
+ 1354 0731 92       		.byte	0x92
+ 1355 0732 15       		.uleb128 0x15
+ 1356 0733 FF020000 		.4byte	.LASF75
+ 1357 0737 FF020000 		.4byte	.LASF75
+ 1358 073b 10       		.byte	0x10
+ 1359 073c C3       		.byte	0xc3
+ 1360 073d 15       		.uleb128 0x15
+ 1361 073e F8000000 		.4byte	.LASF76
+ 1362 0742 F8000000 		.4byte	.LASF76
+ 1363 0746 10       		.byte	0x10
+ 1364 0747 DC       		.byte	0xdc
+ 1365 0748 15       		.uleb128 0x15
+ 1366 0749 90010000 		.4byte	.LASF77
+ 1367 074d 90010000 		.4byte	.LASF77
+ 1368 0751 11       		.byte	0x11
+ 1369 0752 92       		.byte	0x92
+ 1370 0753 15       		.uleb128 0x15
+ 1371 0754 3A040000 		.4byte	.LASF78
+ 1372 0758 3A040000 		.4byte	.LASF78
+ 1373 075c 11       		.byte	0x11
+ 1374 075d C3       		.byte	0xc3
+ 1375 075e 15       		.uleb128 0x15
+ 1376 075f AC050000 		.4byte	.LASF79
+ 1377 0763 AC050000 		.4byte	.LASF79
+ 1378 0767 11       		.byte	0x11
+ 1379 0768 DC       		.byte	0xdc
+ 1380 0769 15       		.uleb128 0x15
+ 1381 076a 60030000 		.4byte	.LASF80
+ 1382 076e 60030000 		.4byte	.LASF80
+ 1383 0772 12       		.byte	0x12
+ 1384 0773 92       		.byte	0x92
+ 1385 0774 15       		.uleb128 0x15
+ 1386 0775 48030000 		.4byte	.LASF81
+ 1387 0779 48030000 		.4byte	.LASF81
+ 1388 077d 12       		.byte	0x12
+ 1389 077e DC       		.byte	0xdc
+ 1390 077f 15       		.uleb128 0x15
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 30
+
+
+ 1391 0780 68020000 		.4byte	.LASF82
+ 1392 0784 68020000 		.4byte	.LASF82
+ 1393 0788 13       		.byte	0x13
+ 1394 0789 92       		.byte	0x92
+ 1395 078a 15       		.uleb128 0x15
+ 1396 078b 27020000 		.4byte	.LASF83
+ 1397 078f 27020000 		.4byte	.LASF83
+ 1398 0793 13       		.byte	0x13
+ 1399 0794 DC       		.byte	0xdc
+ 1400 0795 15       		.uleb128 0x15
+ 1401 0796 8B000000 		.4byte	.LASF84
+ 1402 079a 8B000000 		.4byte	.LASF84
+ 1403 079e 14       		.byte	0x14
+ 1404 079f 48       		.byte	0x48
+ 1405 07a0 15       		.uleb128 0x15
+ 1406 07a1 4E000000 		.4byte	.LASF85
+ 1407 07a5 4E000000 		.4byte	.LASF85
+ 1408 07a9 15       		.byte	0x15
+ 1409 07aa 48       		.byte	0x48
+ 1410 07ab 15       		.uleb128 0x15
+ 1411 07ac 18050000 		.4byte	.LASF86
+ 1412 07b0 18050000 		.4byte	.LASF86
+ 1413 07b4 16       		.byte	0x16
+ 1414 07b5 5A       		.byte	0x5a
+ 1415 07b6 15       		.uleb128 0x15
+ 1416 07b7 20010000 		.4byte	.LASF87
+ 1417 07bb 20010000 		.4byte	.LASF87
+ 1418 07bf 16       		.byte	0x16
+ 1419 07c0 5E       		.byte	0x5e
+ 1420 07c1 15       		.uleb128 0x15
+ 1421 07c2 40000000 		.4byte	.LASF88
+ 1422 07c6 40000000 		.4byte	.LASF88
+ 1423 07ca 17       		.byte	0x17
+ 1424 07cb 18       		.byte	0x18
+ 1425 07cc 15       		.uleb128 0x15
+ 1426 07cd 71050000 		.4byte	.LASF89
+ 1427 07d1 71050000 		.4byte	.LASF89
+ 1428 07d5 18       		.byte	0x18
+ 1429 07d6 18       		.byte	0x18
+ 1430 07d7 15       		.uleb128 0x15
+ 1431 07d8 E1050000 		.4byte	.LASF90
+ 1432 07dc E1050000 		.4byte	.LASF90
+ 1433 07e0 06       		.byte	0x6
+ 1434 07e1 1A       		.byte	0x1a
+ 1435 07e2 15       		.uleb128 0x15
+ 1436 07e3 07060000 		.4byte	.LASF91
+ 1437 07e7 07060000 		.4byte	.LASF91
+ 1438 07eb 05       		.byte	0x5
+ 1439 07ec 12       		.byte	0x12
+ 1440 07ed 00       		.byte	0
+ 1441              		.section	.debug_abbrev,"",%progbits
+ 1442              	.Ldebug_abbrev0:
+ 1443 0000 01       		.uleb128 0x1
+ 1444 0001 11       		.uleb128 0x11
+ 1445 0002 01       		.byte	0x1
+ 1446 0003 25       		.uleb128 0x25
+ 1447 0004 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 31
+
+
+ 1448 0005 13       		.uleb128 0x13
+ 1449 0006 0B       		.uleb128 0xb
+ 1450 0007 03       		.uleb128 0x3
+ 1451 0008 0E       		.uleb128 0xe
+ 1452 0009 1B       		.uleb128 0x1b
+ 1453 000a 0E       		.uleb128 0xe
+ 1454 000b 55       		.uleb128 0x55
+ 1455 000c 17       		.uleb128 0x17
+ 1456 000d 11       		.uleb128 0x11
+ 1457 000e 01       		.uleb128 0x1
+ 1458 000f 10       		.uleb128 0x10
+ 1459 0010 17       		.uleb128 0x17
+ 1460 0011 00       		.byte	0
+ 1461 0012 00       		.byte	0
+ 1462 0013 02       		.uleb128 0x2
+ 1463 0014 24       		.uleb128 0x24
+ 1464 0015 00       		.byte	0
+ 1465 0016 0B       		.uleb128 0xb
+ 1466 0017 0B       		.uleb128 0xb
+ 1467 0018 3E       		.uleb128 0x3e
+ 1468 0019 0B       		.uleb128 0xb
+ 1469 001a 03       		.uleb128 0x3
+ 1470 001b 0E       		.uleb128 0xe
+ 1471 001c 00       		.byte	0
+ 1472 001d 00       		.byte	0
+ 1473 001e 03       		.uleb128 0x3
+ 1474 001f 16       		.uleb128 0x16
+ 1475 0020 00       		.byte	0
+ 1476 0021 03       		.uleb128 0x3
+ 1477 0022 0E       		.uleb128 0xe
+ 1478 0023 3A       		.uleb128 0x3a
+ 1479 0024 0B       		.uleb128 0xb
+ 1480 0025 3B       		.uleb128 0x3b
+ 1481 0026 0B       		.uleb128 0xb
+ 1482 0027 49       		.uleb128 0x49
+ 1483 0028 13       		.uleb128 0x13
+ 1484 0029 00       		.byte	0
+ 1485 002a 00       		.byte	0
+ 1486 002b 04       		.uleb128 0x4
+ 1487 002c 24       		.uleb128 0x24
+ 1488 002d 00       		.byte	0
+ 1489 002e 0B       		.uleb128 0xb
+ 1490 002f 0B       		.uleb128 0xb
+ 1491 0030 3E       		.uleb128 0x3e
+ 1492 0031 0B       		.uleb128 0xb
+ 1493 0032 03       		.uleb128 0x3
+ 1494 0033 08       		.uleb128 0x8
+ 1495 0034 00       		.byte	0
+ 1496 0035 00       		.byte	0
+ 1497 0036 05       		.uleb128 0x5
+ 1498 0037 2E       		.uleb128 0x2e
+ 1499 0038 01       		.byte	0x1
+ 1500 0039 3F       		.uleb128 0x3f
+ 1501 003a 19       		.uleb128 0x19
+ 1502 003b 03       		.uleb128 0x3
+ 1503 003c 08       		.uleb128 0x8
+ 1504 003d 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 32
+
+
+ 1505 003e 0B       		.uleb128 0xb
+ 1506 003f 3B       		.uleb128 0x3b
+ 1507 0040 0B       		.uleb128 0xb
+ 1508 0041 27       		.uleb128 0x27
+ 1509 0042 19       		.uleb128 0x19
+ 1510 0043 11       		.uleb128 0x11
+ 1511 0044 01       		.uleb128 0x1
+ 1512 0045 12       		.uleb128 0x12
+ 1513 0046 06       		.uleb128 0x6
+ 1514 0047 40       		.uleb128 0x40
+ 1515 0048 18       		.uleb128 0x18
+ 1516 0049 9742     		.uleb128 0x2117
+ 1517 004b 19       		.uleb128 0x19
+ 1518 004c 01       		.uleb128 0x1
+ 1519 004d 13       		.uleb128 0x13
+ 1520 004e 00       		.byte	0
+ 1521 004f 00       		.byte	0
+ 1522 0050 06       		.uleb128 0x6
+ 1523 0051 898201   		.uleb128 0x4109
+ 1524 0054 00       		.byte	0
+ 1525 0055 11       		.uleb128 0x11
+ 1526 0056 01       		.uleb128 0x1
+ 1527 0057 31       		.uleb128 0x31
+ 1528 0058 13       		.uleb128 0x13
+ 1529 0059 00       		.byte	0
+ 1530 005a 00       		.byte	0
+ 1531 005b 07       		.uleb128 0x7
+ 1532 005c 2E       		.uleb128 0x2e
+ 1533 005d 01       		.byte	0x1
+ 1534 005e 3F       		.uleb128 0x3f
+ 1535 005f 19       		.uleb128 0x19
+ 1536 0060 03       		.uleb128 0x3
+ 1537 0061 0E       		.uleb128 0xe
+ 1538 0062 3A       		.uleb128 0x3a
+ 1539 0063 0B       		.uleb128 0xb
+ 1540 0064 3B       		.uleb128 0x3b
+ 1541 0065 0B       		.uleb128 0xb
+ 1542 0066 27       		.uleb128 0x27
+ 1543 0067 19       		.uleb128 0x19
+ 1544 0068 11       		.uleb128 0x11
+ 1545 0069 01       		.uleb128 0x1
+ 1546 006a 12       		.uleb128 0x12
+ 1547 006b 06       		.uleb128 0x6
+ 1548 006c 40       		.uleb128 0x40
+ 1549 006d 18       		.uleb128 0x18
+ 1550 006e 9742     		.uleb128 0x2117
+ 1551 0070 19       		.uleb128 0x19
+ 1552 0071 01       		.uleb128 0x1
+ 1553 0072 13       		.uleb128 0x13
+ 1554 0073 00       		.byte	0
+ 1555 0074 00       		.byte	0
+ 1556 0075 08       		.uleb128 0x8
+ 1557 0076 898201   		.uleb128 0x4109
+ 1558 0079 01       		.byte	0x1
+ 1559 007a 11       		.uleb128 0x11
+ 1560 007b 01       		.uleb128 0x1
+ 1561 007c 31       		.uleb128 0x31
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 33
+
+
+ 1562 007d 13       		.uleb128 0x13
+ 1563 007e 00       		.byte	0
+ 1564 007f 00       		.byte	0
+ 1565 0080 09       		.uleb128 0x9
+ 1566 0081 8A8201   		.uleb128 0x410a
+ 1567 0084 00       		.byte	0
+ 1568 0085 02       		.uleb128 0x2
+ 1569 0086 18       		.uleb128 0x18
+ 1570 0087 9142     		.uleb128 0x2111
+ 1571 0089 18       		.uleb128 0x18
+ 1572 008a 00       		.byte	0
+ 1573 008b 00       		.byte	0
+ 1574 008c 0A       		.uleb128 0xa
+ 1575 008d 2E       		.uleb128 0x2e
+ 1576 008e 01       		.byte	0x1
+ 1577 008f 3F       		.uleb128 0x3f
+ 1578 0090 19       		.uleb128 0x19
+ 1579 0091 03       		.uleb128 0x3
+ 1580 0092 0E       		.uleb128 0xe
+ 1581 0093 3A       		.uleb128 0x3a
+ 1582 0094 0B       		.uleb128 0xb
+ 1583 0095 3B       		.uleb128 0x3b
+ 1584 0096 0B       		.uleb128 0xb
+ 1585 0097 27       		.uleb128 0x27
+ 1586 0098 19       		.uleb128 0x19
+ 1587 0099 49       		.uleb128 0x49
+ 1588 009a 13       		.uleb128 0x13
+ 1589 009b 8701     		.uleb128 0x87
+ 1590 009d 19       		.uleb128 0x19
+ 1591 009e 11       		.uleb128 0x11
+ 1592 009f 01       		.uleb128 0x1
+ 1593 00a0 12       		.uleb128 0x12
+ 1594 00a1 06       		.uleb128 0x6
+ 1595 00a2 40       		.uleb128 0x40
+ 1596 00a3 18       		.uleb128 0x18
+ 1597 00a4 9742     		.uleb128 0x2117
+ 1598 00a6 19       		.uleb128 0x19
+ 1599 00a7 01       		.uleb128 0x1
+ 1600 00a8 13       		.uleb128 0x13
+ 1601 00a9 00       		.byte	0
+ 1602 00aa 00       		.byte	0
+ 1603 00ab 0B       		.uleb128 0xb
+ 1604 00ac 34       		.uleb128 0x34
+ 1605 00ad 00       		.byte	0
+ 1606 00ae 03       		.uleb128 0x3
+ 1607 00af 0E       		.uleb128 0xe
+ 1608 00b0 3A       		.uleb128 0x3a
+ 1609 00b1 0B       		.uleb128 0xb
+ 1610 00b2 3B       		.uleb128 0x3b
+ 1611 00b3 0B       		.uleb128 0xb
+ 1612 00b4 49       		.uleb128 0x49
+ 1613 00b5 13       		.uleb128 0x13
+ 1614 00b6 1C       		.uleb128 0x1c
+ 1615 00b7 0B       		.uleb128 0xb
+ 1616 00b8 00       		.byte	0
+ 1617 00b9 00       		.byte	0
+ 1618 00ba 0C       		.uleb128 0xc
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 34
+
+
+ 1619 00bb 34       		.uleb128 0x34
+ 1620 00bc 00       		.byte	0
+ 1621 00bd 03       		.uleb128 0x3
+ 1622 00be 0E       		.uleb128 0xe
+ 1623 00bf 3A       		.uleb128 0x3a
+ 1624 00c0 0B       		.uleb128 0xb
+ 1625 00c1 3B       		.uleb128 0x3b
+ 1626 00c2 0B       		.uleb128 0xb
+ 1627 00c3 49       		.uleb128 0x49
+ 1628 00c4 13       		.uleb128 0x13
+ 1629 00c5 1C       		.uleb128 0x1c
+ 1630 00c6 05       		.uleb128 0x5
+ 1631 00c7 00       		.byte	0
+ 1632 00c8 00       		.byte	0
+ 1633 00c9 0D       		.uleb128 0xd
+ 1634 00ca 898201   		.uleb128 0x4109
+ 1635 00cd 01       		.byte	0x1
+ 1636 00ce 11       		.uleb128 0x11
+ 1637 00cf 01       		.uleb128 0x1
+ 1638 00d0 31       		.uleb128 0x31
+ 1639 00d1 13       		.uleb128 0x13
+ 1640 00d2 01       		.uleb128 0x1
+ 1641 00d3 13       		.uleb128 0x13
+ 1642 00d4 00       		.byte	0
+ 1643 00d5 00       		.byte	0
+ 1644 00d6 0E       		.uleb128 0xe
+ 1645 00d7 34       		.uleb128 0x34
+ 1646 00d8 00       		.byte	0
+ 1647 00d9 03       		.uleb128 0x3
+ 1648 00da 0E       		.uleb128 0xe
+ 1649 00db 3A       		.uleb128 0x3a
+ 1650 00dc 0B       		.uleb128 0xb
+ 1651 00dd 3B       		.uleb128 0x3b
+ 1652 00de 05       		.uleb128 0x5
+ 1653 00df 49       		.uleb128 0x49
+ 1654 00e0 13       		.uleb128 0x13
+ 1655 00e1 3F       		.uleb128 0x3f
+ 1656 00e2 19       		.uleb128 0x19
+ 1657 00e3 3C       		.uleb128 0x3c
+ 1658 00e4 19       		.uleb128 0x19
+ 1659 00e5 00       		.byte	0
+ 1660 00e6 00       		.byte	0
+ 1661 00e7 0F       		.uleb128 0xf
+ 1662 00e8 35       		.uleb128 0x35
+ 1663 00e9 00       		.byte	0
+ 1664 00ea 49       		.uleb128 0x49
+ 1665 00eb 13       		.uleb128 0x13
+ 1666 00ec 00       		.byte	0
+ 1667 00ed 00       		.byte	0
+ 1668 00ee 10       		.uleb128 0x10
+ 1669 00ef 34       		.uleb128 0x34
+ 1670 00f0 00       		.byte	0
+ 1671 00f1 03       		.uleb128 0x3
+ 1672 00f2 0E       		.uleb128 0xe
+ 1673 00f3 3A       		.uleb128 0x3a
+ 1674 00f4 0B       		.uleb128 0xb
+ 1675 00f5 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 35
+
+
+ 1676 00f6 0B       		.uleb128 0xb
+ 1677 00f7 49       		.uleb128 0x49
+ 1678 00f8 13       		.uleb128 0x13
+ 1679 00f9 3F       		.uleb128 0x3f
+ 1680 00fa 19       		.uleb128 0x19
+ 1681 00fb 02       		.uleb128 0x2
+ 1682 00fc 18       		.uleb128 0x18
+ 1683 00fd 00       		.byte	0
+ 1684 00fe 00       		.byte	0
+ 1685 00ff 11       		.uleb128 0x11
+ 1686 0100 01       		.uleb128 0x1
+ 1687 0101 01       		.byte	0x1
+ 1688 0102 49       		.uleb128 0x49
+ 1689 0103 13       		.uleb128 0x13
+ 1690 0104 01       		.uleb128 0x1
+ 1691 0105 13       		.uleb128 0x13
+ 1692 0106 00       		.byte	0
+ 1693 0107 00       		.byte	0
+ 1694 0108 12       		.uleb128 0x12
+ 1695 0109 21       		.uleb128 0x21
+ 1696 010a 00       		.byte	0
+ 1697 010b 49       		.uleb128 0x49
+ 1698 010c 13       		.uleb128 0x13
+ 1699 010d 2F       		.uleb128 0x2f
+ 1700 010e 0B       		.uleb128 0xb
+ 1701 010f 00       		.byte	0
+ 1702 0110 00       		.byte	0
+ 1703 0111 13       		.uleb128 0x13
+ 1704 0112 34       		.uleb128 0x34
+ 1705 0113 00       		.byte	0
+ 1706 0114 03       		.uleb128 0x3
+ 1707 0115 0E       		.uleb128 0xe
+ 1708 0116 3A       		.uleb128 0x3a
+ 1709 0117 0B       		.uleb128 0xb
+ 1710 0118 3B       		.uleb128 0x3b
+ 1711 0119 0B       		.uleb128 0xb
+ 1712 011a 49       		.uleb128 0x49
+ 1713 011b 13       		.uleb128 0x13
+ 1714 011c 3F       		.uleb128 0x3f
+ 1715 011d 19       		.uleb128 0x19
+ 1716 011e 3C       		.uleb128 0x3c
+ 1717 011f 19       		.uleb128 0x19
+ 1718 0120 00       		.byte	0
+ 1719 0121 00       		.byte	0
+ 1720 0122 14       		.uleb128 0x14
+ 1721 0123 26       		.uleb128 0x26
+ 1722 0124 00       		.byte	0
+ 1723 0125 49       		.uleb128 0x49
+ 1724 0126 13       		.uleb128 0x13
+ 1725 0127 00       		.byte	0
+ 1726 0128 00       		.byte	0
+ 1727 0129 15       		.uleb128 0x15
+ 1728 012a 2E       		.uleb128 0x2e
+ 1729 012b 00       		.byte	0
+ 1730 012c 3F       		.uleb128 0x3f
+ 1731 012d 19       		.uleb128 0x19
+ 1732 012e 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 36
+
+
+ 1733 012f 19       		.uleb128 0x19
+ 1734 0130 6E       		.uleb128 0x6e
+ 1735 0131 0E       		.uleb128 0xe
+ 1736 0132 03       		.uleb128 0x3
+ 1737 0133 0E       		.uleb128 0xe
+ 1738 0134 3A       		.uleb128 0x3a
+ 1739 0135 0B       		.uleb128 0xb
+ 1740 0136 3B       		.uleb128 0x3b
+ 1741 0137 0B       		.uleb128 0xb
+ 1742 0138 00       		.byte	0
+ 1743 0139 00       		.byte	0
+ 1744 013a 00       		.byte	0
+ 1745              		.section	.debug_aranges,"",%progbits
+ 1746 0000 2C000000 		.4byte	0x2c
+ 1747 0004 0200     		.2byte	0x2
+ 1748 0006 00000000 		.4byte	.Ldebug_info0
+ 1749 000a 04       		.byte	0x4
+ 1750 000b 00       		.byte	0
+ 1751 000c 0000     		.2byte	0
+ 1752 000e 0000     		.2byte	0
+ 1753 0010 00000000 		.4byte	.LFB64
+ 1754 0014 08000000 		.4byte	.LFE64-.LFB64
+ 1755 0018 00000000 		.4byte	.LFB65
+ 1756 001c 20000000 		.4byte	.LFE65-.LFB65
+ 1757 0020 00000000 		.4byte	.LFB66
+ 1758 0024 30010000 		.4byte	.LFE66-.LFB66
+ 1759 0028 00000000 		.4byte	0
+ 1760 002c 00000000 		.4byte	0
+ 1761              		.section	.debug_ranges,"",%progbits
+ 1762              	.Ldebug_ranges0:
+ 1763 0000 00000000 		.4byte	.LFB64
+ 1764 0004 08000000 		.4byte	.LFE64
+ 1765 0008 00000000 		.4byte	.LFB65
+ 1766 000c 20000000 		.4byte	.LFE65
+ 1767 0010 00000000 		.4byte	.LFB66
+ 1768 0014 30010000 		.4byte	.LFE66
+ 1769 0018 00000000 		.4byte	0
+ 1770 001c 00000000 		.4byte	0
+ 1771              		.section	.debug_line,"",%progbits
+ 1772              	.Ldebug_line0:
+ 1773 0000 F3020000 		.section	.debug_str,"MS",%progbits,1
+ 1773      02008202 
+ 1773      00000201 
+ 1773      FB0E0D00 
+ 1773      01010101 
+ 1774              	.LASF20:
+ 1775 0000 756C7472 		.ascii	"ultrasonic_testing\000"
+ 1775      61736F6E 
+ 1775      69635F74 
+ 1775      65737469 
+ 1775      6E6700
+ 1776              	.LASF33:
+ 1777 0013 7475726E 		.ascii	"turningLeftFlag\000"
+ 1777      696E674C 
+ 1777      65667446 
+ 1777      6C616700 
+ 1778              	.LASF2:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 37
+
+
+ 1779 0023 73686F72 		.ascii	"short int\000"
+ 1779      7420696E 
+ 1779      7400
+ 1780              	.LASF31:
+ 1781 002d 64726976 		.ascii	"drivingForwardFlag\000"
+ 1781      696E6746 
+ 1781      6F727761 
+ 1781      7264466C 
+ 1781      616700
+ 1782              	.LASF88:
+ 1783 0040 536F6E69 		.ascii	"Sonic_StartEx\000"
+ 1783      635F5374 
+ 1783      61727445 
+ 1783      7800
+ 1784              	.LASF85:
+ 1785 004e 4D6F746F 		.ascii	"Motor_Right_Decoder_Start\000"
+ 1785      725F5269 
+ 1785      6768745F 
+ 1785      4465636F 
+ 1785      6465725F 
+ 1786              	.LASF17:
+ 1787 0068 636F6C6F 		.ascii	"colour_calibration\000"
+ 1787      75725F63 
+ 1787      616C6962 
+ 1787      72617469 
+ 1787      6F6E00
+ 1788              	.LASF50:
+ 1789 007b 62656769 		.ascii	"beginNavigation\000"
+ 1789      6E4E6176 
+ 1789      69676174 
+ 1789      696F6E00 
+ 1790              	.LASF84:
+ 1791 008b 4D6F746F 		.ascii	"Motor_Left_Decoder_Start\000"
+ 1791      725F4C65 
+ 1791      66745F44 
+ 1791      65636F64 
+ 1791      65725F53 
+ 1792              	.LASF27:
+ 1793 00a4 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 1793      5261636B 
+ 1793      4F666673 
+ 1793      65747346 
+ 1793      726F6D57 
+ 1794              	.LASF14:
+ 1795 00bc 6C6F6E67 		.ascii	"long double\000"
+ 1795      20646F75 
+ 1795      626C6500 
+ 1796              	.LASF16:
+ 1797 00c8 53746172 		.ascii	"StartIH\000"
+ 1797      74494800 
+ 1798              	.LASF37:
+ 1799 00d0 756C7472 		.ascii	"ultrasonic_distances_mm\000"
+ 1799      61736F6E 
+ 1799      69635F64 
+ 1799      69737461 
+ 1799      6E636573 
+ 1800              	.LASF41:
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 38
+
+
+ 1801 00e8 756C7472 		.ascii	"ultrasonic_flag\000"
+ 1801      61736F6E 
+ 1801      69635F66 
+ 1801      6C616700 
+ 1802              	.LASF76:
+ 1803 00f8 5261636B 		.ascii	"Rack_Servo_PWM_Sleep\000"
+ 1803      5F536572 
+ 1803      766F5F50 
+ 1803      574D5F53 
+ 1803      6C656570 
+ 1804              	.LASF49:
+ 1805 010d 686F7269 		.ascii	"horizontalPuckGrid\000"
+ 1805      7A6F6E74 
+ 1805      616C5075 
+ 1805      636B4772 
+ 1805      696400
+ 1806              	.LASF87:
+ 1807 0120 54696D65 		.ascii	"Timer_1_ReadStatusRegister\000"
+ 1807      725F315F 
+ 1807      52656164 
+ 1807      53746174 
+ 1807      75735265 
+ 1808              	.LASF74:
+ 1809 013b 5261636B 		.ascii	"Rack_Servo_PWM_Start\000"
+ 1809      5F536572 
+ 1809      766F5F50 
+ 1809      574D5F53 
+ 1809      74617274 
+ 1810              	.LASF24:
+ 1811 0150 64726976 		.ascii	"driveStraightEnable\000"
+ 1811      65537472 
+ 1811      61696768 
+ 1811      74456E61 
+ 1811      626C6500 
+ 1812              	.LASF47:
+ 1813 0164 63757272 		.ascii	"currentPuckStackSize\000"
+ 1813      656E7450 
+ 1813      75636B53 
+ 1813      7461636B 
+ 1813      53697A65 
+ 1814              	.LASF46:
+ 1815 0179 72756E6E 		.ascii	"running\000"
+ 1815      696E6700 
+ 1816              	.LASF53:
+ 1817 0181 626C6F63 		.ascii	"block_location\000"
+ 1817      6B5F6C6F 
+ 1817      63617469 
+ 1817      6F6E00
+ 1818              	.LASF77:
+ 1819 0190 47726970 		.ascii	"Gripper_Servo_PWM_Start\000"
+ 1819      7065725F 
+ 1819      53657276 
+ 1819      6F5F5057 
+ 1819      4D5F5374 
+ 1820              	.LASF58:
+ 1821 01a8 7075636B 		.ascii	"puckWestClearance\000"
+ 1821      57657374 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 39
+
+
+ 1821      436C6561 
+ 1821      72616E63 
+ 1821      6500
+ 1822              	.LASF62:
+ 1823 01ba 756C7472 		.ascii	"ultrasonicInterruptHandler\000"
+ 1823      61736F6E 
+ 1823      6963496E 
+ 1823      74657272 
+ 1823      75707448 
+ 1824              	.LASF34:
+ 1825 01d5 7475726E 		.ascii	"turningRightFlag\000"
+ 1825      696E6752 
+ 1825      69676874 
+ 1825      466C6167 
+ 1825      00
+ 1826              	.LASF11:
+ 1827 01e6 666C6F61 		.ascii	"float\000"
+ 1827      7400
+ 1828              	.LASF26:
+ 1829 01ec 7075636B 		.ascii	"puckRackColours\000"
+ 1829      5261636B 
+ 1829      436F6C6F 
+ 1829      75727300 
+ 1830              	.LASF6:
+ 1831 01fc 6C6F6E67 		.ascii	"long long int\000"
+ 1831      206C6F6E 
+ 1831      6720696E 
+ 1831      7400
+ 1832              	.LASF21:
+ 1833 020a 626C6F63 		.ascii	"block_and_puck_edge_midpoint\000"
+ 1833      6B5F616E 
+ 1833      645F7075 
+ 1833      636B5F65 
+ 1833      6467655F 
+ 1834              	.LASF83:
+ 1835 0227 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
+ 1835      725F5269 
+ 1835      6768745F 
+ 1835      44726976 
+ 1835      65725F53 
+ 1836              	.LASF67:
+ 1837 0240 4144435F 		.ascii	"ADC_Start\000"
+ 1837      53746172 
+ 1837      7400
+ 1838              	.LASF4:
+ 1839 024a 6C6F6E67 		.ascii	"long int\000"
+ 1839      20696E74 
+ 1839      00
+ 1840              	.LASF23:
+ 1841 0253 696E7465 		.ascii	"internal_orientation\000"
+ 1841      726E616C 
+ 1841      5F6F7269 
+ 1841      656E7461 
+ 1841      74696F6E 
+ 1842              	.LASF82:
+ 1843 0268 4D6F746F 		.ascii	"Motor_Right_Driver_Start\000"
+ 1843      725F5269 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 40
+
+
+ 1843      6768745F 
+ 1843      44726976 
+ 1843      65725F53 
+ 1844              	.LASF71:
+ 1845 0281 636F6E74 		.ascii	"control_photodiode_Write\000"
+ 1845      726F6C5F 
+ 1845      70686F74 
+ 1845      6F64696F 
+ 1845      64655F57 
+ 1846              	.LASF45:
+ 1847 029a 73616665 		.ascii	"safety_override\000"
+ 1847      74795F6F 
+ 1847      76657272 
+ 1847      69646500 
+ 1848              	.LASF55:
+ 1849 02aa 626C6F63 		.ascii	"blockEastClearance\000"
+ 1849      6B456173 
+ 1849      74436C65 
+ 1849      6172616E 
+ 1849      636500
+ 1850              	.LASF30:
+ 1851 02bd 7075636B 		.ascii	"puckPileLocation\000"
+ 1851      50696C65 
+ 1851      4C6F6361 
+ 1851      74696F6E 
+ 1851      00
+ 1852              	.LASF32:
+ 1853 02ce 64726976 		.ascii	"drivingBackwardFlag\000"
+ 1853      696E6742 
+ 1853      61636B77 
+ 1853      61726446 
+ 1853      6C616700 
+ 1854              	.LASF25:
+ 1855 02e2 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 1855      656E7450 
+ 1855      75636B52 
+ 1855      61636B53 
+ 1855      63616E6E 
+ 1856              	.LASF75:
+ 1857 02ff 5261636B 		.ascii	"Rack_Servo_PWM_WriteCompare\000"
+ 1857      5F536572 
+ 1857      766F5F50 
+ 1857      574D5F57 
+ 1857      72697465 
+ 1858              	.LASF39:
+ 1859 031b 73746174 		.ascii	"state\000"
+ 1859      6500
+ 1860              	.LASF65:
+ 1861 0321 55415254 		.ascii	"UART_1_Start\000"
+ 1861      5F315F53 
+ 1861      74617274 
+ 1861      00
+ 1862              	.LASF1:
+ 1863 032e 756E7369 		.ascii	"unsigned char\000"
+ 1863      676E6564 
+ 1863      20636861 
+ 1863      7200
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 41
+
+
+ 1864              	.LASF38:
+ 1865 033c 636F6C6F 		.ascii	"colour_flag\000"
+ 1865      75725F66 
+ 1865      6C616700 
+ 1866              	.LASF81:
+ 1867 0348 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
+ 1867      725F4C65 
+ 1867      66745F44 
+ 1867      72697665 
+ 1867      725F536C 
+ 1868              	.LASF80:
+ 1869 0360 4D6F746F 		.ascii	"Motor_Left_Driver_Start\000"
+ 1869      725F4C65 
+ 1869      66745F44 
+ 1869      72697665 
+ 1869      725F5374 
+ 1870              	.LASF54:
+ 1871 0378 7075636B 		.ascii	"puck_location\000"
+ 1871      5F6C6F63 
+ 1871      6174696F 
+ 1871      6E00
+ 1872              	.LASF73:
+ 1873 0386 636F6C6F 		.ascii	"colourSensingInitialise\000"
+ 1873      75725365 
+ 1873      6E73696E 
+ 1873      67496E69 
+ 1873      7469616C 
+ 1874              	.LASF69:
+ 1875 039e 49444143 		.ascii	"IDAC8_1_SetRange\000"
+ 1875      385F315F 
+ 1875      53657452 
+ 1875      616E6765 
+ 1875      00
+ 1876              	.LASF0:
+ 1877 03af 7369676E 		.ascii	"signed char\000"
+ 1877      65642063 
+ 1877      68617200 
+ 1878              	.LASF29:
+ 1879 03bb 626C6F63 		.ascii	"block_edge_location\000"
+ 1879      6B5F6564 
+ 1879      67655F6C 
+ 1879      6F636174 
+ 1879      696F6E00 
+ 1880              	.LASF7:
+ 1881 03cf 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1881      206C6F6E 
+ 1881      6720756E 
+ 1881      7369676E 
+ 1881      65642069 
+ 1882              	.LASF72:
+ 1883 03e6 636F6E74 		.ascii	"control_led_Write\000"
+ 1883      726F6C5F 
+ 1883      6C65645F 
+ 1883      57726974 
+ 1883      6500
+ 1884              	.LASF18:
+ 1885 03f8 73657276 		.ascii	"servo_testing\000"
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 42
+
+
+ 1885      6F5F7465 
+ 1885      7374696E 
+ 1885      6700
+ 1886              	.LASF8:
+ 1887 0406 756E7369 		.ascii	"unsigned int\000"
+ 1887      676E6564 
+ 1887      20696E74 
  1887      00
- 1888              	.LASF10:
- 1889 04dd 696E7433 		.ascii	"int32_t\000"
- 1889      325F7400 
- 1890              	.LASF59:
- 1891 04e5 504C414E 		.ascii	"PLAN_SCAN_VERTICAL\000"
- 1891      5F534341 
- 1891      4E5F5645 
- 1891      52544943 
- 1891      414C00
- 1892              	.LASF44:
- 1893 04f8 636F6C6F 		.ascii	"colour_sensing_algorithm\000"
- 1893      75725F73 
- 1893      656E7369 
- 1893      6E675F61 
- 1893      6C676F72 
- 1894              	.LASF40:
- 1895 0511 6D6F7669 		.ascii	"moving\000"
- 1895      6E6700
- 1896              	.LASF85:
- 1897 0518 54696D65 		.ascii	"Timer_1_Start\000"
- 1897      725F315F 
- 1897      53746172 
- 1897      7400
- 1898              	.LASF51:
- 1899 0526 70617468 		.ascii	"pathPastBlock\000"
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 43
+ 1888              	.LASF59:
+ 1889 0413 69646163 		.ascii	"idac_value\000"
+ 1889      5F76616C 
+ 1889      756500
+ 1890              	.LASF68:
+ 1891 041e 49444143 		.ascii	"IDAC8_1_Start\000"
+ 1891      385F315F 
+ 1891      53746172 
+ 1891      7400
+ 1892              	.LASF43:
+ 1893 042c 63757272 		.ascii	"current_stage\000"
+ 1893      656E745F 
+ 1893      73746167 
+ 1893      6500
+ 1894              	.LASF78:
+ 1895 043a 47726970 		.ascii	"Gripper_Servo_PWM_WriteCompare\000"
+ 1895      7065725F 
+ 1895      53657276 
+ 1895      6F5F5057 
+ 1895      4D5F5772 
+ 1896              	.LASF64:
+ 1897 0459 5449415F 		.ascii	"TIA_1_Start\000"
+ 1897      315F5374 
+ 1897      61727400 
+ 1898              	.LASF28:
+ 1899 0465 73776565 		.ascii	"sweeping\000"
+ 1899      70696E67 
+ 1899      00
+ 1900              	.LASF13:
+ 1901 046e 63686172 		.ascii	"char\000"
+ 1901      00
+ 1902              	.LASF94:
+ 1903 0473 453A5C44 		.ascii	"E:\\Documents\\Uni S12019 Notes\\ECE3091\\Temp Clon"
+ 1903      6F63756D 
+ 1903      656E7473 
+ 1903      5C556E69 
+ 1903      20533132 
+ 1904 04a2 655C4543 		.ascii	"e\\ECE3091_Group17\\Group17RobotReal\\Group17Robot."
+ 1904      45333039 
+ 1904      315F4772 
+ 1904      6F757031 
+ 1904      375C4772 
+ 1905 04d2 63796473 		.ascii	"cydsn\000"
+ 1905      6E00
+ 1906              	.LASF95:
+ 1907 04d8 6D61696E 		.ascii	"main\000"
+ 1907      00
+ 1908              	.LASF10:
+ 1909 04dd 696E7433 		.ascii	"int32_t\000"
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 43
 
 
- 1899      50617374 
- 1899      426C6F63 
- 1899      6B00
- 1900              	.LASF3:
- 1901 0534 73686F72 		.ascii	"short unsigned int\000"
- 1901      7420756E 
- 1901      7369676E 
- 1901      65642069 
- 1901      6E7400
- 1902              	.LASF69:
- 1903 0547 49444143 		.ascii	"IDAC8_1_SetValue\000"
- 1903      385F315F 
- 1903      53657456 
- 1903      616C7565 
- 1903      00
- 1904              	.LASF92:
- 1905 0558 6D61696E 		.ascii	"main.c\000"
- 1905      2E6300
- 1906              	.LASF5:
- 1907 055f 6C6F6E67 		.ascii	"long unsigned int\000"
- 1907      20756E73 
- 1907      69676E65 
- 1907      6420696E 
- 1907      7400
- 1908              	.LASF88:
- 1909 0571 53746172 		.ascii	"Start_StartEx\000"
- 1909      745F5374 
- 1909      61727445 
- 1909      7800
- 1910              	.LASF12:
- 1911 057f 646F7562 		.ascii	"double\000"
- 1911      6C6500
- 1912              	.LASF65:
- 1913 0586 55415254 		.ascii	"UART_1_PutString\000"
- 1913      5F315F50 
- 1913      75745374 
- 1913      72696E67 
- 1913      00
- 1914              	.LASF42:
- 1915 0597 7075636B 		.ascii	"puckConstructionPlan\000"
- 1915      436F6E73 
- 1915      74727563 
- 1915      74696F6E 
- 1915      506C616E 
- 1916              	.LASF78:
- 1917 05ac 47726970 		.ascii	"Gripper_Servo_PWM_Sleep\000"
- 1917      7065725F 
- 1917      53657276 
- 1917      6F5F5057 
- 1917      4D5F536C 
- 1918              	.LASF9:
- 1919 05c4 5F5F696E 		.ascii	"__int32_t\000"
- 1919      7433325F 
- 1919      7400
- 1920              	.LASF55:
- 1921 05ce 626C6F63 		.ascii	"blockWestClearance\000"
- 1921      6B576573 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 44
+ 1909      325F7400 
+ 1910              	.LASF60:
+ 1911 04e5 504C414E 		.ascii	"PLAN_SCAN_VERTICAL\000"
+ 1911      5F534341 
+ 1911      4E5F5645 
+ 1911      52544943 
+ 1911      414C00
+ 1912              	.LASF44:
+ 1913 04f8 636F6C6F 		.ascii	"colour_sensing_algorithm\000"
+ 1913      75725F73 
+ 1913      656E7369 
+ 1913      6E675F61 
+ 1913      6C676F72 
+ 1914              	.LASF40:
+ 1915 0511 6D6F7669 		.ascii	"moving\000"
+ 1915      6E6700
+ 1916              	.LASF86:
+ 1917 0518 54696D65 		.ascii	"Timer_1_Start\000"
+ 1917      725F315F 
+ 1917      53746172 
+ 1917      7400
+ 1918              	.LASF52:
+ 1919 0526 70617468 		.ascii	"pathPastBlock\000"
+ 1919      50617374 
+ 1919      426C6F63 
+ 1919      6B00
+ 1920              	.LASF3:
+ 1921 0534 73686F72 		.ascii	"short unsigned int\000"
+ 1921      7420756E 
+ 1921      7369676E 
+ 1921      65642069 
+ 1921      6E7400
+ 1922              	.LASF70:
+ 1923 0547 49444143 		.ascii	"IDAC8_1_SetValue\000"
+ 1923      385F315F 
+ 1923      53657456 
+ 1923      616C7565 
+ 1923      00
+ 1924              	.LASF93:
+ 1925 0558 6D61696E 		.ascii	"main.c\000"
+ 1925      2E6300
+ 1926              	.LASF5:
+ 1927 055f 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1927      20756E73 
+ 1927      69676E65 
+ 1927      6420696E 
+ 1927      7400
+ 1928              	.LASF89:
+ 1929 0571 53746172 		.ascii	"Start_StartEx\000"
+ 1929      745F5374 
+ 1929      61727445 
+ 1929      7800
+ 1930              	.LASF12:
+ 1931 057f 646F7562 		.ascii	"double\000"
+ 1931      6C6500
+ 1932              	.LASF66:
+ 1933 0586 55415254 		.ascii	"UART_1_PutString\000"
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 44
 
 
- 1921      74436C65 
- 1921      6172616E 
- 1921      636500
- 1922              	.LASF89:
- 1923 05e1 73616665 		.ascii	"safetyDistanceCheck\000"
- 1923      74794469 
- 1923      7374616E 
- 1923      63654368 
- 1923      65636B00 
- 1924              	.LASF56:
- 1925 05f5 7075636B 		.ascii	"puckEastClearance\000"
- 1925      45617374 
- 1925      436C6561 
- 1925      72616E63 
- 1925      6500
- 1926              	.LASF90:
- 1927 0607 6D6F7665 		.ascii	"moveUntil\000"
- 1927      556E7469 
- 1927      6C00
- 1928              	.LASF15:
- 1929 0611 73697A65 		.ascii	"sizetype\000"
- 1929      74797065 
- 1929      00
- 1930              	.LASF36:
- 1931 061a 6F757470 		.ascii	"output\000"
- 1931      757400
- 1932              	.LASF19:
- 1933 0621 6D6F746F 		.ascii	"motor_testing\000"
- 1933      725F7465 
- 1933      7374696E 
- 1933      6700
- 1934              	.LASF60:
- 1935 062f 64697374 		.ascii	"distance_returned_global\000"
- 1935      616E6365 
- 1935      5F726574 
- 1935      75726E65 
- 1935      645F676C 
- 1936              	.LASF22:
- 1937 0648 49544D5F 		.ascii	"ITM_RxBuffer\000"
- 1937      52784275 
- 1937      66666572 
- 1937      00
- 1938              	.LASF91:
- 1939 0655 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 1939      43313120 
- 1939      352E342E 
- 1939      31203230 
- 1939      31363036 
- 1940 0688 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
- 1940      20726576 
- 1940      6973696F 
- 1940      6E203233 
- 1940      37373135 
- 1941 06bb 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 1941      66756E63 
- 1941      74696F6E 
- 1941      2D736563 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\cccsXaP7.s 			page 45
+ 1933      5F315F50 
+ 1933      75745374 
+ 1933      72696E67 
+ 1933      00
+ 1934              	.LASF42:
+ 1935 0597 7075636B 		.ascii	"puckConstructionPlan\000"
+ 1935      436F6E73 
+ 1935      74727563 
+ 1935      74696F6E 
+ 1935      506C616E 
+ 1936              	.LASF79:
+ 1937 05ac 47726970 		.ascii	"Gripper_Servo_PWM_Sleep\000"
+ 1937      7065725F 
+ 1937      53657276 
+ 1937      6F5F5057 
+ 1937      4D5F536C 
+ 1938              	.LASF9:
+ 1939 05c4 5F5F696E 		.ascii	"__int32_t\000"
+ 1939      7433325F 
+ 1939      7400
+ 1940              	.LASF56:
+ 1941 05ce 626C6F63 		.ascii	"blockWestClearance\000"
+ 1941      6B576573 
+ 1941      74436C65 
+ 1941      6172616E 
+ 1941      636500
+ 1942              	.LASF90:
+ 1943 05e1 73616665 		.ascii	"safetyDistanceCheck\000"
+ 1943      74794469 
+ 1943      7374616E 
+ 1943      63654368 
+ 1943      65636B00 
+ 1944              	.LASF57:
+ 1945 05f5 7075636B 		.ascii	"puckEastClearance\000"
+ 1945      45617374 
+ 1945      436C6561 
+ 1945      72616E63 
+ 1945      6500
+ 1946              	.LASF91:
+ 1947 0607 6D6F7665 		.ascii	"moveUntil\000"
+ 1947      556E7469 
+ 1947      6C00
+ 1948              	.LASF15:
+ 1949 0611 73697A65 		.ascii	"sizetype\000"
+ 1949      74797065 
+ 1949      00
+ 1950              	.LASF36:
+ 1951 061a 6F757470 		.ascii	"output\000"
+ 1951      757400
+ 1952              	.LASF19:
+ 1953 0621 6D6F746F 		.ascii	"motor_testing\000"
+ 1953      725F7465 
+ 1953      7374696E 
+ 1953      6700
+ 1954              	.LASF61:
+ 1955 062f 64697374 		.ascii	"distance_returned_global\000"
+ 1955      616E6365 
+ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccTnuBso.s 			page 45
 
 
- 1941      74696F6E 
- 1942              	.LASF62:
- 1943 06e3 43794465 		.ascii	"CyDelay\000"
- 1943      6C617900 
- 1944              	.LASF50:
- 1945 06eb 70617468 		.ascii	"pathToPucks\000"
- 1945      546F5075 
- 1945      636B7300 
- 1946              	.LASF35:
- 1947 06f7 696E6974 		.ascii	"initialisation\000"
- 1947      69616C69 
- 1947      73617469 
- 1947      6F6E00
- 1948              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ 1955      5F726574 
+ 1955      75726E65 
+ 1955      645F676C 
+ 1956              	.LASF22:
+ 1957 0648 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1957      52784275 
+ 1957      66666572 
+ 1957      00
+ 1958              	.LASF92:
+ 1959 0655 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1959      43313120 
+ 1959      352E342E 
+ 1959      31203230 
+ 1959      31363036 
+ 1960 0688 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1960      20726576 
+ 1960      6973696F 
+ 1960      6E203233 
+ 1960      37373135 
+ 1961 06bb 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1961      66756E63 
+ 1961      74696F6E 
+ 1961      2D736563 
+ 1961      74696F6E 
+ 1962              	.LASF63:
+ 1963 06e3 43794465 		.ascii	"CyDelay\000"
+ 1963      6C617900 
+ 1964              	.LASF51:
+ 1965 06eb 70617468 		.ascii	"pathToPucks\000"
+ 1965      546F5075 
+ 1965      636B7300 
+ 1966              	.LASF48:
+ 1967 06f7 7075636B 		.ascii	"puckColoursTempPile\000"
+ 1967      436F6C6F 
+ 1967      75727354 
+ 1967      656D7050 
+ 1967      696C6500 
+ 1968              	.LASF35:
+ 1969 070b 696E6974 		.ascii	"initialisation\000"
+ 1969      69616C69 
+ 1969      73617469 
+ 1969      6F6E00
+ 1970              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

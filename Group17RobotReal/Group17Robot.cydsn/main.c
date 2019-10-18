@@ -236,8 +236,6 @@ int main(void)
     puckConstructionPlan[1] = GREEN;
     puckConstructionPlan[2] = BLUE;
 
-    moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
-    while(1){}
     // Main Loop for States
         
     for(;;)
@@ -1002,9 +1000,27 @@ int main(void)
             
 
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
-            else {current_stage++;
+            else {current_stage++; currentPuckStackSize++;
             // Need to go back to the east wall facing east.
-                state = STATE_RETURN_TO_SOUTH;
+                moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
+                changeOrientation(WEST,SPEED);
+                moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);  
+                changeOrientation(EAST,SPEED);
+                moveUntil(DISTANCE_FRONT_SENSOR_FROM_CENTER + SAFETY_MARGIN, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
+                
+                
+                //Usually we will check if the next colour we need is in home base already
+                //
+                if ( puckConstructionPlan[currentPuckStackSize] == puckColoursTempPile[0]){
+                    
+                }
+                else if(puckConstructionPlan[currentPuckStackSize] == puckColoursTempPile[1]){
+                         
+                }
+                
+                
+                //DELETE
+                state = STATE_DEPOSIT_PUCK;
             }
             
             
