@@ -27,7 +27,7 @@
 #include "motor.h"
 #include "customMath.h"
 #include "navigation.h"
-
+#include "debugging.h"
 
 
 //These are the values that correspond to open, closed, up and down positions of the 

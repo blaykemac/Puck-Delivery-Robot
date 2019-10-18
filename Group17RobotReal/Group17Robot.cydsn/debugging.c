@@ -27,6 +27,7 @@
 #include "motor.h"
 #include "customMath.h"
 #include "navigation.h"
+#include "debugging.h"
 
 // Set which debugging you want to do:
 int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
