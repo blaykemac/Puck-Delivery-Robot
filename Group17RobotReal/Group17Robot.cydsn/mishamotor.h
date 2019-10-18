@@ -17,6 +17,7 @@ void mishaSwivel(int degrees, int speed);
 
 // set speeds: 
 
+#define SPEED_LOW 70                
 #define SPEED 170                   // DO NOT PUT ABOVE 200
 #define SPEED_MAX 200
 

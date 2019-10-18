@@ -31,7 +31,7 @@
 
 
 
-void mishaMoveDynamic(int distance, int speed, int safety_overide){
+void mishaMoveDynamic(int distance, int speed){
     int count_left;
     int count_right;
     int compare;
@@ -58,11 +58,11 @@ void mishaMoveDynamic(int distance, int speed, int safety_overide){
     Motor_Right_Driver_Wakeup();
     Motor_Right_Driver_WriteCompare(speed_right);
     
-    compare = round(distance*ENCODER_MULTIPLIER);
+    compare = round(distance*5.29);
     count_left = Motor_Left_Decoder_GetCounter();
     count_right = Motor_Right_Decoder_GetCounter();
     
-    while (count_right != compare && emergency_exit == FALSE) {
+    while (abs(count_left) < abs(compare) && emergency_exit == FALSE) {
         count_left = Motor_Left_Decoder_GetCounter();
         count_right = Motor_Right_Decoder_GetCounter();
         if (count_left > count_right) {

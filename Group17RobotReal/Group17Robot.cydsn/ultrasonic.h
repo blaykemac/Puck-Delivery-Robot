@@ -23,8 +23,7 @@ void distanceSensor(int currentSensorIndex);
 void printSensorToUART(int sensorNumber, int distanceMeasured);
 float distanceFromCount(int timerCount);
 void ultrasonicInterruptHandler(void);
-void distanceCheckOne(int sensor);
-
+void safetyDistanceCheck();
 
 // External variables (ie. globals)
 extern int driveStraightEnable;
@@ -44,5 +43,4 @@ extern char output[32];
 int initialisation;
 
 int ultrasonic_flag;
-void distanceCheckNidhin(int * sensorNumberPointer);
 

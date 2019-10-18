@@ -25,6 +25,7 @@
 void colourSensingInitialise();
 void colourSensingCalibration();
 void colourSensingDebug();
+void blinkLED(int colour, int time_ms);
 int colourSensingOutput(void);
 
 extern int colour_flag;                 // determines which PHOTODIODE is being used 

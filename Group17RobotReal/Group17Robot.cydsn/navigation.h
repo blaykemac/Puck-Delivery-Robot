@@ -14,6 +14,7 @@
 void armMoving(void);
 void moveUntilPuck(int algorithm);
 void straightAdjust(void);
+void straightAdjustBack(void);          // adjust using the back sensor
 void moveUntil(int distance, int direction, int less_or_great, int ultrasonic_sensor, int speed);           // incorporates the ultrasonics
 void translateUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed);void locatePucks(void);
 void changeOrientation(int orientation_change, int speed);

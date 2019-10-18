@@ -280,4 +280,17 @@ void colourSensingCalibration(void)
 }
 
 
+void blinkLED(int colour, int time_ms) {
+    int old_photodiode = control_photodiode_Read(); // reads which colour sensor is current active
+    control_photodiode_Write(WALL_SENSING);         // changes it to the wall sensor
+    
+    control_led_Write(colour);
+    CyDelay(time_ms);              
+    control_led_Write(0);
+    CyDelay(300);
+    
+    control_photodiode_Write(old_photodiode);   // returns to the previous colour sensor
+}
+
+
 /* [] END OF FILE */

@@ -220,9 +220,13 @@ void straightAdjust(void) {
 }
 
 void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed) {
+       
+    
     // distance_set is in millimeteres
     // will check the front two ultrasonics 
     // will move until distance specified in function 
+    
+    //safetyDistanceCheck(); // CALL this to recalibrate
     
     int count_left;                 // counts the encoder values
     int count_right;
@@ -265,34 +269,11 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     Motor_Right_Driver_Wakeup();
     Motor_Right_Driver_WriteCompare(speed_right);
         
-    if (less_or_great == LESS_THAN) {                                         // if distance_set is positive, it will move until the sensors are greater than set value 
-        while (distance_sensor > abs(distance_set) && emergency_exit == FALSE) {                           // This adjusts for drift 
-            count_left = Motor_Left_Decoder_GetCounter();
-            count_right = Motor_Right_Decoder_GetCounter();
-            if (count_left > count_right) {
-            speed_left -= ADJUST;
-            }
-            if (count_right > count_left) {
-            speed_right -= ADJUST; 
-            }
-            distanceSensor(ultrasonic_sensor);
-            CyDelay(50);
-            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
-            sprintf(output, "%d \t", distance_sensor);       
-            UART_1_PutString(output);
-            
-            // FAILSAFE:
-            if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100)){
-                emergency_exit = failsafe(direction);
-                old_count = count_left;
-            }
-            
-            
-        }
-    }
     
-    if (less_or_great == GREATER_THAN){                                         // if distance_set is negatve, it will move until the sensors are less than set value
-        while (distance_sensor < abs(distance_set) && emergency_exit == FALSE) {                // This adjusts for drift 
+    if (less_or_great == GREATER_THAN) {                                         // if distance_set is negatve, it will move until the sensors are less than set value
+        UART_1_PutString("\n GREATER THAN LOOP: \n");
+        while (distance_sensor < abs(distance_set) && emergency_exit == FALSE) {               // This adjusts for drift 
+            
             count_left = Motor_Left_Decoder_GetCounter();
             count_right = Motor_Right_Decoder_GetCounter();
             if (count_left > count_right) {
@@ -313,14 +294,50 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
                 emergency_exit = failsafe(direction);
                 old_count = count_left;
             }
-        }
+        } 
     }
+    
+    if (less_or_great == LESS_THAN) {                                         // if distance_set is positive, it will move until the sensors are greater than set value 
+        UART_1_PutString("\n LESS THAN LOOP: \n");
+        while (distance_sensor > abs(distance_set) && emergency_exit == FALSE){                           // This adjusts for drift 
+            
+            count_left = Motor_Left_Decoder_GetCounter();
+            count_right = Motor_Right_Decoder_GetCounter();
+            if (count_left > count_right) {
+            speed_left -= ADJUST;
+            }
+            if (count_right > count_left) {
+            speed_right -= ADJUST; 
+            }
+            distanceSensor(ultrasonic_sensor);
+            CyDelay(50);
+            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+            sprintf(output, "%d \t", distance_sensor);       
+            UART_1_PutString(output);
+            
+            // FAILSAFE:
+            if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100)){
+                emergency_exit = failsafe(direction);
+                old_count = count_left;
+            }
+
+        } 
+    }
+    
+    
     
     //sprintf(output, "left motor: %d \n", count_left);       
     //UART_1_PutString(output);
     //sprintf(output, "right motor: %d \n", count_right);      
     //UART_1_PutString(output);
         
+    // final check of sensor:
+    distanceSensor(ultrasonic_sensor);
+    CyDelay(50);
+    distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+    sprintf(output, "\n fin: %d \n", distance_sensor);    
+    UART_1_PutString(output);
+    
     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
     Motor_Right_Decoder_SetCounter(0);   
     
@@ -477,7 +494,7 @@ int failsafe(int direction) {
         CyDelay(50);
         
         check_distance = ultrasonic_distances_mm[BACK];   // checks the distance measured by the ultrasonic
-        if (check_distance < SAFETY_MARGIN) { return TRUE; }
+        if (check_distance < SAFETY_MARGIN) { UART_1_PutString("SAFETY MARGIN ACTIVATED\n"); return TRUE; }
         else { return FALSE; }
     }
     if (direction == FORWARD) {
@@ -487,7 +504,7 @@ int failsafe(int direction) {
         //CyDelay(50);
         
         check_distance = ultrasonic_distances_mm[FRONT_LEFT];   // checks the distance measured by the ultrasonic
-        if (check_distance < SAFETY_MARGIN) { return TRUE; }
+        if (check_distance < SAFETY_MARGIN) { UART_1_PutString("SAFETY MARGIN ACTIVATED\n"); return TRUE; }
         else { return FALSE; }
     }
     // Considerations:
@@ -496,6 +513,21 @@ int failsafe(int direction) {
     
 }
 
+
+void puckZoneFinding(void) {
+    
+    
+    
+    
+}
+
+
+void straightAdjustBack(void) {
+    
+    
+    
+    
+}
 
 
 

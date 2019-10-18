@@ -273,24 +273,18 @@ void distanceCheck()
     }
 }
 
-
-void distanceCheckOne(int sensor) {
-    // want to check:
-        // Front two sensors
-        // left side sensor
-        // right side sensor
-        // back sensor
-    distanceSensor(sensor);                 // passing through the sensor number 
-    CyDelay(SENSOR_PULSE_DELAY_MS); 
+void safetyDistanceCheck() {
+    UART_1_PutString("Ultrasonic safety check: \n");
+    for (int i = 0; i < 5; i++)
+        {
+            distanceSensor(i);
+            CyDelay(60);
+            sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+            UART_1_PutString(output);
+        }
+        UART_1_PutString("\n\n");
 }
 
-void distanceCheckNidhin(int * sensorNumberPointer)
-{
-    UART_1_PutString("CHECK BEING DONE");
-    ultrasonic_mux_control = *sensorNumberPointer;
-    distanceSensor(ultrasonic_mux_control);
-    CyDelay(SENSOR_PULSE_DELAY_MS);
-}
 
 
 /* [] END OF FILE */

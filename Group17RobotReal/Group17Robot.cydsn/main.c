@@ -61,6 +61,11 @@ int block_location[4] = {0,0,0,0};      // The block location values
                                         //#define EAST 1
                                         //#define SOUTH 2
                                         //#define WEST 3
+int puck_location[4] = {0,0,0,0};       // The block location values
+                                        //#define NORTH 0
+                                        //#define EAST 1
+                                        //#define SOUTH 2
+                                        //#define WEST 3
 
 int safety_override = FALSE;            
 
@@ -70,30 +75,6 @@ short int blockEastClearance = 0;
 short int blockWestClearance = 0;
 short int puckEastClearance = 0;
 short int puckWestClearance = 0;
-
-float currentPosition[2] = {0,0};
-float desiredPosition[2];
-int currentOrientation = 90; //in degrees (convert to radians when needed)- 90 assuming we start facing north
-int desiredOrientation;
-
-short int moveNow = 1; //This is a flag that lets the main program tell the moving functions
-//whethe we want the robot to be moving or not. For example, when we need to operate servos
-//the main program would set moveNow to FALSE.
-
-//The four flags below let the rest of the program know if the robot is trying to drive 
-//forward or back, turn left or right. At the start of every motion, turn these flags on
-//at the end turn them off.
-short int drivingForwardFlag = 0;
-short int drivingBackwardFlag = 0;
-short int turningLeftFlag = 0;
-short int turningRightFlag = 0;
-
-//These flags will be used by the main program to allow the robot to move in certain directions
-short int moveLeftAllowed;
-short int moveRightAllowed;
-short int moveForwardAllowed;
-short int moveBackwardAllowed;
-
 
 // * COLOUR VARIABLES * //
 
@@ -202,10 +183,10 @@ int main(void)
     Motor_Left_Decoder_Start();
     Motor_Right_Decoder_Start();
     
-    internal_orientation = EAST;                // robot initial starts in the East direction
+    internal_orientation = WEST;                // robot initial starts in the East direction
    
     // Timer and ISR instantiation
-    Timer_1_Start();
+    Timer_1_Start();                
     Timer_1_ReadStatusRegister();
     Sonic_StartEx(TIH);
     Start_StartEx(StartIH);
@@ -215,17 +196,9 @@ int main(void)
     // The ultrasonics take several test measurements to ensure they are working
         
     UART_1_PutString("Ultrasonic Calibration tests: \n");
-    for(int j = 0; j < 3; j++) 
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            distanceSensor(i);
-            CyDelay(100);
-            sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
-            UART_1_PutString(output);
-        }
-        UART_1_PutString("\n\n");
-    }
+    safetyDistanceCheck();
+    safetyDistanceCheck();
+    safetyDistanceCheck();
     
     /*  OLD CODE FROM NIDHIN:
     //Initialising DC motors
@@ -427,7 +400,8 @@ int main(void)
 
         // FORCING STATE:
         // Manual state set for testing
-        state = STATE_GO_TO_PUCKS;
+        
+        //state = STATE_GO_TO_PUCKS;
         currentPuckStackSize = 2;
         current_stage = 3;
         blockEastClearance = 0;
@@ -437,7 +411,15 @@ int main(void)
         int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the pucks and the block
         
         
-        state = STATE_LOCATE_BLOCK_AND_PUCKS;;
+        //state = STATE_FIND_REQUIRED_PUCK;
+        
+        //moveUntil(100,FORWARD,GREATER_THAN,SIDE_LEFT,SPEED);
+        
+        //while(1) {};
+        
+        
+        state = STATE_LOCATE_BLOCK_AND_PUCKS;
+        
         
         //UART_1_PutString("hI");
         
@@ -533,56 +515,78 @@ int main(void)
 
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
+
             
-            // move away from home base 
-            /*
-            mishaSwivel(-45, SPEED);  
+            // move away from home base:
+            mishaSwivel(-35, SPEED);  
             mishaMoveDynamic(-150, SPEED);
-            mishaSwivel(45, SPEED);
-            mishaMoveDynamic(200, SPEED);
-            mishaSwivel(90, SPEED);
-            mishaMoveDynamic(500, SPEED);
-            */
-            
+            mishaSwivel(35, SPEED);
+    
             // Move until construction zone            
-            moveUntil(100, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
-            straightAdjust();
+            moveUntil(130, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);  // Move to west wall
+            straightAdjust();                                       // straighten against west wall
             
             // SCAN FOR BLOCKS:
             
-            //distanceSensor(SIDE_LEFT);  // takes how far we are away from home base wall
-            //int block_check = ARENA_LENGTH - BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR - ultrasonic_distances_mm[SIDE_LEFT] + 50;    
+            distanceSensor(SIDE_LEFT);  // takes how far we are away from home base wall
+            int block_check = ARENA_LENGTH - BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR - ultrasonic_distances_mm[SIDE_LEFT] + 50;    
                 // TAKES our distance from north wall, 
                 // takes distance from arena, takes away 
                 // minus 50 is a tolerance
             
-            int block_check = 500;
-            
-            distanceSensor(SIDE_LEFT);
-            CyDelay(SENSOR_DELAY_MIN);
-            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_LEFT]);
+            sprintf(output, "distance from robot to block: %d \t", block_check);
             UART_1_PutString(output);
             
-            moveUntil(block_check, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED);   // this will move backwards until it hits the block 
+            block_check = 350;  // This is a default length that is dynamic
+
+            moveUntil(block_check, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED);   
+                                // this will move backwards until it hits the block or the wall
+            blinkLED(GREEN,1000);      // To show it ended at the correct spot
+                    
+            //straightAdjust();                   // Ensure we are straight to take measurements
+                                                // may need to readjust this 
             
+            
+            // Move back a bit to find the left side and right side values (adds a bit of tolerance)
+            mishaMoveDynamic(-(BLOCK_WIDTH/2), SPEED);
+            
+            //straightAdjust();                   // Ensure we are straight to take measurements
+                                                // may need to readjust this 
+            
+            distanceSensor(SIDE_RIGHT);
+            CyDelay(60);
+            distanceSensor(SIDE_LEFT);
+            CyDelay(60);
             
             // FAILSAFE if the block is at the very end of west wall:
             distanceSensor(BACK);
             CyDelay(60);
+            
             if (ultrasonic_distances_mm[BACK] < SAFETY_MARGIN + 50) {
                 // block is " | " this orientation, and close to the side wall
-                // don't move back 
+                
+                // Fill out all the details: 
+                block_location[NORTH] = ARENA_WIDTH - ultrasonic_distances_mm[SIDE_LEFT] - ultrasonic_distances_mm[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
+                block_location[EAST] = 0;
+                block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+                block_location[WEST] = ARENA_WIDTH - BLOCK_WIDTH; 
+                
             }
             if (ultrasonic_distances_mm[BACK] < BLOCK_LENGTH + 50) {
                 // block is " -- " this orientation, and close to the side wall 
-                // don't move back
+                
+                // Fill out all the details: 
+                block_location[NORTH] = ARENA_WIDTH - ultrasonic_distances_mm[SIDE_LEFT] - ultrasonic_distances_mm[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
+                block_location[EAST] = 0;
+                block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+                block_location[WEST] = ARENA_WIDTH - BLOCK_LENGTH; 
             }
             
+            moveUntil(block_check, BACKWARD, GREATER_THAN, SIDE_RIGHT, SPEED);  
+                                // this will move backwards until no longer hitting the block, or the wall
+            blinkLED(GREEN,1000);      // To show it ended at the correct spot
             
-            
-            
-            straightAdjust();
-            
+
             CyDelay(1000);                      // To show it ended at the correct spot
             distanceSensor(FRONT_LEFT);
             CyDelay(60);
@@ -591,102 +595,64 @@ int main(void)
             distanceSensor(SIDE_LEFT);        // might run some code to see if theres a difference between the two          
             CyDelay(60);
             
-            block_location[NORTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
-            block_location[EAST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_FROM_CENTER; 
+            // Block location values:
+            block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+            block_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR; 
             CyDelay(1000);         
             
-            mishaMoveDynamic(-200, SPEED);  // this should exit if it gets too close to the wall
+            // Start moving forward to find the location of the PUCKS:           
+            changeOrientation(EAST, SPEED);                             // No matter where we are this should be okay
+            moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+            straightAdjust();
+            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH;
             
-            distanceSensor(SIDE_RIGHT);
-            CyDelay(50);
             
-            int check = ultrasonic_distances_mm[SIDE_RIGHT];
-            if (check < 500) {                                  // GREEN if block detected
-                control_led_Write(2);
-                CyDelay(1000);
-                control_led_Write(0);
-                CyDelay(500);
+            while(1) {};
+            
+            // Check front and back sensors:
+            moveUntil(puck_check, LESS_THAN, BACKWARD, SIDE_LEFT, SPEED);   // this will move backwards until it hits the block 
+            CyDelay(1000);
+            
+            distanceSensor(FRONT_LEFT);
+            CyDelay(DELAY);
+            distanceSensor(BACK);
+            CyDelay(DELAY);
+            
+            // checking if accidentally detected block:
+            // if the distance we are at is less than the block, we can say we didnt detect the block
+            if (ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR < block_location[EAST])
+            {
+                // puck detected
+                // puck detectedDISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR
+                puck_location[EAST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
+                puck_location[WEST] = ARENA_WIDTH - puck_location[EAST] - PUCK_GRID_WIDTH;
                 
-                block_location[WEST] = block_location[EAST] + BLOCK_LENGTH;
-                block_location[SOUTH] = block_location[NORTH] + BLOCK_LENGTH;  
-            }
-            else {                                              // RED if block  not there 
-                control_led_Write(1);
-                CyDelay(1000);
-                control_led_Write(0);
-                CyDelay(500);
-                
-                block_location[WEST] = block_location[EAST] + BLOCK_WIDTH; 
-                block_location[SOUTH] = block_location[NORTH] + BLOCK_WIDTH; 
-                block_location[SOUTH] = 0;      // This needs to be written
-            }
-            
-            
-            // Start moving forward to find the location of the PUCKS:
-            
-            
-            
-            
-            
-            
-            
-            moveUntil(100, BACKWARD, LESS_THAN, BACK, SPEED);
-            mishaSwivel(90, SPEED);
-            moveUntil(300, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
-
-            
-            // Finding where the boundaries of the block are
-    		// Sweep across WEST to EAST until discrepancy
-            // But first sense the construction plan and then drive to wall and turn around to prepare for full width scan
-            
-            /*
-    		moveForwardIndefinitely();
-    		turnRight(180); // Now facing EAST wall
-    		moveForwardIndefinitely(); // Do this until we get to EAST wall
-            */
-            
-            //moveAndAngle(20,20,EAST_ANGLE); // Move to a position near construction base in an EAST orientation to be ready to scan for the pucks and block
-            //moveForwardIndefinitely(); // Scan until we reach EAST wall.
-            
-            // Will now know the boundaries of the block.
-            // Figure out direction we want to travel
-            
-
-            //pathPastBlock = (block_edge_location[WEST] >= WIDTH_SENSOR_TO_SENSOR + SAFETY_MARGIN ? WEST:EAST);
-            //pathToPucks = (puckPileLocation < ARENA_WIDTH / 2 ? WEST:EAST);
-            
-            state = STATE_GO_TO_PUCKS;
-	    }
-             
-        /*
-        if (state == STATE_GO_TO_PUCKS){
-            
-            
-            if (pathPastBlock == WEST){
-                if (pathToPucks != WEST) {
-                    moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN, EAST_ANGLE); // Take us to NW corner and then face EAST in preparation for finding the pucks
-                }
-                else {moveAndAngle(SAFETY_MARGIN / 2 + WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NW corner
+                blinkLED(GREEN,1000);   // puck location was succesfully found
             }
             else {
-                if (pathToPucks != EAST) {
-                    moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN, WEST_ANGLE); // Take us to NE corner and then face WEST in preparation for finding the pucks
-                }
-                else {moveAndAngle(ARENA_WIDTH - SAFETY_MARGIN / 2 - WIDTH_SENSOR_TO_SENSOR / 2, ARENA_LENGTH - FRONT_CLAW_DISTANCE_FROM_CENTER - SAFETY_MARGIN - DISTANCE_PUCKS_FROM_NORTH, NORTH_ANGLE);} // Take us right up to the pucks in NE corner
+                // block detected & rescans from opposite side:
+                
+                moveUntil(200, BACKWARD, LESS_THAN, BACK, SPEED);   // This should take us to the other side of the wall
+                changeOrientation(WEST, SPEED);
+                moveUntil(100, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                straightAdjust();   // adjusts against the wall
+                moveUntil(puck_check, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED);   // this will move backwards until it hits the 
+                blinkLED(GREEN,1000);   // Find the edge of the puck zone 
+                                
+                distanceSensor(FRONT_LEFT);
+                CyDelay(DELAY);
+                distanceSensor(BACK);
+                CyDelay(DELAY);
+                
+                
             }
             
-            // Now depending on if the pucks are in the corner or not, 
-            
-            // We are now in front of the pucks
-            
-            
-            state = STATE_FIND_REQUIRED_PUCK;
-        }
-        
-        */
-        
+            // PUCK has now been found, enter the IF statements to locate and pick up pucks 
+            state = STATE_GO_TO_PUCKS;
+	    }     
         
         // Ensure that we are @ east wall facing east at a minimum verticaldistance so we can turn left without hitting bottom wall
+        
         if (state == STATE_GO_TO_PUCKS){
             
             if (blockEastClearance && puckEastClearance){
@@ -765,36 +731,32 @@ int main(void)
         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
         int puck_scan;
         
-            
-            
-            
-        
-    
-        puckConstructionPlan[1] = RED;
+        current_stage = 1;
+        puckConstructionPlan[0] = RED;
     
         // Scanning puck:
+            
+        safety_override = TRUE;     // DEACTIVATES the safety override so pucks don't interfere  
 
         while (puck_correct == FALSE) 
         {
-            mishaMoveDynamic(50, SPEED);  // robot moves forward towards puck
+            mishaMoveDynamic(50, SPEED_LOW);  // robot moves forward towards puck
                                     // could replace this with the distance gathered from the ultrasonic 
-            changeHeightToPuck(1);  // arm lowers onto robot
+            changeHeightToPuck(ABOVE_1_PUCK);  // arm lowers onto robot
             puck_scan = colourSensingOutput();  // colour sensor takes a scan
-            changeHeightToPuck(3);  // arm returns to high position
+            changeHeightToPuck(ABOVE_3_PUCK);  // arm returns to high position
             mishaMoveDynamic(-50, SPEED);   // robot moves backwards
-            if (puck_scan == puckConstructionPlan[1]) {puck_correct = TRUE;}
-                                    // if colour == true:
-                
+            if (puck_scan == puckConstructionPlan[current_stage-1]) {puck_correct = TRUE;}                
             else 
             {
-                                    // if colour == false
-                                        // robot translates to side to see next puck, and performs scanning puck again
+                // Bring us to the next puck along: 
+                mishaSwivel(45, SPEED);
+                mishaMoveDynamic(-30,SPEED);
+                mishaSwivel(-30, SPEED);        
             }
         }
                 
-        //state = STATE_GO_TO_PUCKS;
         
-        safety_override = TRUE;     
         
         changeHeightToPuck(GROUND);      // arm lowers to ground
         //armClose();
@@ -805,10 +767,11 @@ int main(void)
         changeHeightToPuck(3);      // arm lifts up to highest position
         mishaMoveDynamic(-60, SPEED);       // robot moves back away from puck area 
         
-        safety_override = FALSE;
+        
+        safety_override = FALSE;        // reactivate safety override
         
                     
-        \
+        
             
             /*
             int requiredColour = puckConstructionPlan[currentPuckStackSize];

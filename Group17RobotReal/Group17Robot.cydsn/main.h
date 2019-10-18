@@ -88,7 +88,7 @@ int internal_orientation;
 #define CONSTRUCTION_DISTANCE_FROM_WALL 80 // How far we should put the front of the robot to the wall when depositing hte puck
 #define CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK 210 // How far we should reverse from constructio stack before attempting to turn.
 
-#define DISTANCE_PUCKS_FROM_NORTH 275 // Where the southmost part of the pucks can extend to from the north wall
+#define PUCK_GRID_FROM_NORTH 275 // Where the southmost part of the pucks can extend to from the north wall
 #define PUCK_GRID_WIDTH 270 // Width from east to west of the 5x5 grid.
 #define PUCK_RACK_0_WEST_DISTANCE 720
 #define PUCK_RACK_1_WEST_DISTANCE 660
@@ -121,6 +121,7 @@ int internal_orientation;
 #define FRONT_CLAW_DISTANCE_FROM_CENTER 110 // Distance from the absolute front extending part of robot to center turning point.
 #define DISTANCE_FRONT_SENSOR_FROM_CENTER 50 // Distance from front ultrasonic sensor to the turning center
 #define DISTANCE_BACK_SENSOR_FROM_CENTER 230 // Distance from back ultrasonic sensor to the turning center
+#define DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR 150
 
 #define WIDTH_WHEEL_TO_WHEEL 214
 
@@ -138,8 +139,9 @@ int internal_orientation;
 #define FORWARD 1
 #define LEFT 2
 #define RIGHT 3
-#define LESS_THAN 0
-#define GREATER_THAN 1
+#define LESS_THAN 4
+#define GREATER_THAN 5
+#define EQUAL_TO 6
 
 #define TRUE 1
 #define FALSE 0
