@@ -110,7 +110,7 @@ void moveUntilPuck(int algorithm) {
     Motor_Left_Driver_Sleep();
     Motor_Right_Driver_Sleep();
     
-    mishaMoveDynamic(37, 100);
+    moveDynamic(37, 100);
 }
 
 
@@ -270,7 +270,7 @@ void changeOrientation(int orientation_change, int speed) {
         degree_change = -1*degree_change;
     }
     
-    mishaSwivel(degree_change, speed);
+    moveSwivel(degree_change, speed);
     internal_orientation = orientation_change;  
 }
 
