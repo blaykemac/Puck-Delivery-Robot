@@ -23,7 +23,7 @@
 #include "colour.h"
 #include "ultrasonic.h" 
 #include "servo.h"
-#include "mishamotor.h"
+#include "motor.h"
 #include "customMath.h"
 #include "navigation.h"
 
@@ -31,7 +31,7 @@
 
 
 
-void mishaMoveDynamic(int distance, int speed){
+void moveDynamic(int distance, int speed){
     int count_left;
     int count_right;
     int compare;
@@ -97,7 +97,7 @@ void mishaMoveDynamic(int distance, int speed){
     
 }
 
-void mishaSwivel(int degrees, int speed) {
+void moveSwivel(int degrees, int speed) {
     int count_left;
     int count_right;
     int compare;
@@ -131,8 +131,7 @@ void mishaSwivel(int degrees, int speed) {
     
     
     while (count_right != -1*compare) {
-        count_right = Motor_Right_Decoder_GetCounter();
-        
+        count_right = Motor_Right_Decoder_GetCounter();        
         count_left = Motor_Left_Decoder_GetCounter();
         if (count_left > -1*count_right) {
         speed_left -= ADJUST;
@@ -162,10 +161,10 @@ void mishaSwivel(int degrees, int speed) {
 }
 
 void translateMoveDynamic(int distance, int degree, int speed) {
-    mishaSwivel(-degree, speed);
-    mishaMoveDynamic(distance, speed);
-    mishaSwivel(degree, speed);
-    mishaMoveDynamic(distance, speed);
+    moveSwivel(-degree, speed);
+    moveDynamic(distance, speed);
+    moveSwivel(degree, speed);
+    moveDynamic(distance, speed);
 }
 
 

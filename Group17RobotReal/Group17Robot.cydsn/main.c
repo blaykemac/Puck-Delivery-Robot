@@ -24,7 +24,7 @@
 #include "colour.h"
 #include "ultrasonic.h" 
 #include "servo.h"
-#include "mishamotor.h"
+#include "motor.h"
 #include "customMath.h"
 #include "navigation.h"
 
@@ -175,7 +175,7 @@ int main(void)
     CyDelay(500);
     Gripper_Servo_PWM_Sleep();
     
-    // Misha Motors Initialisation:
+    // Motors Initialisation:
     Motor_Left_Driver_Start();
     Motor_Left_Driver_Sleep();                  // Puts motor to sleep
     Motor_Right_Driver_Start();
@@ -185,7 +185,7 @@ int main(void)
     Motor_Right_Decoder_Start();
     
     internal_orientation = WEST;                // robot initial starts in the East direction
-   
+    
     // Timer and ISR instantiation
     Timer_1_Start();                
     Timer_1_ReadStatusRegister();
@@ -319,11 +319,9 @@ int main(void)
                     {
                         UART_1_PutString("Motor Testing: \n");
 
-                        //mishaMoveForward();
-                        //mishaMoveBackward();
-                        //mishaMoveDynamic(-300);
+                        //moveDynamic(-300);
                         
-                        mishaSwivel(-180, SPEED);
+                        moveSwivel(-180, SPEED);
                         
                         lock = TRUE;    
                     }
@@ -442,17 +440,17 @@ int main(void)
             
             while(0){
                 moveUntil(400, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
-                mishaMoveDynamic(-450, SPEED);
+                moveDynamic(-450, SPEED);
                 CyDelay(500);   
                 colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
                 CyDelay(500);
-                mishaMoveDynamic(170, SPEED);
+                moveDynamic(170, SPEED);
                 CyDelay(500);
                 
                 for (int i = 0; i < 5; i++) {                       // scan each of the pucks 
                     puckRackColours[i] = colourSensingOutput();
                     CyDelay(500);
-                    mishaMoveDynamic(61, SPEED);
+                    moveDynamic(61, SPEED);
                     CyDelay(500);
                 }
             
@@ -481,11 +479,9 @@ int main(void)
             }
             
             
-            control_photodiode_Write(1);    // changes to claw photodiode
-            colour_sensing_algorithm = 1;   // changes it to claw algorithm
-                       
-            //while(1) {}
-            
+            control_photodiode_Write(CLAW_SENSING);    // changes to claw photodiode
+            colour_sensing_algorithm = CLAW_1_ALGORITHM;   // changes it to claw algorithm
+                                 
             // THEN WE FILTER THE NO PUCK VALUES:
             int puckConstructionPlanIndex = 0; // Will be used to iterate through the 3 puck colours in construction plan
             
@@ -523,9 +519,9 @@ int main(void)
 
             
             // move away from home base:
-            mishaSwivel(-35, SPEED);  
-            mishaMoveDynamic(-150, SPEED);
-            mishaSwivel(35, SPEED);
+            moveSwivel(-35, SPEED);  
+            moveDynamic(-150, SPEED);
+            moveSwivel(35, SPEED);
     
             // Move until construction zone            
             moveUntil(130, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);  // Move to west wall
@@ -553,7 +549,7 @@ int main(void)
             
             
             // Move back a bit to find the left side and right side values (adds a bit of tolerance)
-            mishaMoveDynamic(-(BLOCK_WIDTH/2), SPEED);
+            moveDynamic(-(BLOCK_WIDTH/2), SPEED);
             
             //straightAdjust();                   // Ensure we are straight to take measurements
                                                 // may need to readjust this 
@@ -730,9 +726,8 @@ int main(void)
         }
         
         if (state == STATE_FIND_REQUIRED_PUCK){
+        
             
-            
-        //SPEED = 70;               // need to be able to dynamically change speed of mishaMoveDynamic
         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
         int puck_scan;
         
@@ -745,19 +740,19 @@ int main(void)
 
         while (puck_correct == FALSE) 
         {
-            mishaMoveDynamic(50, SPEED_LOW);  // robot moves forward towards puck
+            moveDynamic(50, SPEED_LOW);  // robot moves forward towards puck
                                     // could replace this with the distance gathered from the ultrasonic 
             changeHeightToPuck(ABOVE_1_PUCK);  // arm lowers onto robot
             puck_scan = colourSensingOutput();  // colour sensor takes a scan
             changeHeightToPuck(ABOVE_3_PUCK);  // arm returns to high position
-            mishaMoveDynamic(-50, SPEED);   // robot moves backwards
+            moveDynamic(-50, SPEED);   // robot moves backwards
             if (puck_scan == puckConstructionPlan[current_stage-1]) {puck_correct = TRUE;}                
             else 
             {
                 // Bring us to the next puck along: 
-                mishaSwivel(45, SPEED);
-                mishaMoveDynamic(-30,SPEED);
-                mishaSwivel(-30, SPEED);        
+                moveSwivel(45, SPEED);
+                moveDynamic(-30,SPEED);
+                moveSwivel(-30, SPEED);        
             }
         }
                 
@@ -767,10 +762,10 @@ int main(void)
         //armClose();
         //changeHeightToPuck(1);
         moveUntilPuck(CLAW_GROUND_ALGORITHM);
-        //mishaMoveDynamic(60);       // robot moves forward
+        //moveDynamic(60);       // robot moves forward
         armClose();                 // claw closes on puck
         changeHeightToPuck(3);      // arm lifts up to highest position
-        mishaMoveDynamic(-60, SPEED);       // robot moves back away from puck area 
+        moveDynamic(-60, SPEED);       // robot moves back away from puck area 
         
         
         safety_override = FALSE;        // reactivate safety override
@@ -1022,10 +1017,10 @@ int main(void)
             // Thus we are facing the stack.
             
             
-            mishaSwivel(90, SPEED);
+            moveSwivel(90, SPEED);
             straightAdjust();
             moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30 , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED); // Absorb the 50 into some constant later
-            mishaSwivel(90, SPEED);
+            moveSwivel(90, SPEED);
             moveUntil(HOME_PARKING_DISTANCE , BACKWARD, LESS_THAN, BACK, SPEED);
     
             while(1) {} // Finish inside infinite loop
