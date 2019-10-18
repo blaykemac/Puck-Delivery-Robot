@@ -100,8 +100,8 @@ int internal_orientation;
 
 #define FIRST_DISCARD_ZONE 1000
 #define SECOND_DISCARD_ZONE 900
-#define FIRST_TEMP_DROPOFF CONSTRUCTION_BASE_EAST_EDGE
-#define SECOND_TEMP_DROPOFF CONSTRUCTION_BASE_WEST_EDGE
+#define FIRST_TEMP_DROPOFF HOME_BASE_EAST_EDGE
+#define SECOND_TEMP_DROPOFF HOME_BASE_WEST_EDGE
 
 
 //* Robot Body Constants *//
@@ -140,7 +140,7 @@ int internal_orientation;
 #define SENSOR_DELAY_MIN 60
 
 // Miscellaneous:
-#define ADJUST 2
+#define ADJUST 1
 #define BACKWARD 0
 #define FORWARD 1
 #define LEFT 2

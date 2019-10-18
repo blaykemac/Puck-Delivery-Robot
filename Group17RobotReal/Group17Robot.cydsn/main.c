@@ -48,6 +48,8 @@ int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
                                 PUCK_RACK_3_WEST_DISTANCE,
                                 PUCK_RACK_4_WEST_DISTANCE };
 
+int puckColoursTempPile[2] = {BLANK,BLANK}; // Index 0 refers to east home base edge, 1 refers to west home base edge
+
 float horizontalPuckGrid = 0;
 
 // * NAVIGATION AND POSITION VARIABLES * //
@@ -234,6 +236,8 @@ int main(void)
     puckConstructionPlan[1] = GREEN;
     puckConstructionPlan[2] = BLUE;
 
+    moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+    while(1){}
     // Main Loop for States
         
     for(;;)
@@ -950,6 +954,8 @@ int main(void)
                 moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
                 
             }   
+            
+            state = STATE_DEPOSIT_PUCK;
         }
         
         // We choose where we put the puck. Depending if its needed now, later or never.
@@ -962,15 +968,22 @@ int main(void)
             
             armOpen();
             colourSensingInitialise();
-            CyDelay(1000);
+            CyDelay(2000);
             armClose();
             
+            
+            
+            
             int heldColour = colourSensingOutput();
-            blinkLED(heldColour,500);
-            CyDelay(1000);
+            //blinkLED(heldColour,500);
+            
+            
+            // TO DELETE
+            heldColour = current_stage; // temp checking it can stack with a fixed rgb order for simplicity
+            
             
             if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
-                moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, FRONT_LEFT, SPEED);  
+                moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);  
                 changeOrientation(WEST,SPEED);
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
                 
@@ -996,7 +1009,7 @@ int main(void)
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
             else {current_stage++;
             // Need to go back to the east wall facing east.
-                
+                state = STATE_RETURN_TO_SOUTH;
             }
             
             
