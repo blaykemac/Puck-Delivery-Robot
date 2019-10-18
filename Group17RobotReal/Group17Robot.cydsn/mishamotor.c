@@ -72,6 +72,9 @@ void mishaMoveDynamic(int distance, int speed){
         speed_right -= ADJUST; 
         }
         
+        Motor_Left_Driver_WriteCompare(speed_left);
+        Motor_Right_Driver_WriteCompare(speed_right);
+        
         // FAILSAFE:
         if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100)){
             emergency_exit = failsafe(direction);
@@ -138,6 +141,8 @@ void mishaSwivel(int degrees, int speed) {
         speed_right -= ADJUST; 
         }
         
+        Motor_Left_Driver_WriteCompare(speed_left);
+        Motor_Right_Driver_WriteCompare(speed_right);
     }
     
     /*

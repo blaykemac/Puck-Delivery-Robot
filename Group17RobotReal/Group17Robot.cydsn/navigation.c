@@ -282,6 +282,10 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             if (count_right > count_left) {
             speed_right -= ADJUST; 
             }
+            
+            Motor_Left_Driver_WriteCompare(speed_left);         // updates the driver speed
+            Motor_Right_Driver_WriteCompare(speed_right);
+            
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
             //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
@@ -309,6 +313,10 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             if (count_right > count_left) {
             speed_right -= ADJUST; 
             }
+            
+            Motor_Left_Driver_WriteCompare(speed_left);         // updates the driver speed
+            Motor_Right_Driver_WriteCompare(speed_right);
+            
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
             distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
@@ -426,6 +434,10 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
             if (count_right > count_left) {
             speed_right -= ADJUST; 
             }
+            
+            Motor_Left_Driver_WriteCompare(speed_left);     // update the drivers
+            Motor_Right_Driver_WriteCompare(speed_right);
+            
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
             //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
@@ -453,6 +465,10 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
             if (count_right > count_left) {
             speed_right -= ADJUST; 
             }
+            
+            Motor_Left_Driver_WriteCompare(speed_left);         // update the drivers
+            Motor_Right_Driver_WriteCompare(speed_right);
+            
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
             
