@@ -993,7 +993,7 @@ int main(void)
             }
             
             else {
-                moveUntil(FIRST_DISCARD_ZONE - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Check if already droppd off, go to second_temp_dropoff
+                moveUntil(ARENA_WIDTH-FIRST_DISCARD_ZONE + DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Check if already droppd off, go to second_temp_dropoff
             } // Discard the puck so drop it in rubbish pile
 
             changeOrientation(SOUTH,SPEED);    
