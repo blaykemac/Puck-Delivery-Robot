@@ -53,7 +53,6 @@ float horizontalPuckGrid = 0;
 // * NAVIGATION AND POSITION VARIABLES * //
 
 int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
-
 int pathToPucks; // This will give us a corridor that we should initially take when trying to go to the pucks
 int pathPastBlock;
 int block_location[4] = {0,0,0,0};      // The block location values
@@ -220,13 +219,26 @@ int main(void)
     Drift_Check_Interrupt_StartEx(Drift_Check_IH);		
     */
 
+      // FORCING STATE:
+    // Manual state set for testing
+    state = STATE_DEPOSIT_PUCK;
+    currentPuckStackSize = 0;
+    current_stage = 1;
+    blockEastClearance = 0;
+    blockWestClearance = 1;
+    puckEastClearance = 0;
+    puckWestClearance = 1;
+    int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the pucks and the block
+    internal_orientation = EAST;
+    puckConstructionPlan[0] = RED;
+    puckConstructionPlan[1] = GREEN;
+    puckConstructionPlan[2] = BLUE;
+
     // Main Loop for States
         
     for(;;)
     {   
         
-
-
         // Start button is pressed so quit sensing
 
         /*
@@ -398,18 +410,7 @@ int main(void)
             } while (lock == TRUE);    
         }    
 
-        // FORCING STATE:
-        // Manual state set for testing
-        
-        //state = STATE_GO_TO_PUCKS;
-        currentPuckStackSize = 2;
-        current_stage = 3;
-        blockEastClearance = 0;
-        blockWestClearance = 1;
-        puckEastClearance = 1;
-        puckWestClearance = 0;
-        int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the pucks and the block
-        
+     
         
         //state = STATE_FIND_REQUIRED_PUCK;
         
@@ -418,7 +419,7 @@ int main(void)
         //while(1) {};
         
         
-        state = STATE_LOCATE_BLOCK_AND_PUCKS;
+        // state = STATE_LOCATE_BLOCK_AND_PUCKS;
         
         
         //UART_1_PutString("hI");
@@ -658,7 +659,7 @@ int main(void)
             if (blockEastClearance && puckEastClearance){
                 
                 //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + 200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + 100, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
                 straightAdjust();
                 changeOrientation(NORTH, SPEED);
                 straightAdjust();
@@ -870,26 +871,135 @@ int main(void)
             
         }
         
-        if (state == STATE_DEPOSIT_PUCK){
+        // Assume that we are currently in the north side of the arena facing the pucks.
+        // This state will return us to the south side of the block and face east at the east wall.
+        if (state == STATE_RETURN_TO_SOUTH){
+            if (blockEastClearance && puckEastClearance){
+                
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED);
+                // straightAdjust() using back sensor?
+                changeOrientation(NORTH,SPEED);
+                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK, BACKWARD, LESS_THAN, BACK, SPEED); // May need to stop sooner so as to avoid the potential pucks on back wall
+                straightAdjust();
+                changeOrientation(EAST,SPEED);
+                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                straightAdjust();
+                
+            }
+            
+            else if (blockWestClearance && puckWestClearance){
+            
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED);
+                // straightAdjust() using back sensor?
+                changeOrientation(NORTH,SPEED);
+                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK, BACKWARD, LESS_THAN, BACK, SPEED); // May need to stop sooner so as to avoid the potential pucks on back wall
+                straightAdjust();
+                changeOrientation(EAST,SPEED);
+                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                straightAdjust();
 
-            /*
-            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL + 10, SOUTH_ANGLE); // Take us to the drop off point NEAR construction zone
-            lowerAndOpen(currentPuckStackSize);
-            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
-            changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack
-            moveAndAngle(CONSTRUCTION_MIDPOINT,CONSTRUCTION_DISTANCE_FROM_WALL, SOUTH_ANGLE); // Take us to the drop off point in construction zone
-            */
+                
+                //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK, BACKWARD, LESS_THAN, BACK, SPEED);
+                straightAdjust();
+                changeOrientation(NORTH, SPEED);
+                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                //displaceLeft(); Repeatedly call this if below function not implemented
+                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
+                changeOrientation(EAST, SPEED);
+                //displaceLeft();
+                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
+                moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                            
+            }
             
-            //lowerAndOpen(current_stage);
-            changeHeightToPuck(current_stage - 1); // Lift claw above stack to avoid hitting the stack
+            
+            else if (blockEastClearance && puckWestClearance){
+
+                moveUntil(block_and_puck_edge_midpoint - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED);
+                straightAdjust();
+                changeOrientation(NORTH, SPEED);
+                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                //displaceLeft(); Repeatedly call this if below function not implemented
+                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
+                changeOrientation(EAST, SPEED);
+                //displaceLeft();
+                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
+                moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                
+            }
+            
+            else if (blockWestClearance && puckEastClearance){
+                
+                moveUntil(block_and_puck_edge_midpoint - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED);
+                straightAdjust();
+                changeOrientation(NORTH, SPEED);
+                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                //displaceLeft(); Repeatedly call this if below function not implemented
+                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
+                changeOrientation(WEST, SPEED);
+                //displaceLeft();
+                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
+                moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                
+            }   
+        }
+        
+        // We choose where we put the puck. Depending if its needed now, later or never.
+        if (state == STATE_DEPOSIT_PUCK){
+                
+            
+            // Temp grab puck
+            control_photodiode_Write(CLAW_SENSING);    // changes to claw photodiode
+            colour_sensing_algorithm = CLAW_GROUND_ALGORITHM;   // changes it to claw algorithm
+            
             armOpen();
+            colourSensingInitialise();
+            CyDelay(1000);
+            armClose();
             
-            changeHeightToPuck(current_stage);
+            int heldColour = colourSensingOutput();
+            blinkLED(heldColour,500);
+            CyDelay(1000);
             
-            moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
+            if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
+                moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, FRONT_LEFT, SPEED);  
+                changeOrientation(WEST,SPEED);
+                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                
+            }
+            else if ( heldColour == puckConstructionPlan[1] || heldColour == puckConstructionPlan[2]){ // Then put this puck in the home base for grabbing later
+                moveUntil(ARENA_WIDTH - FIRST_TEMP_DROPOFF + DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Check if already droppd off, go to second_temp_dropoff
+            }
             
+            else {
+                moveUntil(FIRST_DISCARD_ZONE - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Check if already droppd off, go to second_temp_dropoff
+            } // Discard the puck so drop it in rubbish pile
+
+            changeOrientation(SOUTH,SPEED);    
+            changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack  
+            
+            moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+            if (heldColour == puckConstructionPlan[currentPuckStackSize]){changeHeightToPuck(currentPuckStackSize);}
+            else {changeHeightToPuck(0);}
+            armOpen();
+            changeHeightToPuck(currentPuckStackSize + 1); // Move higher than stack to avoid hitting it.
+            
+
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
-            else {current_stage++;}
+            else {current_stage++;
+            // Need to go back to the east wall facing east.
+                
+            }
+            
+            
 
         }
         

@@ -28,8 +28,9 @@
 #define STATE_LOCATE_BLOCK_AND_PUCKS 2
 #define STATE_GO_TO_PUCKS 3
 #define STATE_FIND_REQUIRED_PUCK 4
-#define STATE_DEPOSIT_PUCK 5
-#define STATE_PARK_HOME 6
+#define STATE_RETURN_TO_SOUTH 5
+#define STATE_DEPOSIT_PUCK 6
+#define STATE_PARK_HOME 7
 
 
 // Hard-coded distances from the west for where each puck may sit in the construction plan.
@@ -97,6 +98,11 @@ int internal_orientation;
 #define PUCK_RACK_4_WEST_DISTANCE 480
 #define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
 
+#define FIRST_DISCARD_ZONE 1000
+#define SECOND_DISCARD_ZONE 900
+#define FIRST_TEMP_DROPOFF CONSTRUCTION_BASE_EAST_EDGE
+#define SECOND_TEMP_DROPOFF CONSTRUCTION_BASE_WEST_EDGE
+
 
 //* Robot Body Constants *//
 
@@ -133,7 +139,7 @@ int internal_orientation;
 #define DISTANCE_STOPPED_FROM_PUCK 50 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
 #define SENSOR_DELAY_MIN 60
 
-// Miscellaneous
+// Miscellaneous:
 #define ADJUST 2
 #define BACKWARD 0
 #define FORWARD 1
@@ -151,7 +157,7 @@ int internal_orientation;
 #define WALL_SENSING 0
 
 #define WALL_ALGORITHM 0
-#define CLAW_GROUND_ALGORITHM 3
+#define CLAW_GROUND_ALGORITHM 2
 #define CLAW_1_ALGORITHM 1
 
 // Servo:
