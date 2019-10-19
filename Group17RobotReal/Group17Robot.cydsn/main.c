@@ -375,6 +375,8 @@ int main(void)
             moveSwivel(-35, SPEED, TRUE);  
             moveDynamic(-100, SPEED, TRUE);
             moveSwivel(35, SPEED, TRUE);
+            
+            translateMoveDynamic(-100,35,SPEED, TRUE);
     
             // Move until construction zone            
             moveUntil(130, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);  // Move to west wall
@@ -872,6 +874,11 @@ int main(void)
             if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 changeOrientation(WEST,SPEED);
+<<<<<<< HEAD
+=======
+                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                straightAdjust();
+>>>>>>> 21526e54efc9f06684a2ab811a911e5e4deb3ee9
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); // Move to a point where we can face towards stack but able to get a distance check
                 straightAdjust();
                 /*
@@ -962,6 +969,18 @@ int main(void)
             moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30 , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED, TRUE); // Absorb the 50 into some constant later
             moveSwivel(90, SPEED, TRUE);
             moveUntil(HOME_PARKING_DISTANCE , BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+            
+            
+            // END Congratulations:
+            changeHeightToPuck(GROUND);
+            
+            
+            
+            
+            
+            
+            
+            
     
             while(1) {} // Finish inside infinite loop
             

@@ -12,7 +12,7 @@
 
 // Functions: 
 void moveDynamic(int distance, int speed, int activate_safety);    // positive number to move forward by that distance, negative to move backwards
-void translateMoveDynamic(int distance, int degree, int speed);    // positive number to move right by that distance, negative to move left
+void translateMoveDynamic(int distance, int degree, int speed, int activate_safety);    // positive number to move right by that distance, negative to move left
 void moveSwivel(int degrees, int speed, int activate_safety);
 
 // set speeds: 

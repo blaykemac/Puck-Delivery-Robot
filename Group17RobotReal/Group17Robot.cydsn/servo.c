@@ -31,7 +31,7 @@
 
 
 //These are the values that correspond to open, closed, up and down positions of the 
-//arm. These were found by experiment, so if need to recalibrate, you know where to go\
+// arm. These were found by experiment, so if need to recalibrate, you know where to go
 
 
 // Different positions of the arm:
@@ -73,7 +73,7 @@ void armClose(){
 }
 void armTranslate(int new_position){
     
-    if (new_position > 2400 | new_position < 1000) {return;}    // if a value is inputed that is bad for the servo
+    if (new_position > 2400 || new_position < 1000) {return;}    // if a value is inputed that is bad for the servo
                                                                 // function won't run
     
     Rack_Servo_PWM_Wakeup();                    // Brings the servo back from sleep
