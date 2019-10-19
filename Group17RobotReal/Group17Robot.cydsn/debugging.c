@@ -98,7 +98,7 @@ void ultimateDebugging(void){
 
                         //moveDynamic(-300);
                         
-                        moveSwivel(-180, SPEED);
+                        moveSwivel(-180, SPEED, TRUE);
                         
                         lock = TRUE;    
                     }
@@ -161,7 +161,7 @@ void ultimateDebugging(void){
                         UART_1_PutString("\n");
                         
                         
-                        moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);              // should keep moving until we approach 50mm wall
+                        moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);              // should keep moving until we approach 50mm wall
                         straightAdjust();
                         
                         

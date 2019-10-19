@@ -192,10 +192,10 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
 }
 
 void translateMoveDynamic(int distance, int degree, int speed) {
-    moveSwivel(-degree, speed);
-    moveDynamic(distance, speed);
-    moveSwivel(degree, speed);
-    moveDynamic(distance, speed);
+    moveSwivel(-degree, speed, TRUE);
+    moveDynamic(distance, speed, TRUE);
+    moveSwivel(degree, speed, TRUE);
+    moveDynamic(distance, speed, TRUE);
 }
 
 

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 1
 
 
    1              		.syntax unified
@@ -57,13 +57,14 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
   25:customMath.c  **** #include "motor.h"
   26:customMath.c  **** #include "customMath.h"
   27:customMath.c  **** #include "navigation.h"
-  28:customMath.c  **** 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 2
+  28:customMath.c  **** #include "debugging.h"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 2
 
 
   29:customMath.c  **** 
-  30:customMath.c  **** float averageSensor(float num1, float num2){
-  30              		.loc 1 30 0
+  30:customMath.c  **** 
+  31:customMath.c  **** float averageSensor(float num1, float num2){
+  30              		.loc 1 31 0
   31              		.cfi_startproc
   32              		@ args = 0, pretend = 0, frame = 0
   33              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -72,15 +73,15 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
   36              		.cfi_def_cfa_offset 8
   37              		.cfi_offset 3, -8
   38              		.cfi_offset 14, -4
-  31:customMath.c  ****     return (num1 + num2) / 2;
-  39              		.loc 1 31 0
+  32:customMath.c  ****     return (num1 + num2) / 2;
+  39              		.loc 1 32 0
   40 0002 FFF7FEFF 		bl	__aeabi_fadd
   41              	.LVL1:
   42 0006 4FF07C51 		mov	r1, #1056964608
   43 000a FFF7FEFF 		bl	__aeabi_fmul
   44              	.LVL2:
-  32:customMath.c  **** }
-  45              		.loc 1 32 0
+  33:customMath.c  **** }
+  45              		.loc 1 33 0
   46 000e 08BD     		pop	{r3, pc}
   47              		.cfi_endproc
   48              	.LFE64:
@@ -93,46 +94,46 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
   55              		.type	roundDirection, %function
   56              	roundDirection:
   57              	.LFB65:
-  33:customMath.c  **** // Round the current direction into cardinal directions
-  34:customMath.c  **** int roundDirection(){
-  58              		.loc 1 34 0
+  34:customMath.c  **** // Round the current direction into cardinal directions
+  35:customMath.c  **** int roundDirection(){
+  58              		.loc 1 35 0
   59              		.cfi_startproc
   60              		@ args = 0, pretend = 0, frame = 0
   61              		@ frame_needed = 0, uses_anonymous_args = 0
   62              		@ link register save eliminated.
-  35:customMath.c  ****     if (currentOrientation < 45 && currentOrientation > 315){
-  36:customMath.c  ****     return NORTH;}
-  37:customMath.c  ****     else if (currentOrientation >= 45 && currentOrientation < 135){
-  63              		.loc 1 37 0
+  36:customMath.c  ****     if (currentOrientation < 45 && currentOrientation > 315){
+  37:customMath.c  ****     return NORTH;}
+  38:customMath.c  ****     else if (currentOrientation >= 45 && currentOrientation < 135){
+  63              		.loc 1 38 0
   64 0000 074B     		ldr	r3, .L7
   65 0002 1B68     		ldr	r3, [r3]
   66 0004 A3F12D02 		sub	r2, r3, #45
   67 0008 592A     		cmp	r2, #89
   68 000a 04D9     		bls	.L5
-  38:customMath.c  ****     return EAST;}
-  39:customMath.c  ****     else if (currentOrientation >= 135 && currentOrientation < 225){
-  69              		.loc 1 39 0
+  39:customMath.c  ****     return EAST;}
+  40:customMath.c  ****     else if (currentOrientation >= 135 && currentOrientation < 225){
+  69              		.loc 1 40 0
   70 000c 873B     		subs	r3, r3, #135
   71 000e 592B     		cmp	r3, #89
   72 0010 03D8     		bhi	.L6
-  40:customMath.c  ****     return SOUTH;}
-  73              		.loc 1 40 0
+  41:customMath.c  ****     return SOUTH;}
+  73              		.loc 1 41 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 3
+
+
   74 0012 0220     		movs	r0, #2
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 3
-
-
   75 0014 7047     		bx	lr
   76              	.L5:
-  38:customMath.c  ****     return EAST;}
-  77              		.loc 1 38 0
+  39:customMath.c  ****     return EAST;}
+  77              		.loc 1 39 0
   78 0016 0120     		movs	r0, #1
   79 0018 7047     		bx	lr
   80              	.L6:
-  41:customMath.c  ****     else {return WEST;}
-  81              		.loc 1 41 0
+  42:customMath.c  ****     else {return WEST;}
+  81              		.loc 1 42 0
   82 001a 0320     		movs	r0, #3
-  42:customMath.c  **** }
-  83              		.loc 1 42 0
+  43:customMath.c  **** }
+  83              		.loc 1 43 0
   84 001c 7047     		bx	lr
   85              	.L8:
   86 001e 00BF     		.align	2
@@ -177,10 +178,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  125 0011 35010000 		.4byte	.LASF36
  126 0015 A7010000 		.4byte	.LASF37
  127 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 4
+
+
  128 001d 00000000 		.4byte	0
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 4
-
-
  129 0021 00000000 		.4byte	.Ldebug_line0
  130 0025 02       		.uleb128 0x2
  131 0026 04       		.byte	0x4
@@ -237,10 +238,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  182 0083 2C       		.byte	0x2c
  183 0084 48000000 		.4byte	0x48
  184 0088 02       		.uleb128 0x2
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 5
+
+
  185 0089 08       		.byte	0x8
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 5
-
-
  186 008a 04       		.byte	0x4
  187 008b 8C010000 		.4byte	.LASF12
  188 008f 02       		.uleb128 0x2
@@ -258,7 +259,7 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  200 00a4 05       		.uleb128 0x5
  201 00a5 4B000000 		.4byte	.LASF38
  202 00a9 01       		.byte	0x1
- 203 00aa 1E       		.byte	0x1e
+ 203 00aa 1F       		.byte	0x1f
  204 00ab 25000000 		.4byte	0x25
  205 00af 00000000 		.4byte	.LFB64
  206 00b3 10000000 		.4byte	.LFE64-.LFB64
@@ -268,20 +269,20 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  210 00bd 06       		.uleb128 0x6
  211 00be 59010000 		.4byte	.LASF16
  212 00c2 01       		.byte	0x1
- 213 00c3 1E       		.byte	0x1e
+ 213 00c3 1F       		.byte	0x1f
  214 00c4 25000000 		.4byte	0x25
  215 00c8 00000000 		.4byte	.LLST0
  216 00cc 06       		.uleb128 0x6
  217 00cd 42010000 		.4byte	.LASF17
  218 00d1 01       		.byte	0x1
- 219 00d2 1E       		.byte	0x1e
+ 219 00d2 1F       		.byte	0x1f
  220 00d3 25000000 		.4byte	0x25
  221 00d7 23000000 		.4byte	.LLST1
  222 00db 00       		.byte	0
  223 00dc 07       		.uleb128 0x7
  224 00dd 50020000 		.4byte	.LASF39
  225 00e1 01       		.byte	0x1
- 226 00e2 22       		.byte	0x22
+ 226 00e2 23       		.byte	0x23
  227 00e3 6F000000 		.4byte	0x6f
  228 00e7 00000000 		.4byte	.LFB65
  229 00eb 24000000 		.4byte	.LFE65-.LFB65
@@ -297,10 +298,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  239 0102 0A       		.uleb128 0xa
  240 0103 61000000 		.4byte	.LASF19
  241 0107 05       		.byte	0x5
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 6
+
+
  242 0108 1B       		.byte	0x1b
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 6
-
-
  243 0109 6F000000 		.4byte	0x6f
  244 010d 05       		.uleb128 0x5
  245 010e 03       		.byte	0x3
@@ -357,10 +358,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  296 017d 88010000 		.4byte	0x188
  297 0181 0C       		.uleb128 0xc
  298 0182 9D000000 		.4byte	0x9d
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 7
+
+
  299 0186 03       		.byte	0x3
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 7
-
-
  300 0187 00       		.byte	0
  301 0188 0A       		.uleb128 0xa
  302 0189 93010000 		.4byte	.LASF25
@@ -417,10 +418,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  353 01f5 6F000000 		.4byte	0x6f
  354 01f9 05       		.uleb128 0x5
  355 01fa 03       		.byte	0x3
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 8
+
+
  356 01fb 00000000 		.4byte	initialisation
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 8
-
-
  357 01ff 0B       		.uleb128 0xb
  358 0200 8F000000 		.4byte	0x8f
  359 0204 0F020000 		.4byte	0x20f
@@ -477,10 +478,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  410 0016 0B       		.uleb128 0xb
  411 0017 0B       		.uleb128 0xb
  412 0018 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 9
+
+
  413 0019 0B       		.uleb128 0xb
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 9
-
-
  414 001a 03       		.uleb128 0x3
  415 001b 0E       		.uleb128 0xe
  416 001c 00       		.byte	0
@@ -537,10 +538,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  467 0050 00       		.byte	0
  468 0051 00       		.byte	0
  469 0052 06       		.uleb128 0x6
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 10
+
+
  470 0053 05       		.uleb128 0x5
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 10
-
-
  471 0054 00       		.byte	0
  472 0055 03       		.uleb128 0x3
  473 0056 0E       		.uleb128 0xe
@@ -597,10 +598,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  524 008a 09       		.uleb128 0x9
  525 008b 35       		.uleb128 0x35
  526 008c 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 11
+
+
  527 008d 49       		.uleb128 0x49
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 11
-
-
  528 008e 13       		.uleb128 0x13
  529 008f 00       		.byte	0
  530 0090 00       		.byte	0
@@ -657,10 +658,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  581 00c3 00       		.byte	0
  582 00c4 00       		.byte	0
  583 00c5 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 12
+
+
  584              		.section	.debug_loc,"",%progbits
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 12
-
-
  585              	.Ldebug_loc0:
  586              	.LLST0:
  587 0000 00000000 		.4byte	.LVL0
@@ -717,10 +718,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  638 0010 00000000 		.4byte	0
  639 0014 00000000 		.4byte	0
  640              		.section	.debug_line,"",%progbits
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 13
+
+
  641              	.Ldebug_line0:
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 13
-
-
  642 0000 AB010000 		.section	.debug_str,"MS",%progbits,1
  642      02007F01 
  642      00000201 
@@ -777,10 +778,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  663              	.LASF2:
  664 0099 756E7369 		.ascii	"unsigned char\000"
  664      676E6564 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 14
+
+
  664      20636861 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 14
-
-
  664      7200
  665              	.LASF35:
  666 00a7 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
@@ -837,10 +838,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  685              	.LASF25:
  686 0193 626C6F63 		.ascii	"block_edge_location\000"
  686      6B5F6564 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 15
+
+
  686      67655F6C 
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 15
-
-
  686      6F636174 
  686      696F6E00 
  687              	.LASF37:
@@ -897,10 +898,10 @@ ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 1
  705      74797065 
  705      00
  706              	.LASF20:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc0TlmvM.s 			page 16
+
+
  707 0288 64726976 		.ascii	"driveStraightEnable\000"
-ARM GAS  C:\Users\Misha\AppData\Local\Temp\cc63liyx.s 			page 16
-
-
  707      65537472 
  707      61696768 
  707      74456E61 
