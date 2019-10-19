@@ -19,6 +19,7 @@ void moveUntil(int distance, int direction, int less_or_great, int ultrasonic_se
 void translateUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed);void locatePucks(void);
 void changeOrientation(int orientation_change, int speed);
 int failsafe(int direction);
+void toleranceCheck(void);
 
 
 extern int puckConstructionPlan[3];

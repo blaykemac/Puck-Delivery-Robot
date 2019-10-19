@@ -619,6 +619,45 @@ void straightAdjustBack(void) {
     
 }
 
+
+void toleranceCheck(void) {
+    
+    // This function needs work
+    
+    
+    
+    int tolerance = 100;
+    
+    distanceSensor(FRONT_LEFT);
+    CyDelay(60);
+    distanceSensor(FRONT_LEFT);
+    CyDelay(60);
+    distanceSensor(BACK);
+    CyDelay(60);
+    
+    while (ultrasonic_distances_mm[FRONT_LEFT] + ultrasonic_distances_mm[BACK] + tolerance < ARENA_WIDTH 
+            
+    
+    
+    
+    || ultrasonic_distances_mm[FRONT_LEFT] + ultrasonic_distances_mm[BACK] + tolerance < ARENA_WIDTH) { 
+            // this checks if the ultrasonic distances being recorded are accurate
+            // if it is not within this threshold, there must be something up.  
+                
+    distanceSensor(FRONT_LEFT);
+    CyDelay(60);
+    distanceSensor(FRONT_LEFT);
+    CyDelay(60);
+    distanceSensor(BACK);
+    CyDelay(60);
+        
+    }
+    
+}
+
+
+
+
 void locatePucks(void)
 {
     

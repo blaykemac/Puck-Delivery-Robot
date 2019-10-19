@@ -1,4 +1,4 @@
-
+ 
 /* ========================================
  *
  * Copyright Group 17, 2019
@@ -370,7 +370,6 @@ int main(void)
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
 
-            
             // move away from home base:
             moveSwivel(-35, SPEED, TRUE);  
             moveDynamic(-100, SPEED, TRUE);
@@ -402,18 +401,33 @@ int main(void)
             sprintf(output, "distance from robot to block: %d \t", block_check);
             UART_1_PutString(output);
             
-            // block_check = 350;  // This is a default length that isn't dynamic, the block check
-
+            //block_check = 350;  // This is a default length that isn't dynamic, the block check
+            
+            
+            // Stopping at the West side of the block: 
             moveUntil(block_check, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED, TRUE);   
                                 // this will move backwards until it hits the block or the wall
             blinkLED(GREEN,1000);      // To show it ended at the correct spot
+            
+            
+            // Update the west clearance of the block: 
+            
+            toleranceCheck();       // This checks if the values being polled are appropriate 
+            
+            distanceSensor(FRONT_LEFT); // Use front_right instead? 
+            CyDelay(DELAY);
+            
+            block_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
+            
+            
+            
                     
             //straightAdjust();                   // Ensure we are straight to take measurements
                                                   // may need to readjust this 
             
             
             // Move back a bit to find the left side and right side values (adds a bit of tolerance)
-            moveDynamic(-(BLOCK_WIDTH/2), SPEED, TRUE);   
+            //moveDynamic(-(BLOCK_WIDTH/2), SPEED, TRUE);   
             // Double check if the above is required
             
             //straightAdjust();                   // Ensure we are straight to take measurements
@@ -423,25 +437,18 @@ int main(void)
             CyDelay(60); 
             distanceSensor(SIDE_LEFT); 
             CyDelay(60); 
-            
-            // FAILSAFE if the block is at the very end of west wall:
-            distanceSensor(BACK);
-            CyDelay(60);
-            
-            // Failsafe where we check the front and back sensors to see if they allign
-                // FRONT_LEFT + BACK + WIDTH_BACK_TO_FRONT + TOLERANCE < 1200
-            
-            distanceSensor(FRONT_LEFT);
-            CyDelay(60);
-            distanceSensor(BACK);
-            CyDelay(60);
-            
-            while (ultrasonic_distances_mm[FRONT_LEFT] + ultrasonic_distances_mm[BACK] + 100 < 1200) {}
+
+        
+                
             
             
             // If either of the following cases are true, we can just put in default values, 
                 // as it will be easy to circumvent the block
                 // This orientation will be unlikely 
+            
+            
+            
+            
             
             if (ultrasonic_distances_mm[BACK] < SAFETY_MARGIN + 50) {
                 // block is " | " this orientation, and close to the side wall
@@ -874,11 +881,8 @@ int main(void)
             if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 changeOrientation(WEST,SPEED);
-<<<<<<< HEAD
-=======
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
->>>>>>> 21526e54efc9f06684a2ab811a911e5e4deb3ee9
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); // Move to a point where we can face towards stack but able to get a distance check
                 straightAdjust();
                 /*
