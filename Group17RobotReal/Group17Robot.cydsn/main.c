@@ -874,7 +874,7 @@ int main(void)
                 changeOrientation(WEST,SPEED);
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
-                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED); // Move to a point where we can face towards stack but able to get a distance check
+                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); // Move to a point where we can face towards stack but able to get a distance check
                 straightAdjust();
                 /*
                 changeOrientation(SOUTH, SPEED);
@@ -963,6 +963,18 @@ int main(void)
             moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30 , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED, TRUE); // Absorb the 50 into some constant later
             moveSwivel(90, SPEED, TRUE);
             moveUntil(HOME_PARKING_DISTANCE , BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+            
+            
+            // END Congratulations:
+            changeHeightToPuck(GROUND);
+            
+            
+            
+            
+            
+            
+            
+            
     
             while(1) {} // Finish inside infinite loop
             
