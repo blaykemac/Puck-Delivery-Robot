@@ -136,7 +136,7 @@ void ultimateDebugging(void){
                         // 3 gave side right    // side right 
                         // 4 gave back sensor   // back sensor
                         
-                        while(0) {
+                        while(1) {
                             for (int i = 0; i < 5; i++)
                             {
                                 distanceSensor(i);
