@@ -104,7 +104,7 @@ void moveUntilPuck(int algorithm) {
         sprintf(output, "%i \t", puck_detect);       
         UART_1_PutString(output);
     }
-       
+    
     Motor_Left_Decoder_SetCounter(0);
     Motor_Right_Decoder_SetCounter(0);
     
@@ -116,7 +116,7 @@ void moveUntilPuck(int algorithm) {
 
 
 
-void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed) {
+void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed, int activate_safety) {
        
     
     // distance_set is in millimeteres
@@ -173,12 +173,32 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             
             count_left = Motor_Left_Decoder_GetCounter();
             count_right = Motor_Right_Decoder_GetCounter();
+            
+            // DRIFT CORRECTION:
             if (count_left > count_right) {
-            speed_left -= ADJUST;
+                if(speed_left == speed_right){
+                    speed_left -= ADJUST;
+                    speed_right += ADJUST;
+                }
+                else {
+                    int temp = speed_left;
+                    speed_left = speed_right;
+                    speed_right = temp;
+                }        
             }
             if (count_right > count_left) {
-            speed_right -= ADJUST; 
+                if(speed_left == speed_right) {
+                    speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the 
+                    speed_left += ADJUST;
+                }
+                else {
+                    int temp = speed_left;              // if they are not equal, we just swap em
+                    speed_left = speed_right;
+                    speed_right = temp;
+                }
             }
+            // end of drift correction 
+            
             
             Motor_Left_Driver_WriteCompare(speed_left);         // updates the driver speed
             Motor_Right_Driver_WriteCompare(speed_right);
@@ -191,7 +211,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             UART_1_PutString(output);
             
             // FAILSAFE:
-            if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100)){
+            if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100) && activate_safety == TRUE){
                 emergency_exit = failsafe(direction);
                 old_count = count_left;
             }
@@ -204,12 +224,31 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             
             count_left = Motor_Left_Decoder_GetCounter();
             count_right = Motor_Right_Decoder_GetCounter();
+            
+            // DRIFT CORRECTION:
             if (count_left > count_right) {
-            speed_left -= ADJUST;
+                if(speed_left == speed_right){
+                    speed_left -= ADJUST;
+                    speed_right += ADJUST;
+                }
+                else {
+                    int temp = speed_left;
+                    speed_left = speed_right;
+                    speed_right = temp;
+                }        
             }
             if (count_right > count_left) {
-            speed_right -= ADJUST; 
+                if(speed_left == speed_right) {
+                    speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the 
+                    speed_left += ADJUST;
+                }
+                else {
+                    int temp = speed_left;              // if they are not equal, we just swap em
+                    speed_left = speed_right;
+                    speed_right = temp;
+                }
             }
+            // end of drift correction 
             
             Motor_Left_Driver_WriteCompare(speed_left);         // updates the driver speed
             Motor_Right_Driver_WriteCompare(speed_right);
@@ -413,8 +452,8 @@ int failsafe(int direction) {
     if (direction == FORWARD) {
         distanceSensor(FRONT_LEFT);
         CyDelay(50);
-        //distanceSensor(FRONT_RIGHT);      // May need to add this in of front left sensor isnt enough
-        //CyDelay(50);
+        distanceSensor(FRONT_RIGHT);      // May need to add this in of front left sensor isnt enough
+        CyDelay(50);
         
         check_distance = ultrasonic_distances_mm[FRONT_LEFT];   // checks the distance measured by the ultrasonic
         if (check_distance < SAFETY_MARGIN) { UART_1_PutString("SAFETY MARGIN ACTIVATED\n"); return TRUE; }
