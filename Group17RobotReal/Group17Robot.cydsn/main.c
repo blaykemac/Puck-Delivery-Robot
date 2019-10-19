@@ -253,37 +253,7 @@ int main(void)
         }
         */
         
-        
-        // Enter picking up puck state for the moment FOR TESTING
-        //colour_sensing_algorithm = 1;
-        //control_photodiode_Write(1);
-        //state = STATE_FIND_REQUIRED_PUCK;
-        
-        
-     
-        
-        //state = STATE_FIND_REQUIRED_PUCK;
-        
-        //moveUntil(100,FORWARD,GREATER_THAN,SIDE_LEFT,SPEED);
-        
-        //while(1) {};
-        
-        
-        // state = STATE_LOCATE_BLOCK_AND_PUCKS;
-        
-        
-        //UART_1_PutString("hI");
-        
-        //changeOrientation(NORTH, SPEED);
-        //changeOrientation(WEST, SPEED);
-                
-        //state = STATE_DEPOSIT_PUCK;
-        //currentPuckStackSize = 2;
-        //current_stage = 3;
-         
-
-        
-               
+   
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
             while(0){
@@ -827,11 +797,20 @@ int main(void)
             if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);  
                 changeOrientation(WEST,SPEED);
+                straightAdjust();
+                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED); // Move to a point where we can face towards stack but able to get a distance check
+                straightAdjust();
+                /*
+                changeOrientation(SOUTH, SPEED);
+                straightAdjust();
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                straightAdjust();
+                */
                 
             }
             else if ( heldColour == puckConstructionPlan[1] || heldColour == puckConstructionPlan[2]){ // Then put this puck in the home base for grabbing later
                 moveUntil(ARENA_WIDTH - FIRST_TEMP_DROPOFF + DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Check if already droppd off, go to second_temp_dropoff
+                straightAdjust();
             }
             
             else {
@@ -841,7 +820,15 @@ int main(void)
             changeOrientation(SOUTH,SPEED);    
             changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack  
             
-            moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+            if (currentPuckStackSize == 0){
+               moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
+            }
+            else {
+                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL - 50, FORWARD, LESS_THAN, FRONT_LEFT, SPEED); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping)
+            }
+            
+            //moveDynamic(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK - CONSTRUCTION_DISTANCE_FROM_WALL,SPEED);
+            
             if (heldColour == puckConstructionPlan[currentPuckStackSize]){changeHeightToPuck(currentPuckStackSize);}
             else {changeHeightToPuck(0);}
             armOpen();
@@ -853,16 +840,22 @@ int main(void)
             // Need to go back to the east wall facing east.
                 moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
                 changeOrientation(WEST,SPEED);
+                straightAdjust();
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);  
+                straightAdjust();
                 changeOrientation(EAST,SPEED);
-                moveUntil(DISTANCE_FRONT_SENSOR_FROM_CENTER + SAFETY_MARGIN, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED);
+                straightAdjust();
+                moveUntil(DISTANCE_FRONT_SENSOR_FROM_CENTER + SAFETY_MARGIN + 50, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
+                straightAdjust();
                 
                 
                 //Usually we will check if the next colour we need is in home base already
                 //
+                // If in east edge of home base
                 if ( puckConstructionPlan[currentPuckStackSize] == puckColoursTempPile[0]){
                     
                 }
+                //If in west edge of home base
                 else if(puckConstructionPlan[currentPuckStackSize] == puckColoursTempPile[1]){
                          
                 }

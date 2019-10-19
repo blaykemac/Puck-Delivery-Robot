@@ -86,7 +86,7 @@ int internal_orientation;
 #define CONSTRUCTION_BASE_WEST_EDGE 200 // Measure arena to find this edge
 #define CONSTRUCTION_BASE_EAST_EDGE (CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_EDGE_LENGTH)
 #define CONSTRUCTION_MIDPOINT ((CONSTRUCTION_BASE_WEST_EDGE + CONSTRUCTION_BASE_EAST_EDGE + CONSTRUCTION_EDGE_LENGTH) / 2)
-#define CONSTRUCTION_DISTANCE_FROM_WALL 80 // How far we should put the front of the robot to the wall when depositing hte puck
+#define CONSTRUCTION_DISTANCE_FROM_WALL 140 // How far we should put the front of the robot to the wall when depositing hte puck
 #define CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK 210 // How far we should reverse from constructio stack before attempting to turn.
 
 #define PUCK_GRID_FROM_NORTH 275 // Where the southmost part of the pucks can extend to from the north wall
@@ -140,7 +140,7 @@ int internal_orientation;
 #define SENSOR_DELAY_MIN 60
 
 // Miscellaneous:
-#define ADJUST 1
+#define ADJUST 0
 #define BACKWARD 0
 #define FORWARD 1
 #define LEFT 2
