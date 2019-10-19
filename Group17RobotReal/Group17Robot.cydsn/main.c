@@ -375,6 +375,8 @@ int main(void)
             moveSwivel(-35, SPEED, TRUE);  
             moveDynamic(-100, SPEED, TRUE);
             moveSwivel(35, SPEED, TRUE);
+            
+            translateMoveDynamic(-100,35,SPEED, TRUE);
     
             // Move until construction zone            
             moveUntil(130, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);  // Move to west wall
