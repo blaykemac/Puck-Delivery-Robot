@@ -253,7 +253,42 @@ int main(void)
         }
         */
         
+<<<<<<< HEAD
    
+=======
+        
+        // Enter picking up puck state for the moment FOR TESTING
+        //colour_sensing_algorithm = 1;
+        //control_photodiode_Write(1);
+        //state = STATE_FIND_REQUIRED_PUCK;
+        
+        
+     
+        
+        //state = STATE_FIND_REQUIRED_PUCK;
+        
+        //moveUntil(100,FORWARD,GREATER_THAN,SIDE_LEFT,SPEED);
+        
+        //while(1) {};
+        
+        
+        // state = STATE_LOCATE_BLOCK_AND_PUCKS;
+        
+        
+        //UART_1_PutString("hI");
+        
+        //changeOrientation(NORTH, SPEED);
+        //changeOrientation(WEST, SPEED);
+                
+        //state = STATE_DEPOSIT_PUCK;
+        //currentPuckStackSize = 2;
+        //current_stage = 3;
+         
+//
+// *** 1. STATE SCAN PLAN: *** // 
+//
+        
+>>>>>>> d7ca804176bcb868055bbd5ca8c113ae170c9543
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
             while(0){
@@ -332,13 +367,17 @@ int main(void)
             */
         }
 
+//
+// *** 2. STATE LOCATE BLOCKS AND PUCKS: *** // 
+//
+        
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
 
             
             // move away from home base:
             moveSwivel(-35, SPEED);  
-            moveDynamic(-150, SPEED);
+            moveDynamic(-100, SPEED);
             moveSwivel(35, SPEED);
     
             // Move until construction zone            
@@ -348,44 +387,69 @@ int main(void)
             // SCAN FOR BLOCKS:
             
             distanceSensor(SIDE_LEFT);  // takes how far we are away from home base wall
-            int block_check = ARENA_LENGTH - BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR - ultrasonic_distances_mm[SIDE_LEFT] + 50;    
+            while (ultrasonic_distances_mm[SIDE_LEFT] > (BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR)) {
+                // stays in while loop until side left value taken is appropriate
+                // E.g. the side left value should be less than BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR
+                // So, it should be less than 500mm - 220mm = 280mm
+                distanceSensor(SIDE_LEFT);
+               } 
+            
+            
+            int block_check = BLOCK_ZONE_NORTH - ultrasonic_distances_mm[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR + (BLOCK_WIDTH/2);    
                 // TAKES our distance from north wall, 
                 // takes distance from arena, takes away 
                 // minus 50 is a tolerance
+                // This equals 700MM - leftside - 220mm + 45 = 525mm maximum, but we'll be away from the south facing wall 
             
             sprintf(output, "distance from robot to block: %d \t", block_check);
             UART_1_PutString(output);
             
-            block_check = 350;  // This is a default length that is dynamic
+            // block_check = 350;  // This is a default length that isn't dynamic, the block check
 
             moveUntil(block_check, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED);   
                                 // this will move backwards until it hits the block or the wall
             blinkLED(GREEN,1000);      // To show it ended at the correct spot
                     
             //straightAdjust();                   // Ensure we are straight to take measurements
-                                                // may need to readjust this 
+                                                  // may need to readjust this 
             
             
             // Move back a bit to find the left side and right side values (adds a bit of tolerance)
-            moveDynamic(-(BLOCK_WIDTH/2), SPEED);
+            moveDynamic(-(BLOCK_WIDTH/2), SPEED);   
+            // Double check if the above is required
             
             //straightAdjust();                   // Ensure we are straight to take measurements
                                                 // may need to readjust this 
             
-            distanceSensor(SIDE_RIGHT);
-            CyDelay(60);
-            distanceSensor(SIDE_LEFT);
-            CyDelay(60);
+            distanceSensor(SIDE_RIGHT); 
+            CyDelay(60); 
+            distanceSensor(SIDE_LEFT); 
+            CyDelay(60); 
             
             // FAILSAFE if the block is at the very end of west wall:
             distanceSensor(BACK);
             CyDelay(60);
             
+            // Failsafe where we check the front and back sensors to see if they allign
+                // FRONT_LEFT + BACK + WIDTH_BACK_TO_FRONT + TOLERANCE < 1200
+            
+            distanceSensor(FRONT_LEFT);
+            CyDelay(60);
+            distanceSensor(BACK);
+            CyDelay(60);
+            
+            while (ultrasonic_distances_mm[FRONT_LEFT] + ultrasonic_distances_mm[BACK] + 100 < 1200) {}
+            
+            
+            // If either of the following cases are true, we can just put in default values, 
+                // as it will be easy to circumvent the block
+                // This orientation will be unlikely 
+            
             if (ultrasonic_distances_mm[BACK] < SAFETY_MARGIN + 50) {
                 // block is " | " this orientation, and close to the side wall
                 
                 // Fill out all the details: 
-                block_location[NORTH] = ARENA_WIDTH - ultrasonic_distances_mm[SIDE_LEFT] - ultrasonic_distances_mm[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
+                block_location[NORTH] = ARENA_WIDTH - ultrasonic_distances_mm[SIDE_LEFT] - ultrasonic_distances_mm[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
                 block_location[EAST] = 0;
                 block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
                 block_location[WEST] = ARENA_WIDTH - BLOCK_WIDTH; 
@@ -423,7 +487,7 @@ int main(void)
             changeOrientation(EAST, SPEED);                             // No matter where we are this should be okay
             moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED);
             straightAdjust();
-            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH;
+            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH;       
             
             
             while(1) {};
@@ -469,7 +533,11 @@ int main(void)
             // PUCK has now been found, enter the IF statements to locate and pick up pucks 
             state = STATE_GO_TO_PUCKS;
 	    }     
-        
+
+//
+// *** 3. STATE GO TO PUCKS: *** // 
+//
+
         // Ensure that we are @ east wall facing east at a minimum verticaldistance so we can turn left without hitting bottom wall
         
         if (state == STATE_GO_TO_PUCKS){
@@ -542,6 +610,10 @@ int main(void)
             }
 
         }
+ 
+//        
+// *** 4. STATE FIND REQUIRED PUCK: *** // 
+//
         
         if (state == STATE_FIND_REQUIRED_PUCK){
         
@@ -686,6 +758,11 @@ int main(void)
             
             
         }
+ 
+        
+//
+// *** 5. STATE RETURN TO SOUTH: *** // 
+//      
         
         // Assume that we are currently in the north side of the arena facing the pucks.
         // This state will return us to the south side of the block and face east at the east wall.
@@ -769,6 +846,10 @@ int main(void)
             
             state = STATE_DEPOSIT_PUCK;
         }
+        
+//        
+// *** 6. STATE DEPOSIT PUCK: *** // 
+//
         
         // We choose where we put the puck. Depending if its needed now, later or never.
         if (state == STATE_DEPOSIT_PUCK){
@@ -868,6 +949,10 @@ int main(void)
             
 
         }
+ 
+//        
+// *** 7. STATE PARK HOME: *** // 
+//        
         
         if (state == STATE_PARK_HOME){
             
