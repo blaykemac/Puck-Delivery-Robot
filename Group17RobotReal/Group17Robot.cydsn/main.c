@@ -874,11 +874,8 @@ int main(void)
             if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 changeOrientation(WEST,SPEED);
-<<<<<<< HEAD
-=======
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
->>>>>>> 21526e54efc9f06684a2ab811a911e5e4deb3ee9
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); // Move to a point where we can face towards stack but able to get a distance check
                 straightAdjust();
                 /*
@@ -899,7 +896,7 @@ int main(void)
             } // Discard the puck so drop it in rubbish pile
 
             changeOrientation(SOUTH,SPEED);    
-            changeHeightToPuck(currentPuckStackSize + 1, NEITHER); // Lift claw above stack to avoid hitting the stack  
+            changeHeightToPuck(currentPuckStackSize + 1, CLOSE); // Lift claw above stack to avoid hitting the stack  
             
             if (currentPuckStackSize == 0){
                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
@@ -919,7 +916,8 @@ int main(void)
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
             else {current_stage++; currentPuckStackSize++;
             // Need to go back to the east wall facing east.
-                moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
+                //moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
+                moveDynamic(-150,SPEED,FALSE);
                 changeOrientation(WEST,SPEED);
                 straightAdjust();
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
