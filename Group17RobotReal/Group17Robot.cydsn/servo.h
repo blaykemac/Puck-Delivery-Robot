@@ -12,7 +12,7 @@
 */
 
 void armTranslate(int new_position);
-void changeHeightToPuck(int puckHeightIndex); // 0 is ground, 2 will be maximum
+void changeHeightToPuck(int puckHeightIndex, int closed_open); // 0 is ground, 2 will be maximum
 void armOpen(void);
 void armClose(void);
 
@@ -28,3 +28,6 @@ void lowerAndOpen(int nothing);
 #define OPEN_POS_GRIPPER_CMP 1120 //1170
 #define CLOSED_POS_GRIPPER_CMP 1250
 
+#define OPEN 0
+#define CLOSE 1
+#define NEITHER 2

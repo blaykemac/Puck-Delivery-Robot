@@ -102,7 +102,7 @@ void armTranslate(int new_position){
     Rack_Servo_PWM_Sleep();                    // Puts the servo back to sleep
     
 }
-void changeHeightToPuck(int puckHeightIndex){
+void changeHeightToPuck(int puckHeightIndex, int open_close){
     
     // open gripper
     // down
@@ -117,6 +117,16 @@ void changeHeightToPuck(int puckHeightIndex){
 //  When the puck is dropped off at the construction zone, the claw will lift up to the
 //      next puck level before it moves away 
     
+    if(open_close == CLOSE) { 
+        Gripper_Servo_PWM_Wakeup();                     // Brings the servo back from sleep
+        Gripper_Servo_PWM_WriteCompare(GRIPPER_OPEN);   //1170 turns out to be vibrationless open val    
+    }
+    if(open_close == OPEN) { 
+        Gripper_Servo_PWM_Wakeup();                    // Brings the servo back from sleep
+        Gripper_Servo_PWM_WriteCompare(GRIPPER_OPEN); //1170 turns out to be vibrationless open val
+    }
+    if(open_close == NEITHER) {};
+        
     switch(puckHeightIndex){
         case 0:                     // Ground
         armTranslate(2400);    break;
@@ -132,6 +142,8 @@ void changeHeightToPuck(int puckHeightIndex){
         armTranslate(2400);    break;
         break;
     }
+    if (open_close == OPEN || open_close == CLOSE) { Gripper_Servo_PWM_Sleep(); }
+    
 }
 
 

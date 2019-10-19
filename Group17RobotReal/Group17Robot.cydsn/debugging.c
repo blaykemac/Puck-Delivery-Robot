@@ -47,7 +47,7 @@ void ultimateDebugging(void){
                     {
                         
                         control_photodiode_Write(CLAW_SENSING); 
-                        changeHeightToPuck(0);
+                        changeHeightToPuck(0, NEITHER);
 
                         UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
                         for (int i = 0; i < 50; i++)
@@ -77,7 +77,7 @@ void ultimateDebugging(void){
                         
                         for(int i = 0; i < 4; i++)
                         {
-                            changeHeightToPuck(i);
+                            changeHeightToPuck(i, NEITHER);
                             CyDelay(1000);
                         }
 
