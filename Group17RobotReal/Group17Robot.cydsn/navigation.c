@@ -38,16 +38,16 @@ void armMoving(void){
     
     // States
     // moving
-    changeHeightToPuck(3);  // Arm has to be lifted to highest position
+    changeHeightToPuck(3, NEITHER);  // Arm has to be lifted to highest position
         // THIS WILL be ensured by always returning the claw to the highest position after completing any action
         
     // Scanning puck:
     while (puck_correct == FALSE) 
     {
                                 // robot moves forward towards puck
-        changeHeightToPuck(1);  // arm lowers onto robot
+        changeHeightToPuck(1, NEITHER);  // arm lowers onto robot
         puck_scan = colourSensingOutput();  // colour sensor takes a scan
-        changeHeightToPuck(3);  // arm returns to high position
+        changeHeightToPuck(3, NEITHER);  // arm returns to high position
                                 // robot moves backwards
         if (puck_scan == puckConstructionPlan[current_stage]) {puck_correct = TRUE;}
                                 // if colour == true:
@@ -573,7 +573,9 @@ void straightAdjust(void) {
         sprintf(output, "difference = %d, \n", difference);       
         UART_1_PutString(output);
         
-    } while (abs(difference) > 10);        // This ensures that the turning worked correctly
+    } while (abs(difference) > 2);        // This ensures that the turning worked correctly
+                                            // changed it from 10 to 2, this might change the way it works
+    
     
     Motor_Left_Driver_Sleep();
     Motor_Right_Driver_Sleep();

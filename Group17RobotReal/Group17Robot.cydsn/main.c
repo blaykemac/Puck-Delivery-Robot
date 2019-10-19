@@ -636,9 +636,9 @@ int main(void)
         {
             moveDynamic(50, SPEED_LOW, TRUE);  // robot moves forward towards puck
                                     // could replace this with the distance gathered from the ultrasonic 
-            changeHeightToPuck(ABOVE_1_PUCK);  // arm lowers onto robot
+            changeHeightToPuck(ABOVE_1_PUCK, NEITHER);  // arm lowers onto robot
             puck_scan = colourSensingOutput();  // colour sensor takes a scan
-            changeHeightToPuck(ABOVE_3_PUCK);  // arm returns to high position
+            changeHeightToPuck(ABOVE_3_PUCK, NEITHER);  // arm returns to high position
             moveDynamic(-50, SPEED, TRUE);   // robot moves backwards
             if (puck_scan == puckConstructionPlan[current_stage-1]) {puck_correct = TRUE;}                
             else 
@@ -652,13 +652,13 @@ int main(void)
                 
         
         
-        changeHeightToPuck(GROUND);      // arm lowers to ground
+        changeHeightToPuck(GROUND, NEITHER);      // arm lowers to ground
         //armClose();
         //changeHeightToPuck(1);
         moveUntilPuck(CLAW_GROUND_ALGORITHM);
         //moveDynamic(60);       // robot moves forward
         armClose();                 // claw closes on puck
-        changeHeightToPuck(3);      // arm lifts up to highest position
+        changeHeightToPuck(ABOVE_3_PUCK, NEITHER);      // arm lifts up to highest position
         moveDynamic(-60, SPEED, TRUE);       // robot moves back away from puck area 
         
         
@@ -903,7 +903,7 @@ int main(void)
             } // Discard the puck so drop it in rubbish pile
 
             changeOrientation(SOUTH,SPEED);    
-            changeHeightToPuck(currentPuckStackSize + 1); // Lift claw above stack to avoid hitting the stack  
+            changeHeightToPuck(currentPuckStackSize + 1, CLOSE); // Lift claw above stack to avoid hitting the stack  
             
             if (currentPuckStackSize == 0){
                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
@@ -914,16 +914,17 @@ int main(void)
             
             //moveDynamic(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK - CONSTRUCTION_DISTANCE_FROM_WALL,SPEED);
             
-            if (heldColour == puckConstructionPlan[currentPuckStackSize]){changeHeightToPuck(currentPuckStackSize);}
-            else {changeHeightToPuck(0);}
+            if (heldColour == puckConstructionPlan[currentPuckStackSize]){changeHeightToPuck(currentPuckStackSize, NEITHER);}
+            else {changeHeightToPuck(0, NEITHER);}
             armOpen();
-            changeHeightToPuck(currentPuckStackSize + 1); // Move higher than stack to avoid hitting it.
+            changeHeightToPuck(currentPuckStackSize + 1, NEITHER); // Move higher than stack to avoid hitting it.
             
 
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
             else {current_stage++; currentPuckStackSize++;
             // Need to go back to the east wall facing east.
-                moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
+                //moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
+                moveDynamic(-150,SPEED,FALSE);
                 changeOrientation(WEST,SPEED);
                 straightAdjust();
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
@@ -976,7 +977,7 @@ int main(void)
             
             
             // END Congratulations:
-            changeHeightToPuck(GROUND);
+            changeHeightToPuck(GROUND, NEITHER);
             
             
             

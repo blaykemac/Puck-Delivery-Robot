@@ -151,8 +151,8 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
         count_left = Motor_Left_Decoder_GetCounter();
          if (count_left > -1*count_right) {
             if(speed_left == speed_right){
-                speed_left -= ADJUST;
-                speed_right += ADJUST;
+                //speed_left -= ADJUST;
+                //speed_right += ADJUST;
             }
             else {
                 int temp = speed_left;
@@ -162,8 +162,8 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
         }
         if (count_right > -1*count_left) {
             if(speed_left == speed_right) {
-                speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the specific 
-                speed_left += ADJUST;
+                //speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the specific 
+                //speed_left += ADJUST;
             }
             else {
                 int temp = speed_left;              // if they are not equal, we just swap em
