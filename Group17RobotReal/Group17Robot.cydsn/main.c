@@ -874,8 +874,11 @@ int main(void)
             if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 changeOrientation(WEST,SPEED);
+<<<<<<< HEAD
+=======
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
+>>>>>>> 21526e54efc9f06684a2ab811a911e5e4deb3ee9
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); // Move to a point where we can face towards stack but able to get a distance check
                 straightAdjust();
                 /*
@@ -898,12 +901,11 @@ int main(void)
             changeOrientation(SOUTH,SPEED);    
             changeHeightToPuck(currentPuckStackSize + 1, NEITHER); // Lift claw above stack to avoid hitting the stack  
             
-            moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             if (currentPuckStackSize == 0){
                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
             }
             else {
-                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL - 50, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, FALSE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping)
+                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL - 60, FORWARD, LESS_THAN, FRONT_RIGHT, SPEED, FALSE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping)
             }
             
             //moveDynamic(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK - CONSTRUCTION_DISTANCE_FROM_WALL,SPEED);
@@ -917,8 +919,9 @@ int main(void)
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
             else {current_stage++; currentPuckStackSize++;
             // Need to go back to the east wall facing east.
-                moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
                 changeOrientation(WEST,SPEED);
+                straightAdjust();
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 straightAdjust();
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
@@ -960,7 +963,8 @@ int main(void)
             // Thus we are facing the stack.
             
             
-            moveSwivel(90, SPEED, TRUE);
+            moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
+            changeOrientation(WEST,SPEED);
             straightAdjust();
             moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30 , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED, TRUE); // Absorb the 50 into some constant later
             moveSwivel(90, SPEED, TRUE);
