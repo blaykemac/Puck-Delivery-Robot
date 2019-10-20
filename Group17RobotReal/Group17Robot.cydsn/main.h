@@ -128,19 +128,21 @@ int internal_orientation;
 #define DISTANCE_FRONT_SENSOR_FROM_CENTER 50 // Distance from front ultrasonic sensor to the turning center
 #define DISTANCE_BACK_SENSOR_FROM_CENTER 230 // Distance from back ultrasonic sensor to the turning center
 #define DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR 150
+#define DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR 100 
 
 #define WIDTH_WHEEL_TO_WHEEL 214
 
 
 // Tolerances and thresholds
-#define SAFETY_MARGIN 75 // The margin we will enforce be kept around us clear at all times.
+#define SAFETY_MARGIN 85 // The margin we will enforce be kept around us clear at all times.
 #define BLOCK_TOLERANCE 100 // Used for sweeping block location. This affects sensitivity in detecting block.
 #define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 #define DISTANCE_STOPPED_FROM_PUCK 50 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
 #define SENSOR_DELAY_MIN 60
 
 // Miscellaneous:
-#define ADJUST 2
+#define ADJUST 4        // 4 was test to be best
+
 #define BACKWARD 0
 #define FORWARD 1
 #define LEFT 2

@@ -446,7 +446,11 @@ int failsafe(int direction) {
         CyDelay(50);
         
         check_distance = ultrasonic_distances_mm[BACK];   // checks the distance measured by the ultrasonic
-        if (check_distance < SAFETY_MARGIN) { UART_1_PutString("SAFETY MARGIN ACTIVATED\n"); return TRUE; }
+        if (check_distance < SAFETY_MARGIN && check_distance > 0) { 
+            sprintf(output, "SAFETY MARGIN ACTIVATED @ %d\n", check_distance);      
+            UART_1_PutString(output); 
+            return TRUE; 
+        }
         else { return FALSE; }
     }
     if (direction == FORWARD) {
@@ -456,7 +460,11 @@ int failsafe(int direction) {
         CyDelay(50);
         
         check_distance = ultrasonic_distances_mm[FRONT_LEFT];   // checks the distance measured by the ultrasonic
-        if (check_distance < SAFETY_MARGIN) { UART_1_PutString("SAFETY MARGIN ACTIVATED\n"); return TRUE; }
+        if (check_distance < SAFETY_MARGIN && check_distance > 0) { 
+            sprintf(output, "SAFETY MARGIN ACTIVATED @ %d\n", check_distance);      
+            UART_1_PutString(output); 
+            return TRUE; 
+        }
         else { return FALSE; }
     }
     // Considerations:
@@ -481,6 +489,7 @@ void straightAdjust(void) {
     int difference = 300;
     int tolerance = 3;
     int max_difference = 800;
+    int ultra_delay = 50;
        
     while (abs(difference) > max_difference) {              // ensures the initial readings are accurate
         distanceSensor(FRONT_LEFT);
@@ -515,9 +524,9 @@ void straightAdjust(void) {
             Motor_Right_Driver_WriteCompare(speed_right);
 
             distanceSensor(FRONT_LEFT);
-            CyDelay(50);
+            CyDelay(ultra_delay);
             distanceSensor(FRONT_RIGHT);
-            CyDelay(50);
+            CyDelay(ultra_delay);
                       
             difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
             
@@ -543,9 +552,9 @@ void straightAdjust(void) {
             Motor_Right_Driver_WriteCompare(speed_right); 
             
             distanceSensor(FRONT_LEFT);
-            CyDelay(50);
+            CyDelay(ultra_delay);
             distanceSensor(FRONT_RIGHT);
-            CyDelay(50);
+            CyDelay(ultra_delay);
                       
             difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
                        
@@ -563,17 +572,17 @@ void straightAdjust(void) {
         // CHECKS one more time to ensure the difference is accurate: 
             // consider putting in a for loop to get new readings
         distanceSensor(FRONT_LEFT);
-        CyDelay(50);
+        CyDelay(ultra_delay);
         distanceSensor(FRONT_RIGHT);
-        CyDelay(50);
+        CyDelay(ultra_delay);
                       
         difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
-        sprintf(output, "%d, %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
+        sprintf(output, "%d, %d, ", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
         UART_1_PutString(output);
-        sprintf(output, "difference = %d, \n", difference);       
+        sprintf(output, "dif: %d, \n", difference);       
         UART_1_PutString(output);
         
-    } while (abs(difference) > 2);        // This ensures that the turning worked correctly
+    } while (abs(difference) > 0);        // This ensures that the turning worked correctly
                                             // changed it from 10 to 2, this might change the way it works
     
     

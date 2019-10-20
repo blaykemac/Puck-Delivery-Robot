@@ -35,6 +35,9 @@
 void moveDynamic(int distance, int speed, int activate_safety){
     int count_left;
     int count_right;
+    int count_difference;      //count_left - count_right
+                                // if negative: count_right > count_left
+                                // if positive count_left > count_right
     int compare;
     int direction;
     int old_count = -SAFETY_MARGIN*ENCODER_MULTIPLIER;   // used in the old failsafe to check how much distance has passed 
@@ -55,13 +58,13 @@ void moveDynamic(int distance, int speed, int activate_safety){
     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1); direction = BACKWARD;}
     
     Motor_Left_Driver_Wakeup();
-    Motor_Left_Driver_WriteCompare(speed_left);
     Motor_Right_Driver_Wakeup();
-    Motor_Right_Driver_WriteCompare(speed_right);
     
     compare = round(distance*5.29);
     count_left = Motor_Left_Decoder_GetCounter();
     count_right = Motor_Right_Decoder_GetCounter();
+    
+    //rampUpDown(speed, RAMP_UP);     // ramp the speed up smoothly
     
     while (abs(count_left) < abs(compare) && abs(count_right) < abs(compare) && emergency_exit == FALSE) {
         count_left = Motor_Left_Decoder_GetCounter();
@@ -72,6 +75,8 @@ void moveDynamic(int distance, int speed, int activate_safety){
                 speed_right += ADJUST;
             }
             else {
+                //speed_left = speed;
+                //speed_right = speed;
                 int temp = speed_left;
                 speed_left = speed_right;
                 speed_right = temp;
@@ -84,11 +89,27 @@ void moveDynamic(int distance, int speed, int activate_safety){
                 speed_left += ADJUST;
             }
             else {
+                //speed_left = speed;
+                //speed_right = speed;
                 int temp = speed_left;              // if they are not equal, we just swap em
                 speed_left = speed_right;
                 speed_right = temp;
             }
         }
+        
+        // Not sure if the following code made a difference: 
+        
+        /*
+        count_difference = count_left - count_right;
+        if (count_difference > 5) {
+            count_left -= ADJUST;
+            count_right += ADJUST;
+        }
+        if (count_difference < 5) {
+            count_left += ADJUST;
+            count_right -= ADJUST;
+        }
+        */
         
         Motor_Left_Driver_WriteCompare(speed_left);
         Motor_Right_Driver_WriteCompare(speed_right);
@@ -97,6 +118,14 @@ void moveDynamic(int distance, int speed, int activate_safety){
         if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100) && activate_safety == TRUE){
             emergency_exit = failsafe(direction);
             old_count = count_left; 
+                
+            //sprintf(output, "left motor: %d \n", count_left);       
+            //UART_1_PutString(output);
+            //sprintf(output, "right motor: %d \n", count_right);      
+            //UART_1_PutString(output);
+            
+            
+            
         }
         
     }
@@ -106,11 +135,15 @@ void moveDynamic(int distance, int speed, int activate_safety){
     sprintf(output, "right motor: %d \n", count_right);      
     UART_1_PutString(output);
         
-    Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
-    Motor_Right_Decoder_SetCounter(0);   
+    if (emergency_exit == FALSE) {
+        //rampUpDown(speed, RAMP_DOWN);     // ramp the speed down smoothly
+    }
     
     Motor_Left_Driver_Sleep();
     Motor_Right_Driver_Sleep();    
+    
+    Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
+    Motor_Right_Decoder_SetCounter(0);   
 }
 
 void moveSwivel(int degrees, int speed, int activate_safety) {
@@ -200,6 +233,37 @@ void translateMoveDynamic(int distance, int degree, int speed, int activate_safe
     moveDynamic(new_dist, speed, activate_safety);
     moveSwivel(-degree, speed, activate_safety);
     moveDynamic(-new_dist, speed, activate_safety);
+}
+
+void rampUpDown(int speed, int ramp_up_down) {
+    speed = abs(speed);     // fixes bug with negative 
+    int step = (speed/10);
+    int current_speed = 0; 
+    int old_speed;
+    
+    if (ramp_up_down == RAMP_UP) {
+        while (current_speed < (speed - 1.5*step)){
+            current_speed += step;
+            Motor_Left_Driver_WriteCompare(current_speed);
+            Motor_Right_Driver_WriteCompare(current_speed);
+            CyDelay(50);
+        }
+        Motor_Left_Driver_WriteCompare(speed);
+        Motor_Right_Driver_WriteCompare(speed);
+    }
+    
+    if (ramp_up_down == RAMP_DOWN) {
+        current_speed = speed;
+        while (current_speed > 1.5*step){
+            current_speed -= step;
+            Motor_Left_Driver_WriteCompare(current_speed);
+            Motor_Right_Driver_WriteCompare(current_speed);
+            CyDelay(50);
+        }
+        Motor_Left_Driver_WriteCompare(0);
+        Motor_Right_Driver_WriteCompare(0);
+    }
+
 }
 
 

@@ -175,8 +175,10 @@ int main(void)
     
     // Motors Initialisation:
     Motor_Left_Driver_Start();
-    Motor_Left_Driver_Sleep();                  // Puts motor to sleep
     Motor_Right_Driver_Start();
+    Motor_Left_Driver_WriteCompare(0);          // sets the motors to 0 so it will be smooth next time they wake up
+    Motor_Right_Driver_WriteCompare(0);
+    Motor_Left_Driver_Sleep();                  // Puts motor to sleep
     Motor_Right_Driver_Sleep();                 // Puts motor to sleep
     
     Motor_Left_Decoder_Start();
@@ -238,6 +240,41 @@ int main(void)
         
     for(;;)
     {   
+            
+
+        // Checking translating function:
+        
+        
+        for (int i = 0; i < 6; i++) {
+            translateMoveDynamic(10, -15, 100, FALSE);      // This will translate to the right by one puck
+        }
+        
+        for (int i = 0; i < 6; i++) {
+            translateMoveDynamic(-10, 15, 100, FALSE);      // This will translate to the left by one puck
+        }
+        
+        
+        
+        // checks the distance measured by the ultrasonic
+        //moveDynamic(move,SPEED,TRUE);
+        //moveDynamic(-move,SPEED,TRUE);
+        
+        // wasnt moving for some of the tests 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         ultimateDebugging();        // If any of the debugging flags are activated, this will be called over the main code
         
@@ -419,9 +456,7 @@ int main(void)
             
             block_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
             
-            
-            
-                    
+ 
             //straightAdjust();                   // Ensure we are straight to take measurements
                                                   // may need to readjust this 
             
@@ -433,22 +468,52 @@ int main(void)
             //straightAdjust();                   // Ensure we are straight to take measurements
                                                 // may need to readjust this 
             
+            
+            // Updating the South Clearances of the object: 
+            
             distanceSensor(SIDE_RIGHT); 
             CyDelay(60); 
             distanceSensor(SIDE_LEFT); 
             CyDelay(60); 
-
-        
+            
+            block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+            
+            // Check that the value makes sense: 
+            if (block_location[SOUTH] > block_check) {
+                moveDynamic(-(BLOCK_WIDTH/2),SPEED,TRUE);
                 
+                distanceSensor(SIDE_RIGHT); 
+                CyDelay(60); 
+                distanceSensor(SIDE_LEFT); 
+                CyDelay(60); 
             
+            block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT]; 
+            }
             
+            // Stopping at the East side of the block: 
+            moveUntil(block_check, BACKWARD, GREATER_THAN, SIDE_RIGHT, SPEED, TRUE);  
+                                // this will move backwards until no longer hitting the block, or the wall
+            blinkLED(GREEN,1000);      // To show it ended at the correct spot
+            
+            // Updating the East Clearance:
+            block_location[EAST] = ultrasonic_distances_mm[BACK] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+                                                        // double check the distance back sensor to side sensor value
+                
+            // Updating the North Clearance: 
+            if (ARENA_WIDTH - block_location[EAST] - block_location[EAST] > BLOCK_WIDTH) {
+                // block is " -- " this orientation
+                block_location[NORTH] = ARENA_WIDTH - block_location[SOUTH] - BLOCK_WIDTH;                
+            }
+            else {
+                // block is " | " this orientation
+                block_location[NORTH] = ARENA_WIDTH - block_location[SOUTH] - BLOCK_LENGTH;
+            }
+            
+
+            /*
             // If either of the following cases are true, we can just put in default values, 
                 // as it will be easy to circumvent the block
                 // This orientation will be unlikely 
-            
-            
-            
-            
             
             if (ultrasonic_distances_mm[BACK] < SAFETY_MARGIN + 50) {
                 // block is " | " this orientation, and close to the side wall
@@ -470,36 +535,24 @@ int main(void)
                 block_location[WEST] = ARENA_WIDTH - BLOCK_LENGTH; 
             }
             
-            moveUntil(block_check, BACKWARD, GREATER_THAN, SIDE_RIGHT, SPEED, TRUE);  
-                                // this will move backwards until no longer hitting the block, or the wall
-            blinkLED(GREEN,1000);      // To show it ended at the correct spot
-            
 
-            CyDelay(1000);                      // To show it ended at the correct spot
-            distanceSensor(FRONT_LEFT);
-            CyDelay(60);
-            distanceSensor(FRONT_RIGHT);        // might run some code to see if theres a difference between the two          
-            CyDelay(60);
-            distanceSensor(SIDE_LEFT);        // might run some code to see if theres a difference between the two          
-            CyDelay(60);
-            
             // Block location values:
             block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
             block_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR; 
             CyDelay(1000);         
             
+            */
+            
             // Start moving forward to find the location of the PUCKS:           
             changeOrientation(EAST, SPEED);                             // No matter where we are this should be okay
             moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                    // above code could be inefficient if puck is closer to west side of arena 
             straightAdjust();
             int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH;       
             
-            
-            while(1) {};
-            
+                        
             // Check front and back sensors:
             moveUntil(puck_check, LESS_THAN, BACKWARD, SIDE_LEFT, SPEED, TRUE);   // this will move backwards until it hits the block 
-            CyDelay(1000);
             
             distanceSensor(FRONT_LEFT);
             CyDelay(DELAY);
@@ -520,9 +573,11 @@ int main(void)
             else {
                 // block detected & rescans from opposite side:
                 
+                blinkLED(RED,1000); // indicates we hit the block instead 
+                
                 moveUntil(200, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);   // This should take us to the other side of the wall
                 changeOrientation(WEST, SPEED);
-                moveUntil(100, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();   // adjusts against the wall
                 moveUntil(puck_check, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED, TRUE);   // this will move backwards until it hits the 
                 blinkLED(GREEN,1000);   // Find the edge of the puck zone 
@@ -532,6 +587,8 @@ int main(void)
                 distanceSensor(BACK);
                 CyDelay(DELAY);
                 
+                puck_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
+                puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] + PUCK_GRID_WIDTH;
                 
             }
             
@@ -546,6 +603,37 @@ int main(void)
         // Ensure that we are @ east wall facing east at a minimum verticaldistance so we can turn left without hitting bottom wall
         
         if (state == STATE_GO_TO_PUCKS){
+            
+            
+            // Finding the different block & puck clearances: 
+            
+                    // there should be a threshold that allows the robot to travel through a clearance;
+                    // E.g. robot width + 100mm
+            
+                    // the robot will travel to the chosen (block_clearance/2) and travel down there,
+                    // so it is in the middle of the block clearance and the wall 
+            
+                    // check if between the edge of the block and the puck zone gives enough clearance 
+                    
+            
+            if (block_location[EAST] > block_location[WEST]) {
+                // the east clearance is greater than the west clearance 
+                
+            
+            }
+            else {
+                // the west clearance is greater than the east clearance 
+                
+            }
+
+            
+            
+            
+            
+            
+            
+            
+            // The different route finding Algorithms for the different combinations: 
             
             if (blockEastClearance && puckEastClearance){
                 

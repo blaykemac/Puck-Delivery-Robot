@@ -98,7 +98,58 @@ void ultimateDebugging(void){
 
                         //moveDynamic(-300);
                         
-                        moveSwivel(-180, SPEED, TRUE);
+                        //moveSwivel(-180, SPEED, TRUE);
+                        
+                        
+                        changeOrientation(WEST, SPEED);
+                        CyDelay(1000);
+                        changeOrientation(SOUTH, SPEED);
+                        CyDelay(1000);
+                        changeOrientation(WEST, SPEED);
+                        CyDelay(1000);
+                        changeOrientation(NORTH, SPEED);
+                        CyDelay(1000);
+                        
+                        
+                        
+                        
+                        moveUntil(150,FORWARD,LESS_THAN,FRONT_LEFT,SPEED,TRUE);
+                        straightAdjust();
+                        
+                        
+                        
+                        for (int i = 0; i < 6; i++) {
+                            translateMoveDynamic(10, -15, 100, FALSE);      // This will translate to the right by one puck
+                        }
+                        
+                        for (int i = 0; i < 6; i++) {
+                            translateMoveDynamic(-10, 15, 100, FALSE);      // This will translate to the left by one puck
+                        }
+                        
+                        
+                        
+                        int move = 400;
+                        moveDynamic(move,SPEED,TRUE);
+                        moveDynamic(-move,SPEED,TRUE);
+                        distanceSensor(BACK);
+                        CyDelay(50);
+                        
+                        sprintf(output, "measure: %d\n", ultrasonic_distances_mm[BACK]);      
+                            UART_1_PutString(output); 
+        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         
                         lock = TRUE;    
                     }
