@@ -467,6 +467,21 @@ int main(void)
         
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
+<<<<<<< HEAD
+=======
+            //while(1) {
+                //moveUntil(100,FORWARD,LESS_THAN,FRONT_LEFT,100,TRUE);
+                //straightAdjust();
+                //blinkLED(GREEN, 1000);
+            //}
+            
+            //moveDynamic(600, SPEED, TRUE);
+            //moveDynamic(-600, SPEED, TRUE);
+            
+            //while(1) {}
+            
+            
+>>>>>>> c564c6cc614be68f84e912073bd512ccdac339ca
             ultimateDebugging();   
 
             // move away from home base:

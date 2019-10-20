@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 1
+=======
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 1
+>>>>>>> c564c6cc614be68f84e912073bd512ccdac339ca
 
 
    1              		.syntax unified
@@ -58,7 +62,11 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 1
   22:motor.c       **** #include "main.h"
   23:motor.c       **** #include "colour.h"
   24:motor.c       **** #include "ultrasonic.h" 
+<<<<<<< HEAD
 ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 2
+=======
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 2
+>>>>>>> c564c6cc614be68f84e912073bd512ccdac339ca
 
 
   25:motor.c       **** #include "servo.h"
@@ -74,7 +82,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 1
   35:motor.c       **** void moveDynamic(int distance, int speed, int activate_safety){
   34              		.loc 1 35 0
   35              		.cfi_startproc
-  36              		@ args = 0, pretend = 0, frame = 16
+  36              		@ args = 0, pretend = 0, frame = 24
   37              		@ frame_needed = 0, uses_anonymous_args = 0
   38              	.LVL0:
   39 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
@@ -88,11 +96,11 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 1
   47              		.cfi_offset 10, -12
   48              		.cfi_offset 11, -8
   49              		.cfi_offset 14, -4
-  50 0004 85B0     		sub	sp, sp, #20
-  51              		.cfi_def_cfa_offset 56
-  52 0006 0446     		mov	r4, r0
-  53 0008 0D46     		mov	r5, r1
-  54 000a 9146     		mov	r9, r2
+  50 0004 87B0     		sub	sp, sp, #28
+  51              		.cfi_def_cfa_offset 64
+  52 0006 0546     		mov	r5, r0
+  53 0008 8B46     		mov	fp, r1
+  54 000a 0492     		str	r2, [sp, #16]
   55              	.LVL1:
   36:motor.c       ****     int count_left;
   37:motor.c       ****     int count_right;
@@ -111,61 +119,76 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 1
   50:motor.c       ****     if (speed > SPEED_MAX) {
   56              		.loc 1 50 0
   57 000c E129     		cmp	r1, #225
-  58 000e 00DD     		ble	.L2
+  58 000e 01DC     		bgt	.L12
+  48:motor.c       ****     int speed_right = speed;
+  59              		.loc 1 48 0
+  60 0010 0C46     		mov	r4, r1
+  61 0012 00E0     		b	.L2
+  62              	.L12:
   51:motor.c       ****         speed_left = SPEED;         
+<<<<<<< HEAD
   59              		.loc 1 51 0
   60 0010 C825     		movs	r5, #200
   61              	.L2:
   62              	.LVL2:
   52:motor.c       ****         speed_right = SPEED;
 ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 3
+=======
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 3
+>>>>>>> c564c6cc614be68f84e912073bd512ccdac339ca
 
 
+  63              		.loc 1 51 0
+  64 0014 C824     		movs	r4, #200
+  65              	.L2:
+  66              	.LVL2:
+  52:motor.c       ****         speed_right = SPEED;
   53:motor.c       ****     }
   54:motor.c       ****     
   55:motor.c       ****     // The distance is in millimetres 
   56:motor.c       ****     // Is the distance negative or positive? 
   57:motor.c       ****     if (distance > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(0); direction = FORW
-  63              		.loc 1 57 0
-  64 0012 002C     		cmp	r4, #0
-  65 0014 08DD     		ble	.L3
-  66              		.loc 1 57 0 is_stmt 0 discriminator 1
-  67 0016 0020     		movs	r0, #0
-  68              	.LVL3:
-  69 0018 FFF7FEFF 		bl	Motor_Left_Control_Write
-  70              	.LVL4:
-  71 001c 0020     		movs	r0, #0
-  72 001e FFF7FEFF 		bl	Motor_Right_Control_Write
-  73              	.LVL5:
-  74 0022 0123     		movs	r3, #1
-  75 0024 0393     		str	r3, [sp, #12]
-  76 0026 07E0     		b	.L4
-  77              	.LVL6:
-  78              	.L3:
+  67              		.loc 1 57 0
+  68 0016 002D     		cmp	r5, #0
+  69 0018 08DD     		ble	.L3
+  70              		.loc 1 57 0 is_stmt 0 discriminator 1
+  71 001a 0020     		movs	r0, #0
+  72              	.LVL3:
+  73 001c FFF7FEFF 		bl	Motor_Left_Control_Write
+  74              	.LVL4:
+  75 0020 0020     		movs	r0, #0
+  76 0022 FFF7FEFF 		bl	Motor_Right_Control_Write
+  77              	.LVL5:
+  78 0026 0123     		movs	r3, #1
+  79 0028 0593     		str	r3, [sp, #20]
+  80 002a 07E0     		b	.L4
+  81              	.LVL6:
+  82              	.L3:
   58:motor.c       ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(1); direction = BACKWARD;}
-  79              		.loc 1 58 0 is_stmt 1
-  80 0028 0120     		movs	r0, #1
-  81              	.LVL7:
-  82 002a FFF7FEFF 		bl	Motor_Left_Control_Write
-  83              	.LVL8:
-  84 002e 0120     		movs	r0, #1
-  85 0030 FFF7FEFF 		bl	Motor_Right_Control_Write
-  86              	.LVL9:
-  87 0034 0023     		movs	r3, #0
-  88 0036 0393     		str	r3, [sp, #12]
-  89              	.LVL10:
-  90              	.L4:
+  83              		.loc 1 58 0 is_stmt 1
+  84 002c 0120     		movs	r0, #1
+  85              	.LVL7:
+  86 002e FFF7FEFF 		bl	Motor_Left_Control_Write
+  87              	.LVL8:
+  88 0032 0120     		movs	r0, #1
+  89 0034 FFF7FEFF 		bl	Motor_Right_Control_Write
+  90              	.LVL9:
+  91 0038 0023     		movs	r3, #0
+  92 003a 0593     		str	r3, [sp, #20]
+  93              	.LVL10:
+  94              	.L4:
   59:motor.c       ****     
   60:motor.c       ****     Motor_Left_Driver_Wakeup();
-  91              		.loc 1 60 0
-  92 0038 FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
-  93              	.LVL11:
+  95              		.loc 1 60 0
+  96 003c FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
+  97              	.LVL11:
   61:motor.c       ****     Motor_Right_Driver_Wakeup();
-  94              		.loc 1 61 0
-  95 003c FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
-  96              	.LVL12:
+  98              		.loc 1 61 0
+  99 0040 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
+ 100              	.LVL12:
   62:motor.c       ****     
   63:motor.c       ****     compare = round(distance*5.29);
+<<<<<<< HEAD
   97              		.loc 1 63 0
   98 0040 2046     		mov	r0, r4
   99 0042 FFF7FEFF 		bl	__aeabi_i2d
@@ -197,14 +220,64 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 1
  120              	.LVL21:
   66:motor.c       ****     
   67:motor.c       ****     //rampUpDown(speed, RAMP_UP);     // ramp the speed up smoothly
+=======
+ 101              		.loc 1 63 0
+ 102 0044 2846     		mov	r0, r5
+ 103 0046 FFF7FEFF 		bl	__aeabi_i2d
+ 104              	.LVL13:
+ 105 004a 51A3     		adr	r3, .L15
+ 106 004c D3E90023 		ldrd	r2, [r3]
+ 107 0050 FFF7FEFF 		bl	__aeabi_dmul
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 4
+
+
+ 108              	.LVL14:
+ 109 0054 FFF7FEFF 		bl	round
+ 110              	.LVL15:
+ 111 0058 FFF7FEFF 		bl	__aeabi_d2iz
+ 112              	.LVL16:
+ 113 005c 8046     		mov	r8, r0
+ 114              	.LVL17:
+  64:motor.c       ****     sprintf(output, "compare: %d \n", compare);       
+ 115              		.loc 1 64 0
+ 116 005e 504D     		ldr	r5, .L15+16
+ 117              	.LVL18:
+ 118 0060 0246     		mov	r2, r0
+ 119 0062 5049     		ldr	r1, .L15+20
+ 120 0064 2846     		mov	r0, r5
+ 121              	.LVL19:
+ 122 0066 FFF7FEFF 		bl	sprintf
+ 123              	.LVL20:
+  65:motor.c       ****     UART_1_PutString(output);
+ 124              		.loc 1 65 0
+ 125 006a 2846     		mov	r0, r5
+ 126 006c FFF7FEFF 		bl	UART_1_PutString
+ 127              	.LVL21:
+  66:motor.c       ****     count_left = Motor_Left_Decoder_GetCounter();
+ 128              		.loc 1 66 0
+ 129 0070 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
+ 130              	.LVL22:
+ 131 0074 0746     		mov	r7, r0
+ 132              	.LVL23:
+  67:motor.c       ****     count_right = Motor_Right_Decoder_GetCounter();
+ 133              		.loc 1 67 0
+ 134 0076 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 135              	.LVL24:
+ 136 007a 8246     		mov	r10, r0
+ 137              	.LVL25:
+>>>>>>> c564c6cc614be68f84e912073bd512ccdac339ca
   68:motor.c       ****     
-  69:motor.c       ****     while (abs(count_left) < abs(compare) && abs(count_right) < abs(compare) && emergency_exit == F
- 121              		.loc 1 69 0
- 122 0066 2E46     		mov	r6, r5
+  69:motor.c       ****     //rampUpDown(speed, RAMP_UP);     // ramp the speed up smoothly
+  70:motor.c       ****     
+  71:motor.c       ****     while (abs(count_left) < abs(compare) && abs(count_right) < abs(compare) && emergency_exit == F
+ 138              		.loc 1 71 0
+ 139 007c 2546     		mov	r5, r4
   45:motor.c       ****     
- 123              		.loc 1 45 0
- 124 0068 4FF00008 		mov	r8, #0
+ 140              		.loc 1 45 0
+ 141 007e 0023     		movs	r3, #0
+ 142 0080 0293     		str	r3, [sp, #8]
   43:motor.c       ****                                                         // will enter the failsafe straight away du
+<<<<<<< HEAD
  125              		.loc 1 43 0
  126 006c 6FF4E073 		mvn	r3, #448
  127 0070 0293     		str	r3, [sp, #8]
@@ -3664,3 +3737,3516 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccwbU1wj.s 			page 1
  2959      72697665 
  2959      725F5761 
  2960              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+=======
+ 143              		.loc 1 43 0
+ 144 0082 6FF4E073 		mvn	r3, #448
+ 145 0086 0393     		str	r3, [sp, #12]
+ 146              		.loc 1 71 0
+ 147 0088 4FE0     		b	.L5
+ 148              	.LVL26:
+ 149              	.L11:
+  72:motor.c       ****         count_left = Motor_Left_Decoder_GetCounter();
+ 150              		.loc 1 72 0
+ 151 008a FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
+ 152              	.LVL27:
+ 153 008e 0646     		mov	r6, r0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 5
+
+
+ 154 0090 0746     		mov	r7, r0
+ 155              	.LVL28:
+  73:motor.c       ****         count_right = Motor_Right_Decoder_GetCounter();
+ 156              		.loc 1 73 0
+ 157 0092 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 158              	.LVL29:
+ 159 0096 8246     		mov	r10, r0
+ 160              	.LVL30:
+  74:motor.c       ****             
+  75:motor.c       ****         // want to change the speed of the motor with a higher count until 
+  76:motor.c       ****             // the other count starts being higher again
+  77:motor.c       ****         
+  78:motor.c       ****         if (abs(count_left) > abs(count_right)) {
+ 161              		.loc 1 78 0
+ 162 0098 86EAE679 		eor	r9, r6, r6, asr #31
+ 163 009c A9EBE679 		sub	r9, r9, r6, asr #31
+ 164 00a0 0028     		cmp	r0, #0
+ 165 00a2 B8BF     		it	lt
+ 166 00a4 4042     		rsblt	r0, r0, #0
+ 167              	.LVL31:
+ 168 00a6 8145     		cmp	r9, r0
+ 169 00a8 03DD     		ble	.L6
+  79:motor.c       ****                 speed_left = speed - ADJUST;
+ 170              		.loc 1 79 0
+ 171 00aa ABF10404 		sub	r4, fp, #4
+ 172              	.LVL32:
+  80:motor.c       ****                 speed_right = speed + ADJUST;
+ 173              		.loc 1 80 0
+ 174 00ae 0BF10405 		add	r5, fp, #4
+ 175              	.LVL33:
+ 176              	.L6:
+  81:motor.c       ****             }        
+  82:motor.c       ****         if (abs(count_right) > abs(count_left)) {
+ 177              		.loc 1 82 0
+ 178 00b2 8145     		cmp	r9, r0
+ 179 00b4 03DA     		bge	.L7
+  83:motor.c       ****                 speed_right = speed - ADJUST;              // If the speeds are equal, we decrememn
+ 180              		.loc 1 83 0
+ 181 00b6 ABF10405 		sub	r5, fp, #4
+ 182              	.LVL34:
+  84:motor.c       ****                                                     // adjust tolerance 
+  85:motor.c       ****                 speed_left = speed + ADJUST;
+ 183              		.loc 1 85 0
+ 184 00ba 0BF10404 		add	r4, fp, #4
+ 185              	.LVL35:
+ 186              	.L7:
+  86:motor.c       ****         }
+  87:motor.c       ****         
+  88:motor.c       ****         // Not sure if the following code made a difference: 
+  89:motor.c       ****         
+  90:motor.c       ****         /*
+  91:motor.c       ****         count_difference = count_left - count_right;
+  92:motor.c       ****         while (count_difference > 5) {
+  93:motor.c       ****             speed_left = speed - ADJUST;
+  94:motor.c       ****             speed_right = speed + ADJUST;
+  95:motor.c       ****         }
+  96:motor.c       ****         while (count_difference < 5) {
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 6
+
+
+  97:motor.c       ****             speed_left = speed + ADJUST;
+  98:motor.c       ****             speed_right = speed - ADJUST;
+  99:motor.c       ****         }
+ 100:motor.c       ****         speed_left = speed;
+ 101:motor.c       ****         speed_right = speed;
+ 102:motor.c       ****         
+ 103:motor.c       ****         */
+ 104:motor.c       ****         
+ 105:motor.c       ****         sprintf(output, "left: %d \t", speed_left);       
+ 187              		.loc 1 105 0
+ 188 00be 2246     		mov	r2, r4
+ 189 00c0 3949     		ldr	r1, .L15+24
+ 190 00c2 3748     		ldr	r0, .L15+16
+ 191 00c4 FFF7FEFF 		bl	sprintf
+ 192              	.LVL36:
+ 106:motor.c       ****         UART_1_PutString(output);
+ 193              		.loc 1 106 0
+ 194 00c8 3548     		ldr	r0, .L15+16
+ 195 00ca FFF7FEFF 		bl	UART_1_PutString
+ 196              	.LVL37:
+ 107:motor.c       ****         sprintf(output, "right: %d \n", speed_right);       
+ 197              		.loc 1 107 0
+ 198 00ce 2A46     		mov	r2, r5
+ 199 00d0 3649     		ldr	r1, .L15+28
+ 200 00d2 3348     		ldr	r0, .L15+16
+ 201 00d4 FFF7FEFF 		bl	sprintf
+ 202              	.LVL38:
+ 108:motor.c       ****         UART_1_PutString(output);
+ 203              		.loc 1 108 0
+ 204 00d8 3148     		ldr	r0, .L15+16
+ 205 00da FFF7FEFF 		bl	UART_1_PutString
+ 206              	.LVL39:
+ 109:motor.c       ****         
+ 110:motor.c       ****         Motor_Left_Driver_WriteCompare(speed_left);
+ 207              		.loc 1 110 0
+ 208 00de E0B2     		uxtb	r0, r4
+ 209 00e0 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 210              	.LVL40:
+ 111:motor.c       ****         Motor_Right_Driver_WriteCompare(speed_right);
+ 211              		.loc 1 111 0
+ 212 00e4 E8B2     		uxtb	r0, r5
+ 213 00e6 FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 214              	.LVL41:
+ 112:motor.c       ****         
+ 113:motor.c       ****         // FAILSAFE:
+ 114:motor.c       ****         if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100) && activate_safe
+ 215              		.loc 1 114 0
+ 216 00ea 4846     		mov	r0, r9
+ 217 00ec FFF7FEFF 		bl	__aeabi_i2d
+ 218              	.LVL42:
+ 219 00f0 CDE90001 		strd	r0, [sp]
+ 220 00f4 0398     		ldr	r0, [sp, #12]
+ 221 00f6 FFF7FEFF 		bl	__aeabi_i2d
+ 222              	.LVL43:
+ 223 00fa 27A3     		adr	r3, .L15+8
+ 224 00fc D3E90023 		ldrd	r2, [r3]
+ 225 0100 FFF7FEFF 		bl	__aeabi_dadd
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 7
+
+
+ 226              	.LVL44:
+ 227 0104 0022     		movs	r2, #0
+ 228 0106 2A4B     		ldr	r3, .L15+32
+ 229 0108 FFF7FEFF 		bl	__aeabi_dsub
+ 230              	.LVL45:
+ 231 010c 0246     		mov	r2, r0
+ 232 010e 0B46     		mov	r3, r1
+ 233 0110 DDE90001 		ldrd	r0, [sp]
+ 234 0114 FFF7FEFF 		bl	__aeabi_dcmpgt
+ 235              	.LVL46:
+ 236 0118 38B1     		cbz	r0, .L5
+ 237              		.loc 1 114 0 is_stmt 0 discriminator 1
+ 238 011a 049B     		ldr	r3, [sp, #16]
+ 239 011c 012B     		cmp	r3, #1
+ 240 011e 04D1     		bne	.L5
+ 115:motor.c       ****             emergency_exit = failsafe(direction);
+ 241              		.loc 1 115 0 is_stmt 1
+ 242 0120 0598     		ldr	r0, [sp, #20]
+ 243 0122 FFF7FEFF 		bl	failsafe
+ 244              	.LVL47:
+ 245 0126 0290     		str	r0, [sp, #8]
+ 246              	.LVL48:
+ 116:motor.c       ****             old_count = count_left; 
+ 247              		.loc 1 116 0
+ 248 0128 0396     		str	r6, [sp, #12]
+ 249              	.LVL49:
+ 250              	.L5:
+  71:motor.c       ****         count_left = Motor_Left_Decoder_GetCounter();
+ 251              		.loc 1 71 0
+ 252 012a 87EAE772 		eor	r2, r7, r7, asr #31
+ 253 012e A2EBE772 		sub	r2, r2, r7, asr #31
+ 254 0132 88EAE873 		eor	r3, r8, r8, asr #31
+ 255 0136 A3EBE873 		sub	r3, r3, r8, asr #31
+ 256 013a 9A42     		cmp	r2, r3
+ 257 013c 08DA     		bge	.L10
+  71:motor.c       ****         count_left = Motor_Left_Decoder_GetCounter();
+ 258              		.loc 1 71 0 is_stmt 0 discriminator 1
+ 259 013e 8AEAEA72 		eor	r2, r10, r10, asr #31
+ 260 0142 A2EBEA72 		sub	r2, r2, r10, asr #31
+ 261 0146 9342     		cmp	r3, r2
+ 262 0148 02DD     		ble	.L10
+  71:motor.c       ****         count_left = Motor_Left_Decoder_GetCounter();
+ 263              		.loc 1 71 0 discriminator 2
+ 264 014a 029B     		ldr	r3, [sp, #8]
+ 265 014c 002B     		cmp	r3, #0
+ 266 014e 9CD0     		beq	.L11
+ 267              	.L10:
+ 117:motor.c       ****                 
+ 118:motor.c       ****             //sprintf(output, "left motor: %d \n", count_left);       
+ 119:motor.c       ****             //UART_1_PutString(output);
+ 120:motor.c       ****             //sprintf(output, "right motor: %d \n", count_right);      
+ 121:motor.c       ****             //UART_1_PutString(output);
+ 122:motor.c       ****             
+ 123:motor.c       ****             
+ 124:motor.c       ****             
+ 125:motor.c       ****         }
+ 126:motor.c       ****         
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 8
+
+
+ 127:motor.c       ****     }
+ 128:motor.c       ****     
+ 129:motor.c       ****     sprintf(output, "left motor: %d \n", count_left);       
+ 268              		.loc 1 129 0 is_stmt 1
+ 269 0150 134C     		ldr	r4, .L15+16
+ 270              	.LVL50:
+ 271 0152 3A46     		mov	r2, r7
+ 272 0154 1749     		ldr	r1, .L15+36
+ 273 0156 2046     		mov	r0, r4
+ 274 0158 FFF7FEFF 		bl	sprintf
+ 275              	.LVL51:
+ 130:motor.c       ****     UART_1_PutString(output);
+ 276              		.loc 1 130 0
+ 277 015c 2046     		mov	r0, r4
+ 278 015e FFF7FEFF 		bl	UART_1_PutString
+ 279              	.LVL52:
+ 131:motor.c       ****     sprintf(output, "right motor: %d \n", count_right);      
+ 280              		.loc 1 131 0
+ 281 0162 5246     		mov	r2, r10
+ 282 0164 1449     		ldr	r1, .L15+40
+ 283 0166 2046     		mov	r0, r4
+ 284 0168 FFF7FEFF 		bl	sprintf
+ 285              	.LVL53:
+ 132:motor.c       ****     UART_1_PutString(output);
+ 286              		.loc 1 132 0
+ 287 016c 2046     		mov	r0, r4
+ 288 016e FFF7FEFF 		bl	UART_1_PutString
+ 289              	.LVL54:
+ 133:motor.c       ****         
+ 134:motor.c       ****     if (emergency_exit == FALSE) {
+ 135:motor.c       ****         //rampUpDown(speed, RAMP_DOWN);     // ramp the speed down smoothly
+ 136:motor.c       ****     }
+ 137:motor.c       ****     
+ 138:motor.c       ****     Motor_Left_Driver_Sleep();
+ 290              		.loc 1 138 0
+ 291 0172 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 292              	.LVL55:
+ 139:motor.c       ****     Motor_Right_Driver_Sleep();    
+ 293              		.loc 1 139 0
+ 294 0176 FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 295              	.LVL56:
+ 140:motor.c       ****     
+ 141:motor.c       ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
+ 296              		.loc 1 141 0
+ 297 017a 0020     		movs	r0, #0
+ 298 017c FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
+ 299              	.LVL57:
+ 142:motor.c       ****     Motor_Right_Decoder_SetCounter(0);   
+ 300              		.loc 1 142 0
+ 301 0180 0020     		movs	r0, #0
+ 302 0182 FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
+ 303              	.LVL58:
+ 143:motor.c       **** }
+ 304              		.loc 1 143 0
+ 305 0186 07B0     		add	sp, sp, #28
+ 306              		.cfi_def_cfa_offset 36
+ 307              		@ sp needed
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 9
+
+
+ 308 0188 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 309              	.LVL59:
+ 310              	.L16:
+ 311 018c AFF30080 		.align	3
+ 312              	.L15:
+ 313 0190 295C8FC2 		.word	-1030792151
+ 314 0194 F5281540 		.word	1075128565
+ 315 0198 66666666 		.word	1717986918
+ 316 019c 661A7C40 		.word	1081875046
+ 317 01a0 00000000 		.word	output
+ 318 01a4 00000000 		.word	.LC0
+ 319 01a8 10000000 		.word	.LC1
+ 320 01ac 1C000000 		.word	.LC2
+ 321 01b0 00005940 		.word	1079574528
+ 322 01b4 28000000 		.word	.LC3
+ 323 01b8 3C000000 		.word	.LC4
+ 324              		.cfi_endproc
+ 325              	.LFE64:
+ 326              		.size	moveDynamic, .-moveDynamic
+ 327              		.global	__aeabi_ddiv
+ 328              		.section	.text.moveSwivel,"ax",%progbits
+ 329              		.align	2
+ 330              		.global	moveSwivel
+ 331              		.thumb
+ 332              		.thumb_func
+ 333              		.type	moveSwivel, %function
+ 334              	moveSwivel:
+ 335              	.LFB65:
+ 144:motor.c       **** 
+ 145:motor.c       **** void moveSwivel(int degrees, int speed, int activate_safety) {
+ 336              		.loc 1 145 0
+ 337              		.cfi_startproc
+ 338              		@ args = 0, pretend = 0, frame = 0
+ 339              		@ frame_needed = 0, uses_anonymous_args = 0
+ 340              	.LVL60:
+ 341 0000 70B5     		push	{r4, r5, r6, lr}
+ 342              		.cfi_def_cfa_offset 16
+ 343              		.cfi_offset 4, -16
+ 344              		.cfi_offset 5, -12
+ 345              		.cfi_offset 6, -8
+ 346              		.cfi_offset 14, -4
+ 347 0002 0446     		mov	r4, r0
+ 348 0004 0D46     		mov	r5, r1
+ 349              	.LVL61:
+ 146:motor.c       ****     int count_left;
+ 147:motor.c       ****     int count_right;
+ 148:motor.c       ****     int compare;
+ 149:motor.c       ****     int distance;
+ 150:motor.c       ****     int speed_left = speed;
+ 151:motor.c       ****     int speed_right = speed;
+ 152:motor.c       ****     
+ 153:motor.c       ****     // FAILSAFE if you give a speed greater than it can handle:
+ 154:motor.c       ****     if (speed > SPEED_MAX) {
+ 350              		.loc 1 154 0
+ 351 0006 E129     		cmp	r1, #225
+ 352 0008 00DD     		ble	.L18
+ 353              	.LVL62:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 10
+
+
+ 155:motor.c       ****         speed_left = SPEED;         
+ 354              		.loc 1 155 0
+ 355 000a C825     		movs	r5, #200
+ 356              	.LVL63:
+ 357              	.L18:
+ 156:motor.c       ****         speed_right = SPEED;
+ 157:motor.c       ****     }
+ 158:motor.c       ****     
+ 159:motor.c       ****     // Is the degrees negative or positive? 
+ 160:motor.c       ****         // positive = right hand turn: left wheel goes forward, right wheel goes backward 
+ 161:motor.c       ****         // negative = left hand turn: right wheel goes forward, left wheel goes backward 
+ 162:motor.c       ****     if (degrees > 0) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); }
+ 358              		.loc 1 162 0
+ 359 000c 002C     		cmp	r4, #0
+ 360 000e 06DD     		ble	.L19
+ 361              		.loc 1 162 0 is_stmt 0 discriminator 1
+ 362 0010 0020     		movs	r0, #0
+ 363              	.LVL64:
+ 364 0012 FFF7FEFF 		bl	Motor_Left_Control_Write
+ 365              	.LVL65:
+ 366 0016 0120     		movs	r0, #1
+ 367 0018 FFF7FEFF 		bl	Motor_Right_Control_Write
+ 368              	.LVL66:
+ 369 001c 05E0     		b	.L20
+ 370              	.LVL67:
+ 371              	.L19:
+ 163:motor.c       ****     else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);}
+ 372              		.loc 1 163 0 is_stmt 1
+ 373 001e 0120     		movs	r0, #1
+ 374              	.LVL68:
+ 375 0020 FFF7FEFF 		bl	Motor_Left_Control_Write
+ 376              	.LVL69:
+ 377 0024 0020     		movs	r0, #0
+ 378 0026 FFF7FEFF 		bl	Motor_Right_Control_Write
+ 379              	.LVL70:
+ 380              	.L20:
+ 164:motor.c       ****     
+ 165:motor.c       ****     Motor_Left_Driver_Wakeup();
+ 381              		.loc 1 165 0
+ 382 002a FFF7FEFF 		bl	Motor_Left_Driver_Wakeup
+ 383              	.LVL71:
+ 166:motor.c       ****     Motor_Left_Driver_WriteCompare(speed_left);
+ 384              		.loc 1 166 0
+ 385 002e EDB2     		uxtb	r5, r5
+ 386 0030 2846     		mov	r0, r5
+ 387 0032 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 388              	.LVL72:
+ 167:motor.c       ****     Motor_Right_Driver_Wakeup();
+ 389              		.loc 1 167 0
+ 390 0036 FFF7FEFF 		bl	Motor_Right_Driver_Wakeup
+ 391              	.LVL73:
+ 168:motor.c       ****     Motor_Right_Driver_WriteCompare(speed_right);
+ 392              		.loc 1 168 0
+ 393 003a 2846     		mov	r0, r5
+ 394 003c FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 395              	.LVL74:
+ 169:motor.c       ****     
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 11
+
+
+ 170:motor.c       ****     distance = (WIDTH_WHEEL_TO_WHEEL/2)*degrees;            // based on the arclength the wheels ne
+ 171:motor.c       ****     compare = round((distance*3.14*5.29)/180);
+ 396              		.loc 1 171 0
+ 397 0040 6B20     		movs	r0, #107
+ 398 0042 00FB04F0 		mul	r0, r0, r4
+ 399              	.LVL75:
+ 400 0046 FFF7FEFF 		bl	__aeabi_i2d
+ 401              	.LVL76:
+ 402 004a 1DA3     		adr	r3, .L25
+ 403 004c D3E90023 		ldrd	r2, [r3]
+ 404 0050 FFF7FEFF 		bl	__aeabi_dmul
+ 405              	.LVL77:
+ 406 0054 1CA3     		adr	r3, .L25+8
+ 407 0056 D3E90023 		ldrd	r2, [r3]
+ 408 005a FFF7FEFF 		bl	__aeabi_dmul
+ 409              	.LVL78:
+ 410 005e 0022     		movs	r2, #0
+ 411 0060 1B4B     		ldr	r3, .L25+16
+ 412 0062 FFF7FEFF 		bl	__aeabi_ddiv
+ 413              	.LVL79:
+ 414 0066 FFF7FEFF 		bl	round
+ 415              	.LVL80:
+ 416 006a FFF7FEFF 		bl	__aeabi_d2iz
+ 417              	.LVL81:
+ 418 006e 0646     		mov	r6, r0
+ 419              	.LVL82:
+ 172:motor.c       ****     count_left = Motor_Left_Decoder_GetCounter();
+ 420              		.loc 1 172 0
+ 421 0070 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
+ 422              	.LVL83:
+ 173:motor.c       ****     count_right = Motor_Right_Decoder_GetCounter();
+ 423              		.loc 1 173 0
+ 424 0074 FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 425              	.LVL84:
+ 426 0078 0446     		mov	r4, r0
+ 427              	.LVL85:
+ 174:motor.c       ****     
+ 175:motor.c       ****     // NOT SURE IF THE DRIFT ADJUSTING FOR THIS FUNCTION WORKS
+ 176:motor.c       ****     
+ 177:motor.c       ****     
+ 178:motor.c       ****     while (abs(count_right) < abs(compare)) {
+ 428              		.loc 1 178 0
+ 429 007a 0AE0     		b	.L21
+ 430              	.LVL86:
+ 431              	.L22:
+ 179:motor.c       ****         count_right = Motor_Right_Decoder_GetCounter();        
+ 432              		.loc 1 179 0
+ 433 007c FFF7FEFF 		bl	Motor_Right_Decoder_GetCounter
+ 434              	.LVL87:
+ 435 0080 0446     		mov	r4, r0
+ 436              	.LVL88:
+ 180:motor.c       ****         count_left = Motor_Left_Decoder_GetCounter();
+ 437              		.loc 1 180 0
+ 438 0082 FFF7FEFF 		bl	Motor_Left_Decoder_GetCounter
+ 439              	.LVL89:
+ 181:motor.c       ****          if (count_left > -1*count_right) {
+ 182:motor.c       ****             if(speed_left == speed_right){
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 12
+
+
+ 183:motor.c       ****                 //speed_left -= ADJUST;
+ 184:motor.c       ****                 //speed_right += ADJUST;
+ 185:motor.c       ****             }
+ 186:motor.c       ****             else {
+ 187:motor.c       ****                 int temp = speed_left;
+ 188:motor.c       ****                 speed_left = speed_right;
+ 189:motor.c       ****                 speed_right = temp;
+ 190:motor.c       ****             }        
+ 191:motor.c       ****         }
+ 192:motor.c       ****         if (count_right > -1*count_left) {
+ 193:motor.c       ****             if(speed_left == speed_right) {
+ 194:motor.c       ****                 //speed_right -= ADJUST;              // If the speeds are equal, we decrememnt wit
+ 195:motor.c       ****                 //speed_left += ADJUST;
+ 196:motor.c       ****             }
+ 197:motor.c       ****             else {
+ 198:motor.c       ****                 int temp = speed_left;              // if they are not equal, we just swap em
+ 199:motor.c       ****                 speed_left = speed_right;
+ 200:motor.c       ****                 speed_right = temp;
+ 201:motor.c       ****             }
+ 202:motor.c       ****         } 
+ 203:motor.c       ****         Motor_Left_Driver_WriteCompare(speed_left);
+ 440              		.loc 1 203 0
+ 441 0086 2846     		mov	r0, r5
+ 442 0088 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 443              	.LVL90:
+ 204:motor.c       ****         Motor_Right_Driver_WriteCompare(speed_right);
+ 444              		.loc 1 204 0
+ 445 008c 2846     		mov	r0, r5
+ 446 008e FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 447              	.LVL91:
+ 448              	.L21:
+ 178:motor.c       ****         count_right = Motor_Right_Decoder_GetCounter();        
+ 449              		.loc 1 178 0
+ 450 0092 002C     		cmp	r4, #0
+ 451 0094 B8BF     		it	lt
+ 452 0096 6442     		rsblt	r4, r4, #0
+ 453              	.LVL92:
+ 454 0098 86EAE673 		eor	r3, r6, r6, asr #31
+ 455 009c A3EBE673 		sub	r3, r3, r6, asr #31
+ 456 00a0 9C42     		cmp	r4, r3
+ 457 00a2 EBDB     		blt	.L22
+ 205:motor.c       ****         
+ 206:motor.c       ****         /*
+ 207:motor.c       ****         
+ 208:motor.c       ****         FIGURING OUT SWIVEL VALUES FOR PUCKS
+ 209:motor.c       ****         
+ 210:motor.c       ****         distanceSensor(FRONT_LEFT);
+ 211:motor.c       ****         CyDelay(50);
+ 212:motor.c       ****         distanceSensor(FRONT_RIGHT);
+ 213:motor.c       ****         CyDelay(50);
+ 214:motor.c       ****             
+ 215:motor.c       ****         sprintf(output, "%d , %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[
+ 216:motor.c       ****         UART_1_PutString(output);
+ 217:motor.c       ****         CyDelay(150);
+ 218:motor.c       ****         */
+ 219:motor.c       ****         
+ 220:motor.c       ****     }
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 13
+
+
+ 221:motor.c       ****     
+ 222:motor.c       ****     /*
+ 223:motor.c       ****     sprintf(output, "left motor: %d \n", count_left);       
+ 224:motor.c       ****     UART_1_PutString(output);
+ 225:motor.c       ****     sprintf(output, "right motor: %d \n", count_right);      
+ 226:motor.c       ****     UART_1_PutString(output);
+ 227:motor.c       ****     */
+ 228:motor.c       ****     
+ 229:motor.c       ****     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
+ 458              		.loc 1 229 0
+ 459 00a4 0020     		movs	r0, #0
+ 460 00a6 FFF7FEFF 		bl	Motor_Left_Decoder_SetCounter
+ 461              	.LVL93:
+ 230:motor.c       ****     Motor_Right_Decoder_SetCounter(0);   
+ 462              		.loc 1 230 0
+ 463 00aa 0020     		movs	r0, #0
+ 464 00ac FFF7FEFF 		bl	Motor_Right_Decoder_SetCounter
+ 465              	.LVL94:
+ 231:motor.c       ****     
+ 232:motor.c       ****     Motor_Left_Driver_Sleep();
+ 466              		.loc 1 232 0
+ 467 00b0 FFF7FEFF 		bl	Motor_Left_Driver_Sleep
+ 468              	.LVL95:
+ 233:motor.c       ****     Motor_Right_Driver_Sleep();
+ 469              		.loc 1 233 0
+ 470 00b4 FFF7FEFF 		bl	Motor_Right_Driver_Sleep
+ 471              	.LVL96:
+ 472 00b8 70BD     		pop	{r4, r5, r6, pc}
+ 473              	.LVL97:
+ 474              	.L26:
+ 475 00ba 00BFAFF3 		.align	3
+ 475      0080
+ 476              	.L25:
+ 477 00c0 1F85EB51 		.word	1374389535
+ 478 00c4 B81E0940 		.word	1074339512
+ 479 00c8 295C8FC2 		.word	-1030792151
+ 480 00cc F5281540 		.word	1075128565
+ 481 00d0 00806640 		.word	1080459264
+ 482              		.cfi_endproc
+ 483              	.LFE65:
+ 484              		.size	moveSwivel, .-moveSwivel
+ 485              		.section	.text.translateMoveDynamic,"ax",%progbits
+ 486              		.align	2
+ 487              		.global	translateMoveDynamic
+ 488              		.thumb
+ 489              		.thumb_func
+ 490              		.type	translateMoveDynamic, %function
+ 491              	translateMoveDynamic:
+ 492              	.LFB66:
+ 234:motor.c       ****     
+ 235:motor.c       ****     
+ 236:motor.c       **** }
+ 237:motor.c       **** 
+ 238:motor.c       **** void translateMoveDynamic(int distance, int degree, int speed, int activate_safety) {
+ 493              		.loc 1 238 0
+ 494              		.cfi_startproc
+ 495              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 14
+
+
+ 496              		@ frame_needed = 0, uses_anonymous_args = 0
+ 497              	.LVL98:
+ 498 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 499              		.cfi_def_cfa_offset 32
+ 500              		.cfi_offset 3, -32
+ 501              		.cfi_offset 4, -28
+ 502              		.cfi_offset 5, -24
+ 503              		.cfi_offset 6, -20
+ 504              		.cfi_offset 7, -16
+ 505              		.cfi_offset 8, -12
+ 506              		.cfi_offset 9, -8
+ 507              		.cfi_offset 14, -4
+ 508 0004 0746     		mov	r7, r0
+ 509 0006 0E46     		mov	r6, r1
+ 510 0008 1446     		mov	r4, r2
+ 511 000a 1D46     		mov	r5, r3
+ 239:motor.c       ****     // The distance selectected can be positive or negative
+ 240:motor.c       ****     // The degree selected can be positive or negative 
+ 241:motor.c       ****     int new_dist = distance/sin((M_PI/180)*degree);
+ 512              		.loc 1 241 0
+ 513 000c 0846     		mov	r0, r1
+ 514              	.LVL99:
+ 515 000e FFF7FEFF 		bl	__aeabi_i2d
+ 516              	.LVL100:
+ 517 0012 15A3     		adr	r3, .L29
+ 518 0014 D3E90023 		ldrd	r2, [r3]
+ 519 0018 FFF7FEFF 		bl	__aeabi_dmul
+ 520              	.LVL101:
+ 521 001c FFF7FEFF 		bl	sin
+ 522              	.LVL102:
+ 523 0020 8046     		mov	r8, r0
+ 524 0022 8946     		mov	r9, r1
+ 525 0024 3846     		mov	r0, r7
+ 526 0026 FFF7FEFF 		bl	__aeabi_i2d
+ 527              	.LVL103:
+ 528 002a 4246     		mov	r2, r8
+ 529 002c 4B46     		mov	r3, r9
+ 530 002e FFF7FEFF 		bl	__aeabi_ddiv
+ 531              	.LVL104:
+ 532 0032 FFF7FEFF 		bl	__aeabi_d2iz
+ 533              	.LVL105:
+ 534 0036 0746     		mov	r7, r0
+ 535              	.LVL106:
+ 242:motor.c       ****     
+ 243:motor.c       ****     moveSwivel(degree, speed, activate_safety);
+ 536              		.loc 1 243 0
+ 537 0038 2A46     		mov	r2, r5
+ 538 003a 2146     		mov	r1, r4
+ 539 003c 3046     		mov	r0, r6
+ 540              	.LVL107:
+ 541 003e FFF7FEFF 		bl	moveSwivel
+ 542              	.LVL108:
+ 244:motor.c       ****     moveDynamic(new_dist, speed, activate_safety);
+ 543              		.loc 1 244 0
+ 544 0042 2A46     		mov	r2, r5
+ 545 0044 2146     		mov	r1, r4
+ 546 0046 3846     		mov	r0, r7
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 15
+
+
+ 547 0048 FFF7FEFF 		bl	moveDynamic
+ 548              	.LVL109:
+ 245:motor.c       ****     moveSwivel(-degree, speed, activate_safety);
+ 549              		.loc 1 245 0
+ 550 004c 2A46     		mov	r2, r5
+ 551 004e 2146     		mov	r1, r4
+ 552 0050 7042     		negs	r0, r6
+ 553 0052 FFF7FEFF 		bl	moveSwivel
+ 554              	.LVL110:
+ 246:motor.c       ****     moveDynamic(-new_dist, speed, activate_safety);
+ 555              		.loc 1 246 0
+ 556 0056 2A46     		mov	r2, r5
+ 557 0058 2146     		mov	r1, r4
+ 558 005a 7842     		negs	r0, r7
+ 559 005c FFF7FEFF 		bl	moveDynamic
+ 560              	.LVL111:
+ 561 0060 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 562              	.LVL112:
+ 563              	.L30:
+ 564 0064 AFF30080 		.align	3
+ 565              	.L29:
+ 566 0068 399D52A2 		.word	-1571644103
+ 567 006c 46DF913F 		.word	1066524486
+ 568              		.cfi_endproc
+ 569              	.LFE66:
+ 570              		.size	translateMoveDynamic, .-translateMoveDynamic
+ 571              		.global	__aeabi_dcmplt
+ 572              		.section	.text.rampUpDown,"ax",%progbits
+ 573              		.align	2
+ 574              		.global	rampUpDown
+ 575              		.thumb
+ 576              		.thumb_func
+ 577              		.type	rampUpDown, %function
+ 578              	rampUpDown:
+ 579              	.LFB67:
+ 247:motor.c       **** }
+ 248:motor.c       **** 
+ 249:motor.c       **** void rampUpDown(int speed, int ramp_up_down) {
+ 580              		.loc 1 249 0
+ 581              		.cfi_startproc
+ 582              		@ args = 0, pretend = 0, frame = 0
+ 583              		@ frame_needed = 0, uses_anonymous_args = 0
+ 584              	.LVL113:
+ 585 0000 2DE9F84F 		push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 586              		.cfi_def_cfa_offset 40
+ 587              		.cfi_offset 3, -40
+ 588              		.cfi_offset 4, -36
+ 589              		.cfi_offset 5, -32
+ 590              		.cfi_offset 6, -28
+ 591              		.cfi_offset 7, -24
+ 592              		.cfi_offset 8, -20
+ 593              		.cfi_offset 9, -16
+ 594              		.cfi_offset 10, -12
+ 595              		.cfi_offset 11, -8
+ 596              		.cfi_offset 14, -4
+ 250:motor.c       ****     speed = abs(speed);     // fixes bug with negative 
+ 597              		.loc 1 250 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 16
+
+
+ 598 0004 80EAE074 		eor	r4, r0, r0, asr #31
+ 599 0008 A4EBE074 		sub	r4, r4, r0, asr #31
+ 600              	.LVL114:
+ 251:motor.c       ****     int step = (speed/10);
+ 601              		.loc 1 251 0
+ 602 000c 324D     		ldr	r5, .L40
+ 603 000e 85FB0423 		smull	r2, r3, r5, r4
+ 604 0012 E517     		asrs	r5, r4, #31
+ 605 0014 C5EBA305 		rsb	r5, r5, r3, asr #2
+ 606              	.LVL115:
+ 252:motor.c       ****     int current_speed = 0; 
+ 253:motor.c       ****     int old_speed;
+ 254:motor.c       ****     
+ 255:motor.c       ****     if (ramp_up_down == RAMP_UP) {
+ 607              		.loc 1 255 0
+ 608 0018 8B46     		mov	fp, r1
+ 609 001a 69B1     		cbz	r1, .L38
+ 610 001c 32E0     		b	.L33
+ 611              	.LVL116:
+ 612              	.L34:
+ 256:motor.c       ****         while (current_speed < (speed - 1.5*step)){
+ 257:motor.c       ****             current_speed += step;
+ 613              		.loc 1 257 0
+ 614 001e AA44     		add	r10, r10, r5
+ 615              	.LVL117:
+ 258:motor.c       ****             Motor_Left_Driver_WriteCompare(current_speed);
+ 616              		.loc 1 258 0
+ 617 0020 5FFA8AF6 		uxtb	r6, r10
+ 618 0024 3046     		mov	r0, r6
+ 619 0026 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 620              	.LVL118:
+ 259:motor.c       ****             Motor_Right_Driver_WriteCompare(current_speed);
+ 621              		.loc 1 259 0
+ 622 002a 3046     		mov	r0, r6
+ 623 002c FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 624              	.LVL119:
+ 260:motor.c       ****             CyDelay(50);
+ 625              		.loc 1 260 0
+ 626 0030 3220     		movs	r0, #50
+ 627 0032 FFF7FEFF 		bl	CyDelay
+ 628              	.LVL120:
+ 629 0036 01E0     		b	.L32
+ 630              	.LVL121:
+ 631              	.L38:
+ 632 0038 4FF0000A 		mov	r10, #0
+ 633              	.LVL122:
+ 634              	.L32:
+ 256:motor.c       ****             current_speed += step;
+ 635              		.loc 1 256 0
+ 636 003c 5046     		mov	r0, r10
+ 637 003e FFF7FEFF 		bl	__aeabi_i2d
+ 638              	.LVL123:
+ 639 0042 0646     		mov	r6, r0
+ 640 0044 0F46     		mov	r7, r1
+ 641 0046 2846     		mov	r0, r5
+ 642 0048 FFF7FEFF 		bl	__aeabi_i2d
+ 643              	.LVL124:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 17
+
+
+ 644 004c 0022     		movs	r2, #0
+ 645 004e 234B     		ldr	r3, .L40+4
+ 646 0050 FFF7FEFF 		bl	__aeabi_dmul
+ 647              	.LVL125:
+ 648 0054 8046     		mov	r8, r0
+ 649 0056 8946     		mov	r9, r1
+ 650 0058 2046     		mov	r0, r4
+ 651 005a FFF7FEFF 		bl	__aeabi_i2d
+ 652              	.LVL126:
+ 653 005e 4246     		mov	r2, r8
+ 654 0060 4B46     		mov	r3, r9
+ 655 0062 FFF7FEFF 		bl	__aeabi_dsub
+ 656              	.LVL127:
+ 657 0066 0246     		mov	r2, r0
+ 658 0068 0B46     		mov	r3, r1
+ 659 006a 3046     		mov	r0, r6
+ 660 006c 3946     		mov	r1, r7
+ 661 006e FFF7FEFF 		bl	__aeabi_dcmplt
+ 662              	.LVL128:
+ 663 0072 0028     		cmp	r0, #0
+ 664 0074 D3D1     		bne	.L34
+ 261:motor.c       ****         }
+ 262:motor.c       ****         Motor_Left_Driver_WriteCompare(speed);
+ 665              		.loc 1 262 0
+ 666 0076 E6B2     		uxtb	r6, r4
+ 667 0078 3046     		mov	r0, r6
+ 668 007a FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 669              	.LVL129:
+ 263:motor.c       ****         Motor_Right_Driver_WriteCompare(speed);
+ 670              		.loc 1 263 0
+ 671 007e 3046     		mov	r0, r6
+ 672 0080 FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 673              	.LVL130:
+ 674              	.L33:
+ 264:motor.c       ****     }
+ 265:motor.c       ****     
+ 266:motor.c       ****     if (ramp_up_down == RAMP_DOWN) {
+ 675              		.loc 1 266 0
+ 676 0084 BBF1010F 		cmp	fp, #1
+ 677 0088 24D1     		bne	.L31
+ 678 008a 0AE0     		b	.L35
+ 679              	.LVL131:
+ 680              	.L37:
+ 267:motor.c       ****         current_speed = speed;
+ 268:motor.c       ****         while (current_speed > 1.5*step){
+ 269:motor.c       ****             current_speed -= step;
+ 681              		.loc 1 269 0
+ 682 008c 641B     		subs	r4, r4, r5
+ 683              	.LVL132:
+ 270:motor.c       ****             Motor_Left_Driver_WriteCompare(current_speed);
+ 684              		.loc 1 270 0
+ 685 008e E6B2     		uxtb	r6, r4
+ 686 0090 3046     		mov	r0, r6
+ 687 0092 FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 688              	.LVL133:
+ 271:motor.c       ****             Motor_Right_Driver_WriteCompare(current_speed);
+ 689              		.loc 1 271 0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 18
+
+
+ 690 0096 3046     		mov	r0, r6
+ 691 0098 FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 692              	.LVL134:
+ 272:motor.c       ****             CyDelay(50);
+ 693              		.loc 1 272 0
+ 694 009c 3220     		movs	r0, #50
+ 695 009e FFF7FEFF 		bl	CyDelay
+ 696              	.LVL135:
+ 697              	.L35:
+ 268:motor.c       ****             current_speed -= step;
+ 698              		.loc 1 268 0
+ 699 00a2 2046     		mov	r0, r4
+ 700 00a4 FFF7FEFF 		bl	__aeabi_i2d
+ 701              	.LVL136:
+ 702 00a8 0646     		mov	r6, r0
+ 703 00aa 0F46     		mov	r7, r1
+ 704 00ac 2846     		mov	r0, r5
+ 705 00ae FFF7FEFF 		bl	__aeabi_i2d
+ 706              	.LVL137:
+ 707 00b2 0022     		movs	r2, #0
+ 708 00b4 094B     		ldr	r3, .L40+4
+ 709 00b6 FFF7FEFF 		bl	__aeabi_dmul
+ 710              	.LVL138:
+ 711 00ba 0246     		mov	r2, r0
+ 712 00bc 0B46     		mov	r3, r1
+ 713 00be 3046     		mov	r0, r6
+ 714 00c0 3946     		mov	r1, r7
+ 715 00c2 FFF7FEFF 		bl	__aeabi_dcmpgt
+ 716              	.LVL139:
+ 717 00c6 0028     		cmp	r0, #0
+ 718 00c8 E0D1     		bne	.L37
+ 273:motor.c       ****         }
+ 274:motor.c       ****         Motor_Left_Driver_WriteCompare(0);
+ 719              		.loc 1 274 0
+ 720 00ca FFF7FEFF 		bl	Motor_Left_Driver_WriteCompare
+ 721              	.LVL140:
+ 275:motor.c       ****         Motor_Right_Driver_WriteCompare(0);
+ 722              		.loc 1 275 0
+ 723 00ce 0020     		movs	r0, #0
+ 724 00d0 FFF7FEFF 		bl	Motor_Right_Driver_WriteCompare
+ 725              	.LVL141:
+ 726              	.L31:
+ 727 00d4 BDE8F88F 		pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 728              	.LVL142:
+ 729              	.L41:
+ 730              		.align	2
+ 731              	.L40:
+ 732 00d8 67666666 		.word	1717986919
+ 733 00dc 0000F83F 		.word	1073217536
+ 734              		.cfi_endproc
+ 735              	.LFE67:
+ 736              		.size	rampUpDown, .-rampUpDown
+ 737              		.comm	ultrasonic_flag,4,4
+ 738              		.comm	initialisation,4,4
+ 739              		.comm	output,32,4
+ 740              		.comm	turningRightFlag,2,2
+ 741              		.comm	turningLeftFlag,2,2
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 19
+
+
+ 742              		.comm	drivingBackwardFlag,2,2
+ 743              		.comm	drivingForwardFlag,2,2
+ 744              		.comm	puckPileLocation,4,4
+ 745              		.comm	block_edge_location,16,4
+ 746              		.comm	sweeping,4,4
+ 747              		.comm	puckRackOffsetsFromWest,20,4
+ 748              		.comm	puckRackColours,20,4
+ 749              		.comm	currentPuckRackScanningIndex,4,4
+ 750              		.comm	driveStraightEnable,4,4
+ 751              		.comm	internal_orientation,4,4
+ 752              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 753              		.align	2
+ 754              	.LC0:
+ 755 0000 636F6D70 		.ascii	"compare: %d \012\000"
+ 755      6172653A 
+ 755      20256420 
+ 755      0A00
+ 756 000e 0000     		.space	2
+ 757              	.LC1:
+ 758 0010 6C656674 		.ascii	"left: %d \011\000"
+ 758      3A202564 
+ 758      200900
+ 759 001b 00       		.space	1
+ 760              	.LC2:
+ 761 001c 72696768 		.ascii	"right: %d \012\000"
+ 761      743A2025 
+ 761      64200A00 
+ 762              	.LC3:
+ 763 0028 6C656674 		.ascii	"left motor: %d \012\000"
+ 763      206D6F74 
+ 763      6F723A20 
+ 763      2564200A 
+ 763      00
+ 764 0039 000000   		.space	3
+ 765              	.LC4:
+ 766 003c 72696768 		.ascii	"right motor: %d \012\000"
+ 766      74206D6F 
+ 766      746F723A 
+ 766      20256420 
+ 766      0A00
+ 767              		.text
+ 768              	.Letext0:
+ 769              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 770              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 771              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 772              		.file 5 "navigation.h"
+ 773              		.file 6 "ultrasonic.h"
+ 774              		.file 7 "main.h"
+ 775              		.file 8 "Generated_Source\\PSoC5/Motor_Left_Control.h"
+ 776              		.file 9 "Generated_Source\\PSoC5/Motor_Right_Control.h"
+ 777              		.file 10 "Generated_Source\\PSoC5/Motor_Left_Driver.h"
+ 778              		.file 11 "Generated_Source\\PSoC5/Motor_Right_Driver.h"
+ 779              		.file 12 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
+ 780              		.file 13 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
+ 781              		.file 14 "Generated_Source\\PSoC5/UART_1.h"
+ 782              		.file 15 "Generated_Source\\PSoC5/Motor_Left_Decoder.h"
+ 783              		.file 16 "Generated_Source\\PSoC5/Motor_Right_Decoder.h"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 20
+
+
+ 784              		.file 17 "Generated_Source\\PSoC5/CyLib.h"
+ 785              		.section	.debug_info,"",%progbits
+ 786              	.Ldebug_info0:
+ 787 0000 32090000 		.4byte	0x932
+ 788 0004 0400     		.2byte	0x4
+ 789 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 790 000a 04       		.byte	0x4
+ 791 000b 01       		.uleb128 0x1
+ 792 000c 41040000 		.4byte	.LASF72
+ 793 0010 0C       		.byte	0xc
+ 794 0011 6E030000 		.4byte	.LASF73
+ 795 0015 90030000 		.4byte	.LASF74
+ 796 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 797 001d 00000000 		.4byte	0
+ 798 0021 00000000 		.4byte	.Ldebug_line0
+ 799 0025 02       		.uleb128 0x2
+ 800 0026 08       		.byte	0x8
+ 801 0027 07       		.byte	0x7
+ 802 0028 81020000 		.4byte	.LASF0
+ 803 002c 02       		.uleb128 0x2
+ 804 002d 04       		.byte	0x4
+ 805 002e 07       		.byte	0x7
+ 806 002f 98020000 		.4byte	.LASF1
+ 807 0033 03       		.uleb128 0x3
+ 808 0034 04       		.byte	0x4
+ 809 0035 05       		.byte	0x5
+ 810 0036 696E7400 		.ascii	"int\000"
+ 811 003a 02       		.uleb128 0x2
+ 812 003b 01       		.byte	0x1
+ 813 003c 06       		.byte	0x6
+ 814 003d 61020000 		.4byte	.LASF2
+ 815 0041 02       		.uleb128 0x2
+ 816 0042 01       		.byte	0x1
+ 817 0043 08       		.byte	0x8
+ 818 0044 45020000 		.4byte	.LASF3
+ 819 0048 02       		.uleb128 0x2
+ 820 0049 02       		.byte	0x2
+ 821 004a 05       		.byte	0x5
+ 822 004b 7F000000 		.4byte	.LASF4
+ 823 004f 02       		.uleb128 0x2
+ 824 0050 02       		.byte	0x2
+ 825 0051 07       		.byte	0x7
+ 826 0052 D0020000 		.4byte	.LASF5
+ 827 0056 04       		.uleb128 0x4
+ 828 0057 76030000 		.4byte	.LASF9
+ 829 005b 02       		.byte	0x2
+ 830 005c 3F       		.byte	0x3f
+ 831 005d 61000000 		.4byte	0x61
+ 832 0061 02       		.uleb128 0x2
+ 833 0062 04       		.byte	0x4
+ 834 0063 05       		.byte	0x5
+ 835 0064 81010000 		.4byte	.LASF6
+ 836 0068 02       		.uleb128 0x2
+ 837 0069 04       		.byte	0x4
+ 838 006a 07       		.byte	0x7
+ 839 006b 2B030000 		.4byte	.LASF7
+ 840 006f 02       		.uleb128 0x2
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 21
+
+
+ 841 0070 08       		.byte	0x8
+ 842 0071 05       		.byte	0x5
+ 843 0072 5A010000 		.4byte	.LASF8
+ 844 0076 04       		.uleb128 0x4
+ 845 0077 FA020000 		.4byte	.LASF10
+ 846 007b 03       		.byte	0x3
+ 847 007c 2C       		.byte	0x2c
+ 848 007d 56000000 		.4byte	0x56
+ 849 0081 02       		.uleb128 0x2
+ 850 0082 04       		.byte	0x4
+ 851 0083 04       		.byte	0x4
+ 852 0084 43010000 		.4byte	.LASF11
+ 853 0088 02       		.uleb128 0x2
+ 854 0089 08       		.byte	0x8
+ 855 008a 04       		.byte	0x4
+ 856 008b 3D030000 		.4byte	.LASF12
+ 857 008f 02       		.uleb128 0x2
+ 858 0090 01       		.byte	0x1
+ 859 0091 08       		.byte	0x8
+ 860 0092 EC020000 		.4byte	.LASF13
+ 861 0096 02       		.uleb128 0x2
+ 862 0097 08       		.byte	0x8
+ 863 0098 04       		.byte	0x4
+ 864 0099 C6000000 		.4byte	.LASF14
+ 865 009d 02       		.uleb128 0x2
+ 866 009e 04       		.byte	0x4
+ 867 009f 07       		.byte	0x7
+ 868 00a0 F4030000 		.4byte	.LASF15
+ 869 00a4 05       		.uleb128 0x5
+ 870 00a5 1F030000 		.4byte	.LASF27
+ 871 00a9 01       		.byte	0x1
+ 872 00aa 23       		.byte	0x23
+ 873 00ab 00000000 		.4byte	.LFB64
+ 874 00af BC010000 		.4byte	.LFE64-.LFB64
+ 875 00b3 01       		.uleb128 0x1
+ 876 00b4 9C       		.byte	0x9c
+ 877 00b5 85030000 		.4byte	0x385
+ 878 00b9 06       		.uleb128 0x6
+ 879 00ba F1020000 		.4byte	.LASF16
+ 880 00be 01       		.byte	0x1
+ 881 00bf 23       		.byte	0x23
+ 882 00c0 33000000 		.4byte	0x33
+ 883 00c4 00000000 		.4byte	.LLST0
+ 884 00c8 06       		.uleb128 0x6
+ 885 00c9 C0020000 		.4byte	.LASF17
+ 886 00cd 01       		.byte	0x1
+ 887 00ce 23       		.byte	0x23
+ 888 00cf 33000000 		.4byte	0x33
+ 889 00d3 42000000 		.4byte	.LLST1
+ 890 00d7 06       		.uleb128 0x6
+ 891 00d8 15000000 		.4byte	.LASF18
+ 892 00dc 01       		.byte	0x1
+ 893 00dd 23       		.byte	0x23
+ 894 00de 33000000 		.4byte	0x33
+ 895 00e2 84000000 		.4byte	.LLST2
+ 896 00e6 07       		.uleb128 0x7
+ 897 00e7 9F010000 		.4byte	.LASF19
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 22
+
+
+ 898 00eb 01       		.byte	0x1
+ 899 00ec 24       		.byte	0x24
+ 900 00ed 33000000 		.4byte	0x33
+ 901 00f1 C6000000 		.4byte	.LLST3
+ 902 00f5 07       		.uleb128 0x7
+ 903 00f6 D7040000 		.4byte	.LASF20
+ 904 00fa 01       		.byte	0x1
+ 905 00fb 25       		.byte	0x25
+ 906 00fc 33000000 		.4byte	0x33
+ 907 0100 05010000 		.4byte	.LLST4
+ 908 0104 08       		.uleb128 0x8
+ 909 0105 49010000 		.4byte	.LASF30
+ 910 0109 01       		.byte	0x1
+ 911 010a 26       		.byte	0x26
+ 912 010b 33000000 		.4byte	0x33
+ 913 010f 07       		.uleb128 0x7
+ 914 0110 9C000000 		.4byte	.LASF21
+ 915 0114 01       		.byte	0x1
+ 916 0115 29       		.byte	0x29
+ 917 0116 33000000 		.4byte	0x33
+ 918 011a 39010000 		.4byte	.LLST5
+ 919 011e 07       		.uleb128 0x7
+ 920 011f BC000000 		.4byte	.LASF22
+ 921 0123 01       		.byte	0x1
+ 922 0124 2A       		.byte	0x2a
+ 923 0125 33000000 		.4byte	0x33
+ 924 0129 62010000 		.4byte	.LLST6
+ 925 012d 07       		.uleb128 0x7
+ 926 012e C6020000 		.4byte	.LASF23
+ 927 0132 01       		.byte	0x1
+ 928 0133 2B       		.byte	0x2b
+ 929 0134 33000000 		.4byte	0x33
+ 930 0138 9A010000 		.4byte	.LLST7
+ 931 013c 07       		.uleb128 0x7
+ 932 013d E2000000 		.4byte	.LASF24
+ 933 0141 01       		.byte	0x1
+ 934 0142 2D       		.byte	0x2d
+ 935 0143 33000000 		.4byte	0x33
+ 936 0147 DF010000 		.4byte	.LLST8
+ 937 014b 07       		.uleb128 0x7
+ 938 014c 45000000 		.4byte	.LASF25
+ 939 0150 01       		.byte	0x1
+ 940 0151 30       		.byte	0x30
+ 941 0152 33000000 		.4byte	0x33
+ 942 0156 2D020000 		.4byte	.LLST9
+ 943 015a 07       		.uleb128 0x7
+ 944 015b E3040000 		.4byte	.LASF26
+ 945 015f 01       		.byte	0x1
+ 946 0160 31       		.byte	0x31
+ 947 0161 33000000 		.4byte	0x33
+ 948 0165 4B020000 		.4byte	.LLST10
+ 949 0169 09       		.uleb128 0x9
+ 950 016a 20000000 		.4byte	.LVL4
+ 951 016e 6E080000 		.4byte	0x86e
+ 952 0172 7C010000 		.4byte	0x17c
+ 953 0176 0A       		.uleb128 0xa
+ 954 0177 01       		.uleb128 0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 23
+
+
+ 955 0178 50       		.byte	0x50
+ 956 0179 01       		.uleb128 0x1
+ 957 017a 30       		.byte	0x30
+ 958 017b 00       		.byte	0
+ 959 017c 09       		.uleb128 0x9
+ 960 017d 26000000 		.4byte	.LVL5
+ 961 0181 79080000 		.4byte	0x879
+ 962 0185 8F010000 		.4byte	0x18f
+ 963 0189 0A       		.uleb128 0xa
+ 964 018a 01       		.uleb128 0x1
+ 965 018b 50       		.byte	0x50
+ 966 018c 01       		.uleb128 0x1
+ 967 018d 30       		.byte	0x30
+ 968 018e 00       		.byte	0
+ 969 018f 09       		.uleb128 0x9
+ 970 0190 32000000 		.4byte	.LVL8
+ 971 0194 6E080000 		.4byte	0x86e
+ 972 0198 A2010000 		.4byte	0x1a2
+ 973 019c 0A       		.uleb128 0xa
+ 974 019d 01       		.uleb128 0x1
+ 975 019e 50       		.byte	0x50
+ 976 019f 01       		.uleb128 0x1
+ 977 01a0 31       		.byte	0x31
+ 978 01a1 00       		.byte	0
+ 979 01a2 09       		.uleb128 0x9
+ 980 01a3 38000000 		.4byte	.LVL9
+ 981 01a7 79080000 		.4byte	0x879
+ 982 01ab B5010000 		.4byte	0x1b5
+ 983 01af 0A       		.uleb128 0xa
+ 984 01b0 01       		.uleb128 0x1
+ 985 01b1 50       		.byte	0x50
+ 986 01b2 01       		.uleb128 0x1
+ 987 01b3 31       		.byte	0x31
+ 988 01b4 00       		.byte	0
+ 989 01b5 0B       		.uleb128 0xb
+ 990 01b6 40000000 		.4byte	.LVL11
+ 991 01ba 84080000 		.4byte	0x884
+ 992 01be 0B       		.uleb128 0xb
+ 993 01bf 44000000 		.4byte	.LVL12
+ 994 01c3 8F080000 		.4byte	0x88f
+ 995 01c7 0B       		.uleb128 0xb
+ 996 01c8 58000000 		.4byte	.LVL15
+ 997 01cc 9A080000 		.4byte	0x89a
+ 998 01d0 09       		.uleb128 0x9
+ 999 01d1 6A000000 		.4byte	.LVL20
+ 1000 01d5 A6080000 		.4byte	0x8a6
+ 1001 01d9 F3010000 		.4byte	0x1f3
+ 1002 01dd 0A       		.uleb128 0xa
+ 1003 01de 01       		.uleb128 0x1
+ 1004 01df 50       		.byte	0x50
+ 1005 01e0 02       		.uleb128 0x2
+ 1006 01e1 75       		.byte	0x75
+ 1007 01e2 00       		.sleb128 0
+ 1008 01e3 0A       		.uleb128 0xa
+ 1009 01e4 01       		.uleb128 0x1
+ 1010 01e5 51       		.byte	0x51
+ 1011 01e6 05       		.uleb128 0x5
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 24
+
+
+ 1012 01e7 03       		.byte	0x3
+ 1013 01e8 00000000 		.4byte	.LC0
+ 1014 01ec 0A       		.uleb128 0xa
+ 1015 01ed 01       		.uleb128 0x1
+ 1016 01ee 52       		.byte	0x52
+ 1017 01ef 02       		.uleb128 0x2
+ 1018 01f0 78       		.byte	0x78
+ 1019 01f1 00       		.sleb128 0
+ 1020 01f2 00       		.byte	0
+ 1021 01f3 09       		.uleb128 0x9
+ 1022 01f4 70000000 		.4byte	.LVL21
+ 1023 01f8 B1080000 		.4byte	0x8b1
+ 1024 01fc 07020000 		.4byte	0x207
+ 1025 0200 0A       		.uleb128 0xa
+ 1026 0201 01       		.uleb128 0x1
+ 1027 0202 50       		.byte	0x50
+ 1028 0203 02       		.uleb128 0x2
+ 1029 0204 75       		.byte	0x75
+ 1030 0205 00       		.sleb128 0
+ 1031 0206 00       		.byte	0
+ 1032 0207 0B       		.uleb128 0xb
+ 1033 0208 74000000 		.4byte	.LVL22
+ 1034 020c BC080000 		.4byte	0x8bc
+ 1035 0210 0B       		.uleb128 0xb
+ 1036 0211 7A000000 		.4byte	.LVL24
+ 1037 0215 C7080000 		.4byte	0x8c7
+ 1038 0219 0B       		.uleb128 0xb
+ 1039 021a 8E000000 		.4byte	.LVL27
+ 1040 021e BC080000 		.4byte	0x8bc
+ 1041 0222 0B       		.uleb128 0xb
+ 1042 0223 96000000 		.4byte	.LVL29
+ 1043 0227 C7080000 		.4byte	0x8c7
+ 1044 022b 09       		.uleb128 0x9
+ 1045 022c C8000000 		.4byte	.LVL36
+ 1046 0230 A6080000 		.4byte	0x8a6
+ 1047 0234 51020000 		.4byte	0x251
+ 1048 0238 0A       		.uleb128 0xa
+ 1049 0239 01       		.uleb128 0x1
+ 1050 023a 50       		.byte	0x50
+ 1051 023b 05       		.uleb128 0x5
+ 1052 023c 03       		.byte	0x3
+ 1053 023d 00000000 		.4byte	output
+ 1054 0241 0A       		.uleb128 0xa
+ 1055 0242 01       		.uleb128 0x1
+ 1056 0243 51       		.byte	0x51
+ 1057 0244 05       		.uleb128 0x5
+ 1058 0245 03       		.byte	0x3
+ 1059 0246 10000000 		.4byte	.LC1
+ 1060 024a 0A       		.uleb128 0xa
+ 1061 024b 01       		.uleb128 0x1
+ 1062 024c 52       		.byte	0x52
+ 1063 024d 02       		.uleb128 0x2
+ 1064 024e 74       		.byte	0x74
+ 1065 024f 00       		.sleb128 0
+ 1066 0250 00       		.byte	0
+ 1067 0251 09       		.uleb128 0x9
+ 1068 0252 CE000000 		.4byte	.LVL37
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 25
+
+
+ 1069 0256 B1080000 		.4byte	0x8b1
+ 1070 025a 68020000 		.4byte	0x268
+ 1071 025e 0A       		.uleb128 0xa
+ 1072 025f 01       		.uleb128 0x1
+ 1073 0260 50       		.byte	0x50
+ 1074 0261 05       		.uleb128 0x5
+ 1075 0262 03       		.byte	0x3
+ 1076 0263 00000000 		.4byte	output
+ 1077 0267 00       		.byte	0
+ 1078 0268 09       		.uleb128 0x9
+ 1079 0269 D8000000 		.4byte	.LVL38
+ 1080 026d A6080000 		.4byte	0x8a6
+ 1081 0271 8E020000 		.4byte	0x28e
+ 1082 0275 0A       		.uleb128 0xa
+ 1083 0276 01       		.uleb128 0x1
+ 1084 0277 50       		.byte	0x50
+ 1085 0278 05       		.uleb128 0x5
+ 1086 0279 03       		.byte	0x3
+ 1087 027a 00000000 		.4byte	output
+ 1088 027e 0A       		.uleb128 0xa
+ 1089 027f 01       		.uleb128 0x1
+ 1090 0280 51       		.byte	0x51
+ 1091 0281 05       		.uleb128 0x5
+ 1092 0282 03       		.byte	0x3
+ 1093 0283 1C000000 		.4byte	.LC2
+ 1094 0287 0A       		.uleb128 0xa
+ 1095 0288 01       		.uleb128 0x1
+ 1096 0289 52       		.byte	0x52
+ 1097 028a 02       		.uleb128 0x2
+ 1098 028b 75       		.byte	0x75
+ 1099 028c 00       		.sleb128 0
+ 1100 028d 00       		.byte	0
+ 1101 028e 09       		.uleb128 0x9
+ 1102 028f DE000000 		.4byte	.LVL39
+ 1103 0293 B1080000 		.4byte	0x8b1
+ 1104 0297 A5020000 		.4byte	0x2a5
+ 1105 029b 0A       		.uleb128 0xa
+ 1106 029c 01       		.uleb128 0x1
+ 1107 029d 50       		.byte	0x50
+ 1108 029e 05       		.uleb128 0x5
+ 1109 029f 03       		.byte	0x3
+ 1110 02a0 00000000 		.4byte	output
+ 1111 02a4 00       		.byte	0
+ 1112 02a5 09       		.uleb128 0x9
+ 1113 02a6 E4000000 		.4byte	.LVL40
+ 1114 02aa D2080000 		.4byte	0x8d2
+ 1115 02ae B9020000 		.4byte	0x2b9
+ 1116 02b2 0A       		.uleb128 0xa
+ 1117 02b3 01       		.uleb128 0x1
+ 1118 02b4 50       		.byte	0x50
+ 1119 02b5 02       		.uleb128 0x2
+ 1120 02b6 74       		.byte	0x74
+ 1121 02b7 00       		.sleb128 0
+ 1122 02b8 00       		.byte	0
+ 1123 02b9 09       		.uleb128 0x9
+ 1124 02ba EA000000 		.4byte	.LVL41
+ 1125 02be DD080000 		.4byte	0x8dd
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 26
+
+
+ 1126 02c2 CD020000 		.4byte	0x2cd
+ 1127 02c6 0A       		.uleb128 0xa
+ 1128 02c7 01       		.uleb128 0x1
+ 1129 02c8 50       		.byte	0x50
+ 1130 02c9 02       		.uleb128 0x2
+ 1131 02ca 75       		.byte	0x75
+ 1132 02cb 00       		.sleb128 0
+ 1133 02cc 00       		.byte	0
+ 1134 02cd 09       		.uleb128 0x9
+ 1135 02ce 26010000 		.4byte	.LVL47
+ 1136 02d2 E8080000 		.4byte	0x8e8
+ 1137 02d6 E2020000 		.4byte	0x2e2
+ 1138 02da 0A       		.uleb128 0xa
+ 1139 02db 01       		.uleb128 0x1
+ 1140 02dc 50       		.byte	0x50
+ 1141 02dd 03       		.uleb128 0x3
+ 1142 02de 91       		.byte	0x91
+ 1143 02df 54       		.sleb128 -44
+ 1144 02e0 06       		.byte	0x6
+ 1145 02e1 00       		.byte	0
+ 1146 02e2 09       		.uleb128 0x9
+ 1147 02e3 5C010000 		.4byte	.LVL51
+ 1148 02e7 A6080000 		.4byte	0x8a6
+ 1149 02eb 05030000 		.4byte	0x305
+ 1150 02ef 0A       		.uleb128 0xa
+ 1151 02f0 01       		.uleb128 0x1
+ 1152 02f1 50       		.byte	0x50
+ 1153 02f2 02       		.uleb128 0x2
+ 1154 02f3 74       		.byte	0x74
+ 1155 02f4 00       		.sleb128 0
+ 1156 02f5 0A       		.uleb128 0xa
+ 1157 02f6 01       		.uleb128 0x1
+ 1158 02f7 51       		.byte	0x51
+ 1159 02f8 05       		.uleb128 0x5
+ 1160 02f9 03       		.byte	0x3
+ 1161 02fa 28000000 		.4byte	.LC3
+ 1162 02fe 0A       		.uleb128 0xa
+ 1163 02ff 01       		.uleb128 0x1
+ 1164 0300 52       		.byte	0x52
+ 1165 0301 02       		.uleb128 0x2
+ 1166 0302 77       		.byte	0x77
+ 1167 0303 00       		.sleb128 0
+ 1168 0304 00       		.byte	0
+ 1169 0305 09       		.uleb128 0x9
+ 1170 0306 62010000 		.4byte	.LVL52
+ 1171 030a B1080000 		.4byte	0x8b1
+ 1172 030e 19030000 		.4byte	0x319
+ 1173 0312 0A       		.uleb128 0xa
+ 1174 0313 01       		.uleb128 0x1
+ 1175 0314 50       		.byte	0x50
+ 1176 0315 02       		.uleb128 0x2
+ 1177 0316 74       		.byte	0x74
+ 1178 0317 00       		.sleb128 0
+ 1179 0318 00       		.byte	0
+ 1180 0319 09       		.uleb128 0x9
+ 1181 031a 6C010000 		.4byte	.LVL53
+ 1182 031e A6080000 		.4byte	0x8a6
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 27
+
+
+ 1183 0322 3C030000 		.4byte	0x33c
+ 1184 0326 0A       		.uleb128 0xa
+ 1185 0327 01       		.uleb128 0x1
+ 1186 0328 50       		.byte	0x50
+ 1187 0329 02       		.uleb128 0x2
+ 1188 032a 74       		.byte	0x74
+ 1189 032b 00       		.sleb128 0
+ 1190 032c 0A       		.uleb128 0xa
+ 1191 032d 01       		.uleb128 0x1
+ 1192 032e 51       		.byte	0x51
+ 1193 032f 05       		.uleb128 0x5
+ 1194 0330 03       		.byte	0x3
+ 1195 0331 3C000000 		.4byte	.LC4
+ 1196 0335 0A       		.uleb128 0xa
+ 1197 0336 01       		.uleb128 0x1
+ 1198 0337 52       		.byte	0x52
+ 1199 0338 02       		.uleb128 0x2
+ 1200 0339 7A       		.byte	0x7a
+ 1201 033a 00       		.sleb128 0
+ 1202 033b 00       		.byte	0
+ 1203 033c 09       		.uleb128 0x9
+ 1204 033d 72010000 		.4byte	.LVL54
+ 1205 0341 B1080000 		.4byte	0x8b1
+ 1206 0345 50030000 		.4byte	0x350
+ 1207 0349 0A       		.uleb128 0xa
+ 1208 034a 01       		.uleb128 0x1
+ 1209 034b 50       		.byte	0x50
+ 1210 034c 02       		.uleb128 0x2
+ 1211 034d 74       		.byte	0x74
+ 1212 034e 00       		.sleb128 0
+ 1213 034f 00       		.byte	0
+ 1214 0350 0B       		.uleb128 0xb
+ 1215 0351 76010000 		.4byte	.LVL55
+ 1216 0355 F3080000 		.4byte	0x8f3
+ 1217 0359 0B       		.uleb128 0xb
+ 1218 035a 7A010000 		.4byte	.LVL56
+ 1219 035e FE080000 		.4byte	0x8fe
+ 1220 0362 09       		.uleb128 0x9
+ 1221 0363 80010000 		.4byte	.LVL57
+ 1222 0367 09090000 		.4byte	0x909
+ 1223 036b 75030000 		.4byte	0x375
+ 1224 036f 0A       		.uleb128 0xa
+ 1225 0370 01       		.uleb128 0x1
+ 1226 0371 50       		.byte	0x50
+ 1227 0372 01       		.uleb128 0x1
+ 1228 0373 30       		.byte	0x30
+ 1229 0374 00       		.byte	0
+ 1230 0375 0C       		.uleb128 0xc
+ 1231 0376 86010000 		.4byte	.LVL58
+ 1232 037a 14090000 		.4byte	0x914
+ 1233 037e 0A       		.uleb128 0xa
+ 1234 037f 01       		.uleb128 0x1
+ 1235 0380 50       		.byte	0x50
+ 1236 0381 01       		.uleb128 0x1
+ 1237 0382 30       		.byte	0x30
+ 1238 0383 00       		.byte	0
+ 1239 0384 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 28
+
+
+ 1240 0385 05       		.uleb128 0x5
+ 1241 0386 EF040000 		.4byte	.LASF28
+ 1242 038a 01       		.byte	0x1
+ 1243 038b 91       		.byte	0x91
+ 1244 038c 00000000 		.4byte	.LFB65
+ 1245 0390 D4000000 		.4byte	.LFE65-.LFB65
+ 1246 0394 01       		.uleb128 0x1
+ 1247 0395 9C       		.byte	0x9c
+ 1248 0396 31050000 		.4byte	0x531
+ 1249 039a 06       		.uleb128 0x6
+ 1250 039b 3D020000 		.4byte	.LASF29
+ 1251 039f 01       		.byte	0x1
+ 1252 03a0 91       		.byte	0x91
+ 1253 03a1 33000000 		.4byte	0x33
+ 1254 03a5 74020000 		.4byte	.LLST11
+ 1255 03a9 06       		.uleb128 0x6
+ 1256 03aa C0020000 		.4byte	.LASF17
+ 1257 03ae 01       		.byte	0x1
+ 1258 03af 91       		.byte	0x91
+ 1259 03b0 33000000 		.4byte	0x33
+ 1260 03b4 B6020000 		.4byte	.LLST12
+ 1261 03b8 06       		.uleb128 0x6
+ 1262 03b9 15000000 		.4byte	.LASF18
+ 1263 03bd 01       		.byte	0x1
+ 1264 03be 91       		.byte	0x91
+ 1265 03bf 33000000 		.4byte	0x33
+ 1266 03c3 F0020000 		.4byte	.LLST13
+ 1267 03c7 08       		.uleb128 0x8
+ 1268 03c8 9F010000 		.4byte	.LASF19
+ 1269 03cc 01       		.byte	0x1
+ 1270 03cd 92       		.byte	0x92
+ 1271 03ce 33000000 		.4byte	0x33
+ 1272 03d2 07       		.uleb128 0x7
+ 1273 03d3 D7040000 		.4byte	.LASF20
+ 1274 03d7 01       		.byte	0x1
+ 1275 03d8 93       		.byte	0x93
+ 1276 03d9 33000000 		.4byte	0x33
+ 1277 03dd 2A030000 		.4byte	.LLST14
+ 1278 03e1 07       		.uleb128 0x7
+ 1279 03e2 9C000000 		.4byte	.LASF21
+ 1280 03e6 01       		.byte	0x1
+ 1281 03e7 94       		.byte	0x94
+ 1282 03e8 33000000 		.4byte	0x33
+ 1283 03ec 53030000 		.4byte	.LLST15
+ 1284 03f0 07       		.uleb128 0x7
+ 1285 03f1 F1020000 		.4byte	.LASF16
+ 1286 03f5 01       		.byte	0x1
+ 1287 03f6 95       		.byte	0x95
+ 1288 03f7 33000000 		.4byte	0x33
+ 1289 03fb 71030000 		.4byte	.LLST16
+ 1290 03ff 07       		.uleb128 0x7
+ 1291 0400 45000000 		.4byte	.LASF25
+ 1292 0404 01       		.byte	0x1
+ 1293 0405 96       		.byte	0x96
+ 1294 0406 33000000 		.4byte	0x33
+ 1295 040a B5030000 		.4byte	.LLST17
+ 1296 040e 07       		.uleb128 0x7
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 29
+
+
+ 1297 040f E3040000 		.4byte	.LASF26
+ 1298 0413 01       		.byte	0x1
+ 1299 0414 97       		.byte	0x97
+ 1300 0415 33000000 		.4byte	0x33
+ 1301 0419 B5030000 		.4byte	.LLST17
+ 1302 041d 09       		.uleb128 0x9
+ 1303 041e 16000000 		.4byte	.LVL65
+ 1304 0422 6E080000 		.4byte	0x86e
+ 1305 0426 30040000 		.4byte	0x430
+ 1306 042a 0A       		.uleb128 0xa
+ 1307 042b 01       		.uleb128 0x1
+ 1308 042c 50       		.byte	0x50
+ 1309 042d 01       		.uleb128 0x1
+ 1310 042e 30       		.byte	0x30
+ 1311 042f 00       		.byte	0
+ 1312 0430 09       		.uleb128 0x9
+ 1313 0431 1C000000 		.4byte	.LVL66
+ 1314 0435 79080000 		.4byte	0x879
+ 1315 0439 43040000 		.4byte	0x443
+ 1316 043d 0A       		.uleb128 0xa
+ 1317 043e 01       		.uleb128 0x1
+ 1318 043f 50       		.byte	0x50
+ 1319 0440 01       		.uleb128 0x1
+ 1320 0441 31       		.byte	0x31
+ 1321 0442 00       		.byte	0
+ 1322 0443 09       		.uleb128 0x9
+ 1323 0444 24000000 		.4byte	.LVL69
+ 1324 0448 6E080000 		.4byte	0x86e
+ 1325 044c 56040000 		.4byte	0x456
+ 1326 0450 0A       		.uleb128 0xa
+ 1327 0451 01       		.uleb128 0x1
+ 1328 0452 50       		.byte	0x50
+ 1329 0453 01       		.uleb128 0x1
+ 1330 0454 31       		.byte	0x31
+ 1331 0455 00       		.byte	0
+ 1332 0456 09       		.uleb128 0x9
+ 1333 0457 2A000000 		.4byte	.LVL70
+ 1334 045b 79080000 		.4byte	0x879
+ 1335 045f 69040000 		.4byte	0x469
+ 1336 0463 0A       		.uleb128 0xa
+ 1337 0464 01       		.uleb128 0x1
+ 1338 0465 50       		.byte	0x50
+ 1339 0466 01       		.uleb128 0x1
+ 1340 0467 30       		.byte	0x30
+ 1341 0468 00       		.byte	0
+ 1342 0469 0B       		.uleb128 0xb
+ 1343 046a 2E000000 		.4byte	.LVL71
+ 1344 046e 84080000 		.4byte	0x884
+ 1345 0472 09       		.uleb128 0x9
+ 1346 0473 36000000 		.4byte	.LVL72
+ 1347 0477 D2080000 		.4byte	0x8d2
+ 1348 047b 86040000 		.4byte	0x486
+ 1349 047f 0A       		.uleb128 0xa
+ 1350 0480 01       		.uleb128 0x1
+ 1351 0481 50       		.byte	0x50
+ 1352 0482 02       		.uleb128 0x2
+ 1353 0483 75       		.byte	0x75
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 30
+
+
+ 1354 0484 00       		.sleb128 0
+ 1355 0485 00       		.byte	0
+ 1356 0486 0B       		.uleb128 0xb
+ 1357 0487 3A000000 		.4byte	.LVL73
+ 1358 048b 8F080000 		.4byte	0x88f
+ 1359 048f 09       		.uleb128 0x9
+ 1360 0490 40000000 		.4byte	.LVL74
+ 1361 0494 DD080000 		.4byte	0x8dd
+ 1362 0498 A3040000 		.4byte	0x4a3
+ 1363 049c 0A       		.uleb128 0xa
+ 1364 049d 01       		.uleb128 0x1
+ 1365 049e 50       		.byte	0x50
+ 1366 049f 02       		.uleb128 0x2
+ 1367 04a0 75       		.byte	0x75
+ 1368 04a1 00       		.sleb128 0
+ 1369 04a2 00       		.byte	0
+ 1370 04a3 0B       		.uleb128 0xb
+ 1371 04a4 6A000000 		.4byte	.LVL80
+ 1372 04a8 9A080000 		.4byte	0x89a
+ 1373 04ac 0B       		.uleb128 0xb
+ 1374 04ad 74000000 		.4byte	.LVL83
+ 1375 04b1 BC080000 		.4byte	0x8bc
+ 1376 04b5 0B       		.uleb128 0xb
+ 1377 04b6 78000000 		.4byte	.LVL84
+ 1378 04ba C7080000 		.4byte	0x8c7
+ 1379 04be 0B       		.uleb128 0xb
+ 1380 04bf 80000000 		.4byte	.LVL87
+ 1381 04c3 C7080000 		.4byte	0x8c7
+ 1382 04c7 0B       		.uleb128 0xb
+ 1383 04c8 86000000 		.4byte	.LVL89
+ 1384 04cc BC080000 		.4byte	0x8bc
+ 1385 04d0 09       		.uleb128 0x9
+ 1386 04d1 8C000000 		.4byte	.LVL90
+ 1387 04d5 D2080000 		.4byte	0x8d2
+ 1388 04d9 E4040000 		.4byte	0x4e4
+ 1389 04dd 0A       		.uleb128 0xa
+ 1390 04de 01       		.uleb128 0x1
+ 1391 04df 50       		.byte	0x50
+ 1392 04e0 02       		.uleb128 0x2
+ 1393 04e1 75       		.byte	0x75
+ 1394 04e2 00       		.sleb128 0
+ 1395 04e3 00       		.byte	0
+ 1396 04e4 09       		.uleb128 0x9
+ 1397 04e5 92000000 		.4byte	.LVL91
+ 1398 04e9 DD080000 		.4byte	0x8dd
+ 1399 04ed F8040000 		.4byte	0x4f8
+ 1400 04f1 0A       		.uleb128 0xa
+ 1401 04f2 01       		.uleb128 0x1
+ 1402 04f3 50       		.byte	0x50
+ 1403 04f4 02       		.uleb128 0x2
+ 1404 04f5 75       		.byte	0x75
+ 1405 04f6 00       		.sleb128 0
+ 1406 04f7 00       		.byte	0
+ 1407 04f8 09       		.uleb128 0x9
+ 1408 04f9 AA000000 		.4byte	.LVL93
+ 1409 04fd 09090000 		.4byte	0x909
+ 1410 0501 0B050000 		.4byte	0x50b
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 31
+
+
+ 1411 0505 0A       		.uleb128 0xa
+ 1412 0506 01       		.uleb128 0x1
+ 1413 0507 50       		.byte	0x50
+ 1414 0508 01       		.uleb128 0x1
+ 1415 0509 30       		.byte	0x30
+ 1416 050a 00       		.byte	0
+ 1417 050b 09       		.uleb128 0x9
+ 1418 050c B0000000 		.4byte	.LVL94
+ 1419 0510 14090000 		.4byte	0x914
+ 1420 0514 1E050000 		.4byte	0x51e
+ 1421 0518 0A       		.uleb128 0xa
+ 1422 0519 01       		.uleb128 0x1
+ 1423 051a 50       		.byte	0x50
+ 1424 051b 01       		.uleb128 0x1
+ 1425 051c 30       		.byte	0x30
+ 1426 051d 00       		.byte	0
+ 1427 051e 0B       		.uleb128 0xb
+ 1428 051f B4000000 		.4byte	.LVL95
+ 1429 0523 F3080000 		.4byte	0x8f3
+ 1430 0527 0B       		.uleb128 0xb
+ 1431 0528 B8000000 		.4byte	.LVL96
+ 1432 052c FE080000 		.4byte	0x8fe
+ 1433 0530 00       		.byte	0
+ 1434 0531 05       		.uleb128 0x5
+ 1435 0532 00000000 		.4byte	.LASF31
+ 1436 0536 01       		.byte	0x1
+ 1437 0537 EE       		.byte	0xee
+ 1438 0538 00000000 		.4byte	.LFB66
+ 1439 053c 70000000 		.4byte	.LFE66-.LFB66
+ 1440 0540 01       		.uleb128 0x1
+ 1441 0541 9C       		.byte	0x9c
+ 1442 0542 19060000 		.4byte	0x619
+ 1443 0546 06       		.uleb128 0x6
+ 1444 0547 F1020000 		.4byte	.LASF16
+ 1445 054b 01       		.byte	0x1
+ 1446 054c EE       		.byte	0xee
+ 1447 054d 33000000 		.4byte	0x33
+ 1448 0551 D5030000 		.4byte	.LLST19
+ 1449 0555 06       		.uleb128 0x6
+ 1450 0556 2D040000 		.4byte	.LASF32
+ 1451 055a 01       		.byte	0x1
+ 1452 055b EE       		.byte	0xee
+ 1453 055c 33000000 		.4byte	0x33
+ 1454 0560 01040000 		.4byte	.LLST20
+ 1455 0564 06       		.uleb128 0x6
+ 1456 0565 C0020000 		.4byte	.LASF17
+ 1457 0569 01       		.byte	0x1
+ 1458 056a EE       		.byte	0xee
+ 1459 056b 33000000 		.4byte	0x33
+ 1460 056f 2D040000 		.4byte	.LLST21
+ 1461 0573 06       		.uleb128 0x6
+ 1462 0574 15000000 		.4byte	.LASF18
+ 1463 0578 01       		.byte	0x1
+ 1464 0579 EE       		.byte	0xee
+ 1465 057a 33000000 		.4byte	0x33
+ 1466 057e 59040000 		.4byte	.LLST22
+ 1467 0582 07       		.uleb128 0x7
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 32
+
+
+ 1468 0583 F1000000 		.4byte	.LASF33
+ 1469 0587 01       		.byte	0x1
+ 1470 0588 F1       		.byte	0xf1
+ 1471 0589 33000000 		.4byte	0x33
+ 1472 058d 85040000 		.4byte	.LLST23
+ 1473 0591 0B       		.uleb128 0xb
+ 1474 0592 20000000 		.4byte	.LVL102
+ 1475 0596 1F090000 		.4byte	0x91f
+ 1476 059a 09       		.uleb128 0x9
+ 1477 059b 42000000 		.4byte	.LVL108
+ 1478 059f 85030000 		.4byte	0x385
+ 1479 05a3 BA050000 		.4byte	0x5ba
+ 1480 05a7 0A       		.uleb128 0xa
+ 1481 05a8 01       		.uleb128 0x1
+ 1482 05a9 50       		.byte	0x50
+ 1483 05aa 02       		.uleb128 0x2
+ 1484 05ab 76       		.byte	0x76
+ 1485 05ac 00       		.sleb128 0
+ 1486 05ad 0A       		.uleb128 0xa
+ 1487 05ae 01       		.uleb128 0x1
+ 1488 05af 51       		.byte	0x51
+ 1489 05b0 02       		.uleb128 0x2
+ 1490 05b1 74       		.byte	0x74
+ 1491 05b2 00       		.sleb128 0
+ 1492 05b3 0A       		.uleb128 0xa
+ 1493 05b4 01       		.uleb128 0x1
+ 1494 05b5 52       		.byte	0x52
+ 1495 05b6 02       		.uleb128 0x2
+ 1496 05b7 75       		.byte	0x75
+ 1497 05b8 00       		.sleb128 0
+ 1498 05b9 00       		.byte	0
+ 1499 05ba 09       		.uleb128 0x9
+ 1500 05bb 4C000000 		.4byte	.LVL109
+ 1501 05bf A4000000 		.4byte	0xa4
+ 1502 05c3 DA050000 		.4byte	0x5da
+ 1503 05c7 0A       		.uleb128 0xa
+ 1504 05c8 01       		.uleb128 0x1
+ 1505 05c9 50       		.byte	0x50
+ 1506 05ca 02       		.uleb128 0x2
+ 1507 05cb 77       		.byte	0x77
+ 1508 05cc 00       		.sleb128 0
+ 1509 05cd 0A       		.uleb128 0xa
+ 1510 05ce 01       		.uleb128 0x1
+ 1511 05cf 51       		.byte	0x51
+ 1512 05d0 02       		.uleb128 0x2
+ 1513 05d1 74       		.byte	0x74
+ 1514 05d2 00       		.sleb128 0
+ 1515 05d3 0A       		.uleb128 0xa
+ 1516 05d4 01       		.uleb128 0x1
+ 1517 05d5 52       		.byte	0x52
+ 1518 05d6 02       		.uleb128 0x2
+ 1519 05d7 75       		.byte	0x75
+ 1520 05d8 00       		.sleb128 0
+ 1521 05d9 00       		.byte	0
+ 1522 05da 09       		.uleb128 0x9
+ 1523 05db 56000000 		.4byte	.LVL110
+ 1524 05df 85030000 		.4byte	0x385
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 33
+
+
+ 1525 05e3 FB050000 		.4byte	0x5fb
+ 1526 05e7 0A       		.uleb128 0xa
+ 1527 05e8 01       		.uleb128 0x1
+ 1528 05e9 50       		.byte	0x50
+ 1529 05ea 03       		.uleb128 0x3
+ 1530 05eb 76       		.byte	0x76
+ 1531 05ec 00       		.sleb128 0
+ 1532 05ed 1F       		.byte	0x1f
+ 1533 05ee 0A       		.uleb128 0xa
+ 1534 05ef 01       		.uleb128 0x1
+ 1535 05f0 51       		.byte	0x51
+ 1536 05f1 02       		.uleb128 0x2
+ 1537 05f2 74       		.byte	0x74
+ 1538 05f3 00       		.sleb128 0
+ 1539 05f4 0A       		.uleb128 0xa
+ 1540 05f5 01       		.uleb128 0x1
+ 1541 05f6 52       		.byte	0x52
+ 1542 05f7 02       		.uleb128 0x2
+ 1543 05f8 75       		.byte	0x75
+ 1544 05f9 00       		.sleb128 0
+ 1545 05fa 00       		.byte	0
+ 1546 05fb 0C       		.uleb128 0xc
+ 1547 05fc 60000000 		.4byte	.LVL111
+ 1548 0600 A4000000 		.4byte	0xa4
+ 1549 0604 0A       		.uleb128 0xa
+ 1550 0605 01       		.uleb128 0x1
+ 1551 0606 50       		.byte	0x50
+ 1552 0607 03       		.uleb128 0x3
+ 1553 0608 77       		.byte	0x77
+ 1554 0609 00       		.sleb128 0
+ 1555 060a 1F       		.byte	0x1f
+ 1556 060b 0A       		.uleb128 0xa
+ 1557 060c 01       		.uleb128 0x1
+ 1558 060d 51       		.byte	0x51
+ 1559 060e 02       		.uleb128 0x2
+ 1560 060f 74       		.byte	0x74
+ 1561 0610 00       		.sleb128 0
+ 1562 0611 0A       		.uleb128 0xa
+ 1563 0612 01       		.uleb128 0x1
+ 1564 0613 52       		.byte	0x52
+ 1565 0614 02       		.uleb128 0x2
+ 1566 0615 75       		.byte	0x75
+ 1567 0616 00       		.sleb128 0
+ 1568 0617 00       		.byte	0
+ 1569 0618 00       		.byte	0
+ 1570 0619 05       		.uleb128 0x5
+ 1571 061a 22040000 		.4byte	.LASF34
+ 1572 061e 01       		.byte	0x1
+ 1573 061f F9       		.byte	0xf9
+ 1574 0620 00000000 		.4byte	.LFB67
+ 1575 0624 E0000000 		.4byte	.LFE67-.LFB67
+ 1576 0628 01       		.uleb128 0x1
+ 1577 0629 9C       		.byte	0x9c
+ 1578 062a 2E070000 		.4byte	0x72e
+ 1579 062e 06       		.uleb128 0x6
+ 1580 062f C0020000 		.4byte	.LASF17
+ 1581 0633 01       		.byte	0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 34
+
+
+ 1582 0634 F9       		.byte	0xf9
+ 1583 0635 33000000 		.4byte	0x33
+ 1584 0639 A3040000 		.4byte	.LLST24
+ 1585 063d 06       		.uleb128 0x6
+ 1586 063e A5020000 		.4byte	.LASF35
+ 1587 0642 01       		.byte	0x1
+ 1588 0643 F9       		.byte	0xf9
+ 1589 0644 33000000 		.4byte	0x33
+ 1590 0648 DB040000 		.4byte	.LLST25
+ 1591 064c 07       		.uleb128 0x7
+ 1592 064d FA040000 		.4byte	.LASF36
+ 1593 0651 01       		.byte	0x1
+ 1594 0652 FB       		.byte	0xfb
+ 1595 0653 33000000 		.4byte	0x33
+ 1596 0657 1D050000 		.4byte	.LLST26
+ 1597 065b 07       		.uleb128 0x7
+ 1598 065c B2020000 		.4byte	.LASF37
+ 1599 0660 01       		.byte	0x1
+ 1600 0661 FC       		.byte	0xfc
+ 1601 0662 33000000 		.4byte	0x33
+ 1602 0666 71050000 		.4byte	.LLST27
+ 1603 066a 08       		.uleb128 0x8
+ 1604 066b EA030000 		.4byte	.LASF38
+ 1605 066f 01       		.byte	0x1
+ 1606 0670 FD       		.byte	0xfd
+ 1607 0671 33000000 		.4byte	0x33
+ 1608 0675 09       		.uleb128 0x9
+ 1609 0676 2A000000 		.4byte	.LVL118
+ 1610 067a D2080000 		.4byte	0x8d2
+ 1611 067e 89060000 		.4byte	0x689
+ 1612 0682 0A       		.uleb128 0xa
+ 1613 0683 01       		.uleb128 0x1
+ 1614 0684 50       		.byte	0x50
+ 1615 0685 02       		.uleb128 0x2
+ 1616 0686 76       		.byte	0x76
+ 1617 0687 00       		.sleb128 0
+ 1618 0688 00       		.byte	0
+ 1619 0689 09       		.uleb128 0x9
+ 1620 068a 30000000 		.4byte	.LVL119
+ 1621 068e DD080000 		.4byte	0x8dd
+ 1622 0692 9D060000 		.4byte	0x69d
+ 1623 0696 0A       		.uleb128 0xa
+ 1624 0697 01       		.uleb128 0x1
+ 1625 0698 50       		.byte	0x50
+ 1626 0699 02       		.uleb128 0x2
+ 1627 069a 76       		.byte	0x76
+ 1628 069b 00       		.sleb128 0
+ 1629 069c 00       		.byte	0
+ 1630 069d 09       		.uleb128 0x9
+ 1631 069e 36000000 		.4byte	.LVL120
+ 1632 06a2 2A090000 		.4byte	0x92a
+ 1633 06a6 B1060000 		.4byte	0x6b1
+ 1634 06aa 0A       		.uleb128 0xa
+ 1635 06ab 01       		.uleb128 0x1
+ 1636 06ac 50       		.byte	0x50
+ 1637 06ad 02       		.uleb128 0x2
+ 1638 06ae 08       		.byte	0x8
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 35
+
+
+ 1639 06af 32       		.byte	0x32
+ 1640 06b0 00       		.byte	0
+ 1641 06b1 09       		.uleb128 0x9
+ 1642 06b2 7E000000 		.4byte	.LVL129
+ 1643 06b6 D2080000 		.4byte	0x8d2
+ 1644 06ba C5060000 		.4byte	0x6c5
+ 1645 06be 0A       		.uleb128 0xa
+ 1646 06bf 01       		.uleb128 0x1
+ 1647 06c0 50       		.byte	0x50
+ 1648 06c1 02       		.uleb128 0x2
+ 1649 06c2 76       		.byte	0x76
+ 1650 06c3 00       		.sleb128 0
+ 1651 06c4 00       		.byte	0
+ 1652 06c5 09       		.uleb128 0x9
+ 1653 06c6 84000000 		.4byte	.LVL130
+ 1654 06ca DD080000 		.4byte	0x8dd
+ 1655 06ce D9060000 		.4byte	0x6d9
+ 1656 06d2 0A       		.uleb128 0xa
+ 1657 06d3 01       		.uleb128 0x1
+ 1658 06d4 50       		.byte	0x50
+ 1659 06d5 02       		.uleb128 0x2
+ 1660 06d6 76       		.byte	0x76
+ 1661 06d7 00       		.sleb128 0
+ 1662 06d8 00       		.byte	0
+ 1663 06d9 09       		.uleb128 0x9
+ 1664 06da 96000000 		.4byte	.LVL133
+ 1665 06de D2080000 		.4byte	0x8d2
+ 1666 06e2 ED060000 		.4byte	0x6ed
+ 1667 06e6 0A       		.uleb128 0xa
+ 1668 06e7 01       		.uleb128 0x1
+ 1669 06e8 50       		.byte	0x50
+ 1670 06e9 02       		.uleb128 0x2
+ 1671 06ea 76       		.byte	0x76
+ 1672 06eb 00       		.sleb128 0
+ 1673 06ec 00       		.byte	0
+ 1674 06ed 09       		.uleb128 0x9
+ 1675 06ee 9C000000 		.4byte	.LVL134
+ 1676 06f2 DD080000 		.4byte	0x8dd
+ 1677 06f6 01070000 		.4byte	0x701
+ 1678 06fa 0A       		.uleb128 0xa
+ 1679 06fb 01       		.uleb128 0x1
+ 1680 06fc 50       		.byte	0x50
+ 1681 06fd 02       		.uleb128 0x2
+ 1682 06fe 76       		.byte	0x76
+ 1683 06ff 00       		.sleb128 0
+ 1684 0700 00       		.byte	0
+ 1685 0701 09       		.uleb128 0x9
+ 1686 0702 A2000000 		.4byte	.LVL135
+ 1687 0706 2A090000 		.4byte	0x92a
+ 1688 070a 15070000 		.4byte	0x715
+ 1689 070e 0A       		.uleb128 0xa
+ 1690 070f 01       		.uleb128 0x1
+ 1691 0710 50       		.byte	0x50
+ 1692 0711 02       		.uleb128 0x2
+ 1693 0712 08       		.byte	0x8
+ 1694 0713 32       		.byte	0x32
+ 1695 0714 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 36
+
+
+ 1696 0715 0B       		.uleb128 0xb
+ 1697 0716 CE000000 		.4byte	.LVL140
+ 1698 071a D2080000 		.4byte	0x8d2
+ 1699 071e 0C       		.uleb128 0xc
+ 1700 071f D4000000 		.4byte	.LVL141
+ 1701 0723 DD080000 		.4byte	0x8dd
+ 1702 0727 0A       		.uleb128 0xa
+ 1703 0728 01       		.uleb128 0x1
+ 1704 0729 50       		.byte	0x50
+ 1705 072a 01       		.uleb128 0x1
+ 1706 072b 30       		.byte	0x30
+ 1707 072c 00       		.byte	0
+ 1708 072d 00       		.byte	0
+ 1709 072e 0D       		.uleb128 0xd
+ 1710 072f 34040000 		.4byte	.LASF39
+ 1711 0733 04       		.byte	0x4
+ 1712 0734 1207     		.2byte	0x712
+ 1713 0736 3A070000 		.4byte	0x73a
+ 1714 073a 0E       		.uleb128 0xe
+ 1715 073b 76000000 		.4byte	0x76
+ 1716 073f 0F       		.uleb128 0xf
+ 1717 0740 8A010000 		.4byte	.LASF40
+ 1718 0744 05       		.byte	0x5
+ 1719 0745 1C       		.byte	0x1c
+ 1720 0746 33000000 		.4byte	0x33
+ 1721 074a 05       		.uleb128 0x5
+ 1722 074b 03       		.byte	0x3
+ 1723 074c 00000000 		.4byte	internal_orientation
+ 1724 0750 0F       		.uleb128 0xf
+ 1725 0751 02030000 		.4byte	.LASF41
+ 1726 0755 06       		.byte	0x6
+ 1727 0756 1D       		.byte	0x1d
+ 1728 0757 33000000 		.4byte	0x33
+ 1729 075b 05       		.uleb128 0x5
+ 1730 075c 03       		.byte	0x3
+ 1731 075d 00000000 		.4byte	driveStraightEnable
+ 1732 0761 0F       		.uleb128 0xf
+ 1733 0762 EE010000 		.4byte	.LASF42
+ 1734 0766 06       		.byte	0x6
+ 1735 0767 1F       		.byte	0x1f
+ 1736 0768 33000000 		.4byte	0x33
+ 1737 076c 05       		.uleb128 0x5
+ 1738 076d 03       		.byte	0x3
+ 1739 076e 00000000 		.4byte	currentPuckRackScanningIndex
+ 1740 0772 10       		.uleb128 0x10
+ 1741 0773 33000000 		.4byte	0x33
+ 1742 0777 82070000 		.4byte	0x782
+ 1743 077b 11       		.uleb128 0x11
+ 1744 077c 9D000000 		.4byte	0x9d
+ 1745 0780 04       		.byte	0x4
+ 1746 0781 00       		.byte	0
+ 1747 0782 0F       		.uleb128 0xf
+ 1748 0783 80030000 		.4byte	.LASF43
+ 1749 0787 06       		.byte	0x6
+ 1750 0788 20       		.byte	0x20
+ 1751 0789 72070000 		.4byte	0x772
+ 1752 078d 05       		.uleb128 0x5
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 37
+
+
+ 1753 078e 03       		.byte	0x3
+ 1754 078f 00000000 		.4byte	puckRackColours
+ 1755 0793 0F       		.uleb128 0xf
+ 1756 0794 A4000000 		.4byte	.LASF44
+ 1757 0798 06       		.byte	0x6
+ 1758 0799 21       		.byte	0x21
+ 1759 079a 72070000 		.4byte	0x772
+ 1760 079e 05       		.uleb128 0x5
+ 1761 079f 03       		.byte	0x3
+ 1762 07a0 00000000 		.4byte	puckRackOffsetsFromWest
+ 1763 07a4 0F       		.uleb128 0xf
+ 1764 07a5 E3020000 		.4byte	.LASF45
+ 1765 07a9 06       		.byte	0x6
+ 1766 07aa 22       		.byte	0x22
+ 1767 07ab 33000000 		.4byte	0x33
+ 1768 07af 05       		.uleb128 0x5
+ 1769 07b0 03       		.byte	0x3
+ 1770 07b1 00000000 		.4byte	sweeping
+ 1771 07b5 10       		.uleb128 0x10
+ 1772 07b6 81000000 		.4byte	0x81
+ 1773 07ba C5070000 		.4byte	0x7c5
+ 1774 07be 11       		.uleb128 0x11
+ 1775 07bf 9D000000 		.4byte	0x9d
+ 1776 07c3 03       		.byte	0x3
+ 1777 07c4 00       		.byte	0
+ 1778 07c5 0F       		.uleb128 0xf
+ 1779 07c6 6D020000 		.4byte	.LASF46
+ 1780 07ca 06       		.byte	0x6
+ 1781 07cb 23       		.byte	0x23
+ 1782 07cc B5070000 		.4byte	0x7b5
+ 1783 07d0 05       		.uleb128 0x5
+ 1784 07d1 03       		.byte	0x3
+ 1785 07d2 00000000 		.4byte	block_edge_location
+ 1786 07d6 0F       		.uleb128 0xf
+ 1787 07d7 DD010000 		.4byte	.LASF47
+ 1788 07db 07       		.byte	0x7
+ 1789 07dc B6       		.byte	0xb6
+ 1790 07dd 81000000 		.4byte	0x81
+ 1791 07e1 05       		.uleb128 0x5
+ 1792 07e2 03       		.byte	0x3
+ 1793 07e3 00000000 		.4byte	puckPileLocation
+ 1794 07e7 0F       		.uleb128 0xf
+ 1795 07e8 89000000 		.4byte	.LASF48
+ 1796 07ec 06       		.byte	0x6
+ 1797 07ed 25       		.byte	0x25
+ 1798 07ee 48000000 		.4byte	0x48
+ 1799 07f2 05       		.uleb128 0x5
+ 1800 07f3 03       		.byte	0x3
+ 1801 07f4 00000000 		.4byte	drivingForwardFlag
+ 1802 07f8 0F       		.uleb128 0xf
+ 1803 07f9 AA010000 		.4byte	.LASF49
+ 1804 07fd 06       		.byte	0x6
+ 1805 07fe 26       		.byte	0x26
+ 1806 07ff 48000000 		.4byte	0x48
+ 1807 0803 05       		.uleb128 0x5
+ 1808 0804 03       		.byte	0x3
+ 1809 0805 00000000 		.4byte	drivingBackwardFlag
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 38
+
+
+ 1810 0809 0F       		.uleb128 0xf
+ 1811 080a 50000000 		.4byte	.LASF50
+ 1812 080e 06       		.byte	0x6
+ 1813 080f 27       		.byte	0x27
+ 1814 0810 48000000 		.4byte	0x48
+ 1815 0814 05       		.uleb128 0x5
+ 1816 0815 03       		.byte	0x3
+ 1817 0816 00000000 		.4byte	turningLeftFlag
+ 1818 081a 0F       		.uleb128 0xf
+ 1819 081b 32010000 		.4byte	.LASF51
+ 1820 081f 06       		.byte	0x6
+ 1821 0820 28       		.byte	0x28
+ 1822 0821 48000000 		.4byte	0x48
+ 1823 0825 05       		.uleb128 0x5
+ 1824 0826 03       		.byte	0x3
+ 1825 0827 00000000 		.4byte	turningRightFlag
+ 1826 082b 0F       		.uleb128 0xf
+ 1827 082c FF040000 		.4byte	.LASF52
+ 1828 0830 06       		.byte	0x6
+ 1829 0831 2B       		.byte	0x2b
+ 1830 0832 33000000 		.4byte	0x33
+ 1831 0836 05       		.uleb128 0x5
+ 1832 0837 03       		.byte	0x3
+ 1833 0838 00000000 		.4byte	initialisation
+ 1834 083c 10       		.uleb128 0x10
+ 1835 083d 8F000000 		.4byte	0x8f
+ 1836 0841 4C080000 		.4byte	0x84c
+ 1837 0845 11       		.uleb128 0x11
+ 1838 0846 9D000000 		.4byte	0x9d
+ 1839 084a 1F       		.byte	0x1f
+ 1840 084b 00       		.byte	0
+ 1841 084c 0F       		.uleb128 0xf
+ 1842 084d FD030000 		.4byte	.LASF53
+ 1843 0851 06       		.byte	0x6
+ 1844 0852 29       		.byte	0x29
+ 1845 0853 3C080000 		.4byte	0x83c
+ 1846 0857 05       		.uleb128 0x5
+ 1847 0858 03       		.byte	0x3
+ 1848 0859 00000000 		.4byte	output
+ 1849 085d 0F       		.uleb128 0xf
+ 1850 085e D2000000 		.4byte	.LASF54
+ 1851 0862 06       		.byte	0x6
+ 1852 0863 2D       		.byte	0x2d
+ 1853 0864 33000000 		.4byte	0x33
+ 1854 0868 05       		.uleb128 0x5
+ 1855 0869 03       		.byte	0x3
+ 1856 086a 00000000 		.4byte	ultrasonic_flag
+ 1857 086e 12       		.uleb128 0x12
+ 1858 086f 55030000 		.4byte	.LASF55
+ 1859 0873 55030000 		.4byte	.LASF55
+ 1860 0877 08       		.byte	0x8
+ 1861 0878 2F       		.byte	0x2f
+ 1862 0879 12       		.uleb128 0x12
+ 1863 087a 18010000 		.4byte	.LASF56
+ 1864 087e 18010000 		.4byte	.LASF56
+ 1865 0882 09       		.byte	0x9
+ 1866 0883 2F       		.byte	0x2f
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 39
+
+
+ 1867 0884 12       		.uleb128 0x12
+ 1868 0885 2D050000 		.4byte	.LASF57
+ 1869 0889 2D050000 		.4byte	.LASF57
+ 1870 088d 0A       		.byte	0xa
+ 1871 088e DD       		.byte	0xdd
+ 1872 088f 12       		.uleb128 0x12
+ 1873 0890 0B020000 		.4byte	.LASF58
+ 1874 0894 0B020000 		.4byte	.LASF58
+ 1875 0898 0B       		.byte	0xb
+ 1876 0899 DD       		.byte	0xdd
+ 1877 089a 13       		.uleb128 0x13
+ 1878 089b 5B020000 		.4byte	.LASF59
+ 1879 089f 5B020000 		.4byte	.LASF59
+ 1880 08a3 0C       		.byte	0xc
+ 1881 08a4 4B01     		.2byte	0x14b
+ 1882 08a6 12       		.uleb128 0x12
+ 1883 08a7 53020000 		.4byte	.LASF60
+ 1884 08ab 53020000 		.4byte	.LASF60
+ 1885 08af 0D       		.byte	0xd
+ 1886 08b0 E7       		.byte	0xe7
+ 1887 08b1 12       		.uleb128 0x12
+ 1888 08b2 44030000 		.4byte	.LASF61
+ 1889 08b6 44030000 		.4byte	.LASF61
+ 1890 08ba 0E       		.byte	0xe
+ 1891 08bb 8B       		.byte	0x8b
+ 1892 08bc 12       		.uleb128 0x12
+ 1893 08bd 04040000 		.4byte	.LASF62
+ 1894 08c1 04040000 		.4byte	.LASF62
+ 1895 08c5 0F       		.byte	0xf
+ 1896 08c6 4E       		.byte	0x4e
+ 1897 08c7 12       		.uleb128 0x12
+ 1898 08c8 60000000 		.4byte	.LASF63
+ 1899 08cc 60000000 		.4byte	.LASF63
+ 1900 08d0 10       		.byte	0x10
+ 1901 08d1 4E       		.byte	0x4e
+ 1902 08d2 12       		.uleb128 0x12
+ 1903 08d3 0E050000 		.4byte	.LASF64
+ 1904 08d7 0E050000 		.4byte	.LASF64
+ 1905 08db 0A       		.byte	0xa
+ 1906 08dc C3       		.byte	0xc3
+ 1907 08dd 12       		.uleb128 0x12
+ 1908 08de 25000000 		.4byte	.LASF65
+ 1909 08e2 25000000 		.4byte	.LASF65
+ 1910 08e6 0B       		.byte	0xb
+ 1911 08e7 C3       		.byte	0xc3
+ 1912 08e8 12       		.uleb128 0x12
+ 1913 08e9 16030000 		.4byte	.LASF66
+ 1914 08ed 16030000 		.4byte	.LASF66
+ 1915 08f1 05       		.byte	0x5
+ 1916 08f2 15       		.byte	0x15
+ 1917 08f3 12       		.uleb128 0x12
+ 1918 08f4 25020000 		.4byte	.LASF67
+ 1919 08f8 25020000 		.4byte	.LASF67
+ 1920 08fc 0A       		.byte	0xa
+ 1921 08fd DC       		.byte	0xdc
+ 1922 08fe 12       		.uleb128 0x12
+ 1923 08ff 68010000 		.4byte	.LASF68
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 40
+
+
+ 1924 0903 68010000 		.4byte	.LASF68
+ 1925 0907 0B       		.byte	0xb
+ 1926 0908 DC       		.byte	0xdc
+ 1927 0909 12       		.uleb128 0x12
+ 1928 090a FA000000 		.4byte	.LASF69
+ 1929 090e FA000000 		.4byte	.LASF69
+ 1930 0912 0F       		.byte	0xf
+ 1931 0913 4F       		.byte	0x4f
+ 1932 0914 12       		.uleb128 0x12
+ 1933 0915 BE010000 		.4byte	.LASF70
+ 1934 0919 BE010000 		.4byte	.LASF70
+ 1935 091d 10       		.byte	0x10
+ 1936 091e 4F       		.byte	0x4f
+ 1937 091f 14       		.uleb128 0x14
+ 1938 0920 73696E00 		.ascii	"sin\000"
+ 1939 0924 73696E00 		.ascii	"sin\000"
+ 1940 0928 0C       		.byte	0xc
+ 1941 0929 6F       		.byte	0x6f
+ 1942 092a 12       		.uleb128 0x12
+ 1943 092b CF040000 		.4byte	.LASF71
+ 1944 092f CF040000 		.4byte	.LASF71
+ 1945 0933 11       		.byte	0x11
+ 1946 0934 76       		.byte	0x76
+ 1947 0935 00       		.byte	0
+ 1948              		.section	.debug_abbrev,"",%progbits
+ 1949              	.Ldebug_abbrev0:
+ 1950 0000 01       		.uleb128 0x1
+ 1951 0001 11       		.uleb128 0x11
+ 1952 0002 01       		.byte	0x1
+ 1953 0003 25       		.uleb128 0x25
+ 1954 0004 0E       		.uleb128 0xe
+ 1955 0005 13       		.uleb128 0x13
+ 1956 0006 0B       		.uleb128 0xb
+ 1957 0007 03       		.uleb128 0x3
+ 1958 0008 0E       		.uleb128 0xe
+ 1959 0009 1B       		.uleb128 0x1b
+ 1960 000a 0E       		.uleb128 0xe
+ 1961 000b 55       		.uleb128 0x55
+ 1962 000c 17       		.uleb128 0x17
+ 1963 000d 11       		.uleb128 0x11
+ 1964 000e 01       		.uleb128 0x1
+ 1965 000f 10       		.uleb128 0x10
+ 1966 0010 17       		.uleb128 0x17
+ 1967 0011 00       		.byte	0
+ 1968 0012 00       		.byte	0
+ 1969 0013 02       		.uleb128 0x2
+ 1970 0014 24       		.uleb128 0x24
+ 1971 0015 00       		.byte	0
+ 1972 0016 0B       		.uleb128 0xb
+ 1973 0017 0B       		.uleb128 0xb
+ 1974 0018 3E       		.uleb128 0x3e
+ 1975 0019 0B       		.uleb128 0xb
+ 1976 001a 03       		.uleb128 0x3
+ 1977 001b 0E       		.uleb128 0xe
+ 1978 001c 00       		.byte	0
+ 1979 001d 00       		.byte	0
+ 1980 001e 03       		.uleb128 0x3
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 41
+
+
+ 1981 001f 24       		.uleb128 0x24
+ 1982 0020 00       		.byte	0
+ 1983 0021 0B       		.uleb128 0xb
+ 1984 0022 0B       		.uleb128 0xb
+ 1985 0023 3E       		.uleb128 0x3e
+ 1986 0024 0B       		.uleb128 0xb
+ 1987 0025 03       		.uleb128 0x3
+ 1988 0026 08       		.uleb128 0x8
+ 1989 0027 00       		.byte	0
+ 1990 0028 00       		.byte	0
+ 1991 0029 04       		.uleb128 0x4
+ 1992 002a 16       		.uleb128 0x16
+ 1993 002b 00       		.byte	0
+ 1994 002c 03       		.uleb128 0x3
+ 1995 002d 0E       		.uleb128 0xe
+ 1996 002e 3A       		.uleb128 0x3a
+ 1997 002f 0B       		.uleb128 0xb
+ 1998 0030 3B       		.uleb128 0x3b
+ 1999 0031 0B       		.uleb128 0xb
+ 2000 0032 49       		.uleb128 0x49
+ 2001 0033 13       		.uleb128 0x13
+ 2002 0034 00       		.byte	0
+ 2003 0035 00       		.byte	0
+ 2004 0036 05       		.uleb128 0x5
+ 2005 0037 2E       		.uleb128 0x2e
+ 2006 0038 01       		.byte	0x1
+ 2007 0039 3F       		.uleb128 0x3f
+ 2008 003a 19       		.uleb128 0x19
+ 2009 003b 03       		.uleb128 0x3
+ 2010 003c 0E       		.uleb128 0xe
+ 2011 003d 3A       		.uleb128 0x3a
+ 2012 003e 0B       		.uleb128 0xb
+ 2013 003f 3B       		.uleb128 0x3b
+ 2014 0040 0B       		.uleb128 0xb
+ 2015 0041 27       		.uleb128 0x27
+ 2016 0042 19       		.uleb128 0x19
+ 2017 0043 11       		.uleb128 0x11
+ 2018 0044 01       		.uleb128 0x1
+ 2019 0045 12       		.uleb128 0x12
+ 2020 0046 06       		.uleb128 0x6
+ 2021 0047 40       		.uleb128 0x40
+ 2022 0048 18       		.uleb128 0x18
+ 2023 0049 9642     		.uleb128 0x2116
+ 2024 004b 19       		.uleb128 0x19
+ 2025 004c 01       		.uleb128 0x1
+ 2026 004d 13       		.uleb128 0x13
+ 2027 004e 00       		.byte	0
+ 2028 004f 00       		.byte	0
+ 2029 0050 06       		.uleb128 0x6
+ 2030 0051 05       		.uleb128 0x5
+ 2031 0052 00       		.byte	0
+ 2032 0053 03       		.uleb128 0x3
+ 2033 0054 0E       		.uleb128 0xe
+ 2034 0055 3A       		.uleb128 0x3a
+ 2035 0056 0B       		.uleb128 0xb
+ 2036 0057 3B       		.uleb128 0x3b
+ 2037 0058 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 42
+
+
+ 2038 0059 49       		.uleb128 0x49
+ 2039 005a 13       		.uleb128 0x13
+ 2040 005b 02       		.uleb128 0x2
+ 2041 005c 17       		.uleb128 0x17
+ 2042 005d 00       		.byte	0
+ 2043 005e 00       		.byte	0
+ 2044 005f 07       		.uleb128 0x7
+ 2045 0060 34       		.uleb128 0x34
+ 2046 0061 00       		.byte	0
+ 2047 0062 03       		.uleb128 0x3
+ 2048 0063 0E       		.uleb128 0xe
+ 2049 0064 3A       		.uleb128 0x3a
+ 2050 0065 0B       		.uleb128 0xb
+ 2051 0066 3B       		.uleb128 0x3b
+ 2052 0067 0B       		.uleb128 0xb
+ 2053 0068 49       		.uleb128 0x49
+ 2054 0069 13       		.uleb128 0x13
+ 2055 006a 02       		.uleb128 0x2
+ 2056 006b 17       		.uleb128 0x17
+ 2057 006c 00       		.byte	0
+ 2058 006d 00       		.byte	0
+ 2059 006e 08       		.uleb128 0x8
+ 2060 006f 34       		.uleb128 0x34
+ 2061 0070 00       		.byte	0
+ 2062 0071 03       		.uleb128 0x3
+ 2063 0072 0E       		.uleb128 0xe
+ 2064 0073 3A       		.uleb128 0x3a
+ 2065 0074 0B       		.uleb128 0xb
+ 2066 0075 3B       		.uleb128 0x3b
+ 2067 0076 0B       		.uleb128 0xb
+ 2068 0077 49       		.uleb128 0x49
+ 2069 0078 13       		.uleb128 0x13
+ 2070 0079 00       		.byte	0
+ 2071 007a 00       		.byte	0
+ 2072 007b 09       		.uleb128 0x9
+ 2073 007c 898201   		.uleb128 0x4109
+ 2074 007f 01       		.byte	0x1
+ 2075 0080 11       		.uleb128 0x11
+ 2076 0081 01       		.uleb128 0x1
+ 2077 0082 31       		.uleb128 0x31
+ 2078 0083 13       		.uleb128 0x13
+ 2079 0084 01       		.uleb128 0x1
+ 2080 0085 13       		.uleb128 0x13
+ 2081 0086 00       		.byte	0
+ 2082 0087 00       		.byte	0
+ 2083 0088 0A       		.uleb128 0xa
+ 2084 0089 8A8201   		.uleb128 0x410a
+ 2085 008c 00       		.byte	0
+ 2086 008d 02       		.uleb128 0x2
+ 2087 008e 18       		.uleb128 0x18
+ 2088 008f 9142     		.uleb128 0x2111
+ 2089 0091 18       		.uleb128 0x18
+ 2090 0092 00       		.byte	0
+ 2091 0093 00       		.byte	0
+ 2092 0094 0B       		.uleb128 0xb
+ 2093 0095 898201   		.uleb128 0x4109
+ 2094 0098 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 43
+
+
+ 2095 0099 11       		.uleb128 0x11
+ 2096 009a 01       		.uleb128 0x1
+ 2097 009b 31       		.uleb128 0x31
+ 2098 009c 13       		.uleb128 0x13
+ 2099 009d 00       		.byte	0
+ 2100 009e 00       		.byte	0
+ 2101 009f 0C       		.uleb128 0xc
+ 2102 00a0 898201   		.uleb128 0x4109
+ 2103 00a3 01       		.byte	0x1
+ 2104 00a4 11       		.uleb128 0x11
+ 2105 00a5 01       		.uleb128 0x1
+ 2106 00a6 31       		.uleb128 0x31
+ 2107 00a7 13       		.uleb128 0x13
+ 2108 00a8 00       		.byte	0
+ 2109 00a9 00       		.byte	0
+ 2110 00aa 0D       		.uleb128 0xd
+ 2111 00ab 34       		.uleb128 0x34
+ 2112 00ac 00       		.byte	0
+ 2113 00ad 03       		.uleb128 0x3
+ 2114 00ae 0E       		.uleb128 0xe
+ 2115 00af 3A       		.uleb128 0x3a
+ 2116 00b0 0B       		.uleb128 0xb
+ 2117 00b1 3B       		.uleb128 0x3b
+ 2118 00b2 05       		.uleb128 0x5
+ 2119 00b3 49       		.uleb128 0x49
+ 2120 00b4 13       		.uleb128 0x13
+ 2121 00b5 3F       		.uleb128 0x3f
+ 2122 00b6 19       		.uleb128 0x19
+ 2123 00b7 3C       		.uleb128 0x3c
+ 2124 00b8 19       		.uleb128 0x19
+ 2125 00b9 00       		.byte	0
+ 2126 00ba 00       		.byte	0
+ 2127 00bb 0E       		.uleb128 0xe
+ 2128 00bc 35       		.uleb128 0x35
+ 2129 00bd 00       		.byte	0
+ 2130 00be 49       		.uleb128 0x49
+ 2131 00bf 13       		.uleb128 0x13
+ 2132 00c0 00       		.byte	0
+ 2133 00c1 00       		.byte	0
+ 2134 00c2 0F       		.uleb128 0xf
+ 2135 00c3 34       		.uleb128 0x34
+ 2136 00c4 00       		.byte	0
+ 2137 00c5 03       		.uleb128 0x3
+ 2138 00c6 0E       		.uleb128 0xe
+ 2139 00c7 3A       		.uleb128 0x3a
+ 2140 00c8 0B       		.uleb128 0xb
+ 2141 00c9 3B       		.uleb128 0x3b
+ 2142 00ca 0B       		.uleb128 0xb
+ 2143 00cb 49       		.uleb128 0x49
+ 2144 00cc 13       		.uleb128 0x13
+ 2145 00cd 3F       		.uleb128 0x3f
+ 2146 00ce 19       		.uleb128 0x19
+ 2147 00cf 02       		.uleb128 0x2
+ 2148 00d0 18       		.uleb128 0x18
+ 2149 00d1 00       		.byte	0
+ 2150 00d2 00       		.byte	0
+ 2151 00d3 10       		.uleb128 0x10
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 44
+
+
+ 2152 00d4 01       		.uleb128 0x1
+ 2153 00d5 01       		.byte	0x1
+ 2154 00d6 49       		.uleb128 0x49
+ 2155 00d7 13       		.uleb128 0x13
+ 2156 00d8 01       		.uleb128 0x1
+ 2157 00d9 13       		.uleb128 0x13
+ 2158 00da 00       		.byte	0
+ 2159 00db 00       		.byte	0
+ 2160 00dc 11       		.uleb128 0x11
+ 2161 00dd 21       		.uleb128 0x21
+ 2162 00de 00       		.byte	0
+ 2163 00df 49       		.uleb128 0x49
+ 2164 00e0 13       		.uleb128 0x13
+ 2165 00e1 2F       		.uleb128 0x2f
+ 2166 00e2 0B       		.uleb128 0xb
+ 2167 00e3 00       		.byte	0
+ 2168 00e4 00       		.byte	0
+ 2169 00e5 12       		.uleb128 0x12
+ 2170 00e6 2E       		.uleb128 0x2e
+ 2171 00e7 00       		.byte	0
+ 2172 00e8 3F       		.uleb128 0x3f
+ 2173 00e9 19       		.uleb128 0x19
+ 2174 00ea 3C       		.uleb128 0x3c
+ 2175 00eb 19       		.uleb128 0x19
+ 2176 00ec 6E       		.uleb128 0x6e
+ 2177 00ed 0E       		.uleb128 0xe
+ 2178 00ee 03       		.uleb128 0x3
+ 2179 00ef 0E       		.uleb128 0xe
+ 2180 00f0 3A       		.uleb128 0x3a
+ 2181 00f1 0B       		.uleb128 0xb
+ 2182 00f2 3B       		.uleb128 0x3b
+ 2183 00f3 0B       		.uleb128 0xb
+ 2184 00f4 00       		.byte	0
+ 2185 00f5 00       		.byte	0
+ 2186 00f6 13       		.uleb128 0x13
+ 2187 00f7 2E       		.uleb128 0x2e
+ 2188 00f8 00       		.byte	0
+ 2189 00f9 3F       		.uleb128 0x3f
+ 2190 00fa 19       		.uleb128 0x19
+ 2191 00fb 3C       		.uleb128 0x3c
+ 2192 00fc 19       		.uleb128 0x19
+ 2193 00fd 6E       		.uleb128 0x6e
+ 2194 00fe 0E       		.uleb128 0xe
+ 2195 00ff 03       		.uleb128 0x3
+ 2196 0100 0E       		.uleb128 0xe
+ 2197 0101 3A       		.uleb128 0x3a
+ 2198 0102 0B       		.uleb128 0xb
+ 2199 0103 3B       		.uleb128 0x3b
+ 2200 0104 05       		.uleb128 0x5
+ 2201 0105 00       		.byte	0
+ 2202 0106 00       		.byte	0
+ 2203 0107 14       		.uleb128 0x14
+ 2204 0108 2E       		.uleb128 0x2e
+ 2205 0109 00       		.byte	0
+ 2206 010a 3F       		.uleb128 0x3f
+ 2207 010b 19       		.uleb128 0x19
+ 2208 010c 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 45
+
+
+ 2209 010d 19       		.uleb128 0x19
+ 2210 010e 6E       		.uleb128 0x6e
+ 2211 010f 08       		.uleb128 0x8
+ 2212 0110 03       		.uleb128 0x3
+ 2213 0111 08       		.uleb128 0x8
+ 2214 0112 3A       		.uleb128 0x3a
+ 2215 0113 0B       		.uleb128 0xb
+ 2216 0114 3B       		.uleb128 0x3b
+ 2217 0115 0B       		.uleb128 0xb
+ 2218 0116 00       		.byte	0
+ 2219 0117 00       		.byte	0
+ 2220 0118 00       		.byte	0
+ 2221              		.section	.debug_loc,"",%progbits
+ 2222              	.Ldebug_loc0:
+ 2223              	.LLST0:
+ 2224 0000 00000000 		.4byte	.LVL0
+ 2225 0004 1C000000 		.4byte	.LVL3
+ 2226 0008 0100     		.2byte	0x1
+ 2227 000a 50       		.byte	0x50
+ 2228 000b 1C000000 		.4byte	.LVL3
+ 2229 000f 2C000000 		.4byte	.LVL6
+ 2230 0013 0100     		.2byte	0x1
+ 2231 0015 55       		.byte	0x55
+ 2232 0016 2C000000 		.4byte	.LVL6
+ 2233 001a 2E000000 		.4byte	.LVL7
+ 2234 001e 0100     		.2byte	0x1
+ 2235 0020 50       		.byte	0x50
+ 2236 0021 2E000000 		.4byte	.LVL7
+ 2237 0025 60000000 		.4byte	.LVL18
+ 2238 0029 0100     		.2byte	0x1
+ 2239 002b 55       		.byte	0x55
+ 2240 002c 60000000 		.4byte	.LVL18
+ 2241 0030 BC010000 		.4byte	.LFE64
+ 2242 0034 0400     		.2byte	0x4
+ 2243 0036 F3       		.byte	0xf3
+ 2244 0037 01       		.uleb128 0x1
+ 2245 0038 50       		.byte	0x50
+ 2246 0039 9F       		.byte	0x9f
+ 2247 003a 00000000 		.4byte	0
+ 2248 003e 00000000 		.4byte	0
+ 2249              	.LLST1:
+ 2250 0042 00000000 		.4byte	.LVL0
+ 2251 0046 1F000000 		.4byte	.LVL4-1
+ 2252 004a 0100     		.2byte	0x1
+ 2253 004c 51       		.byte	0x51
+ 2254 004d 1F000000 		.4byte	.LVL4-1
+ 2255 0051 2C000000 		.4byte	.LVL6
+ 2256 0055 0100     		.2byte	0x1
+ 2257 0057 5B       		.byte	0x5b
+ 2258 0058 2C000000 		.4byte	.LVL6
+ 2259 005c 31000000 		.4byte	.LVL8-1
+ 2260 0060 0100     		.2byte	0x1
+ 2261 0062 51       		.byte	0x51
+ 2262 0063 31000000 		.4byte	.LVL8-1
+ 2263 0067 8C010000 		.4byte	.LVL59
+ 2264 006b 0100     		.2byte	0x1
+ 2265 006d 5B       		.byte	0x5b
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 46
+
+
+ 2266 006e 8C010000 		.4byte	.LVL59
+ 2267 0072 BC010000 		.4byte	.LFE64
+ 2268 0076 0400     		.2byte	0x4
+ 2269 0078 F3       		.byte	0xf3
+ 2270 0079 01       		.uleb128 0x1
+ 2271 007a 51       		.byte	0x51
+ 2272 007b 9F       		.byte	0x9f
+ 2273 007c 00000000 		.4byte	0
+ 2274 0080 00000000 		.4byte	0
+ 2275              	.LLST2:
+ 2276 0084 00000000 		.4byte	.LVL0
+ 2277 0088 1F000000 		.4byte	.LVL4-1
+ 2278 008c 0100     		.2byte	0x1
+ 2279 008e 52       		.byte	0x52
+ 2280 008f 1F000000 		.4byte	.LVL4-1
+ 2281 0093 2C000000 		.4byte	.LVL6
+ 2282 0097 0200     		.2byte	0x2
+ 2283 0099 91       		.byte	0x91
+ 2284 009a 50       		.sleb128 -48
+ 2285 009b 2C000000 		.4byte	.LVL6
+ 2286 009f 31000000 		.4byte	.LVL8-1
+ 2287 00a3 0100     		.2byte	0x1
+ 2288 00a5 52       		.byte	0x52
+ 2289 00a6 31000000 		.4byte	.LVL8-1
+ 2290 00aa 8C010000 		.4byte	.LVL59
+ 2291 00ae 0200     		.2byte	0x2
+ 2292 00b0 91       		.byte	0x91
+ 2293 00b1 50       		.sleb128 -48
+ 2294 00b2 8C010000 		.4byte	.LVL59
+ 2295 00b6 BC010000 		.4byte	.LFE64
+ 2296 00ba 0200     		.2byte	0x2
+ 2297 00bc 7D       		.byte	0x7d
+ 2298 00bd 50       		.sleb128 -48
+ 2299 00be 00000000 		.4byte	0
+ 2300 00c2 00000000 		.4byte	0
+ 2301              	.LLST3:
+ 2302 00c6 76000000 		.4byte	.LVL23
+ 2303 00ca 79000000 		.4byte	.LVL24-1
+ 2304 00ce 0100     		.2byte	0x1
+ 2305 00d0 50       		.byte	0x50
+ 2306 00d1 79000000 		.4byte	.LVL24-1
+ 2307 00d5 92000000 		.4byte	.LVL28
+ 2308 00d9 0100     		.2byte	0x1
+ 2309 00db 57       		.byte	0x57
+ 2310 00dc 92000000 		.4byte	.LVL28
+ 2311 00e0 95000000 		.4byte	.LVL29-1
+ 2312 00e4 0100     		.2byte	0x1
+ 2313 00e6 50       		.byte	0x50
+ 2314 00e7 95000000 		.4byte	.LVL29-1
+ 2315 00eb 2A010000 		.4byte	.LVL49
+ 2316 00ef 0100     		.2byte	0x1
+ 2317 00f1 56       		.byte	0x56
+ 2318 00f2 2A010000 		.4byte	.LVL49
+ 2319 00f6 8C010000 		.4byte	.LVL59
+ 2320 00fa 0100     		.2byte	0x1
+ 2321 00fc 57       		.byte	0x57
+ 2322 00fd 00000000 		.4byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 47
+
+
+ 2323 0101 00000000 		.4byte	0
+ 2324              	.LLST4:
+ 2325 0105 7C000000 		.4byte	.LVL25
+ 2326 0109 8A000000 		.4byte	.LVL26
+ 2327 010d 0100     		.2byte	0x1
+ 2328 010f 50       		.byte	0x50
+ 2329 0110 8A000000 		.4byte	.LVL26
+ 2330 0114 98000000 		.4byte	.LVL30
+ 2331 0118 0100     		.2byte	0x1
+ 2332 011a 5A       		.byte	0x5a
+ 2333 011b 98000000 		.4byte	.LVL30
+ 2334 011f A6000000 		.4byte	.LVL31
+ 2335 0123 0100     		.2byte	0x1
+ 2336 0125 50       		.byte	0x50
+ 2337 0126 A6000000 		.4byte	.LVL31
+ 2338 012a 8C010000 		.4byte	.LVL59
+ 2339 012e 0100     		.2byte	0x1
+ 2340 0130 5A       		.byte	0x5a
+ 2341 0131 00000000 		.4byte	0
+ 2342 0135 00000000 		.4byte	0
+ 2343              	.LLST5:
+ 2344 0139 5E000000 		.4byte	.LVL17
+ 2345 013d 66000000 		.4byte	.LVL19
+ 2346 0141 0100     		.2byte	0x1
+ 2347 0143 50       		.byte	0x50
+ 2348 0144 66000000 		.4byte	.LVL19
+ 2349 0148 69000000 		.4byte	.LVL20-1
+ 2350 014c 0100     		.2byte	0x1
+ 2351 014e 52       		.byte	0x52
+ 2352 014f 69000000 		.4byte	.LVL20-1
+ 2353 0153 8C010000 		.4byte	.LVL59
+ 2354 0157 0100     		.2byte	0x1
+ 2355 0159 58       		.byte	0x58
+ 2356 015a 00000000 		.4byte	0
+ 2357 015e 00000000 		.4byte	0
+ 2358              	.LLST6:
+ 2359 0162 26000000 		.4byte	.LVL5
+ 2360 0166 2C000000 		.4byte	.LVL6
+ 2361 016a 0200     		.2byte	0x2
+ 2362 016c 31       		.byte	0x31
+ 2363 016d 9F       		.byte	0x9f
+ 2364 016e 38000000 		.4byte	.LVL9
+ 2365 0172 3C000000 		.4byte	.LVL10
+ 2366 0176 0200     		.2byte	0x2
+ 2367 0178 30       		.byte	0x30
+ 2368 0179 9F       		.byte	0x9f
+ 2369 017a 3C000000 		.4byte	.LVL10
+ 2370 017e 8C010000 		.4byte	.LVL59
+ 2371 0182 0200     		.2byte	0x2
+ 2372 0184 91       		.byte	0x91
+ 2373 0185 54       		.sleb128 -44
+ 2374 0186 8C010000 		.4byte	.LVL59
+ 2375 018a BC010000 		.4byte	.LFE64
+ 2376 018e 0200     		.2byte	0x2
+ 2377 0190 7D       		.byte	0x7d
+ 2378 0191 54       		.sleb128 -44
+ 2379 0192 00000000 		.4byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 48
+
+
+ 2380 0196 00000000 		.4byte	0
+ 2381              	.LLST7:
+ 2382 019a 0C000000 		.4byte	.LVL1
+ 2383 019e 8A000000 		.4byte	.LVL26
+ 2384 01a2 0400     		.2byte	0x4
+ 2385 01a4 0B       		.byte	0xb
+ 2386 01a5 3FFE     		.2byte	0xfe3f
+ 2387 01a7 9F       		.byte	0x9f
+ 2388 01a8 8A000000 		.4byte	.LVL26
+ 2389 01ac 28010000 		.4byte	.LVL48
+ 2390 01b0 0200     		.2byte	0x2
+ 2391 01b2 91       		.byte	0x91
+ 2392 01b3 4C       		.sleb128 -52
+ 2393 01b4 28010000 		.4byte	.LVL48
+ 2394 01b8 2A010000 		.4byte	.LVL49
+ 2395 01bc 0100     		.2byte	0x1
+ 2396 01be 56       		.byte	0x56
+ 2397 01bf 2A010000 		.4byte	.LVL49
+ 2398 01c3 8C010000 		.4byte	.LVL59
+ 2399 01c7 0200     		.2byte	0x2
+ 2400 01c9 91       		.byte	0x91
+ 2401 01ca 4C       		.sleb128 -52
+ 2402 01cb 8C010000 		.4byte	.LVL59
+ 2403 01cf BC010000 		.4byte	.LFE64
+ 2404 01d3 0200     		.2byte	0x2
+ 2405 01d5 7D       		.byte	0x7d
+ 2406 01d6 4C       		.sleb128 -52
+ 2407 01d7 00000000 		.4byte	0
+ 2408 01db 00000000 		.4byte	0
+ 2409              	.LLST8:
+ 2410 01df 0C000000 		.4byte	.LVL1
+ 2411 01e3 8A000000 		.4byte	.LVL26
+ 2412 01e7 0200     		.2byte	0x2
+ 2413 01e9 30       		.byte	0x30
+ 2414 01ea 9F       		.byte	0x9f
+ 2415 01eb 8A000000 		.4byte	.LVL26
+ 2416 01ef 8D000000 		.4byte	.LVL27-1
+ 2417 01f3 0100     		.2byte	0x1
+ 2418 01f5 53       		.byte	0x53
+ 2419 01f6 8D000000 		.4byte	.LVL27-1
+ 2420 01fa 28010000 		.4byte	.LVL48
+ 2421 01fe 0200     		.2byte	0x2
+ 2422 0200 91       		.byte	0x91
+ 2423 0201 48       		.sleb128 -56
+ 2424 0202 28010000 		.4byte	.LVL48
+ 2425 0206 2A010000 		.4byte	.LVL49
+ 2426 020a 0100     		.2byte	0x1
+ 2427 020c 50       		.byte	0x50
+ 2428 020d 2A010000 		.4byte	.LVL49
+ 2429 0211 8C010000 		.4byte	.LVL59
+ 2430 0215 0200     		.2byte	0x2
+ 2431 0217 91       		.byte	0x91
+ 2432 0218 48       		.sleb128 -56
+ 2433 0219 8C010000 		.4byte	.LVL59
+ 2434 021d BC010000 		.4byte	.LFE64
+ 2435 0221 0200     		.2byte	0x2
+ 2436 0223 7D       		.byte	0x7d
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 49
+
+
+ 2437 0224 48       		.sleb128 -56
+ 2438 0225 00000000 		.4byte	0
+ 2439 0229 00000000 		.4byte	0
+ 2440              	.LLST9:
+ 2441 022d 0C000000 		.4byte	.LVL1
+ 2442 0231 16000000 		.4byte	.LVL2
+ 2443 0235 0100     		.2byte	0x1
+ 2444 0237 51       		.byte	0x51
+ 2445 0238 16000000 		.4byte	.LVL2
+ 2446 023c 52010000 		.4byte	.LVL50
+ 2447 0240 0100     		.2byte	0x1
+ 2448 0242 54       		.byte	0x54
+ 2449 0243 00000000 		.4byte	0
+ 2450 0247 00000000 		.4byte	0
+ 2451              	.LLST10:
+ 2452 024b 0C000000 		.4byte	.LVL1
+ 2453 024f 16000000 		.4byte	.LVL2
+ 2454 0253 0100     		.2byte	0x1
+ 2455 0255 51       		.byte	0x51
+ 2456 0256 16000000 		.4byte	.LVL2
+ 2457 025a 8A000000 		.4byte	.LVL26
+ 2458 025e 0100     		.2byte	0x1
+ 2459 0260 54       		.byte	0x54
+ 2460 0261 8A000000 		.4byte	.LVL26
+ 2461 0265 8C010000 		.4byte	.LVL59
+ 2462 0269 0100     		.2byte	0x1
+ 2463 026b 55       		.byte	0x55
+ 2464 026c 00000000 		.4byte	0
+ 2465 0270 00000000 		.4byte	0
+ 2466              	.LLST11:
+ 2467 0274 00000000 		.4byte	.LVL60
+ 2468 0278 12000000 		.4byte	.LVL64
+ 2469 027c 0100     		.2byte	0x1
+ 2470 027e 50       		.byte	0x50
+ 2471 027f 12000000 		.4byte	.LVL64
+ 2472 0283 1E000000 		.4byte	.LVL67
+ 2473 0287 0100     		.2byte	0x1
+ 2474 0289 54       		.byte	0x54
+ 2475 028a 1E000000 		.4byte	.LVL67
+ 2476 028e 20000000 		.4byte	.LVL68
+ 2477 0292 0100     		.2byte	0x1
+ 2478 0294 50       		.byte	0x50
+ 2479 0295 20000000 		.4byte	.LVL68
+ 2480 0299 7A000000 		.4byte	.LVL85
+ 2481 029d 0100     		.2byte	0x1
+ 2482 029f 54       		.byte	0x54
+ 2483 02a0 7A000000 		.4byte	.LVL85
+ 2484 02a4 D4000000 		.4byte	.LFE65
+ 2485 02a8 0400     		.2byte	0x4
+ 2486 02aa F3       		.byte	0xf3
+ 2487 02ab 01       		.uleb128 0x1
+ 2488 02ac 50       		.byte	0x50
+ 2489 02ad 9F       		.byte	0x9f
+ 2490 02ae 00000000 		.4byte	0
+ 2491 02b2 00000000 		.4byte	0
+ 2492              	.LLST12:
+ 2493 02b6 00000000 		.4byte	.LVL60
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 50
+
+
+ 2494 02ba 15000000 		.4byte	.LVL65-1
+ 2495 02be 0100     		.2byte	0x1
+ 2496 02c0 51       		.byte	0x51
+ 2497 02c1 15000000 		.4byte	.LVL65-1
+ 2498 02c5 1E000000 		.4byte	.LVL67
+ 2499 02c9 0400     		.2byte	0x4
+ 2500 02cb F3       		.byte	0xf3
+ 2501 02cc 01       		.uleb128 0x1
+ 2502 02cd 51       		.byte	0x51
+ 2503 02ce 9F       		.byte	0x9f
+ 2504 02cf 1E000000 		.4byte	.LVL67
+ 2505 02d3 23000000 		.4byte	.LVL69-1
+ 2506 02d7 0100     		.2byte	0x1
+ 2507 02d9 51       		.byte	0x51
+ 2508 02da 23000000 		.4byte	.LVL69-1
+ 2509 02de D4000000 		.4byte	.LFE65
+ 2510 02e2 0400     		.2byte	0x4
+ 2511 02e4 F3       		.byte	0xf3
+ 2512 02e5 01       		.uleb128 0x1
+ 2513 02e6 51       		.byte	0x51
+ 2514 02e7 9F       		.byte	0x9f
+ 2515 02e8 00000000 		.4byte	0
+ 2516 02ec 00000000 		.4byte	0
+ 2517              	.LLST13:
+ 2518 02f0 00000000 		.4byte	.LVL60
+ 2519 02f4 15000000 		.4byte	.LVL65-1
+ 2520 02f8 0100     		.2byte	0x1
+ 2521 02fa 52       		.byte	0x52
+ 2522 02fb 15000000 		.4byte	.LVL65-1
+ 2523 02ff 1E000000 		.4byte	.LVL67
+ 2524 0303 0400     		.2byte	0x4
+ 2525 0305 F3       		.byte	0xf3
+ 2526 0306 01       		.uleb128 0x1
+ 2527 0307 52       		.byte	0x52
+ 2528 0308 9F       		.byte	0x9f
+ 2529 0309 1E000000 		.4byte	.LVL67
+ 2530 030d 23000000 		.4byte	.LVL69-1
+ 2531 0311 0100     		.2byte	0x1
+ 2532 0313 52       		.byte	0x52
+ 2533 0314 23000000 		.4byte	.LVL69-1
+ 2534 0318 D4000000 		.4byte	.LFE65
+ 2535 031c 0400     		.2byte	0x4
+ 2536 031e F3       		.byte	0xf3
+ 2537 031f 01       		.uleb128 0x1
+ 2538 0320 52       		.byte	0x52
+ 2539 0321 9F       		.byte	0x9f
+ 2540 0322 00000000 		.4byte	0
+ 2541 0326 00000000 		.4byte	0
+ 2542              	.LLST14:
+ 2543 032a 7A000000 		.4byte	.LVL85
+ 2544 032e 7C000000 		.4byte	.LVL86
+ 2545 0332 0100     		.2byte	0x1
+ 2546 0334 50       		.byte	0x50
+ 2547 0335 82000000 		.4byte	.LVL88
+ 2548 0339 85000000 		.4byte	.LVL89-1
+ 2549 033d 0100     		.2byte	0x1
+ 2550 033f 50       		.byte	0x50
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 51
+
+
+ 2551 0340 85000000 		.4byte	.LVL89-1
+ 2552 0344 98000000 		.4byte	.LVL92
+ 2553 0348 0100     		.2byte	0x1
+ 2554 034a 54       		.byte	0x54
+ 2555 034b 00000000 		.4byte	0
+ 2556 034f 00000000 		.4byte	0
+ 2557              	.LLST15:
+ 2558 0353 70000000 		.4byte	.LVL82
+ 2559 0357 73000000 		.4byte	.LVL83-1
+ 2560 035b 0100     		.2byte	0x1
+ 2561 035d 50       		.byte	0x50
+ 2562 035e 73000000 		.4byte	.LVL83-1
+ 2563 0362 BA000000 		.4byte	.LVL97
+ 2564 0366 0100     		.2byte	0x1
+ 2565 0368 56       		.byte	0x56
+ 2566 0369 00000000 		.4byte	0
+ 2567 036d 00000000 		.4byte	0
+ 2568              	.LLST16:
+ 2569 0371 40000000 		.4byte	.LVL74
+ 2570 0375 46000000 		.4byte	.LVL75
+ 2571 0379 0600     		.2byte	0x6
+ 2572 037b 74       		.byte	0x74
+ 2573 037c 00       		.sleb128 0
+ 2574 037d 08       		.byte	0x8
+ 2575 037e 6B       		.byte	0x6b
+ 2576 037f 1E       		.byte	0x1e
+ 2577 0380 9F       		.byte	0x9f
+ 2578 0381 46000000 		.4byte	.LVL75
+ 2579 0385 49000000 		.4byte	.LVL76-1
+ 2580 0389 0100     		.2byte	0x1
+ 2581 038b 50       		.byte	0x50
+ 2582 038c 49000000 		.4byte	.LVL76-1
+ 2583 0390 7A000000 		.4byte	.LVL85
+ 2584 0394 0600     		.2byte	0x6
+ 2585 0396 74       		.byte	0x74
+ 2586 0397 00       		.sleb128 0
+ 2587 0398 08       		.byte	0x8
+ 2588 0399 6B       		.byte	0x6b
+ 2589 039a 1E       		.byte	0x1e
+ 2590 039b 9F       		.byte	0x9f
+ 2591 039c 7A000000 		.4byte	.LVL85
+ 2592 03a0 D4000000 		.4byte	.LFE65
+ 2593 03a4 0700     		.2byte	0x7
+ 2594 03a6 F3       		.byte	0xf3
+ 2595 03a7 01       		.uleb128 0x1
+ 2596 03a8 50       		.byte	0x50
+ 2597 03a9 08       		.byte	0x8
+ 2598 03aa 6B       		.byte	0x6b
+ 2599 03ab 1E       		.byte	0x1e
+ 2600 03ac 9F       		.byte	0x9f
+ 2601 03ad 00000000 		.4byte	0
+ 2602 03b1 00000000 		.4byte	0
+ 2603              	.LLST17:
+ 2604 03b5 06000000 		.4byte	.LVL61
+ 2605 03b9 0A000000 		.4byte	.LVL62
+ 2606 03bd 0100     		.2byte	0x1
+ 2607 03bf 51       		.byte	0x51
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 52
+
+
+ 2608 03c0 0A000000 		.4byte	.LVL62
+ 2609 03c4 0C000000 		.4byte	.LVL63
+ 2610 03c8 0300     		.2byte	0x3
+ 2611 03ca 08       		.byte	0x8
+ 2612 03cb C8       		.byte	0xc8
+ 2613 03cc 9F       		.byte	0x9f
+ 2614 03cd 00000000 		.4byte	0
+ 2615 03d1 00000000 		.4byte	0
+ 2616              	.LLST19:
+ 2617 03d5 00000000 		.4byte	.LVL98
+ 2618 03d9 0E000000 		.4byte	.LVL99
+ 2619 03dd 0100     		.2byte	0x1
+ 2620 03df 50       		.byte	0x50
+ 2621 03e0 0E000000 		.4byte	.LVL99
+ 2622 03e4 38000000 		.4byte	.LVL106
+ 2623 03e8 0100     		.2byte	0x1
+ 2624 03ea 57       		.byte	0x57
+ 2625 03eb 38000000 		.4byte	.LVL106
+ 2626 03ef 70000000 		.4byte	.LFE66
+ 2627 03f3 0400     		.2byte	0x4
+ 2628 03f5 F3       		.byte	0xf3
+ 2629 03f6 01       		.uleb128 0x1
+ 2630 03f7 50       		.byte	0x50
+ 2631 03f8 9F       		.byte	0x9f
+ 2632 03f9 00000000 		.4byte	0
+ 2633 03fd 00000000 		.4byte	0
+ 2634              	.LLST20:
+ 2635 0401 00000000 		.4byte	.LVL98
+ 2636 0405 11000000 		.4byte	.LVL100-1
+ 2637 0409 0100     		.2byte	0x1
+ 2638 040b 51       		.byte	0x51
+ 2639 040c 11000000 		.4byte	.LVL100-1
+ 2640 0410 64000000 		.4byte	.LVL112
+ 2641 0414 0100     		.2byte	0x1
+ 2642 0416 56       		.byte	0x56
+ 2643 0417 64000000 		.4byte	.LVL112
+ 2644 041b 70000000 		.4byte	.LFE66
+ 2645 041f 0400     		.2byte	0x4
+ 2646 0421 F3       		.byte	0xf3
+ 2647 0422 01       		.uleb128 0x1
+ 2648 0423 51       		.byte	0x51
+ 2649 0424 9F       		.byte	0x9f
+ 2650 0425 00000000 		.4byte	0
+ 2651 0429 00000000 		.4byte	0
+ 2652              	.LLST21:
+ 2653 042d 00000000 		.4byte	.LVL98
+ 2654 0431 11000000 		.4byte	.LVL100-1
+ 2655 0435 0100     		.2byte	0x1
+ 2656 0437 52       		.byte	0x52
+ 2657 0438 11000000 		.4byte	.LVL100-1
+ 2658 043c 64000000 		.4byte	.LVL112
+ 2659 0440 0100     		.2byte	0x1
+ 2660 0442 54       		.byte	0x54
+ 2661 0443 64000000 		.4byte	.LVL112
+ 2662 0447 70000000 		.4byte	.LFE66
+ 2663 044b 0400     		.2byte	0x4
+ 2664 044d F3       		.byte	0xf3
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 53
+
+
+ 2665 044e 01       		.uleb128 0x1
+ 2666 044f 52       		.byte	0x52
+ 2667 0450 9F       		.byte	0x9f
+ 2668 0451 00000000 		.4byte	0
+ 2669 0455 00000000 		.4byte	0
+ 2670              	.LLST22:
+ 2671 0459 00000000 		.4byte	.LVL98
+ 2672 045d 11000000 		.4byte	.LVL100-1
+ 2673 0461 0100     		.2byte	0x1
+ 2674 0463 53       		.byte	0x53
+ 2675 0464 11000000 		.4byte	.LVL100-1
+ 2676 0468 64000000 		.4byte	.LVL112
+ 2677 046c 0100     		.2byte	0x1
+ 2678 046e 55       		.byte	0x55
+ 2679 046f 64000000 		.4byte	.LVL112
+ 2680 0473 70000000 		.4byte	.LFE66
+ 2681 0477 0400     		.2byte	0x4
+ 2682 0479 F3       		.byte	0xf3
+ 2683 047a 01       		.uleb128 0x1
+ 2684 047b 53       		.byte	0x53
+ 2685 047c 9F       		.byte	0x9f
+ 2686 047d 00000000 		.4byte	0
+ 2687 0481 00000000 		.4byte	0
+ 2688              	.LLST23:
+ 2689 0485 38000000 		.4byte	.LVL106
+ 2690 0489 3E000000 		.4byte	.LVL107
+ 2691 048d 0100     		.2byte	0x1
+ 2692 048f 50       		.byte	0x50
+ 2693 0490 3E000000 		.4byte	.LVL107
+ 2694 0494 64000000 		.4byte	.LVL112
+ 2695 0498 0100     		.2byte	0x1
+ 2696 049a 57       		.byte	0x57
+ 2697 049b 00000000 		.4byte	0
+ 2698 049f 00000000 		.4byte	0
+ 2699              	.LLST24:
+ 2700 04a3 00000000 		.4byte	.LVL113
+ 2701 04a7 0C000000 		.4byte	.LVL114
+ 2702 04ab 0100     		.2byte	0x1
+ 2703 04ad 50       		.byte	0x50
+ 2704 04ae 0C000000 		.4byte	.LVL114
+ 2705 04b2 8C000000 		.4byte	.LVL131
+ 2706 04b6 0100     		.2byte	0x1
+ 2707 04b8 54       		.byte	0x54
+ 2708 04b9 8C000000 		.4byte	.LVL131
+ 2709 04bd E0000000 		.4byte	.LFE67
+ 2710 04c1 1000     		.2byte	0x10
+ 2711 04c3 F3       		.byte	0xf3
+ 2712 04c4 01       		.uleb128 0x1
+ 2713 04c5 50       		.byte	0x50
+ 2714 04c6 4F       		.byte	0x4f
+ 2715 04c7 26       		.byte	0x26
+ 2716 04c8 F3       		.byte	0xf3
+ 2717 04c9 01       		.uleb128 0x1
+ 2718 04ca 50       		.byte	0x50
+ 2719 04cb 27       		.byte	0x27
+ 2720 04cc F3       		.byte	0xf3
+ 2721 04cd 01       		.uleb128 0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 54
+
+
+ 2722 04ce 50       		.byte	0x50
+ 2723 04cf 4F       		.byte	0x4f
+ 2724 04d0 26       		.byte	0x26
+ 2725 04d1 1C       		.byte	0x1c
+ 2726 04d2 9F       		.byte	0x9f
+ 2727 04d3 00000000 		.4byte	0
+ 2728 04d7 00000000 		.4byte	0
+ 2729              	.LLST25:
+ 2730 04db 00000000 		.4byte	.LVL113
+ 2731 04df 1E000000 		.4byte	.LVL116
+ 2732 04e3 0100     		.2byte	0x1
+ 2733 04e5 51       		.byte	0x51
+ 2734 04e6 1E000000 		.4byte	.LVL116
+ 2735 04ea 38000000 		.4byte	.LVL121
+ 2736 04ee 0100     		.2byte	0x1
+ 2737 04f0 5B       		.byte	0x5b
+ 2738 04f1 38000000 		.4byte	.LVL121
+ 2739 04f5 3C000000 		.4byte	.LVL122
+ 2740 04f9 0100     		.2byte	0x1
+ 2741 04fb 51       		.byte	0x51
+ 2742 04fc 3C000000 		.4byte	.LVL122
+ 2743 0500 D8000000 		.4byte	.LVL142
+ 2744 0504 0100     		.2byte	0x1
+ 2745 0506 5B       		.byte	0x5b
+ 2746 0507 D8000000 		.4byte	.LVL142
+ 2747 050b E0000000 		.4byte	.LFE67
+ 2748 050f 0400     		.2byte	0x4
+ 2749 0511 F3       		.byte	0xf3
+ 2750 0512 01       		.uleb128 0x1
+ 2751 0513 51       		.byte	0x51
+ 2752 0514 9F       		.byte	0x9f
+ 2753 0515 00000000 		.4byte	0
+ 2754 0519 00000000 		.4byte	0
+ 2755              	.LLST26:
+ 2756 051d 18000000 		.4byte	.LVL115
+ 2757 0521 D8000000 		.4byte	.LVL142
+ 2758 0525 0100     		.2byte	0x1
+ 2759 0527 55       		.byte	0x55
+ 2760 0528 D8000000 		.4byte	.LVL142
+ 2761 052c E0000000 		.4byte	.LFE67
+ 2762 0530 3700     		.2byte	0x37
+ 2763 0532 F3       		.byte	0xf3
+ 2764 0533 01       		.uleb128 0x1
+ 2765 0534 50       		.byte	0x50
+ 2766 0535 4F       		.byte	0x4f
+ 2767 0536 26       		.byte	0x26
+ 2768 0537 F3       		.byte	0xf3
+ 2769 0538 01       		.uleb128 0x1
+ 2770 0539 50       		.byte	0x50
+ 2771 053a 27       		.byte	0x27
+ 2772 053b F3       		.byte	0xf3
+ 2773 053c 01       		.uleb128 0x1
+ 2774 053d 50       		.byte	0x50
+ 2775 053e 4F       		.byte	0x4f
+ 2776 053f 26       		.byte	0x26
+ 2777 0540 1C       		.byte	0x1c
+ 2778 0541 F7       		.byte	0xf7
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 55
+
+
+ 2779 0542 33       		.uleb128 0x33
+ 2780 0543 F7       		.byte	0xf7
+ 2781 0544 25       		.uleb128 0x25
+ 2782 0545 0C       		.byte	0xc
+ 2783 0546 67666666 		.4byte	0x66666667
+ 2784 054a F7       		.byte	0xf7
+ 2785 054b 25       		.uleb128 0x25
+ 2786 054c 1E       		.byte	0x1e
+ 2787 054d 08       		.byte	0x8
+ 2788 054e 20       		.byte	0x20
+ 2789 054f F7       		.byte	0xf7
+ 2790 0550 25       		.uleb128 0x25
+ 2791 0551 25       		.byte	0x25
+ 2792 0552 F7       		.byte	0xf7
+ 2793 0553 2C       		.uleb128 0x2c
+ 2794 0554 32       		.byte	0x32
+ 2795 0555 26       		.byte	0x26
+ 2796 0556 F3       		.byte	0xf3
+ 2797 0557 01       		.uleb128 0x1
+ 2798 0558 50       		.byte	0x50
+ 2799 0559 4F       		.byte	0x4f
+ 2800 055a 26       		.byte	0x26
+ 2801 055b F3       		.byte	0xf3
+ 2802 055c 01       		.uleb128 0x1
+ 2803 055d 50       		.byte	0x50
+ 2804 055e 27       		.byte	0x27
+ 2805 055f F3       		.byte	0xf3
+ 2806 0560 01       		.uleb128 0x1
+ 2807 0561 50       		.byte	0x50
+ 2808 0562 4F       		.byte	0x4f
+ 2809 0563 26       		.byte	0x26
+ 2810 0564 1C       		.byte	0x1c
+ 2811 0565 4F       		.byte	0x4f
+ 2812 0566 26       		.byte	0x26
+ 2813 0567 1C       		.byte	0x1c
+ 2814 0568 9F       		.byte	0x9f
+ 2815 0569 00000000 		.4byte	0
+ 2816 056d 00000000 		.4byte	0
+ 2817              	.LLST27:
+ 2818 0571 18000000 		.4byte	.LVL115
+ 2819 0575 1E000000 		.4byte	.LVL116
+ 2820 0579 0200     		.2byte	0x2
+ 2821 057b 30       		.byte	0x30
+ 2822 057c 9F       		.byte	0x9f
+ 2823 057d 1E000000 		.4byte	.LVL116
+ 2824 0581 38000000 		.4byte	.LVL121
+ 2825 0585 0100     		.2byte	0x1
+ 2826 0587 5A       		.byte	0x5a
+ 2827 0588 38000000 		.4byte	.LVL121
+ 2828 058c 3C000000 		.4byte	.LVL122
+ 2829 0590 0200     		.2byte	0x2
+ 2830 0592 30       		.byte	0x30
+ 2831 0593 9F       		.byte	0x9f
+ 2832 0594 3C000000 		.4byte	.LVL122
+ 2833 0598 84000000 		.4byte	.LVL130
+ 2834 059c 0100     		.2byte	0x1
+ 2835 059e 5A       		.byte	0x5a
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 56
+
+
+ 2836 059f 8C000000 		.4byte	.LVL131
+ 2837 05a3 D4000000 		.4byte	.LVL141
+ 2838 05a7 0100     		.2byte	0x1
+ 2839 05a9 54       		.byte	0x54
+ 2840 05aa 00000000 		.4byte	0
+ 2841 05ae 00000000 		.4byte	0
+ 2842              		.section	.debug_aranges,"",%progbits
+ 2843 0000 34000000 		.4byte	0x34
+ 2844 0004 0200     		.2byte	0x2
+ 2845 0006 00000000 		.4byte	.Ldebug_info0
+ 2846 000a 04       		.byte	0x4
+ 2847 000b 00       		.byte	0
+ 2848 000c 0000     		.2byte	0
+ 2849 000e 0000     		.2byte	0
+ 2850 0010 00000000 		.4byte	.LFB64
+ 2851 0014 BC010000 		.4byte	.LFE64-.LFB64
+ 2852 0018 00000000 		.4byte	.LFB65
+ 2853 001c D4000000 		.4byte	.LFE65-.LFB65
+ 2854 0020 00000000 		.4byte	.LFB66
+ 2855 0024 70000000 		.4byte	.LFE66-.LFB66
+ 2856 0028 00000000 		.4byte	.LFB67
+ 2857 002c E0000000 		.4byte	.LFE67-.LFB67
+ 2858 0030 00000000 		.4byte	0
+ 2859 0034 00000000 		.4byte	0
+ 2860              		.section	.debug_ranges,"",%progbits
+ 2861              	.Ldebug_ranges0:
+ 2862 0000 00000000 		.4byte	.LFB64
+ 2863 0004 BC010000 		.4byte	.LFE64
+ 2864 0008 00000000 		.4byte	.LFB65
+ 2865 000c D4000000 		.4byte	.LFE65
+ 2866 0010 00000000 		.4byte	.LFB66
+ 2867 0014 70000000 		.4byte	.LFE66
+ 2868 0018 00000000 		.4byte	.LFB67
+ 2869 001c E0000000 		.4byte	.LFE67
+ 2870 0020 00000000 		.4byte	0
+ 2871 0024 00000000 		.4byte	0
+ 2872              		.section	.debug_line,"",%progbits
+ 2873              	.Ldebug_line0:
+ 2874 0000 65030000 		.section	.debug_str,"MS",%progbits,1
+ 2874      02008F02 
+ 2874      00000201 
+ 2874      FB0E0D00 
+ 2874      01010101 
+ 2875              	.LASF31:
+ 2876 0000 7472616E 		.ascii	"translateMoveDynamic\000"
+ 2876      736C6174 
+ 2876      654D6F76 
+ 2876      6544796E 
+ 2876      616D6963 
+ 2877              	.LASF18:
+ 2878 0015 61637469 		.ascii	"activate_safety\000"
+ 2878      76617465 
+ 2878      5F736166 
+ 2878      65747900 
+ 2879              	.LASF65:
+ 2880 0025 4D6F746F 		.ascii	"Motor_Right_Driver_WriteCompare\000"
+ 2880      725F5269 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 57
+
+
+ 2880      6768745F 
+ 2880      44726976 
+ 2880      65725F57 
+ 2881              	.LASF25:
+ 2882 0045 73706565 		.ascii	"speed_left\000"
+ 2882      645F6C65 
+ 2882      667400
+ 2883              	.LASF50:
+ 2884 0050 7475726E 		.ascii	"turningLeftFlag\000"
+ 2884      696E674C 
+ 2884      65667446 
+ 2884      6C616700 
+ 2885              	.LASF63:
+ 2886 0060 4D6F746F 		.ascii	"Motor_Right_Decoder_GetCounter\000"
+ 2886      725F5269 
+ 2886      6768745F 
+ 2886      4465636F 
+ 2886      6465725F 
+ 2887              	.LASF4:
+ 2888 007f 73686F72 		.ascii	"short int\000"
+ 2888      7420696E 
+ 2888      7400
+ 2889              	.LASF48:
+ 2890 0089 64726976 		.ascii	"drivingForwardFlag\000"
+ 2890      696E6746 
+ 2890      6F727761 
+ 2890      7264466C 
+ 2890      616700
+ 2891              	.LASF21:
+ 2892 009c 636F6D70 		.ascii	"compare\000"
+ 2892      61726500 
+ 2893              	.LASF44:
+ 2894 00a4 7075636B 		.ascii	"puckRackOffsetsFromWest\000"
+ 2894      5261636B 
+ 2894      4F666673 
+ 2894      65747346 
+ 2894      726F6D57 
+ 2895              	.LASF22:
+ 2896 00bc 64697265 		.ascii	"direction\000"
+ 2896      6374696F 
+ 2896      6E00
+ 2897              	.LASF14:
+ 2898 00c6 6C6F6E67 		.ascii	"long double\000"
+ 2898      20646F75 
+ 2898      626C6500 
+ 2899              	.LASF54:
+ 2900 00d2 756C7472 		.ascii	"ultrasonic_flag\000"
+ 2900      61736F6E 
+ 2900      69635F66 
+ 2900      6C616700 
+ 2901              	.LASF24:
+ 2902 00e2 656D6572 		.ascii	"emergency_exit\000"
+ 2902      67656E63 
+ 2902      795F6578 
+ 2902      697400
+ 2903              	.LASF33:
+ 2904 00f1 6E65775F 		.ascii	"new_dist\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 58
+
+
+ 2904      64697374 
+ 2904      00
+ 2905              	.LASF69:
+ 2906 00fa 4D6F746F 		.ascii	"Motor_Left_Decoder_SetCounter\000"
+ 2906      725F4C65 
+ 2906      66745F44 
+ 2906      65636F64 
+ 2906      65725F53 
+ 2907              	.LASF56:
+ 2908 0118 4D6F746F 		.ascii	"Motor_Right_Control_Write\000"
+ 2908      725F5269 
+ 2908      6768745F 
+ 2908      436F6E74 
+ 2908      726F6C5F 
+ 2909              	.LASF51:
+ 2910 0132 7475726E 		.ascii	"turningRightFlag\000"
+ 2910      696E6752 
+ 2910      69676874 
+ 2910      466C6167 
+ 2910      00
+ 2911              	.LASF11:
+ 2912 0143 666C6F61 		.ascii	"float\000"
+ 2912      7400
+ 2913              	.LASF30:
+ 2914 0149 636F756E 		.ascii	"count_difference\000"
+ 2914      745F6469 
+ 2914      66666572 
+ 2914      656E6365 
+ 2914      00
+ 2915              	.LASF8:
+ 2916 015a 6C6F6E67 		.ascii	"long long int\000"
+ 2916      206C6F6E 
+ 2916      6720696E 
+ 2916      7400
+ 2917              	.LASF68:
+ 2918 0168 4D6F746F 		.ascii	"Motor_Right_Driver_Sleep\000"
+ 2918      725F5269 
+ 2918      6768745F 
+ 2918      44726976 
+ 2918      65725F53 
+ 2919              	.LASF6:
+ 2920 0181 6C6F6E67 		.ascii	"long int\000"
+ 2920      20696E74 
+ 2920      00
+ 2921              	.LASF40:
+ 2922 018a 696E7465 		.ascii	"internal_orientation\000"
+ 2922      726E616C 
+ 2922      5F6F7269 
+ 2922      656E7461 
+ 2922      74696F6E 
+ 2923              	.LASF19:
+ 2924 019f 636F756E 		.ascii	"count_left\000"
+ 2924      745F6C65 
+ 2924      667400
+ 2925              	.LASF49:
+ 2926 01aa 64726976 		.ascii	"drivingBackwardFlag\000"
+ 2926      696E6742 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 59
+
+
+ 2926      61636B77 
+ 2926      61726446 
+ 2926      6C616700 
+ 2927              	.LASF70:
+ 2928 01be 4D6F746F 		.ascii	"Motor_Right_Decoder_SetCounter\000"
+ 2928      725F5269 
+ 2928      6768745F 
+ 2928      4465636F 
+ 2928      6465725F 
+ 2929              	.LASF47:
+ 2930 01dd 7075636B 		.ascii	"puckPileLocation\000"
+ 2930      50696C65 
+ 2930      4C6F6361 
+ 2930      74696F6E 
+ 2930      00
+ 2931              	.LASF42:
+ 2932 01ee 63757272 		.ascii	"currentPuckRackScanningIndex\000"
+ 2932      656E7450 
+ 2932      75636B52 
+ 2932      61636B53 
+ 2932      63616E6E 
+ 2933              	.LASF58:
+ 2934 020b 4D6F746F 		.ascii	"Motor_Right_Driver_Wakeup\000"
+ 2934      725F5269 
+ 2934      6768745F 
+ 2934      44726976 
+ 2934      65725F57 
+ 2935              	.LASF67:
+ 2936 0225 4D6F746F 		.ascii	"Motor_Left_Driver_Sleep\000"
+ 2936      725F4C65 
+ 2936      66745F44 
+ 2936      72697665 
+ 2936      725F536C 
+ 2937              	.LASF29:
+ 2938 023d 64656772 		.ascii	"degrees\000"
+ 2938      65657300 
+ 2939              	.LASF3:
+ 2940 0245 756E7369 		.ascii	"unsigned char\000"
+ 2940      676E6564 
+ 2940      20636861 
+ 2940      7200
+ 2941              	.LASF60:
+ 2942 0253 73707269 		.ascii	"sprintf\000"
+ 2942      6E746600 
+ 2943              	.LASF59:
+ 2944 025b 726F756E 		.ascii	"round\000"
+ 2944      6400
+ 2945              	.LASF2:
+ 2946 0261 7369676E 		.ascii	"signed char\000"
+ 2946      65642063 
+ 2946      68617200 
+ 2947              	.LASF46:
+ 2948 026d 626C6F63 		.ascii	"block_edge_location\000"
+ 2948      6B5F6564 
+ 2948      67655F6C 
+ 2948      6F636174 
+ 2948      696F6E00 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 60
+
+
+ 2949              	.LASF0:
+ 2950 0281 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2950      206C6F6E 
+ 2950      6720756E 
+ 2950      7369676E 
+ 2950      65642069 
+ 2951              	.LASF1:
+ 2952 0298 756E7369 		.ascii	"unsigned int\000"
+ 2952      676E6564 
+ 2952      20696E74 
+ 2952      00
+ 2953              	.LASF35:
+ 2954 02a5 72616D70 		.ascii	"ramp_up_down\000"
+ 2954      5F75705F 
+ 2954      646F776E 
+ 2954      00
+ 2955              	.LASF37:
+ 2956 02b2 63757272 		.ascii	"current_speed\000"
+ 2956      656E745F 
+ 2956      73706565 
+ 2956      6400
+ 2957              	.LASF17:
+ 2958 02c0 73706565 		.ascii	"speed\000"
+ 2958      6400
+ 2959              	.LASF23:
+ 2960 02c6 6F6C645F 		.ascii	"old_count\000"
+ 2960      636F756E 
+ 2960      7400
+ 2961              	.LASF5:
+ 2962 02d0 73686F72 		.ascii	"short unsigned int\000"
+ 2962      7420756E 
+ 2962      7369676E 
+ 2962      65642069 
+ 2962      6E7400
+ 2963              	.LASF45:
+ 2964 02e3 73776565 		.ascii	"sweeping\000"
+ 2964      70696E67 
+ 2964      00
+ 2965              	.LASF13:
+ 2966 02ec 63686172 		.ascii	"char\000"
+ 2966      00
+ 2967              	.LASF16:
+ 2968 02f1 64697374 		.ascii	"distance\000"
+ 2968      616E6365 
+ 2968      00
+ 2969              	.LASF10:
+ 2970 02fa 696E7433 		.ascii	"int32_t\000"
+ 2970      325F7400 
+ 2971              	.LASF41:
+ 2972 0302 64726976 		.ascii	"driveStraightEnable\000"
+ 2972      65537472 
+ 2972      61696768 
+ 2972      74456E61 
+ 2972      626C6500 
+ 2973              	.LASF66:
+ 2974 0316 6661696C 		.ascii	"failsafe\000"
+ 2974      73616665 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 61
+
+
+ 2974      00
+ 2975              	.LASF27:
+ 2976 031f 6D6F7665 		.ascii	"moveDynamic\000"
+ 2976      44796E61 
+ 2976      6D696300 
+ 2977              	.LASF7:
+ 2978 032b 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2978      20756E73 
+ 2978      69676E65 
+ 2978      6420696E 
+ 2978      7400
+ 2979              	.LASF12:
+ 2980 033d 646F7562 		.ascii	"double\000"
+ 2980      6C6500
+ 2981              	.LASF61:
+ 2982 0344 55415254 		.ascii	"UART_1_PutString\000"
+ 2982      5F315F50 
+ 2982      75745374 
+ 2982      72696E67 
+ 2982      00
+ 2983              	.LASF55:
+ 2984 0355 4D6F746F 		.ascii	"Motor_Left_Control_Write\000"
+ 2984      725F4C65 
+ 2984      66745F43 
+ 2984      6F6E7472 
+ 2984      6F6C5F57 
+ 2985              	.LASF73:
+ 2986 036e 6D6F746F 		.ascii	"motor.c\000"
+ 2986      722E6300 
+ 2987              	.LASF9:
+ 2988 0376 5F5F696E 		.ascii	"__int32_t\000"
+ 2988      7433325F 
+ 2988      7400
+ 2989              	.LASF43:
+ 2990 0380 7075636B 		.ascii	"puckRackColours\000"
+ 2990      5261636B 
+ 2990      436F6C6F 
+ 2990      75727300 
+ 2991              	.LASF74:
+ 2992 0390 433A5C55 		.ascii	"C:\\Users\\Misha\\Documents\\PSoC Creator\\ECE3091_"
+ 2992      73657273 
+ 2992      5C4D6973 
+ 2992      68615C44 
+ 2992      6F63756D 
+ 2993 03be 47726F75 		.ascii	"Group17\\Group17RobotReal\\Group17Robot.cydsn\000"
+ 2993      7031375C 
+ 2993      47726F75 
+ 2993      70313752 
+ 2993      6F626F74 
+ 2994              	.LASF38:
+ 2995 03ea 6F6C645F 		.ascii	"old_speed\000"
+ 2995      73706565 
+ 2995      6400
+ 2996              	.LASF15:
+ 2997 03f4 73697A65 		.ascii	"sizetype\000"
+ 2997      74797065 
+ 2997      00
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 62
+
+
+ 2998              	.LASF53:
+ 2999 03fd 6F757470 		.ascii	"output\000"
+ 2999      757400
+ 3000              	.LASF62:
+ 3001 0404 4D6F746F 		.ascii	"Motor_Left_Decoder_GetCounter\000"
+ 3001      725F4C65 
+ 3001      66745F44 
+ 3001      65636F64 
+ 3001      65725F47 
+ 3002              	.LASF34:
+ 3003 0422 72616D70 		.ascii	"rampUpDown\000"
+ 3003      5570446F 
+ 3003      776E00
+ 3004              	.LASF32:
+ 3005 042d 64656772 		.ascii	"degree\000"
+ 3005      656500
+ 3006              	.LASF39:
+ 3007 0434 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 3007      52784275 
+ 3007      66666572 
+ 3007      00
+ 3008              	.LASF72:
+ 3009 0441 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 3009      43313120 
+ 3009      352E342E 
+ 3009      31203230 
+ 3009      31363036 
+ 3010 0474 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 3010      20726576 
+ 3010      6973696F 
+ 3010      6E203233 
+ 3010      37373135 
+ 3011 04a7 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 3011      66756E63 
+ 3011      74696F6E 
+ 3011      2D736563 
+ 3011      74696F6E 
+ 3012              	.LASF71:
+ 3013 04cf 43794465 		.ascii	"CyDelay\000"
+ 3013      6C617900 
+ 3014              	.LASF20:
+ 3015 04d7 636F756E 		.ascii	"count_right\000"
+ 3015      745F7269 
+ 3015      67687400 
+ 3016              	.LASF26:
+ 3017 04e3 73706565 		.ascii	"speed_right\000"
+ 3017      645F7269 
+ 3017      67687400 
+ 3018              	.LASF28:
+ 3019 04ef 6D6F7665 		.ascii	"moveSwivel\000"
+ 3019      53776976 
+ 3019      656C00
+ 3020              	.LASF36:
+ 3021 04fa 73746570 		.ascii	"step\000"
+ 3021      00
+ 3022              	.LASF52:
+ 3023 04ff 696E6974 		.ascii	"initialisation\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccB1LDYe.s 			page 63
+
+
+ 3023      69616C69 
+ 3023      73617469 
+ 3023      6F6E00
+ 3024              	.LASF64:
+ 3025 050e 4D6F746F 		.ascii	"Motor_Left_Driver_WriteCompare\000"
+ 3025      725F4C65 
+ 3025      66745F44 
+ 3025      72697665 
+ 3025      725F5772 
+ 3026              	.LASF57:
+ 3027 052d 4D6F746F 		.ascii	"Motor_Left_Driver_Wakeup\000"
+ 3027      725F4C65 
+ 3027      66745F44 
+ 3027      72697665 
+ 3027      725F5761 
+ 3028              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+>>>>>>> c564c6cc614be68f84e912073bd512ccdac339ca

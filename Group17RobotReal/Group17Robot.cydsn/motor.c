@@ -61,6 +61,8 @@ void moveDynamic(int distance, int speed, int activate_safety){
     Motor_Right_Driver_Wakeup();
     
     compare = round(distance*5.29);
+    sprintf(output, "compare: %d \n", compare);       
+    UART_1_PutString(output);
     count_left = Motor_Left_Decoder_GetCounter();
     count_right = Motor_Right_Decoder_GetCounter();
     
@@ -69,47 +71,40 @@ void moveDynamic(int distance, int speed, int activate_safety){
     while (abs(count_left) < abs(compare) && abs(count_right) < abs(compare) && emergency_exit == FALSE) {
         count_left = Motor_Left_Decoder_GetCounter();
         count_right = Motor_Right_Decoder_GetCounter();
-        if (count_left > count_right) {
-            if(speed_left == speed_right){
-                speed_left -= ADJUST;
-                speed_right += ADJUST;
-            }
-            else {
-                //speed_left = speed;
-                //speed_right = speed;
-                int temp = speed_left;
-                speed_left = speed_right;
-                speed_right = temp;
+            
+        // want to change the speed of the motor with a higher count until 
+            // the other count starts being higher again
+        
+        if (abs(count_left) > abs(count_right)) {
+                speed_left = speed - ADJUST;
+                speed_right = speed + ADJUST;
             }        
-        }
-        if (count_right > count_left) {
-            if(speed_left == speed_right) {
-                speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the specific 
-                                                    // adjust tolerance 
-                speed_left += ADJUST;
-            }
-            else {
-                //speed_left = speed;
-                //speed_right = speed;
-                int temp = speed_left;              // if they are not equal, we just swap em
-                speed_left = speed_right;
-                speed_right = temp;
-            }
+        if (abs(count_right) > abs(count_left)) {
+                speed_right = speed - ADJUST;             
+                speed_left = speed + ADJUST;
         }
         
-        // Not sure if the following code made a difference: 
+        // The following code could be used if we require a certain tolerance: 
         
         /*
         count_difference = count_left - count_right;
-        if (count_difference > 5) {
-            count_left -= ADJUST;
-            count_right += ADJUST;
+        while (count_difference > 5) {
+            speed_left = speed - ADJUST;
+            speed_right = speed + ADJUST;
         }
-        if (count_difference < 5) {
-            count_left += ADJUST;
-            count_right -= ADJUST;
+        while (count_difference < 5) {
+            speed_left = speed + ADJUST;
+            speed_right = speed - ADJUST;
         }
+        speed_left = speed;
+        speed_right = speed;
+        
         */
+        
+        sprintf(output, "left: %d \t", speed_left);       
+        UART_1_PutString(output);
+        sprintf(output, "right: %d \n", speed_right);       
+        UART_1_PutString(output);
         
         Motor_Left_Driver_WriteCompare(speed_left);
         Motor_Right_Driver_WriteCompare(speed_right);
@@ -182,27 +177,13 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
     while (abs(count_right) < abs(compare)) {
         count_right = Motor_Right_Decoder_GetCounter();        
         count_left = Motor_Left_Decoder_GetCounter();
-         if (count_left > -1*count_right) {
-            if(speed_left == speed_right){
-                //speed_left -= ADJUST;
-                //speed_right += ADJUST;
-            }
-            else {
-                int temp = speed_left;
-                speed_left = speed_right;
-                speed_right = temp;
-            }        
+        if (abs(count_left) > abs(count_right)) {
+            //speed_left = speed - ADJUST;
+            //speed_right = speed + ADJUST;
         }
-        if (count_right > -1*count_left) {
-            if(speed_left == speed_right) {
-                //speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the specific 
-                //speed_left += ADJUST;
-            }
-            else {
-                int temp = speed_left;              // if they are not equal, we just swap em
-                speed_left = speed_right;
-                speed_right = temp;
-            }
+        if (abs(count_right) > abs(count_left)) {
+            //speed_right = speed - ADJUST;             
+            //speed_left = speed + ADJUST;
         } 
         Motor_Left_Driver_WriteCompare(speed_left);
         Motor_Right_Driver_WriteCompare(speed_right);
@@ -235,8 +216,6 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
     
     Motor_Left_Driver_Sleep();
     Motor_Right_Driver_Sleep();
-    
-    
 }
 
 void translateMoveDynamic(int distance, int degree, int speed, int activate_safety) {
