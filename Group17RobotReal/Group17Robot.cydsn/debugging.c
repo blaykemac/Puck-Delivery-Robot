@@ -104,10 +104,11 @@ void ultimateDebugging(void){
 
                         //moveDynamic(-300);
                         
-                        //moveSwivel(-180, SPEED, TRUE);
-                          
+                        //moveSwivel(360, SPEED, TRUE);
                         
-                        moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
+                        
+                        
+                        //moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                         
                         /*
                         changeOrientation(WEST, SPEED);

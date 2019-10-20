@@ -242,9 +242,8 @@ int main(void)
     
 
     // Main Loop for States
-
     
-    
+    //while(1){}
     
     for(;;)
     {

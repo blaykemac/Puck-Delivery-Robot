@@ -167,7 +167,8 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
     Motor_Right_Driver_WriteCompare(speed_right);
     
     distance = (WIDTH_WHEEL_TO_WHEEL/2)*degrees;            // based on the arclength the wheels need to travel
-    compare = round((distance*3.14*5.29)/180);
+    compare = round((distance*M_PI*ENCODER_MULTIPLIER*ANGLE_CORRECTION_MULTIPLIER)/180);
+    
     count_left = Motor_Left_Decoder_GetCounter();
     count_right = Motor_Right_Decoder_GetCounter();
     
@@ -178,12 +179,12 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
         count_right = Motor_Right_Decoder_GetCounter();        
         count_left = Motor_Left_Decoder_GetCounter();
         if (abs(count_left) > abs(count_right)) {
-            //speed_left = speed - ADJUST;
-            //speed_right = speed + ADJUST;
+            speed_left = speed - ADJUST;
+            speed_right = speed + ADJUST;
         }
         if (abs(count_right) > abs(count_left)) {
-            //speed_right = speed - ADJUST;             
-            //speed_left = speed + ADJUST;
+            speed_right = speed - ADJUST;             
+            speed_left = speed + ADJUST;
         } 
         Motor_Left_Driver_WriteCompare(speed_left);
         Motor_Right_Driver_WriteCompare(speed_right);

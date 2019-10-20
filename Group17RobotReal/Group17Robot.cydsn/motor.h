@@ -24,6 +24,7 @@ void rampUpDown(int speed, int ramp_up_down);
 
 #define DELAY 60
 #define ENCODER_MULTIPLIER 5.29
+#define ANGLE_CORRECTION_MULTIPLIER 0.955 // Used to offset the fact that we overturn when swivelling 90 degrees
 
 #define RAMP_UP 0
 #define RAMP_DOWN 1
