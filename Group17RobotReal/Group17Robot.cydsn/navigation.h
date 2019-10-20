@@ -21,7 +21,7 @@ void locatePucks(void);
 void changeOrientation(int orientation_change, int speed);
 int failsafe(int direction);
 void toleranceCheck(void);
-
+void blockAndPuckZoneFinding(void);
 
 extern int puckConstructionPlan[3];
 extern int current_stage;

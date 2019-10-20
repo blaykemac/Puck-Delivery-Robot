@@ -470,7 +470,7 @@ void straightAdjust(void) {
     Motor_Right_Driver_WriteCompare(speed_right);
 
     
-    do {
+    while(abs(difference) > tolerance ) {
         if (difference > 0)             // This means we need to move it right
         {
             Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
@@ -533,7 +533,7 @@ void straightAdjust(void) {
         sprintf(output, "dif: %d, \n", difference);       
         UART_1_PutString(output);
         
-    } while (abs(difference) > tolerance );        // This ensures that the turning worked correctly
+    }         // This ensures that the turning worked correctly
                                             // changed it from 10 to 2, this might change the way it works
     
     
@@ -632,7 +632,13 @@ void locatePucks(void)
 }
 
 
-void puckZoneFinding(void) {
+void blockAndPuckZoneFinding(void) {
+    // this function will scan while moving across, and depending on different thresholds, whill trigger
+    // either for a block or a  puck
+    
+    
+    
+    
     
     
     
