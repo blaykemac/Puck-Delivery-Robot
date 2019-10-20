@@ -588,7 +588,7 @@ void straightAdjustBack(void) {
     int distance_check;
     int distance_previous = 0;  // ensures we will enter the while loop
     int direction = LEFT;       // start off turning left first 
-                                
+    int minimum_distance;                           
         
     distanceSensor(BACK);
     CyDelay(DELAY);
@@ -599,8 +599,9 @@ void straightAdjustBack(void) {
     Motor_Right_Driver_WriteCompare(25);
     
     distance_check = ultrasonic_distances_mm[BACK];
+    minimum_distance = distance_check;
     
-    while(distance_previous != distance_check) {
+    while(1) {
         if (direction == LEFT) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); }
         else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(0); }
         
