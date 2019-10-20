@@ -223,12 +223,9 @@ int main(void)
 
     // FORCING STATE:
     // Manual state set for testing
-<<<<<<< HEAD
     state = STATE_PRE_RUN;
-=======
     
     //state = STATE_DEPOSIT_PUCK;
->>>>>>> 83cf0dfa490f380638a60fda414c247d35e2cca2
     currentPuckStackSize = 0;
     current_stage = 1;
     blockEastClearance = 0;
@@ -243,18 +240,14 @@ int main(void)
     
 
     // Main Loop for States
-<<<<<<< HEAD
 
     
     
     
     for(;;)
     {
-=======
-        
-    for(;;)
-    {   
-            
+
+   
         
         //changeOrientation(SOUTH, SPEED);
         //changeOrientation(NORTH, SPEED);
@@ -275,9 +268,9 @@ int main(void)
         }
         
         while(0){
-            distanceSensor(BACK);
+            distanceSensor(SIDE_LEFT);
             CyDelay(60);
-            sprintf(output, "%d \t", ultrasonic_distances_mm[BACK]);
+            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_LEFT]);
             UART_1_PutString(output);
         }
         
@@ -309,12 +302,9 @@ int main(void)
         //moveDynamic(-move,SPEED,TRUE);
         
         // wasnt moving for some of the tests 
+            
         
->>>>>>> 83cf0dfa490f380638a60fda414c247d35e2cca2
-        
-        
-      
-        
+    
         // Start button is pressed so quit sensing
 
         if (state == STATE_PRE_RUN){
@@ -456,6 +446,7 @@ int main(void)
             // move away from home base:
             
             translateMoveDynamic(25, -35, 100, FALSE);
+            straightAdjust();
     
             // Move until construction zone            
             moveUntil(130, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);  // Move to west wall
@@ -601,7 +592,7 @@ int main(void)
             
             // Start moving forward to find the location of the PUCKS:           
             changeOrientation(EAST, SPEED);                             // No matter where we are this should be okay
-            moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+            moveUntil(200, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                     // above code could be inefficient if puck is closer to west side of arena 
             straightAdjust();
             
@@ -611,13 +602,14 @@ int main(void)
             sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_RIGHT]);
             UART_1_PutString(output);
             
-            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - ultrasonic_distances_mm[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR - 100;       
+            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - ultrasonic_distances_mm[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR + 100;       
+            puck_check = 750;
             
             sprintf(output, "puck check: %d, \n", puck_check);       
             UART_1_PutString(output);
                         
             // Check front and back sensors:
-            moveUntil(puck_check, LESS_THAN, BACKWARD, SIDE_LEFT, SPEED, TRUE);   // this will move backwards until it hits the block 
+            moveUntil(puck_check, BACKWARD, LESS_THAN, SIDE_LEFT, SPEED, TRUE);   // this will move backwards until it hits the block 
             
             
             distanceSensor(FRONT_LEFT);
@@ -645,7 +637,7 @@ int main(void)
                 changeOrientation(WEST, SPEED);
                 moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();   // adjusts against the wall
-                moveUntil(puck_check, LESS_THAN, BACKWARD, SIDE_RIGHT, SPEED, TRUE);   // this will move backwards until it hits the 
+                moveUntil(puck_check, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED, TRUE);   // this will move backwards until it hits the 
                 blinkLED(GREEN,1000);   // Find the edge of the puck zone 
                                 
                 distanceSensor(FRONT_LEFT);
