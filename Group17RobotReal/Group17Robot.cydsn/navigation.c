@@ -304,7 +304,7 @@ void changeOrientation(int orientation_change, int speed) {
     int change = orientation_change - internal_orientation;
     degree_change = 90*change;                                  // converts the amount of degrees we need to change
     
-    if (degree_change == 270 || change == -270)
+    if (degree_change == 270 || degree_change == -270)
     {
         degree_change = degree_change/3;
         degree_change = -1*degree_change;

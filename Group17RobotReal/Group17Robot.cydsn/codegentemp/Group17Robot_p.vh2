@@ -1,5 +1,5 @@
 -- Project:   Group17Robot
--- Generated: 10/20/2019 19:33:26
+-- Generated: 10/21/2019 00:54:38
 -- PSoC Creator  4.2
 
 ENTITY Group17Robot IS
@@ -13,6 +13,7 @@ ENTITY Group17Robot IS
         LED_Green(0)_PAD : OUT std_ulogic;
         Trigger_1(0)_PAD : IN std_ulogic;
         Echo_1(0)_PAD : IN std_ulogic;
+        Echo_6(0)_PAD : IN std_ulogic;
         Trigger_2(0)_PAD : IN std_ulogic;
         Trigger_3(0)_PAD : IN std_ulogic;
         Trigger_4(0)_PAD : IN std_ulogic;
@@ -21,6 +22,7 @@ ENTITY Group17Robot IS
         Echo_3(0)_PAD : IN std_ulogic;
         Echo_4(0)_PAD : IN std_ulogic;
         Echo_5(0)_PAD : IN std_ulogic;
+        Trigger_6(0)_PAD : IN std_ulogic;
         Rack_Servo(0)_PAD : OUT std_ulogic;
         Gripper_Servo(0)_PAD : OUT std_ulogic;
         LED_Blue(0)_PAD : OUT std_ulogic;
@@ -64,6 +66,7 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     SIGNAL Echo_3(0)__PA : bit;
     SIGNAL Echo_4(0)__PA : bit;
     SIGNAL Echo_5(0)__PA : bit;
+    SIGNAL Echo_6(0)__PA : bit;
     SIGNAL Gripper_Servo(0)__PA : bit;
     SIGNAL LED_Blue(0)__PA : bit;
     SIGNAL LED_Green(0)__PA : bit;
@@ -89,9 +92,11 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     SIGNAL Net_149 : bit;
     SIGNAL Net_150 : bit;
     SIGNAL Net_151 : bit;
+    SIGNAL Net_152 : bit;
     SIGNAL Net_155_0 : bit;
     SIGNAL Net_155_1 : bit;
     SIGNAL Net_155_2 : bit;
+    SIGNAL Net_156 : bit;
     SIGNAL Net_1916 : bit;
     SIGNAL Net_1983 : bit;
     SIGNAL Net_2035 : bit;
@@ -147,6 +152,7 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     SIGNAL Trigger_3(0)__PA : bit;
     SIGNAL Trigger_4(0)__PA : bit;
     SIGNAL Trigger_5(0)__PA : bit;
+    SIGNAL Trigger_6(0)__PA : bit;
     SIGNAL Tx_1(0)__PA : bit;
     SIGNAL \ADC:Net_245_0\ : bit;
     SIGNAL \ADC:Net_245_1\ : bit;
@@ -449,47 +455,51 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     ATTRIBUTE Location OF Trigger_1(0) : LABEL IS "P12[2]";
     ATTRIBUTE lib_model OF Echo_1(0) : LABEL IS "iocell10";
     ATTRIBUTE Location OF Echo_1(0) : LABEL IS "P12[3]";
-    ATTRIBUTE lib_model OF Trigger_2(0) : LABEL IS "iocell11";
+    ATTRIBUTE lib_model OF Echo_6(0) : LABEL IS "iocell11";
+    ATTRIBUTE Location OF Echo_6(0) : LABEL IS "P0[6]";
+    ATTRIBUTE lib_model OF Trigger_2(0) : LABEL IS "iocell12";
     ATTRIBUTE Location OF Trigger_2(0) : LABEL IS "P2[7]";
-    ATTRIBUTE lib_model OF Trigger_3(0) : LABEL IS "iocell12";
+    ATTRIBUTE lib_model OF Trigger_3(0) : LABEL IS "iocell13";
     ATTRIBUTE Location OF Trigger_3(0) : LABEL IS "P3[0]";
-    ATTRIBUTE lib_model OF Trigger_4(0) : LABEL IS "iocell13";
+    ATTRIBUTE lib_model OF Trigger_4(0) : LABEL IS "iocell14";
     ATTRIBUTE Location OF Trigger_4(0) : LABEL IS "P0[0]";
-    ATTRIBUTE lib_model OF Trigger_5(0) : LABEL IS "iocell14";
+    ATTRIBUTE lib_model OF Trigger_5(0) : LABEL IS "iocell15";
     ATTRIBUTE Location OF Trigger_5(0) : LABEL IS "P3[6]";
-    ATTRIBUTE lib_model OF Echo_2(0) : LABEL IS "iocell15";
+    ATTRIBUTE lib_model OF Echo_2(0) : LABEL IS "iocell16";
     ATTRIBUTE Location OF Echo_2(0) : LABEL IS "P2[6]";
-    ATTRIBUTE lib_model OF Echo_3(0) : LABEL IS "iocell16";
+    ATTRIBUTE lib_model OF Echo_3(0) : LABEL IS "iocell17";
     ATTRIBUTE Location OF Echo_3(0) : LABEL IS "P3[1]";
-    ATTRIBUTE lib_model OF Echo_4(0) : LABEL IS "iocell17";
+    ATTRIBUTE lib_model OF Echo_4(0) : LABEL IS "iocell18";
     ATTRIBUTE Location OF Echo_4(0) : LABEL IS "P0[1]";
-    ATTRIBUTE lib_model OF Echo_5(0) : LABEL IS "iocell18";
+    ATTRIBUTE lib_model OF Echo_5(0) : LABEL IS "iocell19";
     ATTRIBUTE Location OF Echo_5(0) : LABEL IS "P3[7]";
-    ATTRIBUTE lib_model OF Rack_Servo(0) : LABEL IS "iocell19";
+    ATTRIBUTE lib_model OF Trigger_6(0) : LABEL IS "iocell20";
+    ATTRIBUTE Location OF Trigger_6(0) : LABEL IS "P0[7]";
+    ATTRIBUTE lib_model OF Rack_Servo(0) : LABEL IS "iocell21";
     ATTRIBUTE Location OF Rack_Servo(0) : LABEL IS "P12[5]";
-    ATTRIBUTE lib_model OF Gripper_Servo(0) : LABEL IS "iocell20";
+    ATTRIBUTE lib_model OF Gripper_Servo(0) : LABEL IS "iocell22";
     ATTRIBUTE Location OF Gripper_Servo(0) : LABEL IS "P12[4]";
-    ATTRIBUTE lib_model OF Photo_Diode_1(0) : LABEL IS "iocell21";
+    ATTRIBUTE lib_model OF Photo_Diode_1(0) : LABEL IS "iocell23";
     ATTRIBUTE Location OF Photo_Diode_1(0) : LABEL IS "P1[4]";
-    ATTRIBUTE lib_model OF LED_Blue(0) : LABEL IS "iocell22";
+    ATTRIBUTE lib_model OF LED_Blue(0) : LABEL IS "iocell24";
     ATTRIBUTE Location OF LED_Blue(0) : LABEL IS "P1[5]";
-    ATTRIBUTE lib_model OF Pin_Start(0) : LABEL IS "iocell23";
+    ATTRIBUTE lib_model OF Pin_Start(0) : LABEL IS "iocell25";
     ATTRIBUTE Location OF Pin_Start(0) : LABEL IS "P2[2]";
-    ATTRIBUTE lib_model OF Motor_Left_Phase_A(0) : LABEL IS "iocell24";
+    ATTRIBUTE lib_model OF Motor_Left_Phase_A(0) : LABEL IS "iocell26";
     ATTRIBUTE Location OF Motor_Left_Phase_A(0) : LABEL IS "P3[3]";
-    ATTRIBUTE lib_model OF Motor_Left_Phase_B(0) : LABEL IS "iocell25";
+    ATTRIBUTE lib_model OF Motor_Left_Phase_B(0) : LABEL IS "iocell27";
     ATTRIBUTE Location OF Motor_Left_Phase_B(0) : LABEL IS "P2[0]";
-    ATTRIBUTE lib_model OF Motor_Right_Phase_A(0) : LABEL IS "iocell26";
+    ATTRIBUTE lib_model OF Motor_Right_Phase_A(0) : LABEL IS "iocell28";
     ATTRIBUTE Location OF Motor_Right_Phase_A(0) : LABEL IS "P15[0]";
-    ATTRIBUTE lib_model OF Motor_Right_Phase_B(0) : LABEL IS "iocell27";
+    ATTRIBUTE lib_model OF Motor_Right_Phase_B(0) : LABEL IS "iocell29";
     ATTRIBUTE Location OF Motor_Right_Phase_B(0) : LABEL IS "P1[2]";
-    ATTRIBUTE lib_model OF Motor_Left_Forward(0) : LABEL IS "iocell28";
+    ATTRIBUTE lib_model OF Motor_Left_Forward(0) : LABEL IS "iocell30";
     ATTRIBUTE Location OF Motor_Left_Forward(0) : LABEL IS "P3[5]";
-    ATTRIBUTE lib_model OF Motor_Left_Backward(0) : LABEL IS "iocell29";
+    ATTRIBUTE lib_model OF Motor_Left_Backward(0) : LABEL IS "iocell31";
     ATTRIBUTE Location OF Motor_Left_Backward(0) : LABEL IS "P3[4]";
-    ATTRIBUTE lib_model OF Motor_Right_Backward(0) : LABEL IS "iocell30";
+    ATTRIBUTE lib_model OF Motor_Right_Backward(0) : LABEL IS "iocell32";
     ATTRIBUTE Location OF Motor_Right_Backward(0) : LABEL IS "P15[5]";
-    ATTRIBUTE lib_model OF Motor_Right_Forward(0) : LABEL IS "iocell31";
+    ATTRIBUTE lib_model OF Motor_Right_Forward(0) : LABEL IS "iocell33";
     ATTRIBUTE Location OF Motor_Right_Forward(0) : LABEL IS "P15[1]";
     ATTRIBUTE lib_model OF Net_548 : LABEL IS "macrocell2";
     ATTRIBUTE lib_model OF \UART_1:BUART:counter_load_not\ : LABEL IS "macrocell3";
@@ -536,7 +546,7 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     ATTRIBUTE lib_model OF \UART_1:BUART:sTX:TxSts\ : LABEL IS "statusicell1";
     ATTRIBUTE lib_model OF \UART_1:BUART:sRX:RxShifter:u0\ : LABEL IS "datapathcell3";
     ATTRIBUTE lib_model OF \UART_1:BUART:sRX:RxSts\ : LABEL IS "statusicell2";
-    ATTRIBUTE Location OF \IDAC8_1:viDAC8\ : LABEL IS "F(VIDAC,0)";
+    ATTRIBUTE Location OF \IDAC8_1:viDAC8\ : LABEL IS "F(VIDAC,1)";
     ATTRIBUTE lib_model OF \Timer_1:TimerUDB:sCTRLReg:SyncCtl:ctrlreg\ : LABEL IS "controlcell2";
     ATTRIBUTE lib_model OF \Timer_1:TimerUDB:rstSts:stsreg\ : LABEL IS "statusicell3";
     ATTRIBUTE lib_model OF \Timer_1:TimerUDB:sT16:timerdp:u0\ : LABEL IS "datapathcell4";
@@ -544,7 +554,7 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     ATTRIBUTE lib_model OF \Ultrasonic_Mux_Control:Sync:ctrl_reg\ : LABEL IS "controlcell3";
     ATTRIBUTE Location OF autoVrefComparator_0 : LABEL IS "F(Comparator,2)";
     ATTRIBUTE Location OF \ADC:DSM\ : LABEL IS "F(DSM,0)";
-    ATTRIBUTE Location OF \TIA_1:SC\ : LABEL IS "F(SC,0)";
+    ATTRIBUTE Location OF \TIA_1:SC\ : LABEL IS "F(SC,2)";
     ATTRIBUTE lib_model OF \control_photodiode:Sync:ctrl_reg\ : LABEL IS "controlcell4";
     ATTRIBUTE lib_model OF \Motor_Left_Decoder:Cnt16:CounterUDB:sCTRLReg:ctrlreg\ : LABEL IS "controlcell5";
     ATTRIBUTE lib_model OF \Motor_Left_Decoder:Cnt16:CounterUDB:sSTSReg:stsreg\ : LABEL IS "statusicell4";
@@ -2001,6 +2011,97 @@ BEGIN
             out_clock_en => '1',
             out_reset => '0');
 
+    Echo_6:logicalport
+        GENERIC MAP(
+            drive_mode => "001",
+            ibuf_enabled => "1",
+            id => "7c8c5d3f-7c2a-4442-b0b0-a70127272594",
+            init_dr_st => "0",
+            input_buffer_sel => "00",
+            input_clk_en => 0,
+            input_sync => "0",
+            input_sync_mode => "0",
+            intr_mode => "00",
+            invert_in_clock => 0,
+            invert_in_clock_en => 0,
+            invert_in_reset => 0,
+            invert_out_clock => 0,
+            invert_out_clock_en => 0,
+            invert_out_reset => 0,
+            io_voltage => "",
+            layout_mode => "CONTIGUOUS",
+            oe_conn => "0",
+            oe_reset => 0,
+            oe_sync => "0",
+            output_clk_en => 0,
+            output_clock_mode => "0",
+            output_conn => "0",
+            output_mode => "0",
+            output_reset => 0,
+            output_sync => "0",
+            ovt_hyst_trim => "0",
+            ovt_needed => "0",
+            ovt_slew_control => "00",
+            pa_in_clock => -1,
+            pa_in_clock_en => -1,
+            pa_in_reset => -1,
+            pa_out_clock => -1,
+            pa_out_clock_en => -1,
+            pa_out_reset => -1,
+            pin_aliases => "",
+            pin_mode => "I",
+            por_state => 4,
+            port_alias_group => "",
+            port_alias_required => 0,
+            sio_group_cnt => 0,
+            sio_hifreq => "00000000",
+            sio_hyst => "1",
+            sio_ibuf => "00000000",
+            sio_info => "00",
+            sio_obuf => "00000000",
+            sio_refsel => "00000000",
+            sio_vohsel => "00000000",
+            sio_vtrip => "00000000",
+            slew_rate => "0",
+            spanning => 0,
+            sw_only => 0,
+            use_annotation => "0",
+            vtrip => "00",
+            width => 1,
+            in_clk_inv => 0,
+            in_clken_inv => 0,
+            in_clken_mode => 1,
+            in_rst_inv => 0,
+            out_clk_inv => 0,
+            out_clken_inv => 0,
+            out_clken_mode => 1,
+            out_rst_inv => 0)
+        PORT MAP(
+            in_clock_en => open,
+            in_reset => open,
+            out_clock_en => open,
+            out_reset => open);
+
+    Echo_6(0):iocell
+        GENERIC MAP(
+            in_sync_mode => 0,
+            out_sync_mode => 0,
+            oe_sync_mode => 0,
+            logicalport => "Echo_6",
+            logicalport_pin_id => 0,
+            io_capabilities => "0000000000000000000000000000000000000000000000000000000000000101")
+        PORT MAP(
+            pa_out => Echo_6(0)__PA,
+            oe => open,
+            fb => Net_152,
+            pad_in => Echo_6(0)_PAD,
+            in_clock => open,
+            in_clock_en => '1',
+            in_reset => '0',
+            out_clock => open,
+            out_clock_en => '1',
+            out_reset => '0');
+
     Trigger_2:logicalport
         GENERIC MAP(
             drive_mode => "110",
@@ -2722,6 +2823,97 @@ BEGIN
             oe => open,
             fb => Net_151,
             pad_in => Echo_5(0)_PAD,
+            in_clock => open,
+            in_clock_en => '1',
+            in_reset => '0',
+            out_clock => open,
+            out_clock_en => '1',
+            out_reset => '0');
+
+    Trigger_6:logicalport
+        GENERIC MAP(
+            drive_mode => "110",
+            ibuf_enabled => "1",
+            id => "4597907c-7d84-472a-873a-63c98d053514",
+            init_dr_st => "0",
+            input_buffer_sel => "00",
+            input_clk_en => 0,
+            input_sync => "0",
+            input_sync_mode => "0",
+            intr_mode => "00",
+            invert_in_clock => 0,
+            invert_in_clock_en => 0,
+            invert_in_reset => 0,
+            invert_out_clock => 0,
+            invert_out_clock_en => 0,
+            invert_out_reset => 0,
+            io_voltage => "",
+            layout_mode => "CONTIGUOUS",
+            oe_conn => "0",
+            oe_reset => 0,
+            oe_sync => "0",
+            output_clk_en => 0,
+            output_clock_mode => "0",
+            output_conn => "0",
+            output_mode => "0",
+            output_reset => 0,
+            output_sync => "0",
+            ovt_hyst_trim => "0",
+            ovt_needed => "0",
+            ovt_slew_control => "00",
+            pa_in_clock => -1,
+            pa_in_clock_en => -1,
+            pa_in_reset => -1,
+            pa_out_clock => -1,
+            pa_out_clock_en => -1,
+            pa_out_reset => -1,
+            pin_aliases => "",
+            pin_mode => "I",
+            por_state => 4,
+            port_alias_group => "",
+            port_alias_required => 0,
+            sio_group_cnt => 0,
+            sio_hifreq => "00000000",
+            sio_hyst => "1",
+            sio_ibuf => "00000000",
+            sio_info => "00",
+            sio_obuf => "00000000",
+            sio_refsel => "00000000",
+            sio_vohsel => "00000000",
+            sio_vtrip => "00000000",
+            slew_rate => "0",
+            spanning => 0,
+            sw_only => 0,
+            use_annotation => "0",
+            vtrip => "00",
+            width => 1,
+            in_clk_inv => 0,
+            in_clken_inv => 0,
+            in_clken_mode => 1,
+            in_rst_inv => 0,
+            out_clk_inv => 0,
+            out_clken_inv => 0,
+            out_clken_mode => 1,
+            out_rst_inv => 0)
+        PORT MAP(
+            in_clock_en => open,
+            in_reset => open,
+            out_clock_en => open,
+            out_reset => open);
+
+    Trigger_6(0):iocell
+        GENERIC MAP(
+            in_sync_mode => 0,
+            out_sync_mode => 0,
+            oe_sync_mode => 0,
+            logicalport => "Trigger_6",
+            logicalport_pin_id => 0,
+            io_capabilities => "0000000000000000000000000000000000000000000000000000000000000101")
+        PORT MAP(
+            pa_out => Trigger_6(0)__PA,
+            oe => open,
+            fb => Net_156,
+            pad_in => Trigger_6(0)_PAD,
             in_clock => open,
             in_clock_en => '1',
             in_reset => '0',
@@ -4007,7 +4199,7 @@ BEGIN
     \Timer_1:TimerUDB:capt_fifo_load\:macrocell
         GENERIC MAP(
             soft => 1,
-            eqn_main => "(main_0 * main_1 * !main_2 * !main_7 * !main_8 * !main_9) + (main_0 * main_1 * !main_3 * !main_8 * main_9) + (main_0 * main_1 * !main_4 * main_8 * !main_9) + (main_0 * main_1 * !main_5 * main_8 * main_9) + (main_0 * main_1 * !main_6 * main_7) + (main_0 * main_1 * main_7 * main_8) + (main_0 * main_1 * main_7 * main_9)",
+            eqn_main => "(main_0 * main_1 * !main_2 * !main_8 * !main_9 * !main_10) + (main_0 * main_1 * !main_3 * main_8 * main_10) + (main_0 * main_1 * !main_4 * !main_8 * !main_9 * main_10) + (main_0 * main_1 * !main_5 * main_9 * !main_10) + (main_0 * main_1 * !main_6 * main_9 * main_10) + (main_0 * main_1 * !main_7 * main_8 * !main_10) + (main_0 * main_1 * main_8 * main_9)",
             regmode => 0,
             clken_mode => 1)
         PORT MAP(
@@ -4015,13 +4207,14 @@ BEGIN
             main_0 => \Timer_1:TimerUDB:capture_last\,
             main_1 => \Timer_1:TimerUDB:timer_enable\,
             main_2 => Net_130,
-            main_3 => Net_148,
-            main_4 => Net_149,
-            main_5 => Net_150,
-            main_6 => Net_151,
-            main_7 => Net_155_2,
-            main_8 => Net_155_1,
-            main_9 => Net_155_0);
+            main_3 => Net_152,
+            main_4 => Net_148,
+            main_5 => Net_149,
+            main_6 => Net_150,
+            main_7 => Net_151,
+            main_8 => Net_155_2,
+            main_9 => Net_155_1,
+            main_10 => Net_155_0);
 
     \Timer_1:TimerUDB:status_tc\:macrocell
         GENERIC MAP(
@@ -4036,7 +4229,7 @@ BEGIN
     Net_124:macrocell
         GENERIC MAP(
             soft => 1,
-            eqn_main => "(main_0 * !main_5 * !main_6 * !main_7) + (main_1 * !main_5 * !main_6 * main_7) + (main_2 * !main_5 * main_6 * !main_7) + (main_3 * !main_5 * main_6 * main_7) + (main_4 * main_5 * !main_6 * !main_7)",
+            eqn_main => "(main_0 * !main_5 * !main_6 * !main_7) + (main_1 * !main_5 * !main_6 * main_7) + (main_2 * !main_5 * main_6 * !main_7) + (main_3 * !main_5 * main_6 * main_7) + (main_4 * main_5 * !main_6 * !main_7) + (main_5 * !main_6 * main_7 * main_8)",
             regmode => 0,
             clken_mode => 1)
         PORT MAP(
@@ -4048,7 +4241,8 @@ BEGIN
             main_4 => Net_147,
             main_5 => Net_155_2,
             main_6 => Net_155_1,
-            main_7 => Net_155_0);
+            main_7 => Net_155_0,
+            main_8 => Net_156);
 
     Net_1916:macrocell
         GENERIC MAP(
@@ -5735,7 +5929,7 @@ BEGIN
 
     \Timer_1:TimerUDB:capture_last\:macrocell
         GENERIC MAP(
-            eqn_main => "(main_0 * !main_5 * !main_6 * !main_7) + (main_1 * !main_5 * !main_6 * main_7) + (main_2 * !main_5 * main_6 * !main_7) + (main_3 * !main_5 * main_6 * main_7) + (main_4 * main_5 * !main_6 * !main_7)",
+            eqn_main => "(main_0 * !main_6 * !main_7 * !main_8) + (main_1 * main_6 * !main_7 * main_8) + (main_2 * !main_6 * !main_7 * main_8) + (main_3 * !main_6 * main_7 * !main_8) + (main_4 * !main_6 * main_7 * main_8) + (main_5 * main_6 * !main_7 * !main_8)",
             regmode => 1,
             clk_inv => '0',
             clken_mode => 1)
@@ -5743,17 +5937,18 @@ BEGIN
             q => \Timer_1:TimerUDB:capture_last\,
             clock_0 => Net_391,
             main_0 => Net_130,
-            main_1 => Net_148,
-            main_2 => Net_149,
-            main_3 => Net_150,
-            main_4 => Net_151,
-            main_5 => Net_155_2,
-            main_6 => Net_155_1,
-            main_7 => Net_155_0);
+            main_1 => Net_152,
+            main_2 => Net_148,
+            main_3 => Net_149,
+            main_4 => Net_150,
+            main_5 => Net_151,
+            main_6 => Net_155_2,
+            main_7 => Net_155_1,
+            main_8 => Net_155_0);
 
     \Timer_1:TimerUDB:run_mode\:macrocell
         GENERIC MAP(
-            eqn_main => "(main_0 * main_1 * !main_6 * !main_7 * !main_8) + (main_0 * main_2 * !main_6 * !main_7 * main_8) + (main_0 * main_3 * !main_6 * main_7 * !main_8) + (main_0 * main_4 * !main_6 * main_7 * main_8) + (main_0 * main_5 * main_6 * !main_7 * !main_8)",
+            eqn_main => "(main_0 * main_1 * !main_7 * !main_8 * !main_9) + (main_0 * main_2 * main_7 * !main_8 * main_9) + (main_0 * main_3 * !main_7 * !main_8 * main_9) + (main_0 * main_4 * !main_7 * main_8 * !main_9) + (main_0 * main_5 * !main_7 * main_8 * main_9) + (main_0 * main_6 * main_7 * !main_8 * !main_9)",
             regmode => 1,
             clk_inv => '0',
             clken_mode => 1)
@@ -5762,13 +5957,14 @@ BEGIN
             clock_0 => Net_391,
             main_0 => \Timer_1:TimerUDB:control_7\,
             main_1 => Net_130,
-            main_2 => Net_148,
-            main_3 => Net_149,
-            main_4 => Net_150,
-            main_5 => Net_151,
-            main_6 => Net_155_2,
-            main_7 => Net_155_1,
-            main_8 => Net_155_0);
+            main_2 => Net_152,
+            main_3 => Net_148,
+            main_4 => Net_149,
+            main_5 => Net_150,
+            main_6 => Net_151,
+            main_7 => Net_155_2,
+            main_8 => Net_155_1,
+            main_9 => Net_155_0);
 
     \Timer_1:TimerUDB:int_capt_count_1\:macrocell
         GENERIC MAP(
@@ -5820,7 +6016,7 @@ BEGIN
 
     \Timer_1:TimerUDB:timer_enable\:macrocell
         GENERIC MAP(
-            eqn_main => "(main_0 * !main_1 * !main_2 * !main_4) + (main_0 * !main_1 * !main_3 * !main_4)",
+            eqn_main => "(main_0 * !main_1 * !main_2 * !main_3)",
             regmode => 1,
             clk_inv => '0',
             clken_mode => 1)
@@ -5829,9 +6025,8 @@ BEGIN
             clock_0 => Net_391,
             main_0 => \Timer_1:TimerUDB:control_7\,
             main_1 => Net_124,
-            main_2 => Net_155_2,
-            main_3 => Net_155_1,
-            main_4 => \Timer_1:TimerUDB:timer_enable_split\);
+            main_2 => \Timer_1:TimerUDB:trig_disable\,
+            main_3 => \Timer_1:TimerUDB:timer_enable_split\);
 
     \Timer_1:TimerUDB:trig_disable\:macrocell
         GENERIC MAP(
@@ -5913,7 +6108,7 @@ BEGIN
 
     \Timer_1:TimerUDB:timer_enable_split\:macrocell
         GENERIC MAP(
-            eqn_main => "(main_0 * main_1 * main_2) + (main_3) + (!main_4 * !main_9 * !main_10 * !main_11) + (!main_5 * !main_10 * main_11) + (!main_6 * main_10 * !main_11) + (!main_7 * main_10 * main_11) + (!main_8 * main_9) + (main_9 * main_11)",
+            eqn_main => "(main_0 * main_1 * main_2) + (!main_3 * !main_9 * !main_10 * !main_11) + (!main_4 * main_9 * main_11) + (!main_5 * !main_9 * !main_10 * main_11) + (!main_6 * main_10 * !main_11) + (!main_7 * main_10 * main_11) + (!main_8 * main_9 * !main_11) + (main_9 * main_10)",
             regmode => 0,
             clken_mode => 1)
         PORT MAP(
@@ -5921,8 +6116,8 @@ BEGIN
             main_0 => \Timer_1:TimerUDB:timer_enable\,
             main_1 => \Timer_1:TimerUDB:run_mode\,
             main_2 => \Timer_1:TimerUDB:per_zero\,
-            main_3 => \Timer_1:TimerUDB:trig_disable\,
-            main_4 => Net_130,
+            main_3 => Net_130,
+            main_4 => Net_152,
             main_5 => Net_148,
             main_6 => Net_149,
             main_7 => Net_150,

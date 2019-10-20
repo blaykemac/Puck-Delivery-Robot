@@ -98,6 +98,7 @@ int internal_orientation;
 #define PUCK_RACK_3_WEST_DISTANCE 540
 #define PUCK_RACK_4_WEST_DISTANCE 480
 #define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
+#define PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS 50
 
 #define FIRST_DISCARD_ZONE 1000
 #define SECOND_DISCARD_ZONE 900
@@ -114,8 +115,9 @@ int internal_orientation;
 #define FRONT_RIGHT 1        //2
 #define SIDE_RIGHT 3         //3
 #define BACK 4               //4
+#define FRONT_MIDDLE 5       //5
 
-#define TOTAL_SONIC_SENSORS 5
+#define TOTAL_SONIC_SENSORS 6
 
 // Distance offsets on bot body (eg. side sensor to center)
 
@@ -193,8 +195,8 @@ extern void closeAndRaise(int puck_stack_position);
 
 char output[32];
 
-extern float ultrasonic_distances[5];
+extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
 extern char output[32];
 
-extern int ultrasonic_distances_mm[5];
+extern int ultrasonic_distances_mm[TOTAL_SONIC_SENSORS];
 
