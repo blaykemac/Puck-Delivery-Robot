@@ -48,6 +48,12 @@ void ultimateDebugging(void){
                         
                         control_photodiode_Write(CLAW_SENSING); 
                         changeHeightToPuck(0, NEITHER);
+                        
+                        for (int i = 0; i < 4; i++) 
+                        {
+                            control_led_Write(i);
+                            CyDelay(500);
+                        }
 
                         UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
                         for (int i = 0; i < 50; i++)
@@ -117,14 +123,6 @@ void ultimateDebugging(void){
                         straightAdjust();
                         
                         
-                        
-                        for (int i = 0; i < 6; i++) {
-                            translateMoveDynamic(10, -15, 100, FALSE);      // This will translate to the right by one puck
-                        }
-                        
-                        for (int i = 0; i < 6; i++) {
-                            translateMoveDynamic(-10, 15, 100, FALSE);      // This will translate to the left by one puck
-                        }
                         
                         
                         

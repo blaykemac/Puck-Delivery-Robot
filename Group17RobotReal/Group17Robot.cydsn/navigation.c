@@ -168,7 +168,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
         
     
     if (less_or_great == GREATER_THAN) {                                         // if distance_set is negatve, it will move until the sensors are less than set value
-        UART_1_PutString("\n GREATER THAN LOOP: \n");
+        //UART_1_PutString("\n GREATER THAN LOOP: \n");
         while (distance_sensor < abs(distance_set) && emergency_exit == FALSE) {               // This adjusts for drift 
             
             count_left = Motor_Left_Decoder_GetCounter();
@@ -219,7 +219,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     }
     
     if (less_or_great == LESS_THAN) {                                         // if distance_set is positive, it will move until the sensors are greater than set value 
-        UART_1_PutString("\n LESS THAN LOOP: \n");
+        //UART_1_PutString("\n LESS THAN LOOP: \n");
         while (distance_sensor > abs(distance_set) && emergency_exit == FALSE){                           // This adjusts for drift 
             
             count_left = Motor_Left_Decoder_GetCounter();
@@ -319,6 +319,8 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
     // will check the front two ultrasonics 
     // will move until distance specified in function 
     
+    // direction can be left or right
+    
     int count_left;                 // counts the encoder values
     int count_right;
     int old_count = -SAFETY_MARGIN*ENCODER_MULTIPLIER;   // used in the old failsafe to check how much distance has passed 
@@ -326,25 +328,10 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
     int speed_left = speed;         // the set speed of the motors
     int speed_right = speed;
     int compare;
-    int emergency_exit = FALSE;     // BREAKS out of the code in an emergency 
+    //int emergency_exit = FALSE;     // BREAKS out of the code in an emergency 
                                   // the ultrasonic sensor we will be using 
     int distance_sensor;            // the measured distance of the sensor
-    
-    // The distance is in millimetres 
-    // Is the distance negative or positive? 
-    if (direction == LEFT) { 
-        Motor_Left_Control_Write(0); 
-        Motor_Right_Control_Write(0); 
-        //ultrasonic_sensor = FRONT_LEFT;       // use the back ultrasonic to test our distance
-                                        // THIS CHECKS THE FRONT LEFT SENSOR, for some reason?
-        compare = 32000;                // max compare value
-    }
-    if (direction == RIGHT) {
-        Motor_Left_Control_Write(1); 
-        Motor_Right_Control_Write(1);
-        //ultrasonic_sensor = BACK; // We just use one ultrasonic front sensor
-        compare = -32000;               // min compare value
-    }
+
     
     ultrasonic_distances_mm[ultrasonic_sensor] = ARENA_WIDTH + 100;             // So it will enter the while loop
     while (ultrasonic_distances_mm[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
@@ -355,24 +342,29 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
         UART_1_PutString(output);
     }
     
-    Motor_Left_Driver_Wakeup();
-    Motor_Left_Driver_WriteCompare(speed_left);
-    Motor_Right_Driver_Wakeup();
-    Motor_Right_Driver_WriteCompare(speed_right);
+    //Motor_Left_Driver_Wakeup();
+    //Motor_Left_Driver_WriteCompare(speed_left);
+    //Motor_Right_Driver_Wakeup();
+    //Motor_Right_Driver_WriteCompare(speed_right);
         
     if (less_or_great == LESS_THAN) {                                         // if distance_set is positive, it will move until the sensors are greater than set value 
-        while (distance_sensor > abs(distance_set) && emergency_exit == FALSE) {                // This adjusts for drift 
+        while (distance_sensor > abs(distance_set)) {                // This adjusts for drift 
+            
+            UART_1_PutString("entering greater than\n");
+            
             count_left = Motor_Left_Decoder_GetCounter();
             count_right = Motor_Right_Decoder_GetCounter();
-            if (count_left > count_right) {
-            speed_left -= ADJUST;
-            }
-            if (count_right > count_left) {
-            speed_right -= ADJUST; 
+
+            if (direction == LEFT) {
+                translateMoveDynamic(-5, 7, speed, FALSE);      // This will translate to the left by one puck
             }
             
-            Motor_Left_Driver_WriteCompare(speed_left);     // update the drivers
-            Motor_Right_Driver_WriteCompare(speed_right);
+            if (direction == RIGHT) {
+                translateMoveDynamic(5, -7, speed, FALSE);      // This will translate to the right by one puck
+            }
+                        
+            //Motor_Left_Driver_WriteCompare(speed_left);     // update the drivers
+            //Motor_Right_Driver_WriteCompare(speed_right);
             
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
@@ -381,29 +373,28 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
             sprintf(output, "%d \t", distance_sensor);       
             UART_1_PutString(output);
             
-            // FAILSAFE:
-            if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100)){
-                emergency_exit = failsafe(direction);
-                old_count = count_left;
-            }
-            
+           
             
         }
     }
     
     if (less_or_great == GREATER_THAN){                                         // if distance_set is negatve, it will move until the sensors are less than set value
-        while (distance_sensor < abs(distance_set) && emergency_exit == FALSE) {                // This adjusts for drift 
+        while (distance_sensor < abs(distance_set)) {                // This adjusts for drift 
             count_left = Motor_Left_Decoder_GetCounter();
             count_right = Motor_Right_Decoder_GetCounter();
-            if (count_left > count_right) {
-            speed_left -= ADJUST;
-            }
-            if (count_right > count_left) {
-            speed_right -= ADJUST; 
+            
+            UART_1_PutString("entering less than\n");
+
+            if (direction == LEFT) {
+                translateMoveDynamic(-5, 7, speed, FALSE);      // This will translate to the left by one puck
             }
             
-            Motor_Left_Driver_WriteCompare(speed_left);         // update the drivers
-            Motor_Right_Driver_WriteCompare(speed_right);
+            if (direction == RIGHT) {
+                translateMoveDynamic(5, -7, speed, FALSE);      // This will translate to the right by one puck
+            }
+            
+            //Motor_Left_Driver_WriteCompare(speed_left);         // update the drivers
+            //Motor_Right_Driver_WriteCompare(speed_right);
             
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
@@ -412,11 +403,6 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
             sprintf(output, "%d \t", distance_sensor);       
             UART_1_PutString(output);
             
-            // FAILSAFE:
-            if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100)){
-                emergency_exit = failsafe(direction);
-                old_count = count_left;
-            }
         }
     }
     
@@ -425,11 +411,13 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
     //sprintf(output, "right motor: %d \n", count_right);      
     //UART_1_PutString(output);
         
+    UART_1_PutString("exited loop");
+    
     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
     Motor_Right_Decoder_SetCounter(0);   
     
-    Motor_Left_Driver_Sleep();              // Puts motors to sleep 
-    Motor_Right_Driver_Sleep();
+    //Motor_Left_Driver_Sleep();              // Puts motors to sleep 
+    //Motor_Right_Driver_Sleep();
     
 }
 
@@ -582,7 +570,7 @@ void straightAdjust(void) {
         sprintf(output, "dif: %d, \n", difference);       
         UART_1_PutString(output);
         
-    } while (abs(difference) > 0);        // This ensures that the turning worked correctly
+    } while (abs(difference) > 1 );        // This ensures that the turning worked correctly
                                             // changed it from 10 to 2, this might change the way it works
     
     
