@@ -129,6 +129,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     int speed_left = speed;         // the set speed of the motors
     int speed_right = speed;
     int compare;                    
+    int front_sensor_flag = FALSE;
                                   // the ultrasonic sensor we will be using 
     int distance_sensor;            // the measured distance of the sensor
     
@@ -151,6 +152,8 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
         compare = -32000;               // min compare value
     }
     
+    if (ultrasonic_sensor == FRONT_SENSORS) {ultrasonic_sensor = FRONT_LEFT; front_sensor_flag = TRUE; }
+    
     ultrasonic_distances_mm[ultrasonic_sensor] = ARENA_WIDTH + 100;             // So it will enter the while loop
     while (ultrasonic_distances_mm[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
         distanceSensor(ultrasonic_sensor);
@@ -159,6 +162,8 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
         sprintf(output, "%d \t", distance_sensor);       
         UART_1_PutString(output);
     }
+    
+    if (front_sensor_flag == TRUE) {ultrasonic_sensor = FRONT_SENSORS; front_sensor_flag = FALSE; } 
     
     Motor_Left_Driver_Wakeup();
     Motor_Left_Driver_WriteCompare(speed_left);
@@ -188,13 +193,27 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             Motor_Left_Driver_WriteCompare(speed_left);         // updates the driver speed
             Motor_Right_Driver_WriteCompare(speed_right);
             
-            distanceSensor(ultrasonic_sensor);
-            CyDelay(50);
-            //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
-            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
-            sprintf(output, "%d \t", distance_sensor);       
-            UART_1_PutString(output);
-            
+            // When you want to do both front sensors: 
+            if (ultrasonic_sensor == FRONT_SENSORS && front_sensor_flag == TRUE) {
+                distanceSensor(FRONT_LEFT);
+                CyDelay(50);
+                distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the 
+                front_sensor_flag = FALSE;
+            }
+            else if (ultrasonic_sensor == FRONT_SENSORS && front_sensor_flag == FALSE) {
+                distanceSensor(FRONT_RIGHT);
+                CyDelay(50);
+                distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the 
+                front_sensor_flag = TRUE;
+            }
+            else {
+                distanceSensor(ultrasonic_sensor);
+                CyDelay(50);
+                distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+                sprintf(output, "%d \t", distance_sensor);       
+                UART_1_PutString(output);
+            }
+                
             // FAILSAFE:
             if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100) && activate_safety == TRUE){
                 emergency_exit = failsafe(direction);
@@ -636,6 +655,70 @@ void blockAndPuckZoneFinding(void) {
     // this function will scan while moving across, and depending on different thresholds, whill trigger
     // either for a block or a  puck
     
+    int block_threshold; // the block toloerance will be anything less than 700mm - width of robot - opposite sensor
+    
+    int puck_threshold;     // the puck zone will be between 1200 - width of robot - opposite sensor 
+                                                        //  & 1200 - grid_width - width of robot - opposite sensor 
+    
+    int distance_sensor;    // the value the ultrasonic sensors will give us
+    
+    // first check the south facing sensor's value, ensure that it is correct
+    
+    
+    // need to scan the front or back sensors
+    // This function can be generalised, but I'm going to first write it just assuming we are moving backwards, 
+    // from the west wall towards the east wall
+    
+    // The following while loop will run while the sensor is above the puck threshold and inbetween
+    // the puck threshold and the block threshold 
+    // as soon as it moves outside of this threshold, it will trigger, and then we will determine whether it was
+    // the puck or the block that triggere it
+    
+    // Then it will keep moving, looking to trigger only for the other object
+    
+    
+    
+    // Calculate the block threshold:
+    
+    
+    // Calulcate the puck threshold: 
+    
+    
+    
+    // Hardcoded values for both, assuming location of robot: (if dynamic versions don't work) 
+    
+    distance_sensor = (puck_threshold + block_threshold)/2;     // Used to initialise the while loop
+    
+    while (distance_sensor > puck_threshold) {
+    
+        
+    
+    } 
+    if (distance_sensor < puck_threshold && distance_sensor > block_threshold) {
+        // The puck sensor tripped the sensor
+        
+        
+        
+        // Enter while loop to find block: 
+        while (distance_sensor > block_threshold) {
+            
+            
+            
+        }
+
+    }
+    else if (distance_sensor < block_threshold) {
+        // The block tripped the sensor 
+        
+        
+        
+        // Enter while loop to find puck:         
+        while (distance_sensor > puck_threshold && distance_sensor < block_threshold) {
+            
+            
+        }
+        
+    }
     
     
     

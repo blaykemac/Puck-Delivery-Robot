@@ -116,6 +116,7 @@ int internal_orientation;
 #define SIDE_RIGHT 3         //3
 #define BACK 4               //4
 #define FRONT_MIDDLE 5       //5
+#define FRONT_SENSORS 7      
 
 #define TOTAL_SONIC_SENSORS 6
 
