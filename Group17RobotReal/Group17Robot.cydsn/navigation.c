@@ -117,7 +117,6 @@ void moveUntilPuck(int algorithm) {
 
 
 void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed, int activate_safety) {
-       
     
     // distance_set is in millimeteres
     // will check the front two ultrasonics 
@@ -175,30 +174,16 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             count_right = Motor_Right_Decoder_GetCounter();
             
             // DRIFT CORRECTION:
-            if (count_left > count_right) {
-                if(speed_left == speed_right){
-                    speed_left -= ADJUST;
-                    speed_right += ADJUST;
-                }
-                else {
-                    int temp = speed_left;
-                    speed_left = speed_right;
-                    speed_right = temp;
-                }        
-            }
-            if (count_right > count_left) {
-                if(speed_left == speed_right) {
-                    speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the 
-                    speed_left += ADJUST;
-                }
-                else {
-                    int temp = speed_left;              // if they are not equal, we just swap em
-                    speed_left = speed_right;
-                    speed_right = temp;
-                }
+            if (abs(count_left) > abs(count_right)) {
+                speed_left = speed - ADJUST;
+                speed_right = speed + ADJUST;
+            }        
+            if (abs(count_right) > abs(count_left)) {
+                    speed_right = speed - ADJUST;              // If the speeds are equal, we decrememnt within the specific 
+                                                        // adjust tolerance 
+                    speed_left = speed + ADJUST;
             }
             // end of drift correction 
-            
             
             Motor_Left_Driver_WriteCompare(speed_left);         // updates the driver speed
             Motor_Right_Driver_WriteCompare(speed_right);
@@ -226,27 +211,14 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             count_right = Motor_Right_Decoder_GetCounter();
             
             // DRIFT CORRECTION:
-            if (count_left > count_right) {
-                if(speed_left == speed_right){
-                    speed_left -= ADJUST;
-                    speed_right += ADJUST;
-                }
-                else {
-                    int temp = speed_left;
-                    speed_left = speed_right;
-                    speed_right = temp;
-                }        
-            }
-            if (count_right > count_left) {
-                if(speed_left == speed_right) {
-                    speed_right -= ADJUST;              // If the speeds are equal, we decrememnt within the 
-                    speed_left += ADJUST;
-                }
-                else {
-                    int temp = speed_left;              // if they are not equal, we just swap em
-                    speed_left = speed_right;
-                    speed_right = temp;
-                }
+            if (abs(count_left) > abs(count_right)) {
+                speed_left = speed - ADJUST;
+                speed_right = speed + ADJUST;
+            }        
+            if (abs(count_right) > abs(count_left)) {
+                    speed_right = speed - ADJUST;              // If the speeds are equal, we decrememnt within the specific 
+                                                        // adjust tolerance 
+                    speed_left = speed + ADJUST;
             }
             // end of drift correction 
             
@@ -304,7 +276,7 @@ void changeOrientation(int orientation_change, int speed) {
     int change = orientation_change - internal_orientation;
     degree_change = 90*change;                                  // converts the amount of degrees we need to change
     
-    if (degree_change == 270 || change == -270)
+    if (degree_change == 270 || degree_change == -270)
     {
         degree_change = degree_change/3;
         degree_change = -1*degree_change;
@@ -462,13 +434,6 @@ int failsafe(int direction) {
 }
 
 
-void puckZoneFinding(void) {
-    
-    
-    
-    
-}
-
 
 void straightAdjust(void) {
        
@@ -495,8 +460,8 @@ void straightAdjust(void) {
         UART_1_PutString(output);
     }
         
-    int speed_left = 25;        // slow speed
-    int speed_right = 25;
+    int speed_left = 50;        // slow speed
+    int speed_right = 50;
     
     do {
         if (difference > 0)             // This means we need to move it right
@@ -630,9 +595,7 @@ void straightAdjustBack(void) {
 void toleranceCheck(void) {
     
     // This function needs work
-    
-    
-    
+
     int tolerance = 100;
     
     distanceSensor(FRONT_LEFT);
@@ -662,9 +625,6 @@ void toleranceCheck(void) {
     
 }
 
-
-
-
 void locatePucks(void)
 {
     
@@ -673,5 +633,12 @@ void locatePucks(void)
     
 }
 
+
+void puckZoneFinding(void) {
+    
+    
+    
+    
+}
 
 

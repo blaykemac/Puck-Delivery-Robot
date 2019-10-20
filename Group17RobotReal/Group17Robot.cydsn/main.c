@@ -467,6 +467,17 @@ int main(void)
         
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
+            //while(1) {
+                //moveUntil(100,FORWARD,LESS_THAN,FRONT_LEFT,100,TRUE);
+                //straightAdjust();
+                //blinkLED(GREEN, 1000);
+            //}
+            
+            //moveDynamic(600, SPEED, TRUE);
+            //moveDynamic(-600, SPEED, TRUE);
+            
+            //while(1) {}
+            
             
             ultimateDebugging();   
 
