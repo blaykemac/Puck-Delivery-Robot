@@ -467,6 +467,8 @@ int main(void)
         
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
+<<<<<<< HEAD
+=======
             //while(1) {
                 //moveUntil(100,FORWARD,LESS_THAN,FRONT_LEFT,100,TRUE);
                 //straightAdjust();
@@ -479,6 +481,7 @@ int main(void)
             //while(1) {}
             
             
+>>>>>>> c564c6cc614be68f84e912073bd512ccdac339ca
             ultimateDebugging();   
 
             // move away from home base:
@@ -772,7 +775,8 @@ int main(void)
                 changeOrientation(NORTH, SPEED);
                 //straightAdjust();
                 moveUntil(PUCK_GRID_FROM_NORTH, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                translateMoveDynamic(-100, 30, SPEED, FALSE); // Change safety to TRUE when implemented
+                translateUntil(PUCK_GRID_FROM_NORTH - WIDTH_SENSOR_TO_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, RIGHT, LESS_THAN, SIDE_RIGHT, SPEED);
+                //translateMoveDynamic(-100, 30, SPEED, FALSE); // Change safety to TRUE when implemented and use translateUntil
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 changeOrientation(WEST, SPEED);
@@ -868,10 +872,12 @@ int main(void)
             if (puck_scan == puckConstructionPlan[current_stage-1]) {puck_correct = TRUE;}                
             else 
             {
+                /*
                 // Bring us to the next puck along: 
                 moveSwivel(45, SPEED, TRUE);
                 moveDynamic(-30,SPEED, TRUE);
-                moveSwivel(-30, SPEED, TRUE);        
+                moveSwivel(-30, SPEED, TRUE);
+                */
             }
         }
                 
@@ -1174,9 +1180,7 @@ int main(void)
                          
                 }
                 
-                
-                //DELETE
-                state = STATE_DEPOSIT_PUCK;
+                state = STATE_GO_TO_PUCKS; // Go grab the next puck from the pile since it isn't in the home base
             }
             
             
