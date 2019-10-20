@@ -231,9 +231,9 @@ int main(void)
     currentPuckStackSize = 0;
     current_stage = 1;
     blockEastClearance = 0;
-    blockWestClearance = 1;
+    blockWestClearance = 0;
     puckEastClearance = 0;
-    puckWestClearance = 1;
+    puckWestClearance = 0;
     int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the pucks and the block
     //internal_orientation = EAST;
     puckConstructionPlan[0] = RED;
@@ -713,11 +713,11 @@ int main(void)
             }
             if (puck_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
                 // the east clearance of block check
-              blockEastClearance = 1;  
+              puckEastClearance = 1;  
             }
             if (puck_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
                 // the east clearance of block check
-              blockEastClearance = 1;  
+              puckWestClearance = 1;  
             }
             
             
@@ -733,8 +733,9 @@ int main(void)
             ///oveDynamic(1200, SPEED, TRUE);
             
             moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
+            changeOrientation(SOUTH,SPEED);
             changeOrientation(EAST, SPEED);
-            moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+            moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             
             
             // PUCK has now been found, enter the IF statements to locate and pick up pucks 
@@ -758,15 +759,16 @@ int main(void)
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
                 changeOrientation(NORTH, SPEED);
-                straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                translateMoveDynamic(-CLEARANCE_RADIUS_CENTER_TO_BACK, 10, SPEED, FALSE); // Change safety to TRUE when implemented
+                //straightAdjust();
+                moveUntil(PUCK_GRID_FROM_NORTH, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                translateMoveDynamic(-100, 30, SPEED, FALSE); // Change safety to TRUE when implemented
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 changeOrientation(WEST, SPEED);
                 //displaceLeft();
                 //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
                 //moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                
                 
             }
             
@@ -777,7 +779,7 @@ int main(void)
                 straightAdjust();
                 changeOrientation(NORTH, SPEED);
                 straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(PUCK_GRID_FROM_NORTH, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 translateMoveDynamic(CLEARANCE_RADIUS_CENTER_TO_BACK, 10, SPEED, FALSE); // Change safety to TRUE when implemented
@@ -795,7 +797,7 @@ int main(void)
                 straightAdjust();
                 changeOrientation(NORTH, SPEED);
                 straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(PUCK_GRID_FROM_NORTH, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 changeOrientation(EAST, SPEED);
@@ -811,7 +813,7 @@ int main(void)
                 straightAdjust();
                 changeOrientation(NORTH, SPEED);
                 straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(PUCK_GRID_FROM_NORTH, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 changeOrientation(WEST, SPEED);
@@ -820,6 +822,8 @@ int main(void)
                 //moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 
             }
+            
+            state = STATE_FIND_REQUIRED_PUCK;
 
         }
  
@@ -827,14 +831,17 @@ int main(void)
 // *** 4. STATE FIND REQUIRED PUCK: *** // 
 //
         
+        
         if (state == STATE_FIND_REQUIRED_PUCK){
         
         int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
         int puck_scan;
         
-        current_stage = 1;
-        puckConstructionPlan[0] = RED;
     
+        //Temp delete after teesting!!!!!!!!!!!!!!!!!!!!!
+        puck_correct = TRUE;
+        
+            
         // Scanning puck:
             
         safety_override = TRUE;     // DEACTIVATES the safety override so pucks don't interfere  
@@ -872,6 +879,7 @@ int main(void)
         safety_override = FALSE;        // reactivate safety override
         
             
+        state = STATE_RETURN_TO_SOUTH;
             /*
             int requiredColour = puckConstructionPlan[currentPuckStackSize];
             int puckFound = 0;
@@ -979,12 +987,12 @@ int main(void)
         if (state == STATE_RETURN_TO_SOUTH){
             if (blockEastClearance && puckEastClearance){
                 
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 190, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
                 // straightAdjust() using back sensor?
                 changeOrientation(NORTH,SPEED);
                 straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
-                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
+                //straightAdjust();
                 changeOrientation(EAST,SPEED);
                 straightAdjust();
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
@@ -1069,11 +1077,12 @@ int main(void)
             control_photodiode_Write(CLAW_SENSING);    // changes to claw photodiode
             colour_sensing_algorithm = CLAW_GROUND_ALGORITHM;   // changes it to claw algorithm
             
+            /*
             armOpen();
             colourSensingInitialise();
             CyDelay(2000);
             armClose();
-            
+            */
             
             
             
