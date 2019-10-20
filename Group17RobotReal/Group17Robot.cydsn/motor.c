@@ -179,7 +179,7 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
     // NOT SURE IF THE DRIFT ADJUSTING FOR THIS FUNCTION WORKS
     
     
-    while (count_right != -1*compare) {
+    while (abs(count_right) < abs(compare)) {
         count_right = Motor_Right_Decoder_GetCounter();        
         count_left = Motor_Left_Decoder_GetCounter();
          if (count_left > -1*count_right) {
@@ -206,6 +206,21 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
         } 
         Motor_Left_Driver_WriteCompare(speed_left);
         Motor_Right_Driver_WriteCompare(speed_right);
+        
+        /*
+        
+        FIGURING OUT SWIVEL VALUES FOR PUCKS
+        
+        distanceSensor(FRONT_LEFT);
+        CyDelay(50);
+        distanceSensor(FRONT_RIGHT);
+        CyDelay(50);
+            
+        sprintf(output, "%d , %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);
+        UART_1_PutString(output);
+        CyDelay(150);
+        */
+        
     }
     
     /*
