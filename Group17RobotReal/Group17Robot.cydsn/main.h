@@ -162,6 +162,7 @@ int internal_orientation;
 #define WALL_ALGORITHM 0
 #define CLAW_GROUND_ALGORITHM 2
 #define CLAW_1_ALGORITHM 1
+#define CLAW_BLACK_PUCK_ALGORITHM 4
 
 // Servo:
 #define GROUND 0

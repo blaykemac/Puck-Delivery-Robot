@@ -246,6 +246,14 @@ int colourSensingOutput(void)
                 value = BLUE;      // Blue puck detected
             }
             break;
+        case 4:    
+            if (test_red < 5000 && test_blue < 5000 && test_green < 5000 && test_white < 5000) {
+                value = RED;
+            }
+            else {
+                value = BLANK;
+            }
+            break;
         default:
             UART_1_PutString("INVALID COLOUR SENSING ALGORITHM \n");
             CyDelay(3000);

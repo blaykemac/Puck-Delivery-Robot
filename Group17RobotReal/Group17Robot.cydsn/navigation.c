@@ -593,6 +593,11 @@ void straightAdjustBack(void) {
     distanceSensor(BACK);
     CyDelay(DELAY);
     
+    Motor_Left_Driver_Wakeup();
+    Motor_Right_Driver_Wakeup();
+    Motor_Left_Driver_WriteCompare(25);
+    Motor_Right_Driver_WriteCompare(25);
+    
     distance_check = ultrasonic_distances_mm[BACK];
     
     while(distance_previous != distance_check) {
@@ -615,6 +620,8 @@ void straightAdjustBack(void) {
         // This may enter an infinite loop where it can't decide if it is correct 
     }
     
+    Motor_Left_Driver_Sleep();
+    Motor_Right_Driver_Sleep();   
     
 }
 
