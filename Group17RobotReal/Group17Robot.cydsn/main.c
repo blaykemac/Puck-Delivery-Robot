@@ -735,7 +735,9 @@ int main(void)
             moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
             changeOrientation(SOUTH,SPEED);
             changeOrientation(EAST, SPEED);
+            straightAdjust();
             moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+            straightAdjust();
             
             
             // PUCK has now been found, enter the IF statements to locate and pick up pucks 
@@ -870,10 +872,10 @@ int main(void)
         changeHeightToPuck(GROUND, NEITHER);      // arm lowers to ground
         //armClose();
         //changeHeightToPuck(1);
-        moveUntilPuck(CLAW_GROUND_ALGORITHM);
+        moveUntilPuck(CLAW_BLACK_PUCK_ALGORITHM);
         //moveDynamic(60);       // robot moves forward
         armClose();                 // claw closes on puck
-        changeHeightToPuck(ABOVE_3_PUCK, NEITHER);      // arm lifts up to highest position
+        changeHeightToPuck(ABOVE_3_PUCK, CLOSE);      // arm lifts up to highest position
         moveDynamic(-60, SPEED, TRUE);       // robot moves back away from puck area 
         
         
