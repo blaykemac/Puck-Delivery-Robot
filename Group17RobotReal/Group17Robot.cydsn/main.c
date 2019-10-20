@@ -586,10 +586,13 @@ int main(void)
                     // above code could be inefficient if puck is closer to west side of arena 
             straightAdjust();
             
-            distanceSensor(SIDE_LEFT);
+            distanceSensor(SIDE_RIGHT);
             CyDelay(50);
             
-            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - ultrasonic_distances_mm[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR - 100;       
+            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_RIGHT]);
+            UART_1_PutString(output);
+            
+            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - ultrasonic_distances_mm[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR - 100;       
             
             sprintf(output, "puck check: %d, \n", puck_check);       
             UART_1_PutString(output);
