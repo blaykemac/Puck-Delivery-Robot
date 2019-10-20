@@ -135,7 +135,7 @@ int internal_orientation;
 
 // Tolerances and thresholds
 #define SAFETY_MARGIN 85 // The margin we will enforce be kept around us clear at all times.
-#define BLOCK_TOLERANCE 100 // Used for sweeping block location. This affects sensitivity in detecting block.
+#define BLOCK_TOLERANCE 50 // Used for sweeping block location. This affects sensitivity in detecting block.
 #define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
 #define DISTANCE_STOPPED_FROM_PUCK 50 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
 #define SENSOR_DELAY_MIN 60

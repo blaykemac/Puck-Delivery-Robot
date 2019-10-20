@@ -592,6 +592,36 @@ int main(void)
                 
             }
             
+            // Finding the different block & puck clearances: 
+            
+                    // there should be a threshold that allows the robot to travel through a clearance;
+                    // E.g. robot width + 100mm
+            
+                    // the robot will travel to the chosen (block_clearance/2) and travel down there,
+                    // so it is in the middle of the block clearance and the wall 
+            
+                    // check if between the edge of the block and the puck zone gives enough clearance 
+                    
+            
+            if (block_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
+                // the east clearance of block check
+              blockEastClearance = 1;  
+            }
+            if (block_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
+                // the east clearance of block check
+              blockWestClearance = 1;  
+            }
+            if (puck_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
+                // the east clearance of block check
+              blockEastClearance = 1;  
+            }
+            if (puck_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
+                // the east clearance of block check
+              blockEastClearance = 1;  
+            }
+            
+            
+            
             // PUCK has now been found, enter the IF statements to locate and pick up pucks 
             state = STATE_GO_TO_PUCKS;
 	    }     
@@ -604,35 +634,7 @@ int main(void)
         
         if (state == STATE_GO_TO_PUCKS){
             
-            
-            // Finding the different block & puck clearances: 
-            
-                    // there should be a threshold that allows the robot to travel through a clearance;
-                    // E.g. robot width + 100mm
-            
-                    // the robot will travel to the chosen (block_clearance/2) and travel down there,
-                    // so it is in the middle of the block clearance and the wall 
-            
-                    // check if between the edge of the block and the puck zone gives enough clearance 
-                    
-            
-            if (block_location[EAST] > block_location[WEST]) {
-                // the east clearance is greater than the west clearance 
-                
-            
-            }
-            else {
-                // the west clearance is greater than the east clearance 
-                
-            }
 
-            
-            
-            
-            
-            
-            
-            
             // The different route finding Algorithms for the different combinations: 
             
             if (blockEastClearance && puckEastClearance){
