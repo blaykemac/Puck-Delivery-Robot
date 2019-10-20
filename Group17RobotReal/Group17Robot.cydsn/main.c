@@ -33,7 +33,7 @@
 extern char output[32];   
 
 // * STATE VARIABLES * //
-int state = STATE_SCAN_PLAN;
+int state = STATE_PRE_RUN;
 int running = 1;
 int sweeping = 0;
 float block_edge_location[4] = {0,0,0,0}; // N E S W edge positions respectively
@@ -107,9 +107,9 @@ CY_ISR(TIH)                             // Ultrasonic ISR Definition
 CY_ISR(StartIH)                             // Ultrasonic ISR Definition
 {
     CyDelay(100);
-    
-    beginNavigation = 1;
-    colour_flag = 0; 
+    if (beginNavigation){
+        state = STATE_SCAN_PLAN; 
+    }
 }
  
 //Interrupt service routines for dcmotor function
@@ -191,7 +191,7 @@ int main(void)
     Timer_1_ReadStatusRegister();
     Sonic_StartEx(TIH);
     Start_StartEx(StartIH);
-    beginNavigation = 0;
+    beginNavigation = 1; // Set to true after it has run ISR at least once
     
     // Ultrasonic Initialisation & Calibration:
     // The ultrasonics take several test measurements to ensure they are working
@@ -223,7 +223,7 @@ int main(void)
 
       // FORCING STATE:
     // Manual state set for testing
-    state = STATE_DEPOSIT_PUCK;
+    state = STATE_PRE_RUN;
     currentPuckStackSize = 0;
     current_stage = 1;
     blockEastClearance = 0;
@@ -237,50 +237,21 @@ int main(void)
     puckConstructionPlan[2] = BLUE;
 
     // Main Loop for States
-        
-    for(;;)
-    {   
-            
 
-        // Checking translating function:
-        
-        
-        for (int i = 0; i < 6; i++) {
-            translateMoveDynamic(10, -15, 100, FALSE);      // This will translate to the right by one puck
-        }
-        
-        for (int i = 0; i < 6; i++) {
-            translateMoveDynamic(-10, 15, 100, FALSE);      // This will translate to the left by one puck
-        }
-        
-        
-        
-        // checks the distance measured by the ultrasonic
-        //moveDynamic(move,SPEED,TRUE);
-        //moveDynamic(-move,SPEED,TRUE);
-        
-        // wasnt moving for some of the tests 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+    
+    
+    
+    for(;;)
+    {
         
         ultimateDebugging();        // If any of the debugging flags are activated, this will be called over the main code
         
         
         // Start button is pressed so quit sensing
 
+        if (state == STATE_PRE_RUN){
+            
+        }
         /*
         while (beginNavigation == 0) {
             distanceCheck();           
@@ -289,6 +260,9 @@ int main(void)
                 
         }
         */
+        
+        
+        
         
         
         // Enter picking up puck state for the moment FOR TESTING
@@ -970,6 +944,7 @@ int main(void)
             
             if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
+                changeOrientation(NORTH,SPEED);
                 changeOrientation(WEST,SPEED);
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
@@ -1019,11 +994,8 @@ int main(void)
                 straightAdjust();
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 straightAdjust();
-                moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
-                straightAdjust();
+                changeOrientation(SOUTH,SPEED);
                 changeOrientation(EAST,SPEED);
-                moveUntil(DISTANCE_FRONT_SENSOR_FROM_CENTER + SAFETY_MARGIN, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
-                straightAdjust();
                 moveUntil(DISTANCE_FRONT_SENSOR_FROM_CENTER + SAFETY_MARGIN + 50, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
                 
