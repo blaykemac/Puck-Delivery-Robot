@@ -19,8 +19,8 @@ void rampUpDown(int speed, int ramp_up_down);
 // set speeds: 
 
 #define SPEED_LOW 70                
-#define SPEED 170                   // DO NOT PUT ABOVE 200
-#define SPEED_MAX 200
+#define SPEED 200                   // DO NOT PUT ABOVE 200
+#define SPEED_MAX 225
 
 #define DELAY 60
 #define ENCODER_MULTIPLIER 5.29

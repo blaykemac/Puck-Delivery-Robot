@@ -108,7 +108,8 @@ CY_ISR(StartIH)                             // Ultrasonic ISR Definition
 {
     CyDelay(100);
     if (beginNavigation){
-        state = STATE_SCAN_PLAN; 
+        UART_1_PutString("Beginning Navigation \n");
+        //state = STATE_SCAN_PLAN; 
         state = STATE_LOCATE_BLOCK_AND_PUCKS;
     }
 }
@@ -279,11 +280,11 @@ int main(void)
         
         
         
-        changeHeightToPuck(GROUND,NEITHER);
-        moveUntilPuck(CLAW_BLACK_PUCK_ALGORITHM);
+        //changeHeightToPuck(GROUND,NEITHER);
+        //moveUntilPuck(CLAW_BLACK_PUCK_ALGORITHM);
         //translateUntil(150, LEFT, LESS_THAN, SIDE_LEFT, SPEED);
         
-        while(1);
+        //while(1);
         
        
         
@@ -722,17 +723,18 @@ int main(void)
             
             
             //changeOrientation(WEST,SPEED);
-            moveDynamic(-600, SPEED, TRUE);
-            moveUntil((puck_location[EAST]/2),FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-            straightAdjust();
-            changeOrientation(WEST,SPEED);
-            moveUntil((PUCK_GRID_FROM_NORTH/2), FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE);
-            straightAdjust();
+            //moveDynamic(-600, SPEED, TRUE);
+            //moveUntil((puck_location[EAST]/2),FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+            //straightAdjust();
+            //changeOrientation(WEST,SPEED);
+            //moveUntil((PUCK_GRID_FROM_NORTH/2), FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE);
+            //straightAdjust();
+            //changeOrientation(EAST, SPEED);
+            ///oveDynamic(1200, SPEED, TRUE);
+            
+            moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
             changeOrientation(EAST, SPEED);
-            moveDynamic(1200, SPEED, TRUE);
-            
-            
-            
+            moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             
             
             // PUCK has now been found, enter the IF statements to locate and pick up pucks 

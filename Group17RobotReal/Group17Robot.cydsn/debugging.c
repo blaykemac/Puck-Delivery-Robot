@@ -30,7 +30,7 @@
 #include "debugging.h"
 
 // Set which debugging you want to do:
-int colour_calibration = TRUE;             // Do we want to calibrate the sensor? 
+int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
 int servo_testing = FALSE;                  // Do the servos need to be tested?      
 int motor_testing = FALSE;
 int ultrasonic_testing = FALSE;  
@@ -105,8 +105,11 @@ void ultimateDebugging(void){
                         //moveDynamic(-300);
                         
                         //moveSwivel(-180, SPEED, TRUE);
+                          
                         
+                        moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                         
+                        /*
                         changeOrientation(WEST, SPEED);
                         CyDelay(1000);
                         changeOrientation(SOUTH, SPEED);
@@ -143,7 +146,7 @@ void ultimateDebugging(void){
                         
                         
                         
-                        
+                        */
                         
                         
                         
