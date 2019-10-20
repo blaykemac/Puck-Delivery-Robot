@@ -24,6 +24,7 @@
 
 // Main states for overall navigation and motor control
 
+#define STATE_PRE_RUN 0
 #define STATE_SCAN_PLAN 1
 #define STATE_LOCATE_BLOCK_AND_PUCKS 2
 #define STATE_GO_TO_PUCKS 3
