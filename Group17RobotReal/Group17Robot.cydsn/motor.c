@@ -179,7 +179,7 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
     // NOT SURE IF THE DRIFT ADJUSTING FOR THIS FUNCTION WORKS
     
     
-    while (count_right != -1*compare) {
+    while (abs(count_right) < abs(compare)) {
         count_right = Motor_Right_Decoder_GetCounter();        
         count_left = Motor_Left_Decoder_GetCounter();
          if (count_left > -1*count_right) {
