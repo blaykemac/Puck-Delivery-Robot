@@ -1,6 +1,6 @@
 // ======================================================================
 // Group17Robot.v generated from TopDesign.cysch
-// 10/21/2019 at 21:38
+// 10/22/2019 at 01:52
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -1837,8 +1837,8 @@ module top ;
           wire  Net_622;
           wire  Net_621;
           wire  Net_620;
-          wire  Net_12;
           wire  Net_4640;
+          wire  Net_12;
           wire  Net_4590;
           wire  Net_4589;
           wire  Net_442;

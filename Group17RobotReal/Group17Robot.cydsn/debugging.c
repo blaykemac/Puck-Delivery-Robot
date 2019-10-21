@@ -32,7 +32,7 @@
 // Set which debugging you want to do:
 int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
 int servo_testing = FALSE;                  // Do the servos need to be tested?      
-int motor_testing = FALSE;
+int motor_testing = TRUE;
 int ultrasonic_testing = FALSE;  
 
 
@@ -125,7 +125,19 @@ void ultimateDebugging(void){
                         straightAdjust(FRONT_SENSORS);
                         blinkLED(GREEN, 1000);
                         }
-
+                        
+                        int timer;
+                        
+                        Timer_straight_adjust_Start();
+                        
+                        while(0) {
+                        timer = Timer_straight_adjust_ReadCounter();
+                        sprintf(output, "%d \t", timer);      
+                        UART_1_PutString(output); 
+                        CyDelay(100);
+        
+                        }
+                        
                         //moveDynamic(-300);
                         
                         //moveSwivel(360, SPEED, TRUE);

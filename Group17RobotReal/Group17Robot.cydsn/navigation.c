@@ -723,10 +723,10 @@ void straightAdjust(int front_back) {
         UART_1_PutString(output);
         
         // Timer out failsafe: 
-        /*
+        
         timer = Timer_straight_adjust_ReadCounter();
         
-        if (timer > 60000) {
+        if (timer < 35000) {
             Motor_Left_Driver_Sleep();                  // puts it back to sleep
             Motor_Right_Driver_Sleep();
             moveDynamic(-30,SPEED,TRUE);                // calls movedynamic
@@ -742,7 +742,7 @@ void straightAdjust(int front_back) {
             sprintf(output, "timer count: %d", timer);
             UART_1_PutString(output);
         }
-        */
+        
         
         
         
