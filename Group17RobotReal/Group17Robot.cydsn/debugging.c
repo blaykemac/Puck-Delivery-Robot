@@ -172,7 +172,7 @@ void ultimateDebugging(void){
                         distanceSensor(BACK);
                         CyDelay(50);
                         
-                        sprintf(output, "measure: %d\n", ultrasonic_distances_mm[BACK]);      
+                        sprintf(output, "measure: %d\n", sensor_distances[BACK]);      
                             UART_1_PutString(output); 
         
 
@@ -202,11 +202,11 @@ void ultimateDebugging(void){
                         while(0) {
                             distanceSensor(dick);
                             CyDelay(500);
-                            sprintf(output, "%d \t %d \t %d \t %d \t %d \n", ultrasonic_distances_mm[0], 
-                                                     ultrasonic_distances_mm[1],
-                                                     ultrasonic_distances_mm[2],
-                                                        ultrasonic_distances_mm[3],
-                                                        ultrasonic_distances_mm[4]);
+                            sprintf(output, "%d \t %d \t %d \t %d \t %d \n", sensor_distances[0], 
+                                                     sensor_distances[1],
+                                                     sensor_distances[2],
+                                                        sensor_distances[3],
+                                                        sensor_distances[4]);
                             UART_1_PutString(output);
                         }
                         // 0 gave front left    // front left
@@ -220,7 +220,7 @@ void ultimateDebugging(void){
                             {
                                 distanceSensor(i);
                                 CyDelay(100);
-                                sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+                                sprintf(output, "%d \t", sensor_distances[i]);
                                 UART_1_PutString(output);
                             }
                             UART_1_PutString("\n");
@@ -234,7 +234,7 @@ void ultimateDebugging(void){
                             {
                                 distanceSensor(i);
                                 CyDelay(100);
-                                sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+                                sprintf(output, "%d \t", sensor_distances[i]);
                                 UART_1_PutString(output);
                             }
                         UART_1_PutString("\n");

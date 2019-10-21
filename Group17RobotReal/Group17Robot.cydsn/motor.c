@@ -196,7 +196,7 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
         distanceSensor(FRONT_RIGHT);
         CyDelay(50);
             
-        sprintf(output, "%d , %d \n", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);
+        sprintf(output, "%d , %d \n", sensor_distances[FRONT_LEFT], sensor_distances[FRONT_RIGHT]);
         UART_1_PutString(output);
         CyDelay(150);
         */

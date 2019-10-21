@@ -33,8 +33,7 @@
 int i = 0; //what is i and count used for? We might need to name them more descriptively
 int count = 0;      
 int distance_measured = 0; 
-float ultrasonic_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0,0};      // array fills up depending on position of sensor
-int ultrasonic_distances_mm[TOTAL_SONIC_SENSORS] = {0,0,0,0,0,0};
+int sensor_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0,0};
 int ultrasonic_mux_control;       // THIS is a global variable that will be taken 
 int block_start = 0;
 int puck_start = 0;
@@ -50,36 +49,22 @@ void ultrasonicInterruptHandler(){
     Timer_1_Stop();
     
     // Calculate distances based off timer counts
-    //ultrasonic_distances[ultrasonic_mux_control] = distanceFromCount(count);
-    //ultrasonic_distances[ultrasonic_mux_control] = 0.172413*(65536-count) / 10;     // This is in cm
-    ultrasonic_distances_mm[ultrasonic_mux_control] = 0.172413*(65536-count);          // This is in mm
+    sensor_distances[ultrasonic_mux_control] = 0.172413*(65536-count);          // This is in mm
     
 }
 
-
-void printSensorToUART(int sensorNumber, int distanceMeasured){
-    
-    // Print distance to UART
-    //sprintf(output, "Ultrasonic Sensor %d - distance: %dmm\n", sensorNumber, distanceMeasured);
-    //sprintf(output, "%d: %fcm\n", sensorNumber, distanceMeasured);
-    sprintf(output, "%d: %dmm\n", sensorNumber, distanceMeasured);
-    //sprintf(output, "%dmm \t", distanceMeasured);   
-    UART_1_PutString(output);
-    
-}
-
-void distanceSensor(int currentSensorIndex) {
+void distanceSensor(int current_sensor_index) {
     
     //ultrasonic_flag = TRUE;
-    Ultrasonic_Mux_Control_Write(currentSensorIndex);
+    Ultrasonic_Mux_Control_Write(current_sensor_index);
     
     // I think i need to change ultrasonic_mux_control to the correct value 
-    ultrasonic_mux_control = currentSensorIndex;    // This will be used when the interrupt occurs to put in the correct array
+    ultrasonic_mux_control = current_sensor_index;    // This will be used when the interrupt occurs to put in the correct array
     
     
     Timer_1_Start();            // starts the timer
             
-    switch(currentSensorIndex){
+    switch(current_sensor_index){
         
         case 0:
         
@@ -173,7 +158,7 @@ void safetyDistanceCheck() {
         {
             distanceSensor(i);
             CyDelay(60);
-            sprintf(output, "%d \t", ultrasonic_distances_mm[i]);
+            sprintf(output, "%d \t", sensor_distances[i]);
             UART_1_PutString(output);
         }
         UART_1_PutString("\n\n");

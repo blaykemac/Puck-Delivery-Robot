@@ -142,7 +142,7 @@ int internal_orientation;
 #define SAFETY_MARGIN 85 // The margin we will enforce be kept around us clear at all times.
 #define BLOCK_TOLERANCE 50 // Used for sweeping block location. This affects sensitivity in detecting block.
 #define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
-#define DISTANCE_STOPPED_FROM_PUCK 50 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
+#define DISTANCE_MIDDLE_STOPPED_FROM_PUCK 150 // How far moveUntil() should go when going to pucks. Usingthe middle front sensor.
 #define SENSOR_DELAY_MIN 60
 #define WALL_CLEARANCE_FRONT 175 // Distance to stop from east wall 
 #define OVER_ROTATION_ANGLE 20 // We over-rotate when scanning for puck and stack so we can then counter-rotate and hone in on minimum.
@@ -179,19 +179,10 @@ int internal_orientation;
 
 /* Variables to be shared / imported */
 
-extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
-int driveStraightEnable;
-int currentPuckRackScanningIndex;
-int puckRackColours[5];
-int puckRackOffsetsFromWest[5];
-int sweeping;
+int puck_rack_scans[5];
+int puck_rack_west_offsets[5];
 float block_edge_location[4];
-float puckPileLocation;
 
-short int drivingForwardFlag;
-short int drivingBackwardFlag;
-short int turningLeftFlag;
-short int turningRightFlag;
 
 extern int initialisation;
 
@@ -200,8 +191,7 @@ extern void closeAndRaise(int puck_stack_position);
 
 char output[32];
 
-extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
 extern char output[32];
 
-extern int ultrasonic_distances_mm[TOTAL_SONIC_SENSORS];
+extern int sensor_distances[TOTAL_SONIC_SENSORS];
 

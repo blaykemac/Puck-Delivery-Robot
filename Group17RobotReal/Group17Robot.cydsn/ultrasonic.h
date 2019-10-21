@@ -19,25 +19,17 @@
 
 
 void distanceCheck();  
-void distanceSensor(int currentSensorIndex);
-void printSensorToUART(int sensorNumber, int distanceMeasured);
-float distanceFromCount(int timerCount);
+void distanceSensor(int current_sensor_index);
 void ultrasonicInterruptHandler(void);
 void safetyDistanceCheck();
 
 // External variables (ie. globals)
-extern int driveStraightEnable;
 extern int state;
-extern int currentPuckRackScanningIndex;
-extern int puckRackColours[5];
-extern int puckRackOffsetsFromWest[5];
+extern int puck_rack_scans[5];
+extern int puck_rack_west_offsets[5];
 extern int sweeping;
 extern float block_edge_location[4];
 extern int moving;
-extern short int drivingForwardFlag;
-extern short int drivingBackwardFlag;
-extern short int turningLeftFlag;
-extern short int turningRightFlag;
 extern char output[32];
 
 int initialisation;

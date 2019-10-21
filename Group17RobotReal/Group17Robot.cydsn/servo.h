@@ -12,11 +12,11 @@
 */
 
 void armTranslate(int new_position);
-void changeHeightToPuck(int puckHeightIndex, int closed_open); // 0 is ground, 2 will be maximum
+void changeHeightToPuck(int puck_height_index, int closed_open); // 0 is ground, 2 will be maximum
 void armOpen(void);
 void armClose(void);
 
-void armMoveUpDown(int desiredPosition);
+void armMoveUpDown(int desired_position);
 
 void closeAndRaise(int nothing);
 void lowerAndOpen(int nothing);
