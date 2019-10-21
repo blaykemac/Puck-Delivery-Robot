@@ -422,7 +422,6 @@ int main(void)
         
     	if (state == STATE_LOCATE_BLOCK_AND_PUCKS){
             
-
             ultimateDebugging();   
 
             // move away from home base:
@@ -609,6 +608,7 @@ int main(void)
             {
                 
                 int offset = ultrasonic_distances_mm[SIDE_LEFT]*sin(18*M_PI/180);
+                if (ultrasonic_distances_mm[FRONT_LEFT] < 200) { offset = 0; }      // set the offset to 0 if it reasonable that we hit the pucks close to the corner
                 // puck detected
                 // puck detectedDISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR
                 puck_location[EAST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
@@ -639,6 +639,7 @@ int main(void)
                 puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] - PUCK_GRID_WIDTH;
                 
                 if (ultrasonic_distances_mm[BACK] < 100 ) {
+                    // we stop without detecting any pucks
                     // Assume that pucks are in NorthEast corner
                     puck_location[EAST] = 100; 
                     puck_location[WEST] = 1200 - PUCK_GRID_WIDTH - 100;
@@ -650,6 +651,7 @@ int main(void)
                 
             }
             
+            
             sprintf(output, "east puck: %d, \n", puck_location[EAST]);       
             UART_1_PutString(output);
             sprintf(output, "west puck: %d, \n", puck_location[WEST]);       
@@ -658,10 +660,6 @@ int main(void)
             UART_1_PutString(output);
             sprintf(output, "west block: %d, \n", block_location[WEST]);       
             UART_1_PutString(output);
-            
-            
-            
-            
             
             
             // Finding the different block & puck clearances: 
