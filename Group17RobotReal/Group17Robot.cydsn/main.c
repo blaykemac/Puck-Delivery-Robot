@@ -106,6 +106,19 @@ CY_ISR(StartIH)                             // Ultrasonic ISR Definition
         state = STATE_LOCATE_BLOCK_AND_PUCKS;
     }
 }
+
+CY_ISR(SAIH)                             // 
+{
+    // Set a global variable 
+    Motor_Left_Driver_Sleep();                  // puts it back to sleep
+    Motor_Right_Driver_Sleep();
+    moveDynamic(-20,SPEED,TRUE);                // calls movedynamic
+    moveDynamic(20, SPEED,TRUE);      
+    Motor_Left_Driver_Wakeup();
+    Motor_Left_Driver_WriteCompare(SPEED); // brings it back to continue the while loop
+    Motor_Right_Driver_Wakeup();
+    Motor_Right_Driver_WriteCompare(SPEED);
+}
  
 
 int main(void)
@@ -161,13 +174,14 @@ int main(void)
     Motor_Left_Decoder_Start();
     Motor_Right_Decoder_Start();
     
-    internal_orientation = WEST;                // robot initial starts in the East direction
+    internal_orientation = WEST;                // robot initial starts in the West direction
     
     // Timer and ISR instantiation
     Timer_1_Start();                
     Timer_1_ReadStatusRegister();
     Sonic_StartEx(TIH);
     Start_StartEx(StartIH);
+    Straight_StartEx(SAIH);
     begin_navigation = 1; // Set to true after it has run ISR at least once
     
     // Ultrasonic Initialisation & Calibration:
@@ -181,7 +195,7 @@ int main(void)
     // Straight adjust timer: 
     Timer_straight_adjust_Start();                
     Timer_straight_adjust_ReadStatusRegister();
-    Control_Reset_Straight_Write(0);
+    //Control_Reset_Straight_Write(0);
     
     // FORCING STATE:
     // Manual state set for testing
@@ -209,56 +223,84 @@ int main(void)
             sprintf(output, "%d \t", sensor_distances[SIDE_LEFT]);
             UART_1_PutString(output);
         }
+<<<<<<< HEAD
         
+=======
+      
+        //changeHeightToPuck(GROUND,NEITHER);
+        //moveUntilPuck(CLAW_BLACK_PUCK_ALGORITHM);
+        //translateUntil(150, LEFT, LESS_THAN, SIDE_LEFT, SPEED);
+       
+        
+        /*
+        for (int i = 0; i < 6; i++) {
+            translateMoveDynamic(10, -15, 100, FALSE);      // This will translate to the right by one puck
+        }
+        
+        for (int i = 0; i < 6; i++) {
+            translateMoveDynamic(-10, 15, 100, FALSE);      // This will translate to the left by one puck
+        }
+        */
+                
+        /*
+        while (begin_navigation == 0) {
+            distanceCheck();           
+            UART_1_PutString("\n");
+            CyDelay(1000); // Check distance once a second.
+                
+        }
+        */
+        
+        
+        // Enter picking up puck state for the moment FOR TESTING
+        //colour_sensing_algorithm = 1;
+        //control_photodiode_Write(1);
+        
+
+        //state = STATE_DEPOSIT_PUCK;
+        //current_puck_stack_size = 2;
+        //current_stage = 3;
+         
+>>>>>>> ac60bb3bf43094db73614c580e4b481b32e708df
 //
 // *** 1. STATE SCAN PLAN: *** // 
 //
         
       
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
+<<<<<<< HEAD
 
             // Debugging: 
         
+=======
+                   
+>>>>>>> ac60bb3bf43094db73614c580e4b481b32e708df
             ultimateDebugging();        // If any of the debugging flags are activated, this will be called over the main code
-                
             
-            while(0){
-                moveUntil(400, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                moveDynamic(-450, SPEED, TRUE);
-                CyDelay(500);   
-                colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
-                CyDelay(500);
-                moveDynamic(170, SPEED, TRUE);
-                CyDelay(500);
-                
-                
-                
-                for (int i = 0; i < 5; i++) {                       // scan each of the pucks 
-                    puck_rack_scans[i] = colourSensingOutput();
-                    CyDelay(500);
-                    moveDynamic(61, SPEED, TRUE);
-                    CyDelay(500);
-                }
-            
-            }
-
-
-            
+<<<<<<< HEAD
             straightAdjust(FRONT_SENSORS);
             moveUntil(-100, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
+=======
+            moveUntil(400, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+            moveDynamic(-450, SPEED, TRUE);
+            CyDelay(500);   
+>>>>>>> ac60bb3bf43094db73614c580e4b481b32e708df
             colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
-                        
-            
-            
-            for (int i = 0; i < 5; i++) { 
-                // scan each of the pucks 
-                //moveUntil(puck_rack_west_offsets[i]);
+            CyDelay(500);
+            moveDynamic(170, SPEED, TRUE);
+            CyDelay(500);
+
+            for (int i = 0; i < 5; i++) {                       // scan each of the pucks 
                 puck_rack_scans[i] = colourSensingOutput();
                 CyDelay(500);
-
-            //straightAdjust();
+                moveDynamic(61, SPEED, TRUE);
+                blinkLED(puck_rack_scans[i],500);   // Will show us which coloured puck it thinks it scanned
             }
             
+            //straightAdjust(FRONT_SENSORS);
+            //moveUntil(-100, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+            //colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
+                          
             UART_1_PutString("Found Colours: \n");
             for (int i = 0; i < 5; i++) 
             {
@@ -453,7 +495,7 @@ int main(void)
             sprintf(output, "%d \t", sensor_distances[SIDE_RIGHT]);
             UART_1_PutString(output);
             
-            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - sensor_distances[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR + 100;       
+            int puck_check = ARENA_LENGTH - (PUCK_GRID_FROM_NORTH/2) - sensor_distances[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR;       
             //puck_check = 700;
             
             sprintf(output, "puck check: %d, \n", puck_check);       
