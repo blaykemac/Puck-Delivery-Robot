@@ -574,9 +574,7 @@ void straightAdjust(int front_back) {
         //sensor_left = BACK_LEFT;
         //sensor_right = BACK_RIGHT;
     }
-    
-    
-       
+          
     // Ensure the initial readings are accurate: 
     while (abs(difference) > max_difference) {              
         distanceSensor(sensor_left);
@@ -703,6 +701,7 @@ void straightAdjust(int front_back) {
         
         // Timer out failsafe: 
         
+        /*
         timer = Timer_straight_adjust_ReadCounter();
         
         if (timer < 35000) {
@@ -722,7 +721,7 @@ void straightAdjust(int front_back) {
             UART_1_PutString(output);
         }
         
-        
+        */
         
         
         
@@ -824,7 +823,6 @@ void locatePucks(void)
     
 }
 
-
 void blockAndPuckZoneFinding(void) {
     // this function will scan while moving across, and depending on different thresholds, whill trigger
     // either for a block or a  puck
@@ -850,26 +848,43 @@ void blockAndPuckZoneFinding(void) {
     
     // Then it will keep moving, looking to trigger only for the other object
     
+    // Currently expecting to go from a west to east direction
     
+    straightAdjust(FRONT_SENSORS);  // adjusts on front sensor
+    distanceSensor(SIDE_LEFT);
+    CyDelay(50);
     
     // Calculate the block threshold:
-    block_threshold = 0;
+    block_threshold = BLOCK_ZONE_NORTH - sensor_distances[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR + (BLOCK_WIDTH/2);    
     
     // Calulcate the puck threshold: 
-    puck_threshold = 0;
+    puck_threshold = ARENA_LENGTH - (PUCK_GRID_FROM_NORTH/2) - sensor_distances[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR;       
     
     
-    // Hardcoded values for both, assuming location of robot: (if dynamic versions don't work) 
+    // Hardcoded values for both, assuming location of robot: (failsafe if dynamic versions don't work) 
+    if (block_threshold < 155 || block_threshold > 435) { block_threshold = 295; }
+    if (puck_threshold < 525 || puck_threshold > 805) { puck_threshold = 650; }
     
     distance_sensor = (puck_threshold + block_threshold)/2;     // Used to initialise the while loop
     
-    while (distance_sensor > puck_threshold) {
+    //Waking up the motors 
+    int speed_left = SPEED;
+    int speed_right = SPEED;
     
+    Motor_Left_Driver_Wakeup();
+    Motor_Left_Driver_WriteCompare(speed_left);
+    Motor_Right_Driver_Wakeup();
+    Motor_Right_Driver_WriteCompare(speed_right);
+    
+    
+    
+    while (distance_sensor > puck_threshold) {
+        // This will be tripped as soon as it hits the pucks or a block
         
     
     } 
     if (distance_sensor < puck_threshold && distance_sensor > block_threshold) {
-        // The puck sensor tripped the sensor
+        // The pucks tripped the sensor
         
         
         
@@ -896,6 +911,10 @@ void blockAndPuckZoneFinding(void) {
     
 
 }
+
+
+
+
 
 void straightAdjustSensor(int sensor){
     //Start by rotating a definite direction away from the rough center point we have aligned in before calling this function.

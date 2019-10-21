@@ -172,10 +172,10 @@ void Timer_straight_adjust_Wakeup(void)        ;
 #define Timer_straight_adjust_INIT_CAPTURE_MODE       ((uint8)((uint8)1u << Timer_straight_adjust_CTRL_CAP_MODE_SHIFT))
 #define Timer_straight_adjust_INIT_TRIGGER_MODE       ((uint8)((uint8)0u << Timer_straight_adjust_CTRL_TRIG_MODE_SHIFT))
 #if (Timer_straight_adjust_UsingFixedFunction)
-    #define Timer_straight_adjust_INIT_INTERRUPT_MODE (((uint8)((uint8)0u << Timer_straight_adjust_STATUS_TC_INT_MASK_SHIFT)) | \
+    #define Timer_straight_adjust_INIT_INTERRUPT_MODE (((uint8)((uint8)1u << Timer_straight_adjust_STATUS_TC_INT_MASK_SHIFT)) | \
                                                   ((uint8)((uint8)0 << Timer_straight_adjust_STATUS_CAPTURE_INT_MASK_SHIFT)))
 #else
-    #define Timer_straight_adjust_INIT_INTERRUPT_MODE (((uint8)((uint8)0u << Timer_straight_adjust_STATUS_TC_INT_MASK_SHIFT)) | \
+    #define Timer_straight_adjust_INIT_INTERRUPT_MODE (((uint8)((uint8)1u << Timer_straight_adjust_STATUS_TC_INT_MASK_SHIFT)) | \
                                                  ((uint8)((uint8)0 << Timer_straight_adjust_STATUS_CAPTURE_INT_MASK_SHIFT)) | \
                                                  ((uint8)((uint8)0 << Timer_straight_adjust_STATUS_FIFOFULL_INT_MASK_SHIFT)))
 #endif /* (Timer_straight_adjust_UsingFixedFunction) */

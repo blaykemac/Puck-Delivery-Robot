@@ -1,6 +1,6 @@
 // ======================================================================
 // Group17Robot.v generated from TopDesign.cysch
-// 10/22/2019 at 01:52
+// 10/22/2019 at 03:35
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -1574,7 +1574,7 @@ module PWM_v3_30_12 (
 
 endmodule
 
-// Timer_v2_80(CaptureAlternatingFall=false, CaptureAlternatingRise=false, CaptureCount=2, CaptureCounterEnabled=false, CaptureInputEnabled=true, CaptureMode=1, CONTROL3=1, ControlRegRemoved=0, CtlModeReplacementString=SyncCtl, CyGetRegReplacementString=CY_GET_REG16, CySetRegReplacementString=CY_SET_REG16, DeviceFamily=PSoC5, EnableMode=0, FF16=true, FF8=false, FixedFunction=true, FixedFunctionUsed=1, HWCaptureCounterEnabled=false, InterruptOnCapture=false, InterruptOnFIFOFull=false, InterruptOnTC=false, IntOnCapture=0, IntOnFIFOFull=0, IntOnTC=0, NumberOfCaptures=1, param45=1, Period=65535, RegDefReplacementString=reg16, RegSizeReplacementString=uint16, Resolution=16, RstStatusReplacementString=rstSts, RunMode=0, SiliconRevision=0, SoftwareCaptureModeEnabled=false, SoftwareTriggerModeEnabled=false, TriggerInputEnabled=false, TriggerMode=0, UDB16=false, UDB24=false, UDB32=false, UDB8=false, UDBControlReg=false, UsesHWEnable=0, VerilogSectionReplacementString=sT16, CY_API_CALLBACK_HEADER_INCLUDE=#include "cyapicallbacks.h", CY_COMMENT=, CY_COMPONENT_NAME=Timer_v2_80, CY_CONFIG_TITLE=Timer_straight_adjust, CY_CONST_CONFIG=true, CY_CONTROL_FILE=<:default:>, CY_DATASHEET_FILE=<:default:>, CY_FITTER_NAME=Timer_straight_adjust, CY_INSTANCE_SHORT_NAME=Timer_straight_adjust, CY_MAJOR_VERSION=2, CY_MINOR_VERSION=80, CY_PDL_DRIVER_NAME=, CY_PDL_DRIVER_REQ_VERSION=, CY_PDL_DRIVER_SUBGROUP=, CY_PDL_DRIVER_VARIANT=, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=PSoC Creator  4.2, INSTANCE_NAME=Timer_straight_adjust, )
+// Timer_v2_80(CaptureAlternatingFall=false, CaptureAlternatingRise=false, CaptureCount=2, CaptureCounterEnabled=false, CaptureInputEnabled=true, CaptureMode=1, CONTROL3=1, ControlRegRemoved=0, CtlModeReplacementString=SyncCtl, CyGetRegReplacementString=CY_GET_REG16, CySetRegReplacementString=CY_SET_REG16, DeviceFamily=PSoC5, EnableMode=0, FF16=true, FF8=false, FixedFunction=true, FixedFunctionUsed=1, HWCaptureCounterEnabled=false, InterruptOnCapture=false, InterruptOnFIFOFull=false, InterruptOnTC=true, IntOnCapture=0, IntOnFIFOFull=0, IntOnTC=1, NumberOfCaptures=1, param45=1, Period=65535, RegDefReplacementString=reg16, RegSizeReplacementString=uint16, Resolution=16, RstStatusReplacementString=rstSts, RunMode=0, SiliconRevision=0, SoftwareCaptureModeEnabled=false, SoftwareTriggerModeEnabled=false, TriggerInputEnabled=false, TriggerMode=0, UDB16=false, UDB24=false, UDB32=false, UDB8=false, UDBControlReg=false, UsesHWEnable=0, VerilogSectionReplacementString=sT16, CY_API_CALLBACK_HEADER_INCLUDE=#include "cyapicallbacks.h", CY_COMMENT=, CY_COMPONENT_NAME=Timer_v2_80, CY_CONFIG_TITLE=Timer_straight_adjust, CY_CONST_CONFIG=true, CY_CONTROL_FILE=<:default:>, CY_DATASHEET_FILE=<:default:>, CY_FITTER_NAME=Timer_straight_adjust, CY_INSTANCE_SHORT_NAME=Timer_straight_adjust, CY_MAJOR_VERSION=2, CY_MINOR_VERSION=80, CY_PDL_DRIVER_NAME=, CY_PDL_DRIVER_REQ_VERSION=, CY_PDL_DRIVER_SUBGROUP=, CY_PDL_DRIVER_VARIANT=, CY_REMOVE=false, CY_SUPPRESS_API_GEN=false, CY_VERSION=PSoC Creator  4.2, INSTANCE_NAME=Timer_straight_adjust, )
 module Timer_v2_80_13 (
     reset,
     interrupt,
@@ -1597,7 +1597,7 @@ module Timer_v2_80_13 (
     parameter CaptureCounterEnabled = 0;
     parameter DeviceFamily = "PSoC5";
     parameter InterruptOnCapture = 0;
-    parameter InterruptOnTC = 0;
+    parameter InterruptOnTC = 1;
     parameter Resolution = 16;
     parameter SiliconRevision = "0";
 
@@ -1647,7 +1647,6 @@ module top ;
           wire  Net_4624;
           wire  Net_4623;
           wire  Net_4622;
-          wire  Net_4621;
           wire  Net_4643;
           wire  Net_4639;
           wire  Net_4638;
@@ -1655,6 +1654,7 @@ module top ;
           wire  Net_4636;
           wire  Net_4635;
           wire  Net_4634;
+          wire  Net_4645;
           wire  Net_4632;
           wire  Net_4631;
           wire  Net_4630;
@@ -1837,8 +1837,8 @@ module top ;
           wire  Net_622;
           wire  Net_621;
           wire  Net_620;
-          wire  Net_4640;
           wire  Net_12;
+          wire  Net_4640;
           wire  Net_4590;
           wire  Net_4589;
           wire  Net_442;
@@ -5028,36 +5028,12 @@ module top ;
     defparam Motor_Right_Control.ExtrReset = 0;
     defparam Motor_Right_Control.NumOutputs = 1;
 
-    CyControlReg_v1_80 Control_Reset_Straight (
-        .control_1(Net_4630),
-        .control_2(Net_4631),
-        .control_3(Net_4632),
-        .control_0(Net_12),
-        .control_4(Net_4634),
-        .control_5(Net_4635),
-        .control_6(Net_4636),
-        .control_7(Net_4637),
-        .clock(1'b0),
-        .reset(1'b0));
-    defparam Control_Reset_Straight.Bit0Mode = 0;
-    defparam Control_Reset_Straight.Bit1Mode = 0;
-    defparam Control_Reset_Straight.Bit2Mode = 0;
-    defparam Control_Reset_Straight.Bit3Mode = 0;
-    defparam Control_Reset_Straight.Bit4Mode = 0;
-    defparam Control_Reset_Straight.Bit5Mode = 0;
-    defparam Control_Reset_Straight.Bit6Mode = 0;
-    defparam Control_Reset_Straight.Bit7Mode = 0;
-    defparam Control_Reset_Straight.BitValue = 0;
-    defparam Control_Reset_Straight.BusDisplay = 0;
-    defparam Control_Reset_Straight.ExtrReset = 0;
-    defparam Control_Reset_Straight.NumOutputs = 1;
-
 
 	cy_clock_v1_0
 		#(.id("831fd4b5-261c-4ef6-8665-d01cc85d4248"),
 		  .source_clock_id(""),
 		  .divisor(0),
-		  .period("166666666666.667"),
+		  .period("142857142857.143"),
 		  .is_direct(0),
 		  .is_digital(1))
 		Clock_2
@@ -5066,7 +5042,7 @@ module top ;
 
     Timer_v2_80_13 Timer_straight_adjust (
         .reset(Net_12),
-        .interrupt(Net_4621),
+        .interrupt(Net_12),
         .enable(1'b1),
         .trigger(1'b1),
         .capture(1'b0),
@@ -5077,9 +5053,16 @@ module top ;
     defparam Timer_straight_adjust.CaptureCounterEnabled = 0;
     defparam Timer_straight_adjust.DeviceFamily = "PSoC5";
     defparam Timer_straight_adjust.InterruptOnCapture = 0;
-    defparam Timer_straight_adjust.InterruptOnTC = 0;
+    defparam Timer_straight_adjust.InterruptOnTC = 1;
     defparam Timer_straight_adjust.Resolution = 16;
     defparam Timer_straight_adjust.SiliconRevision = "0";
+
+
+	cy_isr_v1_0
+		#(.int_type(2'b10))
+		Straight
+		 (.int_signal(Net_12));
+
 
 
 
