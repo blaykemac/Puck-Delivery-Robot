@@ -72,6 +72,18 @@ void armClose(){
     CyDelay(500);
     Gripper_Servo_PWM_Sleep();                    // Puts Servo back to sleep
 }
+void armCloseIndefintely(int activate){
+    if (activate == TRUE) {
+        Gripper_Servo_PWM_Wakeup();                    // Brings the servo back from sleep
+        Gripper_Servo_PWM_WriteCompare(GRIPPER_CLOSED); //1250 turns out to be a decent closed val
+        CyDelay(500);    
+    }
+    if (activate == FALSE) {
+        Gripper_Servo_PWM_Sleep();                    // Puts Servo back to sleep
+        CyDelay(500);    
+    }
+}
+
 void armTranslate(int new_position){
     
     if (new_position > ARM_POS_GROUND || new_position < ARM_POS_3) {return;}    // if a value is inputed that is bad for the servo

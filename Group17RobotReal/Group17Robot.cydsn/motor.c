@@ -40,8 +40,8 @@ void moveDynamic(int distance, int speed, int activate_safety){
                                 // if positive count_left > count_right
     int compare;
     int direction;
-    int old_count = -SAFETY_MARGIN*ENCODER_MULTIPLIER;   // used in the old failsafe to check how much distance has passed 
-                                                        // will enter the failsafe straight away due to this
+    int old_count = -SAFETY_MARGIN*0.75*ENCODER_MULTIPLIER - 1000;   // used in the old failsafe to check how much distance has passed 
+                                                         // will enter the failsafe straight away due to this
     int emergency_exit = FALSE;
     
     // FAILSAFE if you give a speed greater than it can handle 
@@ -71,7 +71,7 @@ void moveDynamic(int distance, int speed, int activate_safety){
     while (abs(count_left) < abs(compare) && abs(count_right) < abs(compare) && emergency_exit == FALSE) {
         count_left = Motor_Left_Decoder_GetCounter();
         count_right = Motor_Right_Decoder_GetCounter();
-            
+                
         // want to change the speed of the motor with a higher count until 
             // the other count starts being higher again
         
@@ -101,10 +101,10 @@ void moveDynamic(int distance, int speed, int activate_safety){
         
         */
         
-        sprintf(output, "left: %d \t", speed_left);       
-        UART_1_PutString(output);
-        sprintf(output, "right: %d \n", speed_right);       
-        UART_1_PutString(output);
+        //sprintf(output, "left: %d \t", speed_left);       
+        //UART_1_PutString(output);
+        //sprintf(output, "right: %d \n", speed_right);       
+        //UART_1_PutString(output);
         
         Motor_Left_Driver_WriteCompare(speed_left);
         Motor_Right_Driver_WriteCompare(speed_right);

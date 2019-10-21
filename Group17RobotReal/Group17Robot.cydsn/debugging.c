@@ -97,8 +97,8 @@ void ultimateDebugging(void){
                         //}
                         
                   
-                        armClose();
-                        CyDelay(2000);
+                        //armClose();
+                        //CyDelay(2000);
                         //armOpen();
                         //CyDelay(2000);
                         
@@ -118,9 +118,13 @@ void ultimateDebugging(void){
                         UART_1_PutString("Motor Testing: \n");
                         //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
                         
-                        //straightAdjustSensor(FRONT_MIDDLE);
+                       //straightAdjustSensor(FRONT_MIDDLE);
                         //straightAdjustBack();
                         
+                        while(1) {
+                        straightAdjust(FRONT_SENSORS);
+                        blinkLED(GREEN, 1000);
+                        }
 
                         //moveDynamic(-300);
                         
@@ -225,7 +229,7 @@ void ultimateDebugging(void){
                         
                         
                         moveUntil(150, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);              // should keep moving until we approach 50mm wall
-                        straightAdjust();
+                        straightAdjust(FRONT_SENSORS);
                         
                         
                         /*

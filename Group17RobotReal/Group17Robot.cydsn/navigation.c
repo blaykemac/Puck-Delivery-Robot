@@ -82,6 +82,26 @@ void armMoving(void){
     
 }
 
+void checkHoldingPuck(void) {
+    // This function will check if we are holding a puck after having attempted to pick up a puck,
+    // if we are not holding a puck, it will translate to the left or right, and then attempt to pick up
+    // the puck again 
+    int colour_check = colourSensingOutput();
+    
+    if (colour_check == BLANK) {
+        // Reattempt to pick up the puck
+        //straightAdjustSensor(FRONT_MIDDLE);
+        moveUntilPuck(CLAW_GROUND_ALGORITHM);       // This may be the wrong algorithm, 
+                                                    // as the claw is fairly above the ground now
+    }
+    else {
+        // still have a puck, can continue as normal
+        return;
+    }
+    
+}
+
+
 void moveUntilPuck(int algorithm) {
       
     int puck_detect = 0;
@@ -157,7 +177,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
                                   // the ultrasonic sensor we will be using 
     int distance_sensor;            // the measured distance of the sensor
     
-    int old_count = -SAFETY_MARGIN*ENCODER_MULTIPLIER;  // used in the old failsafe to check how much distance has passed 
+    int old_count = -(SAFETY_MARGIN)*ENCODER_MULTIPLIER*0.75 - 1000;  // used in the old failsafe to check how much distance has passed 
                                                         // will enter the failsafe check straight away due to this
     int emergency_exit = FALSE;
     
@@ -254,7 +274,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             int failsafe_alternator = TRUE;
             
             // FAILSAFE forward & backward
-            if (abs(count_left) > (old_count + (SAFETY_MARGIN)*ENCODER_MULTIPLIER - 100) 
+            if (abs(count_left) > (old_count + (SAFETY_MARGIN)*ENCODER_MULTIPLIER*0.75 - 100) 
                                         && failsafe_alternator == TRUE 
                                         && activate_safety == TRUE){
                 emergency_exit = failsafe(direction);
@@ -548,35 +568,49 @@ void failsafeSideSensors(int side_sensing, int initial_value) {
         //translateUntil(initial_value, translate_direction, GREATER_THAN,side_sensing,SPEED);   // will take us back to our initial position
                                                                                 // if this got tripped by a block, it would mess everything up
         //translateMoveDynamic(translate_direction, 30, SPEED, FALSE);          // these are not the correct values 
-        straightAdjust();                                                       // straight adjust to correct any problems from translating
+        straightAdjust(FRONT_SENSORS);                                          // straight adjust to correct any problems from translating
         
     }
 }
 
 
-void straightAdjust(void) {
+void straightAdjust(int front_back) {
        
-    int front_left;
-    int front_right;
+    int sensor_left; 
+    int sensor_right;
     int difference = 300;
     int tolerance = 1;
     int max_difference = 800;
     int ultra_delay = 50;
     int speed = 25;
+    int timer;
+    Timer_straight_adjust_Start();      // Starts counting the timer 
+    
+    // Are we adjusting with the back or front sensors: 
+    if (front_back == FRONT_SENSORS) {
+        sensor_left = FRONT_LEFT;
+        sensor_right = FRONT_RIGHT;
+    }
+    else {
+        //sensor_left = BACK_LEFT;
+        //sensor_right = BACK_RIGHT;
+    }
+    
+    
        
     // Ensure the initial readings are accurate: 
     while (abs(difference) > max_difference) {              
-        distanceSensor(FRONT_LEFT);
+        distanceSensor(sensor_left);
         CyDelay(50);                        // 50ms might not be enough ???
-        sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_LEFT]);
+        sprintf(output, "%d \t", ultrasonic_distances_mm[sensor_left]);
         UART_1_PutString(output);
         
-        distanceSensor(FRONT_RIGHT);
+        distanceSensor(sensor_right);
         CyDelay(50);
-        sprintf(output, "%d \t", ultrasonic_distances_mm[FRONT_RIGHT]);
+        sprintf(output, "%d \t", ultrasonic_distances_mm[sensor_right]);
         UART_1_PutString(output);
         
-        difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+        difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
         sprintf(output, "difference = %d, \n", difference);       
         UART_1_PutString(output);
     }
@@ -603,12 +637,12 @@ void straightAdjust(void) {
                 && abs(difference) < max_difference)     // ensures working correctly
             {
 
-            distanceSensor(FRONT_LEFT);
+            distanceSensor(sensor_left);
             CyDelay(ultra_delay);
-            distanceSensor(FRONT_RIGHT);
+            distanceSensor(sensor_right);
             CyDelay(ultra_delay);
                       
-            difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+            difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
             
             //sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
             //                                            ultrasonic_distances_mm[FRONT_RIGHT],
@@ -618,9 +652,8 @@ void straightAdjust(void) {
             
             }
             
-
- 
-            while (abs(difference) > tolerance 
+            /* I DON'T KNOW WHY THIS IS DUPLICATED, JUST COMMENTING OUT FOR NOW
+            while (abs(difference) > tolerance                  
                         && difference > 0
                         && abs(difference) < max_difference) {    // ensures working correctly
                 distanceSensor(FRONT_LEFT);
@@ -635,35 +668,35 @@ void straightAdjust(void) {
                                                                                         difference);       
                 UART_1_PutString(output);
             } 
+            */
         }
         else if (difference < 0 ){      // HERE we are turning left
             Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
             
-            distanceSensor(FRONT_LEFT);
+            distanceSensor(sensor_left);
             CyDelay(ultra_delay);
-            distanceSensor(FRONT_RIGHT);
+            distanceSensor(sensor_right);
             CyDelay(ultra_delay);
                       
-            difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+            difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
                        
             //sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
             //                                            ultrasonic_distances_mm[FRONT_RIGHT],
             //                                                                        difference);       
             //UART_1_PutString(output);
-
             
             while (abs(difference) > tolerance 
                         && difference < 0
                         && abs(difference) < max_difference) {
-                distanceSensor(FRONT_LEFT);
+                distanceSensor(sensor_left);
                 CyDelay(ultra_delay);
-                distanceSensor(FRONT_RIGHT);
+                distanceSensor(sensor_right);
                 CyDelay(ultra_delay);
                           
-                difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+                difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
                            
-                sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
-                                                            ultrasonic_distances_mm[FRONT_RIGHT],
+                sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[sensor_left], 
+                                                            ultrasonic_distances_mm[sensor_right],
                                                                                         difference);       
                 UART_1_PutString(output);
             
@@ -678,16 +711,41 @@ void straightAdjust(void) {
         
         // CHECKS one more time to ensure the difference is accurate: 
             // consider putting in a for loop to get new readings
-        distanceSensor(FRONT_LEFT);
+        distanceSensor(sensor_left);
         CyDelay(ultra_delay);
-        distanceSensor(FRONT_RIGHT);
+        distanceSensor(sensor_right);
         CyDelay(ultra_delay);
                       
-        difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
-        sprintf(output, "%d, %d, ", ultrasonic_distances_mm[FRONT_LEFT], ultrasonic_distances_mm[FRONT_RIGHT]);       
+        difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
+        sprintf(output, "%d, %d, ", ultrasonic_distances_mm[sensor_left], ultrasonic_distances_mm[sensor_right]);       
         UART_1_PutString(output);
         sprintf(output, "dif: %d, \n", difference);       
         UART_1_PutString(output);
+        
+        // Timer out failsafe: 
+        /*
+        timer = Timer_straight_adjust_ReadCounter();
+        
+        if (timer > 60000) {
+            Motor_Left_Driver_Sleep();                  // puts it back to sleep
+            Motor_Right_Driver_Sleep();
+            moveDynamic(-30,SPEED,TRUE);                // calls movedynamic
+            moveDynamic(30, SPEED,TRUE);      
+            Motor_Left_Driver_Wakeup();
+            Motor_Left_Driver_WriteCompare(speed_left); // brings it back to continue the while loop
+            Motor_Right_Driver_Wakeup();
+            Motor_Right_Driver_WriteCompare(speed_right);
+            Control_Reset_Straight_Write(1);            // Resets the timer (I think)
+            CyDelay(10); 
+            Control_Reset_Straight_Write(0);
+            
+            sprintf(output, "timer count: %d", timer);
+            UART_1_PutString(output);
+        }
+        */
+        
+        
+        
         
     }         // This ensures that the turning worked correctly
                                             // changed it from 10 to 2, this might change the way it works
@@ -695,7 +753,7 @@ void straightAdjust(void) {
     
     Motor_Left_Driver_Sleep();
     Motor_Right_Driver_Sleep();
-       
+    Timer_straight_adjust_Stop();       // stops the timer 
 }
 
 

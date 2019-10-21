@@ -1,13 +1,5 @@
 -- Project:   Group17Robot
-<<<<<<< HEAD
--- Generated: 10/21/2019 15:08:48
-=======
-<<<<<<< HEAD
--- Generated: 10/21/2019 13:17:40
-=======
--- Generated: 10/21/2019 11:49:08
->>>>>>> master
->>>>>>> a3aa0765efe011f010f038193cd5a197d48cbab5
+-- Generated: 10/21/2019 21:39:05
 -- PSoC Creator  4.2
 
 ENTITY Group17Robot IS
@@ -87,6 +79,7 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     SIGNAL Motor_Right_Forward(0)__PA : bit;
     SIGNAL Motor_Right_Phase_A(0)__PA : bit;
     SIGNAL Motor_Right_Phase_B(0)__PA : bit;
+    SIGNAL Net_12 : bit;
     SIGNAL Net_122 : bit;
     SIGNAL Net_124 : bit;
     ATTRIBUTE soft OF Net_124 : SIGNAL IS 1;
@@ -139,6 +132,9 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     SIGNAL Net_442 : bit;
     SIGNAL Net_4589 : bit;
     SIGNAL Net_4590 : bit;
+    SIGNAL Net_4640 : bit;
+    ATTRIBUTE global_signal OF Net_4640 : SIGNAL IS true;
+    SIGNAL Net_4640_local : bit;
     SIGNAL Net_470 : bit;
     SIGNAL Net_526_0 : bit;
     SIGNAL Net_526_1 : bit;
@@ -184,6 +180,13 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     SIGNAL \ADC:mod_dat_2\ : bit;
     SIGNAL \ADC:mod_dat_3\ : bit;
     SIGNAL \ADC:mod_reset\ : bit;
+    SIGNAL \Control_Reset_Straight:control_1\ : bit;
+    SIGNAL \Control_Reset_Straight:control_2\ : bit;
+    SIGNAL \Control_Reset_Straight:control_3\ : bit;
+    SIGNAL \Control_Reset_Straight:control_4\ : bit;
+    SIGNAL \Control_Reset_Straight:control_5\ : bit;
+    SIGNAL \Control_Reset_Straight:control_6\ : bit;
+    SIGNAL \Control_Reset_Straight:control_7\ : bit;
     SIGNAL \Gripper_Servo_PWM:Net_54\ : bit;
     SIGNAL \Gripper_Servo_PWM:Net_63\ : bit;
     SIGNAL \Motor_Left_Control:control_1\ : bit;
@@ -337,6 +340,9 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     SIGNAL \Timer_1:TimerUDB:timer_enable\ : bit;
     SIGNAL \Timer_1:TimerUDB:timer_enable_split\ : bit;
     SIGNAL \Timer_1:TimerUDB:trig_disable\ : bit;
+    SIGNAL \Timer_straight_adjust:Net_261\ : bit;
+    SIGNAL \Timer_straight_adjust:Net_51\ : bit;
+    SIGNAL \Timer_straight_adjust:Net_57\ : bit;
     SIGNAL \UART_1:BUART:counter_load_not\ : bit;
     SIGNAL \UART_1:BUART:pollcount_0\ : bit;
     SIGNAL \UART_1:BUART:pollcount_1\ : bit;
@@ -405,6 +411,7 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     ATTRIBUTE GROUND OF zero : SIGNAL IS true;
     SIGNAL \ClockBlock.dclk_glb_ff_2__sig\ : bit;
     SIGNAL \ClockBlock.aclk_glb_ff_0__sig\ : bit;
+    SIGNAL \ClockBlock.dclk_glb_ff_5__sig\ : bit;
     SIGNAL \Timer_1:TimerUDB:sT16:timerdp:u0.ce0__sig\ : bit;
     SIGNAL \Timer_1:TimerUDB:sT16:timerdp:u0.cl0__sig\ : bit;
     SIGNAL \Timer_1:TimerUDB:sT16:timerdp:u0.z0__sig\ : bit;
@@ -594,6 +601,7 @@ ARCHITECTURE __DEFAULT__ OF Group17Robot IS
     ATTRIBUTE lib_model OF \Motor_Right_Driver:PWMUDB:sP8:pwmdp:u0\ : LABEL IS "datapathcell11";
     ATTRIBUTE lib_model OF \Motor_Left_Control:Sync:ctrl_reg\ : LABEL IS "controlcell9";
     ATTRIBUTE lib_model OF \Motor_Right_Control:Sync:ctrl_reg\ : LABEL IS "controlcell10";
+    ATTRIBUTE lib_model OF \Control_Reset_Straight:Sync:ctrl_reg\ : LABEL IS "controlcell11";
     ATTRIBUTE lib_model OF \UART_1:BUART:txn\ : LABEL IS "macrocell53";
     ATTRIBUTE lib_model OF \UART_1:BUART:tx_state_1\ : LABEL IS "macrocell54";
     ATTRIBUTE lib_model OF \UART_1:BUART:tx_state_0\ : LABEL IS "macrocell55";
@@ -1100,8 +1108,11 @@ BEGIN
             dclk_3 => \UART_1:Net_9_local\,
             dclk_glb_4 => Net_3199,
             dclk_4 => Net_3199_local,
+            dclk_glb_5 => Net_4640,
+            dclk_5 => Net_4640_local,
             dclk_glb_ff_2 => \ClockBlock.dclk_glb_ff_2__sig\,
-            aclk_glb_ff_0 => \ClockBlock.aclk_glb_ff_0__sig\);
+            aclk_glb_ff_0 => \ClockBlock.aclk_glb_ff_0__sig\,
+            dclk_glb_ff_5 => \ClockBlock.dclk_glb_ff_5__sig\);
 
     Tx_1:logicalport
         GENERIC MAP(
@@ -5648,6 +5659,38 @@ BEGIN
             control_1 => \Motor_Right_Control:control_1\,
             control_0 => Net_3726,
             busclk => ClockBlock_BUS_CLK);
+
+    \Control_Reset_Straight:Sync:ctrl_reg\:controlcell
+        GENERIC MAP(
+            cy_ctrl_mode_0 => "00000000",
+            cy_ctrl_mode_1 => "00000000",
+            cy_ext_reset => 0,
+            cy_force_order => 1,
+            cy_init_value => "00000000",
+            clken_mode => 1)
+        PORT MAP(
+            control_7 => \Control_Reset_Straight:control_7\,
+            control_6 => \Control_Reset_Straight:control_6\,
+            control_5 => \Control_Reset_Straight:control_5\,
+            control_4 => \Control_Reset_Straight:control_4\,
+            control_3 => \Control_Reset_Straight:control_3\,
+            control_2 => \Control_Reset_Straight:control_2\,
+            control_1 => \Control_Reset_Straight:control_1\,
+            control_0 => Net_12,
+            busclk => ClockBlock_BUS_CLK);
+
+    \Timer_straight_adjust:TimerHW\:timercell
+        GENERIC MAP(
+            cy_registers => "")
+        PORT MAP(
+            clock => \ClockBlock.dclk_glb_ff_5__sig\,
+            kill => open,
+            enable => __ONE__,
+            capture => open,
+            timer_reset => Net_12,
+            tc => \Timer_straight_adjust:Net_51\,
+            cmp => \Timer_straight_adjust:Net_261\,
+            irq => \Timer_straight_adjust:Net_57\);
 
     \UART_1:BUART:txn\:macrocell
         GENERIC MAP(

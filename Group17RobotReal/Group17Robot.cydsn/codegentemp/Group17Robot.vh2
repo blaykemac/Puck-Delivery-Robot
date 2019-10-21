@@ -2,15 +2,7 @@
 --	Conversion of Group17Robot.v to vh2:
 --
 --	Cypress Semiconductor - WARP Version 6.3 IR 41
-<<<<<<< HEAD
---	Mon Oct 21 15:08:44 2019
-=======
-<<<<<<< HEAD
---	Mon Oct 21 13:17:36 2019
-=======
---	Mon Oct 21 11:49:05 2019
->>>>>>> master
->>>>>>> a3aa0765efe011f010f038193cd5a197d48cbab5
+--	Mon Oct 21 21:38:59 2019
 --
 
 USE cypress.cypress.all;
@@ -2214,6 +2206,41 @@ SIGNAL \Motor_Right_Control:control_3\ : bit;
 SIGNAL \Motor_Right_Control:control_2\ : bit;
 SIGNAL \Motor_Right_Control:control_1\ : bit;
 SIGNAL \Motor_Right_Control:control_0\ : bit;
+SIGNAL \Control_Reset_Straight:clk\ : bit;
+SIGNAL \Control_Reset_Straight:rst\ : bit;
+SIGNAL Net_12 : bit;
+SIGNAL \Control_Reset_Straight:control_out_0\ : bit;
+SIGNAL Net_4630 : bit;
+SIGNAL \Control_Reset_Straight:control_out_1\ : bit;
+SIGNAL Net_4631 : bit;
+SIGNAL \Control_Reset_Straight:control_out_2\ : bit;
+SIGNAL Net_4632 : bit;
+SIGNAL \Control_Reset_Straight:control_out_3\ : bit;
+SIGNAL Net_4634 : bit;
+SIGNAL \Control_Reset_Straight:control_out_4\ : bit;
+SIGNAL Net_4635 : bit;
+SIGNAL \Control_Reset_Straight:control_out_5\ : bit;
+SIGNAL Net_4636 : bit;
+SIGNAL \Control_Reset_Straight:control_out_6\ : bit;
+SIGNAL Net_4637 : bit;
+SIGNAL \Control_Reset_Straight:control_out_7\ : bit;
+SIGNAL \Control_Reset_Straight:control_7\ : bit;
+SIGNAL \Control_Reset_Straight:control_6\ : bit;
+SIGNAL \Control_Reset_Straight:control_5\ : bit;
+SIGNAL \Control_Reset_Straight:control_4\ : bit;
+SIGNAL \Control_Reset_Straight:control_3\ : bit;
+SIGNAL \Control_Reset_Straight:control_2\ : bit;
+SIGNAL \Control_Reset_Straight:control_1\ : bit;
+SIGNAL \Control_Reset_Straight:control_0\ : bit;
+SIGNAL Net_4640 : bit;
+SIGNAL \Timer_straight_adjust:Net_260\ : bit;
+SIGNAL \Timer_straight_adjust:Net_266\ : bit;
+SIGNAL \Timer_straight_adjust:Net_51\ : bit;
+SIGNAL \Timer_straight_adjust:Net_261\ : bit;
+SIGNAL \Timer_straight_adjust:Net_57\ : bit;
+SIGNAL Net_4621 : bit;
+SIGNAL Net_4626 : bit;
+SIGNAL \Timer_straight_adjust:Net_102\ : bit;
 SIGNAL \MODULE_10:g1:a0:newa_0\ : bit;
 SIGNAL \MODULE_10:g1:a0:newb_0\ : bit;
 SIGNAL MODIN10_0 : bit;
@@ -6537,6 +6564,36 @@ Clock_6:cy_clock_v1_0
 		clock=>zero,
 		control=>(\Motor_Right_Control:control_7\, \Motor_Right_Control:control_6\, \Motor_Right_Control:control_5\, \Motor_Right_Control:control_4\,
 			\Motor_Right_Control:control_3\, \Motor_Right_Control:control_2\, \Motor_Right_Control:control_1\, Net_3726));
+\Control_Reset_Straight:Sync:ctrl_reg\:cy_psoc3_control
+	GENERIC MAP(cy_init_value=>"00000000",
+		cy_force_order=>'1',
+		cy_ctrl_mode_1=>"00000000",
+		cy_ctrl_mode_0=>"00000000",
+		cy_ext_reset=>'0')
+	PORT MAP(reset=>zero,
+		clock=>zero,
+		control=>(\Control_Reset_Straight:control_7\, \Control_Reset_Straight:control_6\, \Control_Reset_Straight:control_5\, \Control_Reset_Straight:control_4\,
+			\Control_Reset_Straight:control_3\, \Control_Reset_Straight:control_2\, \Control_Reset_Straight:control_1\, Net_12));
+Clock_2:cy_clock_v1_0
+	GENERIC MAP(cy_registers=>"",
+		id=>"831fd4b5-261c-4ef6-8665-d01cc85d4248",
+		source_clock_id=>"",
+		divisor=>0,
+		period=>"166666666666.667",
+		is_direct=>'0',
+		is_digital=>'1')
+	PORT MAP(clock_out=>Net_4640,
+		dig_domain_out=>open);
+\Timer_straight_adjust:TimerHW\:cy_psoc3_timer_v1_0
+	GENERIC MAP(cy_registers=>"")
+	PORT MAP(clock=>Net_4640,
+		kill=>zero,
+		enable=>Net_2035,
+		capture=>zero,
+		timer_reset=>Net_12,
+		tc=>\Timer_straight_adjust:Net_51\,
+		compare=>\Timer_straight_adjust:Net_261\,
+		interrupt=>\Timer_straight_adjust:Net_57\);
 \UART_1:BUART:reset_reg\:cy_dff
 	PORT MAP(d=>zero,
 		clk=>\UART_1:BUART:clock_op\,
