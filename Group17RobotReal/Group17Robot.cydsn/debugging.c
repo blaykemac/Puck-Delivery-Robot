@@ -101,7 +101,10 @@ void ultimateDebugging(void){
                     if (lock == FALSE) 
                     {
                         UART_1_PutString("Motor Testing: \n");
-                        translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
+                        //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
+                        
+                        //straightAdjustSensor(FRONT_MIDDLE);
+                        //straightAdjustBack();
                         
 
                         //moveDynamic(-300);

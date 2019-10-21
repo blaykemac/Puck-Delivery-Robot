@@ -505,10 +505,10 @@ void straightAdjust(void) {
                       
             difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
             
-            sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
-                                                        ultrasonic_distances_mm[FRONT_RIGHT],
-                                                                                    difference);       
-            UART_1_PutString(output);
+            //sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
+            //                                            ultrasonic_distances_mm[FRONT_RIGHT],
+            //                                                                        difference);       
+            //UART_1_PutString(output);
             
             
             }
@@ -528,10 +528,10 @@ void straightAdjust(void) {
                       
             difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
                        
-            sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
-                                                        ultrasonic_distances_mm[FRONT_RIGHT],
-                                                                                    difference);       
-            UART_1_PutString(output);
+            //sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
+            //                                            ultrasonic_distances_mm[FRONT_RIGHT],
+            //                                                                        difference);       
+            //UART_1_PutString(output);
             
             
             }
@@ -587,7 +587,7 @@ void straightAdjustBack(void) {
         if (direction == LEFT) { Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); }
         else {Motor_Left_Control_Write(1); Motor_Right_Control_Write(0); }
         
-        while (distance_previous < distance_check) {
+        while (distance_previous > distance_check) {
             // this will run while:
                 // new distance values are getting smaller           
             
@@ -720,11 +720,33 @@ void blockAndPuckZoneFinding(void) {
         
     }
     
-    
-    
-    
-    
-    
+
+}
+
+void straightAdjustSensor(int sensor){
+    //Start by rotating a definite direction away from the rough center point we have aligned in before calling this function.
+    moveSwivel(OVER_ROTATION_ANGLE, SPEED_LOW, FALSE);
+    distanceSensor(sensor);
+    int minimum = ultrasonic_distances_mm[sensor];
+    int above_minimum_count = 0;
+    while(1){
+        distanceSensor(sensor);
+        CyDelay(100);
+        
+        if (ultrasonic_distances_mm[sensor] < minimum) { // Update minimum if smaller value is found
+            minimum = ultrasonic_distances_mm[sensor];
+            above_minimum_count = 0;
+        } 
+        else {
+            above_minimum_count++;   
+        }
+        
+        if (above_minimum_count == ABOVE_MINIMUM_COUNT_THRESHOLD){
+            moveSwivel(ABOVE_MINIMUM_COUNT_THRESHOLD, SPEED_LOW_ROTATE, FALSE);   
+        }
+
+        moveSwivel(-1, SPEED_LOW_ROTATE, FALSE);
+    }
     
 }
 

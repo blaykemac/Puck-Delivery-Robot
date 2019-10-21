@@ -87,8 +87,9 @@ int internal_orientation;
 #define CONSTRUCTION_BASE_WEST_EDGE 200 // Measure arena to find this edge
 #define CONSTRUCTION_BASE_EAST_EDGE 300
 #define CONSTRUCTION_MIDPOINT 250
-#define CONSTRUCTION_DISTANCE_FROM_WALL 150 // How far we should put the front of the robot to the wall when depositing hte puck
+#define CONSTRUCTION_DISTANCE_FROM_WALL 130 // How far we should put the front of the robot to the wall when depositing hte puck
 #define CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK 210 // How far we should reverse from constructio stack before attempting to turn.
+#define DISTANCE_BEFORE_STACK_MIDDLE_SENSOR 95 // Distance the middle bottom sensor requires to get to before stopping at the stack.
 
 #define PUCK_GRID_FROM_NORTH 275 // Where the southmost part of the pucks can extend to from the north wall
 #define PUCK_GRID_WIDTH 270 // Width from east to west of the 5x5 grid.
@@ -98,7 +99,7 @@ int internal_orientation;
 #define PUCK_RACK_3_WEST_DISTANCE 540
 #define PUCK_RACK_4_WEST_DISTANCE 480
 #define SCAN_INITIALISE_HORIZONTAL 85 // The distance from the west that we should stop the robot during the black wall colour initialisation
-#define PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS 50
+#define PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS 55
 
 #define FIRST_DISCARD_ZONE 1000
 #define SECOND_DISCARD_ZONE 900
@@ -144,6 +145,8 @@ int internal_orientation;
 #define DISTANCE_STOPPED_FROM_PUCK 50 // When we drive up to the puck using moveForwardIndefinitely(), we use this value to moveForward even further until puck is scooped up.
 #define SENSOR_DELAY_MIN 60
 #define WALL_CLEARANCE_FRONT 175 // Distance to stop from east wall 
+#define OVER_ROTATION_ANGLE 20 // We over-rotate when scanning for puck and stack so we can then counter-rotate and hone in on minimum.
+#define ABOVE_MINIMUM_COUNT_THRESHOLD 3 
 
 // Miscellaneous:
 #define ADJUST 4        // 4 was test to be best

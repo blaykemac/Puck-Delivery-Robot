@@ -226,19 +226,10 @@ int main(void)
     // FORCING STATE:
     // Manual state set for testing
     state = STATE_PRE_RUN;
-    
-    //state = STATE_DEPOSIT_PUCK;
-    currentPuckStackSize = 0;
-    current_stage = 1;
-    blockEastClearance = 0;
-    blockWestClearance = 0;
-    puckEastClearance = 0;
-    puckWestClearance = 0;
-    int block_and_puck_edge_midpoint = 500; // take the midpoint between inner edge between the pucks and the block
-    //internal_orientation = EAST;
     puckConstructionPlan[0] = RED;
     puckConstructionPlan[1] = GREEN;
     puckConstructionPlan[2] = BLUE;
+    int block_and_puck_edge_midpoint = 0;
     
 
     // Main Loop for States
@@ -629,7 +620,7 @@ int main(void)
             UART_1_PutString(output);
             
             int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - ultrasonic_distances_mm[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR + 100;       
-            puck_check = 700;
+            //puck_check = 700;
             
             sprintf(output, "puck check: %d, \n", puck_check);       
             UART_1_PutString(output);
@@ -685,6 +676,10 @@ int main(void)
             UART_1_PutString(output);
             sprintf(output, "west puck: %d, \n", puck_location[WEST]);       
             UART_1_PutString(output);
+            sprintf(output, "east block: %d, \n", block_location[EAST]);       
+            UART_1_PutString(output);
+            sprintf(output, "west block: %d, \n", block_location[WEST]);       
+            UART_1_PutString(output);
             
             
             
@@ -719,6 +714,9 @@ int main(void)
               puckWestClearance = 1;  
             }
             
+            //Temp delete later
+            puckEastClearance = 0;
+            puckWestClearance = 1;
             
             
             //changeOrientation(WEST,SPEED);
@@ -757,21 +755,14 @@ int main(void)
             
             if (blockEastClearance && puckEastClearance){
                 
-                //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
                 moveUntil(WALL_CLEARANCE_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
                 changeOrientation(NORTH, SPEED);
                 //straightAdjust();
                 moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
-                //translateUntil(PUCK_GRID_FROM_NORTH - WIDTH_SENSOR_TO_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, RIGHT, LESS_THAN, SIDE_RIGHT, SPEED);
-                //translateMoveDynamic(-100, 30, SPEED, FALSE); // Change safety to TRUE when implemented and use translateUntil
-                //displaceLeft(); Repeatedly call this if below function not implemented
-                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 changeOrientation(WEST, SPEED);
-                //displaceLeft();
-                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
-                //moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+
                 
                 
             }
@@ -779,18 +770,15 @@ int main(void)
             else if (blockWestClearance && puckWestClearance){
             
                 //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
-                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+                straightAdjust(); //? Remove if it fucks things up
                 changeOrientation(NORTH, SPEED);
+                straightAdjust(); //? Remove if it fucks things up
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                //translateMoveDynamic(CLEARANCE_RADIUS_CENTER_TO_BACK, 10, SPEED, FALSE); // Change safety to TRUE when implemented
                 straightAdjust();
-                moveUntil(PUCK_GRID_FROM_NORTH, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                //displaceLeft(); Repeatedly call this if below function not implemented
-                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
-                translateMoveDynamic(CLEARANCE_RADIUS_CENTER_TO_BACK, 10, SPEED, FALSE); // Change safety to TRUE when implemented
                 changeOrientation(EAST, SPEED);
-                //displaceLeft();
-                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
-                //moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+
                             
             }
             
@@ -911,31 +899,17 @@ int main(void)
             
             else if (blockWestClearance && puckWestClearance){
             
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
                 // straightAdjust() using back sensor?
                 changeOrientation(NORTH,SPEED);
                 straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
-                straightAdjust();
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
+                //straightAdjust();
                 changeOrientation(EAST,SPEED);
                 straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(WALL_CLEARANCE_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
-
-                
-                //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
-                straightAdjust();
-                changeOrientation(NORTH, SPEED);
-                straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                //displaceLeft(); Repeatedly call this if below function not implemented
-                //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
-                changeOrientation(EAST, SPEED);
-                //displaceLeft();
-                //displaceLeftUntil(DISTANCE_PUCKS_FROM_NORTH + WIDTH_SENSOR_TO_CENTER ,RIGHT);
-                moveUntil(DISTANCE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                            
+              
             }
             
             
@@ -1027,22 +1001,24 @@ int main(void)
             } // Discard the puck so drop it in rubbish pile
 
             changeOrientation(SOUTH,SPEED);    
-            changeHeightToPuck(currentPuckStackSize + 1, CLOSE); // Lift claw above stack to avoid hitting the stack  
+            changeHeightToPuck(ABOVE_3_PUCK, CLOSE); // Lift claw above stack to avoid hitting the stack  
             
             if (currentPuckStackSize == 0){
-               moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
+                straightAdjust();
+                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
+               
             }
             else {
-                //moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL - 60, FORWARD, LESS_THAN, FRONT_RIGHT, SPEED, FALSE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping)
-                moveDynamic(140, SPEED, FALSE);            
+                moveUntil(DISTANCE_BEFORE_STACK_MIDDLE_SENSOR, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, FALSE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping)
+                //moveDynamic(140, SPEED, FALSE);            
             }
             
             //moveDynamic(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK - CONSTRUCTION_DISTANCE_FROM_WALL,SPEED);
             
-            if (heldColour == puckConstructionPlan[currentPuckStackSize]){changeHeightToPuck(currentPuckStackSize, NEITHER);}
-            else {changeHeightToPuck(0, NEITHER);}
-            armOpen();
-            changeHeightToPuck(currentPuckStackSize + 1, NEITHER); // Move higher than stack to avoid hitting it.
+            changeHeightToPuck(currentPuckStackSize, OPEN);
+            //else {changeHeightToPuck(0, NEITHER);}
+            //armOpen();
+            changeHeightToPuck(ABOVE_3_PUCK, OPEN); // Move higher than stack to avoid hitting it.
             
 
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
