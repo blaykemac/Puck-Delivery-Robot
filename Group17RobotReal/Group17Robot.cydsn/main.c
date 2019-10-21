@@ -56,8 +56,6 @@ float horizontalPuckGrid = 0;
 // * NAVIGATION AND POSITION VARIABLES * //
 
 int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
-int pathToPucks; // This will give us a corridor/ that we should initially take when trying to go to the pucks
-int pathPastBlock;
 int block_location[4] = {0,0,0,0};      // The block location values
                                         //#define NORTH 0
                                         //#define EAST 1
@@ -114,24 +112,6 @@ CY_ISR(StartIH)                             // Ultrasonic ISR Definition
     }
 }
  
-//Interrupt service routines for dcmotor function
-/*
-CY_ISR(Encoder_Counts_1_IH){
-    stopMotor1AndUpdate();
-}
-
-CY_ISR(Encoder_Counts_2_IH){
-    stopMotor2AndUpdate();
-}
-
-CY_ISR(Drift_Check_IH){    
-    Drift_Check_Timer_ReadStatusRegister(); //Clears the interrupt
-    Drift_Check_Timer_Stop(); //Stops the timer
-    motor1EncoderCounts = Motor_1_Encoder_Counts_ReadCounter();
-    motor2EncoderCounts = Motor_2_Encoder_Counts_ReadCounter();
-    driftCorrect(); //Does checking
-}
-*/
 
 int main(void)
 {
@@ -756,7 +736,7 @@ int main(void)
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(WEST, SPEED);
 
-                
+                moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
                 
             }
             
@@ -772,7 +752,7 @@ int main(void)
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(EAST, SPEED);
 
-                            
+                moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);          
             }
             
             
@@ -787,6 +767,7 @@ int main(void)
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(EAST, SPEED);
                 
+                moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
             }
             
             else if (blockWestClearance && puckEastClearance){
@@ -798,6 +779,7 @@ int main(void)
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(WEST, SPEED);
                 
+                moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
             }
             
             state = STATE_FIND_REQUIRED_PUCK;
