@@ -586,7 +586,6 @@ void straightAdjust(void) {
         if (difference > 0)             // This means we need to move it right
         {
             Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
-<<<<<<< HEAD
             while (abs(difference) > tolerance 
                 && difference > 0
                 && abs(difference) < max_difference)     // ensures working correctly
@@ -606,8 +605,6 @@ void straightAdjust(void) {
             
             
             }
-=======
->>>>>>> a3aa0765efe011f010f038193cd5a197d48cbab5
             
             Motor_Left_Driver_Wakeup();
             Motor_Left_Driver_WriteCompare(speed_left);
@@ -633,7 +630,7 @@ void straightAdjust(void) {
         else if (difference < 0 ){      // HERE we are turning left
             Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
             
-<<<<<<< HEAD
+
             distanceSensor(FRONT_LEFT);
             CyDelay(ultra_delay);
             distanceSensor(FRONT_RIGHT);
@@ -645,12 +642,10 @@ void straightAdjust(void) {
             //                                            ultrasonic_distances_mm[FRONT_RIGHT],
             //                                                                        difference);       
             //UART_1_PutString(output);
-=======
             Motor_Left_Driver_Wakeup();
             Motor_Left_Driver_WriteCompare(speed_left);
             Motor_Right_Driver_Wakeup();
             Motor_Right_Driver_WriteCompare(speed_right);
->>>>>>> a3aa0765efe011f010f038193cd5a197d48cbab5
             
             while (abs(difference) > tolerance 
                         && difference < 0
@@ -857,7 +852,6 @@ void blockAndPuckZoneFinding(void) {
         
     }
     
-<<<<<<< HEAD
 
 }
 
@@ -886,8 +880,6 @@ void straightAdjustSensor(int sensor){
         moveSwivel(-1, SPEED_LOW_ROTATE, FALSE);
     }
     
-=======
->>>>>>> a3aa0765efe011f010f038193cd5a197d48cbab5
 }
 
 
