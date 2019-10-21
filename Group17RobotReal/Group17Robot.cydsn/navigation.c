@@ -162,6 +162,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     int emergency_exit = FALSE;
     
     // Check if we are closer to or further away from the side wall: 
+    /*
         int side_prox_sensor;
         int initial_side_distance;
         distanceSensor(SIDE_LEFT);
@@ -173,7 +174,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             initial_side_distance = ultrasonic_distances_mm[SIDE_RIGHT];
         }
         else { side_prox_sensor = SIDE_LEFT; initial_side_distance = ultrasonic_distances_mm[SIDE_LEFT]; } ;   
-    
+    */
     // Setting the direction 
     if (direction == FORWARD) { 
         Motor_Left_Control_Write(0); 
@@ -185,7 +186,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     }
     
     
-    if (ultrasonic_sensor == FRONT_SENSORS) {ultrasonic_sensor = FRONT_LEFT; front_sensor_flag = TRUE; }    // this destermines if we want to use both front sensors
+    //if (ultrasonic_sensor == FRONT_SENSORS) {ultrasonic_sensor = FRONT_LEFT; front_sensor_flag = TRUE; }    // this destermines if we want to use both front sensors
     
     // This ensures that the initial sensing value is good 
     ultrasonic_distances_mm[ultrasonic_sensor] = ARENA_WIDTH + 100;             // Enters the while loop
@@ -197,7 +198,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
         UART_1_PutString(output);
     }
     
-    if (front_sensor_flag == TRUE) {ultrasonic_sensor = FRONT_SENSORS; front_sensor_flag = FALSE; } 
+    //if (front_sensor_flag == TRUE) {ultrasonic_sensor = FRONT_SENSORS; front_sensor_flag = FALSE; } 
     
     Motor_Left_Driver_Wakeup();
     Motor_Left_Driver_WriteCompare(speed_left);
@@ -253,15 +254,16 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             int failsafe_alternator = TRUE;
             
             // FAILSAFE forward & backward
-            if (abs(count_left) > (old_count + (SAFETY_MARGIN/2)*ENCODER_MULTIPLIER - 100) 
+            if (abs(count_left) > (old_count + (SAFETY_MARGIN)*ENCODER_MULTIPLIER - 100) 
                                         && failsafe_alternator == TRUE 
                                         && activate_safety == TRUE){
                 emergency_exit = failsafe(direction);
                 old_count = count_left;
-                failsafe_alternator = FALSE;
+                //failsafe_alternator = FALSE;
             }
                         
             //  side sensors sensors
+            /*
             if (abs(count_left) > (old_count + (SAFETY_MARGIN/2)*ENCODER_MULTIPLIER - 100)
                                         && failsafe_alternator == FALSE 
                                         && activate_safety == TRUE){
@@ -269,6 +271,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
                 old_count = count_left;
                 failsafe_alternator = TRUE;
             }
+            */                            
         } 
     }
     
@@ -312,10 +315,11 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
                                         && activate_safety == TRUE){
                 emergency_exit = failsafe(direction);
                 old_count = count_left;
-                failsafe_alternator = FALSE;
+                //failsafe_alternator = FALSE;
             }
                         
             //  side sensors sensors
+            /*
             if (abs(count_left) > (old_count + (SAFETY_MARGIN/2)*ENCODER_MULTIPLIER - 100)
                                         && failsafe_alternator == FALSE 
                                         && activate_safety == TRUE){
@@ -323,6 +327,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
                 old_count = count_left;
                 failsafe_alternator = TRUE;
             }
+            */                            
         } 
     }
     
@@ -580,12 +585,19 @@ void straightAdjust(void) {
     // Adjust against the wall: 
     int speed_left = speed;        // slow speed
     int speed_right = speed;
+    
+    
+    Motor_Left_Driver_Wakeup();
+    Motor_Left_Driver_WriteCompare(speed_left);
+    Motor_Right_Driver_Wakeup();
+    Motor_Right_Driver_WriteCompare(speed_right);
         
     while(abs(difference) > tolerance ) {
         
         if (difference > 0)             // This means we need to move it right
         {
             Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
+             
             while (abs(difference) > tolerance 
                 && difference > 0
                 && abs(difference) < max_difference)     // ensures working correctly
@@ -606,10 +618,7 @@ void straightAdjust(void) {
             
             }
             
-            Motor_Left_Driver_Wakeup();
-            Motor_Left_Driver_WriteCompare(speed_left);
-            Motor_Right_Driver_Wakeup();
-            Motor_Right_Driver_WriteCompare(speed_right);
+
  
             while (abs(difference) > tolerance 
                         && difference > 0
@@ -630,7 +639,6 @@ void straightAdjust(void) {
         else if (difference < 0 ){      // HERE we are turning left
             Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
             
-
             distanceSensor(FRONT_LEFT);
             CyDelay(ultra_delay);
             distanceSensor(FRONT_RIGHT);
@@ -642,10 +650,7 @@ void straightAdjust(void) {
             //                                            ultrasonic_distances_mm[FRONT_RIGHT],
             //                                                                        difference);       
             //UART_1_PutString(output);
-            Motor_Left_Driver_Wakeup();
-            Motor_Left_Driver_WriteCompare(speed_left);
-            Motor_Right_Driver_Wakeup();
-            Motor_Right_Driver_WriteCompare(speed_right);
+
             
             while (abs(difference) > tolerance 
                         && difference < 0
