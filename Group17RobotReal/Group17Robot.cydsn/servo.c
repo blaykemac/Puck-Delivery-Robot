@@ -50,13 +50,14 @@
 #define LOW_POS_ARM_CMP 2400 
 #define HIGH_POS_ARM_CMP 1000
 
-# define ARM_POS_GROUND 2400    // Arm positioned at the ground
-# define ARM_POS_1 1700              // Arm positioned 1 pucks length above the ground (plus some tolerance)
-# define ARM_POS_2 1250           // Arm positioned 2...
-# define ARM_POS_3
+# define ARM_POS_GROUND 2500    // Arm positioned at the ground
+# define ARM_POS_1 1900              // Arm positioned 1 pucks length above the ground (plus some tolerance)
+# define ARM_POS_2 1350           // Arm positioned 2...
+# define ARM_POS_3 1000
+# define ARM_POS_MAX 1000
 
-#define GRIPPER_OPEN 1120 //1170
-#define GRIPPER_CLOSED 1250
+#define GRIPPER_OPEN 1120       // 1170?
+#define GRIPPER_CLOSED 1300
 
 
 void armOpen(){
@@ -73,7 +74,7 @@ void armClose(){
 }
 void armTranslate(int new_position){
     
-    if (new_position > 2400 || new_position < 1000) {return;}    // if a value is inputed that is bad for the servo
+    if (new_position > ARM_POS_GROUND || new_position < ARM_POS_3) {return;}    // if a value is inputed that is bad for the servo
                                                                 // function won't run
     
     Rack_Servo_PWM_Wakeup();                    // Brings the servo back from sleep
@@ -129,13 +130,13 @@ void changeHeightToPuck(int puckHeightIndex, int open_close){
         
     switch(puckHeightIndex){
         case 0:                     // Ground
-        armTranslate(2400);    break;
+        armTranslate(ARM_POS_GROUND);    break;
         case 1:                     // 1 puck above the ground
-        armTranslate(1700);    break;
+        armTranslate(ARM_POS_1);    break;
         case 2:                     // 2 pucks above the ground
-        armTranslate(1250);    break;
+        armTranslate(ARM_POS_2);    break;
         case 3:                     // 3 pucks above the ground
-        armTranslate(1000);    break;
+        armTranslate(ARM_POS_3);    break;
                                     // also max height
                                     // also the position it will be in when driving (so that ultrasonics will work
         default:                    // will be set to max height as default
@@ -145,14 +146,6 @@ void changeHeightToPuck(int puckHeightIndex, int open_close){
     if (open_close == OPEN || open_close == CLOSE) { Gripper_Servo_PWM_Sleep(); }
     
 }
-
-
-// NEW CODE WRITTEN BY MISHA: 
-
-// POSITIONS needed:
-    // Driving position - gripper is above the ultrasonic
-    // picking up position - down, and then up
-            // different switch cases - stage 1 height, stage 2 height, stage 3 height 
 
 
 
