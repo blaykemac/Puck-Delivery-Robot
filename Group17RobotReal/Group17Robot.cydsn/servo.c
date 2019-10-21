@@ -115,7 +115,7 @@ void armTranslate(int new_position){
     Rack_Servo_PWM_Sleep();                    // Puts the servo back to sleep
     
 }
-void changeHeightToPuck(int puckHeightIndex, int open_close){
+void changeHeightToPuck(int puck_height_index, int open_close){
     
     // open gripper
     // down
@@ -140,7 +140,7 @@ void changeHeightToPuck(int puckHeightIndex, int open_close){
     }
     if(open_close == NEITHER) {};
         
-    switch(puckHeightIndex){
+    switch(puck_height_index){
         case 0:                     // Ground
         armTranslate(ARM_POS_GROUND);    break;
         case 1:                     // 1 puck above the ground
@@ -168,14 +168,14 @@ void lowerAndOpen(int nothing) {nothing++;}
 
 
 //This takes input in cm
-void armMoveUpDown(int desiredPosition){
+void armMoveUpDown(int desired_position){
     //40 teeth on the gear
     //as the wheel rotates a certain angle, the arm moves up by r*theta. 
     //At angle = 0, we have arm at lowest position
     //At angle = 180, we have it at the highest
     //So theta= desiredheight/r . r = 20 mm approx. We'll work on it
     const int GEAR_RADIUS = 20;
-    int theta = (desiredPosition*10)/GEAR_RADIUS;
+    int theta = (desired_position*10)/GEAR_RADIUS;
     int compare_val = round(theta*5.5555);
     Rack_Servo_PWM_WriteCompare(1000+compare_val); //This needs to be modified a lot
     CyDelay(500);

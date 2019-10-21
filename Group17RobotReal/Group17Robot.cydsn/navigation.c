@@ -34,7 +34,7 @@ void armMoving(void){
     int puck_correct = FALSE;   // A flag to determine if the correct puck has been picked up
     int puck_scan;
     
-    puckConstructionPlan[1] = RED;  // this was a test
+    puck_construction_plan[1] = RED;  // this was a test
     
     // States
     // moving
@@ -49,7 +49,7 @@ void armMoving(void){
         puck_scan = colourSensingOutput();  // colour sensor takes a scan
         changeHeightToPuck(3, NEITHER);  // arm returns to high position
                                 // robot moves backwards
-        if (puck_scan == puckConstructionPlan[current_stage]) {puck_correct = TRUE;}
+        if (puck_scan == puck_construction_plan[current_stage]) {puck_correct = TRUE;}
                                 // if colour == true:
                                     // enter picking up puck from 
         else 
@@ -58,27 +58,6 @@ void armMoving(void){
                                     // robot translates to side to see next puck, and performs scanning puck again
         }
     }
-    
-    /*
-    
-    // Picking Up puck from pile:
-    changeHeightToPuck(0);      // arm lowers to ground
-                                // robot moves forward
-    armClose();                 // claw closes on puck
-    changeHeightToPuck(3);      // arm lifts up to highest position
-                                // robot moves back away from puck area   
-      
-    
-    // Deposition puck in construction zone:
-                                // arm will be in highest position from moving
-        changeHeightToPuck(current_stage-1);    // arm moves to position of stacking pucks          
-                                                // stage 1st = ground/0
-                                                // stage 2nd = 1
-                                                // stage 3rd = 2
-        armOpen();              // gripper releases puck
-        changeHeightToPuck(3);  // arm moves back to highest position availabe
-                                // robot moves away 
-    */
     
 }
 
@@ -189,11 +168,11 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
         CyDelay(50);
         distanceSensor(SIDE_RIGHT);
         CyDelay(50);
-        if (ultrasonic_distances_mm[SIDE_LEFT] > ultrasonic_distances_mm[SIDE_RIGHT]) {
+        if (sensor_distances[SIDE_LEFT] > sensor_distances[SIDE_RIGHT]) {
             side_prox_sensor = SIDE_RIGHT; 
-            initial_side_distance = ultrasonic_distances_mm[SIDE_RIGHT];
+            initial_side_distance = sensor_distances[SIDE_RIGHT];
         }
-        else { side_prox_sensor = SIDE_LEFT; initial_side_distance = ultrasonic_distances_mm[SIDE_LEFT]; } ;   
+        else { side_prox_sensor = SIDE_LEFT; initial_side_distance = sensor_distances[SIDE_LEFT]; } ;   
     */
     // Setting the direction 
     if (direction == FORWARD) { 
@@ -209,11 +188,11 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     //if (ultrasonic_sensor == FRONT_SENSORS) {ultrasonic_sensor = FRONT_LEFT; front_sensor_flag = TRUE; }    // this destermines if we want to use both front sensors
     
     // This ensures that the initial sensing value is good 
-    ultrasonic_distances_mm[ultrasonic_sensor] = ARENA_WIDTH + 100;             // Enters the while loop
-    while (ultrasonic_distances_mm[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
+    sensor_distances[ultrasonic_sensor] = ARENA_WIDTH + 100;             // Enters the while loop
+    while (sensor_distances[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
         distanceSensor(ultrasonic_sensor);
         CyDelay(50);
-        distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the   
+        distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the   
         sprintf(output, "%d \t", distance_sensor);       
         UART_1_PutString(output);
     }
@@ -250,19 +229,19 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             if (ultrasonic_sensor == FRONT_SENSORS && front_sensor_flag == TRUE) {
                 distanceSensor(FRONT_LEFT);
                 CyDelay(50);
-                distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the 
+                distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the 
                 front_sensor_flag = FALSE;
             }
             else if (ultrasonic_sensor == FRONT_SENSORS && front_sensor_flag == FALSE) {
                 distanceSensor(FRONT_RIGHT);
                 CyDelay(50);
-                distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the 
+                distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the 
                 front_sensor_flag = TRUE;
             }
             else {
                 distanceSensor(ultrasonic_sensor);
                 CyDelay(50);
-                distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+                distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
                 sprintf(output, "%d \t", distance_sensor);       
                 UART_1_PutString(output);
             }
@@ -319,7 +298,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
-            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+            distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
             sprintf(output, "%d \t", distance_sensor);       
             UART_1_PutString(output);
             
@@ -361,7 +340,7 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     // final check of sensor:
     distanceSensor(ultrasonic_sensor);
     CyDelay(50);
-    distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+    distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
     sprintf(output, "\n fin: %d \n", distance_sensor);    
     UART_1_PutString(output);
     
@@ -414,11 +393,11 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
     int distance_sensor;            // the measured distance of the sensor
 
     
-    ultrasonic_distances_mm[ultrasonic_sensor] = ARENA_WIDTH + 100;             // So it will enter the while loop
-    while (ultrasonic_distances_mm[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
+    sensor_distances[ultrasonic_sensor] = ARENA_WIDTH + 100;             // So it will enter the while loop
+    while (sensor_distances[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
         distanceSensor(ultrasonic_sensor);
         CyDelay(50);
-        distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the   
+        distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the   
         sprintf(output, "%d \t", distance_sensor);       
         UART_1_PutString(output);
     }
@@ -450,7 +429,7 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
             //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
-            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+            distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
             sprintf(output, "%d \t", distance_sensor);       
             UART_1_PutString(output);
             
@@ -480,7 +459,7 @@ void translateUntil(int distance_set, int direction, int less_or_great, int ultr
             distanceSensor(ultrasonic_sensor);
             CyDelay(50);
             
-            distance_sensor = ultrasonic_distances_mm[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
+            distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
             sprintf(output, "%d \t", distance_sensor);       
             UART_1_PutString(output);
             
@@ -515,7 +494,7 @@ int failsafe(int direction) {
         distanceSensor(BACK);
         CyDelay(50);
         
-        check_distance = ultrasonic_distances_mm[BACK];   // checks the distance measured by the ultrasonic
+        check_distance = sensor_distances[BACK];   // checks the distance measured by the ultrasonic
         if (check_distance < SAFETY_MARGIN && check_distance > 0) { 
             sprintf(output, "SAFETY MARGIN ACTIVATED @ %d\n", check_distance);      
             UART_1_PutString(output); 
@@ -529,7 +508,7 @@ int failsafe(int direction) {
         //distanceSensor(FRONT_RIGHT);      // May need to add this in of front left sensor isnt enough
         //CyDelay(50);
         
-        check_distance = ultrasonic_distances_mm[FRONT_LEFT];   // checks the distance measured by the ultrasonic
+        check_distance = sensor_distances[FRONT_LEFT];   // checks the distance measured by the ultrasonic
         if (check_distance < SAFETY_MARGIN && check_distance > 0) { 
             sprintf(output, "SAFETY MARGIN ACTIVATED @ %d\n", check_distance);      
             UART_1_PutString(output); 
@@ -562,8 +541,8 @@ void failsafeSideSensors(int side_sensing, int initial_value) {
     distanceSensor(side_sensing);
     CyDelay(50);
     
-    if (ultrasonic_distances_mm[side_sensing] > initial_value + drift_tolerance 
-                || ultrasonic_distances_mm[side_sensing] < initial_value - drift_tolerance ){
+    if (sensor_distances[side_sensing] > initial_value + drift_tolerance 
+                || sensor_distances[side_sensing] < initial_value - drift_tolerance ){
         // If it has drifted more than 10mm either side from the initial value, we perform a straight adjust
         //translateUntil(initial_value, translate_direction, GREATER_THAN,side_sensing,SPEED);   // will take us back to our initial position
                                                                                 // if this got tripped by a block, it would mess everything up
@@ -602,15 +581,15 @@ void straightAdjust(int front_back) {
     while (abs(difference) > max_difference) {              
         distanceSensor(sensor_left);
         CyDelay(50);                        // 50ms might not be enough ???
-        sprintf(output, "%d \t", ultrasonic_distances_mm[sensor_left]);
+        sprintf(output, "%d \t", sensor_distances[sensor_left]);
         UART_1_PutString(output);
         
         distanceSensor(sensor_right);
         CyDelay(50);
-        sprintf(output, "%d \t", ultrasonic_distances_mm[sensor_right]);
+        sprintf(output, "%d \t", sensor_distances[sensor_right]);
         UART_1_PutString(output);
         
-        difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
+        difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
         sprintf(output, "difference = %d, \n", difference);       
         UART_1_PutString(output);
     }
@@ -642,10 +621,10 @@ void straightAdjust(int front_back) {
             distanceSensor(sensor_right);
             CyDelay(ultra_delay);
                       
-            difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
+            difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
             
-            //sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
-            //                                            ultrasonic_distances_mm[FRONT_RIGHT],
+            //sprintf(output, " %d , %d \t dif: %d, \n", sensor_distances[FRONT_LEFT], 
+            //                                            sensor_distances[FRONT_RIGHT],
             //                                                                        difference);       
             //UART_1_PutString(output);
             
@@ -661,10 +640,10 @@ void straightAdjust(int front_back) {
                 distanceSensor(FRONT_RIGHT);
                 CyDelay(ultra_delay);
                           
-                difference = ultrasonic_distances_mm[FRONT_LEFT] - ultrasonic_distances_mm[FRONT_RIGHT];
+                difference = sensor_distances[FRONT_LEFT] - sensor_distances[FRONT_RIGHT];
                 
-                sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
-                                                            ultrasonic_distances_mm[FRONT_RIGHT],
+                sprintf(output, " %d , %d \t dif: %d, \n", sensor_distances[FRONT_LEFT], 
+                                                            sensor_distances[FRONT_RIGHT],
                                                                                         difference);       
                 UART_1_PutString(output);
             } 
@@ -678,10 +657,10 @@ void straightAdjust(int front_back) {
             distanceSensor(sensor_right);
             CyDelay(ultra_delay);
                       
-            difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
+            difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
                        
-            //sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[FRONT_LEFT], 
-            //                                            ultrasonic_distances_mm[FRONT_RIGHT],
+            //sprintf(output, " %d , %d \t dif: %d, \n", sensor_distances[FRONT_LEFT], 
+            //                                            sensor_distances[FRONT_RIGHT],
             //                                                                        difference);       
             //UART_1_PutString(output);
             
@@ -693,10 +672,10 @@ void straightAdjust(int front_back) {
                 distanceSensor(sensor_right);
                 CyDelay(ultra_delay);
                           
-                difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
+                difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
                            
-                sprintf(output, " %d , %d \t dif: %d, \n", ultrasonic_distances_mm[sensor_left], 
-                                                            ultrasonic_distances_mm[sensor_right],
+                sprintf(output, " %d , %d \t dif: %d, \n", sensor_distances[sensor_left], 
+                                                            sensor_distances[sensor_right],
                                                                                         difference);       
                 UART_1_PutString(output);
             
@@ -716,8 +695,8 @@ void straightAdjust(int front_back) {
         distanceSensor(sensor_right);
         CyDelay(ultra_delay);
                       
-        difference = ultrasonic_distances_mm[sensor_left] - ultrasonic_distances_mm[sensor_right];
-        sprintf(output, "%d, %d, ", ultrasonic_distances_mm[sensor_left], ultrasonic_distances_mm[sensor_right]);       
+        difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
+        sprintf(output, "%d, %d, ", sensor_distances[sensor_left], sensor_distances[sensor_right]);       
         UART_1_PutString(output);
         sprintf(output, "dif: %d, \n", difference);       
         UART_1_PutString(output);
@@ -775,7 +754,7 @@ void straightAdjustBack(void) {
     Motor_Left_Driver_WriteCompare(25);
     Motor_Right_Driver_WriteCompare(25);
     
-    distance_check = ultrasonic_distances_mm[BACK];
+    distance_check = sensor_distances[BACK];
     minimum_distance = distance_check;
     
     while(1) {
@@ -790,7 +769,7 @@ void straightAdjustBack(void) {
             distance_previous = distance_check;
             distanceSensor(BACK);
             CyDelay(DELAY);
-            distance_check = ultrasonic_distances_mm[BACK];
+            distance_check = sensor_distances[BACK];
         }
         if (direction == LEFT) {direction = RIGHT; }        // This changes the directions
         else {direction = LEFT; }
@@ -817,12 +796,12 @@ void toleranceCheck(void) {
     distanceSensor(BACK);
     CyDelay(60);
     
-    while (ultrasonic_distances_mm[FRONT_LEFT] + ultrasonic_distances_mm[BACK] + tolerance < ARENA_WIDTH 
+    while (sensor_distances[FRONT_LEFT] + sensor_distances[BACK] + tolerance < ARENA_WIDTH 
             
     
     
     
-    || ultrasonic_distances_mm[FRONT_LEFT] + ultrasonic_distances_mm[BACK] + tolerance < ARENA_WIDTH) { 
+    || sensor_distances[FRONT_LEFT] + sensor_distances[BACK] + tolerance < ARENA_WIDTH) { 
             // this checks if the ultrasonic distances being recorded are accurate
             // if it is not within this threshold, there must be something up.  
                 
@@ -922,14 +901,14 @@ void straightAdjustSensor(int sensor){
     //Start by rotating a definite direction away from the rough center point we have aligned in before calling this function.
     moveSwivel(OVER_ROTATION_ANGLE, SPEED_LOW, FALSE);
     distanceSensor(sensor);
-    int minimum = ultrasonic_distances_mm[sensor];
+    int minimum = sensor_distances[sensor];
     int above_minimum_count = 0;
     while(1){
         distanceSensor(sensor);
         CyDelay(100);
         
-        if (ultrasonic_distances_mm[sensor] < minimum) { // Update minimum if smaller value is found
-            minimum = ultrasonic_distances_mm[sensor];
+        if (sensor_distances[sensor] < minimum) { // Update minimum if smaller value is found
+            minimum = sensor_distances[sensor];
             above_minimum_count = 0;
         } 
         else {

@@ -179,19 +179,10 @@ int internal_orientation;
 
 /* Variables to be shared / imported */
 
-extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
-int driveStraightEnable;
-int currentPuckRackScanningIndex;
-int puckRackColours[5];
-int puckRackOffsetsFromWest[5];
-int sweeping;
+int puck_rack_scans[5];
+int puck_rack_west_offsets[5];
 float block_edge_location[4];
-float puckPileLocation;
 
-short int drivingForwardFlag;
-short int drivingBackwardFlag;
-short int turningLeftFlag;
-short int turningRightFlag;
 
 extern int initialisation;
 
@@ -200,8 +191,7 @@ extern void closeAndRaise(int puck_stack_position);
 
 char output[32];
 
-extern float ultrasonic_distances[TOTAL_SONIC_SENSORS];
 extern char output[32];
 
-extern int ultrasonic_distances_mm[TOTAL_SONIC_SENSORS];
+extern int sensor_distances[TOTAL_SONIC_SENSORS];
 

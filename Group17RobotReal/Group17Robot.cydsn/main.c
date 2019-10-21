@@ -34,28 +34,23 @@ extern char output[32];
 
 // * STATE VARIABLES * //
 int state = STATE_PRE_RUN;
-int running = 1;
-int sweeping = 0;
 float block_edge_location[4] = {0,0,0,0}; // N E S W edge positions respectively
 
 // * PUCK CONSTRUCTION VARIABLES * //
-int currentPuckStackSize = 0; // How many pucks are currently on the construction plate
-int puckRackColours[5] = {BLANK,BLANK,BLANK,BLANK,BLANK}; // 5 slots in puck rack.
-int puckConstructionPlan[3] = {BLANK,BLANK,BLANK};
-int currentPuckRackScanningIndex = 0;
-int puckRackOffsetsFromWest[5] = {PUCK_RACK_0_WEST_DISTANCE,
+int current_puck_stack_size = 0; // How many pucks are currently on the construction plate
+int puck_rack_scans[5] = {BLANK,BLANK,BLANK,BLANK,BLANK}; // 5 slots in puck rack.
+int puck_construction_plan[3] = {BLANK,BLANK,BLANK};
+int puck_rack_west_offsets[5] = {PUCK_RACK_0_WEST_DISTANCE,
                                 PUCK_RACK_1_WEST_DISTANCE,
                                 PUCK_RACK_2_WEST_DISTANCE,
                                 PUCK_RACK_3_WEST_DISTANCE,
                                 PUCK_RACK_4_WEST_DISTANCE };
 
-int puckColoursTempPile[2] = {BLANK,BLANK}; // Index 0 refers to east home base edge, 1 refers to west home base edge
-
-float horizontalPuckGrid = 0;
+int puck_temp_pile[2] = {BLANK,BLANK}; // Index 0 refers to east home base edge, 1 refers to west home base edge
 
 // * NAVIGATION AND POSITION VARIABLES * //
 
-int beginNavigation = 0; // Allow us to break out of the intial phase when powered up
+int begin_navigation = 0; // Allow us to break out of the intial phase when powered up
 int block_location[4] = {0,0,0,0};      // The block location values
                                         //#define NORTH 0
                                         //#define EAST 1
@@ -71,10 +66,10 @@ int safety_override = FALSE;
 
 // These block clearance variables are only true if we have enough room either side of the block to fully fit the robot through within a safety tolerance
 // And only true for the puck clearance variables if there is enough room to be able to turn at the far wall to face the pucks.
-short int blockEastClearance = 0;
-short int blockWestClearance = 0;
-short int puckEastClearance = 0;
-short int puckWestClearance = 0;
+short int block_east_clearance = 0;
+short int block_west_clearance = 0;
+short int puck_east_clearance = 0;
+short int puck_west_clearance = 0;
 
 // * COLOUR VARIABLES * //
 
@@ -105,9 +100,9 @@ CY_ISR(TIH)                             // Ultrasonic ISR Definition
 CY_ISR(StartIH)                             // Ultrasonic ISR Definition
 {
     CyDelay(100);
-    if (beginNavigation){
+    if (begin_navigation){
         UART_1_PutString("Beginning Navigation \n");
-        //state = STATE_SCAN_PLAN; 
+        //state = STATE_SCAN_PLAN; // Put to this for competition
         state = STATE_LOCATE_BLOCK_AND_PUCKS;
     }
 }
@@ -173,7 +168,7 @@ int main(void)
     Timer_1_ReadStatusRegister();
     Sonic_StartEx(TIH);
     Start_StartEx(StartIH);
-    beginNavigation = 1; // Set to true after it has run ISR at least once
+    begin_navigation = 1; // Set to true after it has run ISR at least once
     
     // Ultrasonic Initialisation & Calibration:
     // The ultrasonics take several test measurements to ensure they are working
@@ -191,9 +186,9 @@ int main(void)
     // FORCING STATE:
     // Manual state set for testing
     state = STATE_PRE_RUN;
-    puckConstructionPlan[0] = RED;
-    puckConstructionPlan[1] = GREEN;
-    puckConstructionPlan[2] = BLUE;
+    puck_construction_plan[0] = RED;
+    puck_construction_plan[1] = GREEN;
+    puck_construction_plan[2] = BLUE;
     int block_and_puck_edge_midpoint = 0;
     
 
@@ -207,16 +202,7 @@ int main(void)
         if (state == STATE_PRE_RUN){
         
         }
-        
-        //changeOrientation(SOUTH, SPEED);
-        //changeOrientation(NORTH, SPEED);
-        //changeOrientation(WEST, SPEED);
-        
-        //while(1) {}
-        
 
-        
-        
         while(0) {
                 UART_1_PutString("turning left\n");
                 moveSwivel(-25,20,FALSE);
@@ -227,7 +213,7 @@ int main(void)
         while(0){
             distanceSensor(SIDE_LEFT);
             CyDelay(60);
-            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_LEFT]);
+            sprintf(output, "%d \t", sensor_distances[SIDE_LEFT]);
             UART_1_PutString(output);
         }
         
@@ -266,7 +252,7 @@ int main(void)
 
         
         /*
-        while (beginNavigation == 0) {
+        while (begin_navigation == 0) {
             distanceCheck();           
             UART_1_PutString("\n");
             CyDelay(1000); // Check distance once a second.
@@ -302,17 +288,14 @@ int main(void)
         //changeOrientation(WEST, SPEED);
                 
         //state = STATE_DEPOSIT_PUCK;
-        //currentPuckStackSize = 2;
+        //current_puck_stack_size = 2;
         //current_stage = 3;
          
 //
 // *** 1. STATE SCAN PLAN: *** // 
 //
         
-
-        
-        
-        
+      
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
             
             
@@ -320,20 +303,6 @@ int main(void)
             // Debugging: 
         
             ultimateDebugging();        // If any of the debugging flags are activated, this will be called over the main code
-
-            
-            
-            // Checking translating function:
-            
-            //straightAdjust();
-            //blinkLED(GREEN,1000);
-            //moveSwivel(180, SPEED_LOW, FALSE);
-            //straightAdjustBack();
-            //blinkLED(GREEN, 1000);
-            
-            //while(1) {}
-            
-            // TRUE START:
                 
             
             while(0){
@@ -348,7 +317,7 @@ int main(void)
                 
                 
                 for (int i = 0; i < 5; i++) {                       // scan each of the pucks 
-                    puckRackColours[i] = colourSensingOutput();
+                    puck_rack_scans[i] = colourSensingOutput();
                     CyDelay(500);
                     moveDynamic(61, SPEED, TRUE);
                     CyDelay(500);
@@ -366,8 +335,8 @@ int main(void)
             
             for (int i = 0; i < 5; i++) { 
                 // scan each of the pucks 
-                //moveUntil(puckRackOffsetsFromWest[i]);
-                puckRackColours[i] = colourSensingOutput();
+                //moveUntil(puck_rack_west_offsets[i]);
+                puck_rack_scans[i] = colourSensingOutput();
                 CyDelay(500);
 
             //straightAdjust();
@@ -376,7 +345,7 @@ int main(void)
             UART_1_PutString("Found Colours: \n");
             for (int i = 0; i < 5; i++) 
             {
-                sprintf(output, "%i \n", puckRackColours[i]);    // updates UART showing values of scanned pucks    
+                sprintf(output, "%i \n", puck_rack_scans[i]);    // updates UART showing values of scanned pucks    
                 UART_1_PutString(output);
             }
             
@@ -385,35 +354,19 @@ int main(void)
             colour_sensing_algorithm = CLAW_1_ALGORITHM;   // changes it to claw algorithm
                                  
             // THEN WE FILTER THE NO PUCK VALUES:
-            int puckConstructionPlanIndex = 0; // Will be used to iterate through the 3 puck colours in construction plan
+            int puck_construction_plan_index = 0; // Will be used to iterate through the 3 puck colours in construction plan
             
-            // Iterate over all 5 rack slots and place the 3 colours into puckConstructionPlan.
-            for (int puckRackIndex = 0; puckRackIndex < 5; puckRackIndex++){
-                if (puckRackColours[puckRackIndex] != BLANK && puckConstructionPlanIndex != 3){
-                    puckConstructionPlan[puckConstructionPlanIndex] = puckRackColours[puckRackIndex];
-                    puckConstructionPlanIndex++;
+            // Iterate over all 5 rack slots and place the 3 colours into puck_construction_plan.
+            for (int puck_rack_index = 0; puck_rack_index < 5; puck_rack_index++){
+                if (puck_rack_scans[puck_rack_index] != BLANK && puck_construction_plan_index != 3){
+                    puck_construction_plan[puck_construction_plan_index] = puck_rack_scans[puck_rack_index];
+                    puck_construction_plan_index++;
                 }
             }
                     
             // MOVE into the next state: 
             state = STATE_LOCATE_BLOCK_AND_PUCKS;
-            
-            /*
-            if (!moving){
-                moving = 1;
-            if (initialisation){moveBackwardIndefinitely(); initialisation = 0;}
-            else {moveForwardIndefinitely();}        
 
-            moveAndAngle(SCAN_INITIALISE_HORIZONTAL,PLAN_SCAN_VERTICAL,WEST_ANGLE); // Move beyond the puck rack to scan the black empty wall
-            
-            // Read the black wall
-            
-            for (currentPuckRackScanningIndex = 0; currentPuckRackScanningIndex <= 4; currentPuckRackScanningIndex++){
-                moveAndAngle(puckRackOffsetsFromWest[currentPuckRackScanningIndex],PLAN_SCAN_VERTICAL,WEST_ANGLE); // Choose the plan vertical to be whatever Y value we start at
-                puckRackColours[currentPuckRackScanningIndex] = colourSensingOutput();
-            }
-   
-            */
         }
 
 //
@@ -436,7 +389,7 @@ int main(void)
             // SCAN FOR BLOCKS:
             
             distanceSensor(SIDE_LEFT);  // takes how far we are away from home base wall
-            while (ultrasonic_distances_mm[SIDE_LEFT] > (BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR)) {
+            while (sensor_distances[SIDE_LEFT] > (BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR)) {
                 // stays in while loop until side left value taken is appropriate
                 // E.g. the side left value should be less than BLOCK_ZONE_SOUTH - WIDTH_SENSOR_TO_SENSOR
                 // So, it should be less than 500mm - 220mm = 280mm
@@ -444,7 +397,7 @@ int main(void)
                } 
             
             
-            int block_check = BLOCK_ZONE_NORTH - ultrasonic_distances_mm[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR + (BLOCK_WIDTH/2);    
+            int block_check = BLOCK_ZONE_NORTH - sensor_distances[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR + (BLOCK_WIDTH/2);    
                 // TAKES our distance from north wall, 
                 // takes distance from arena, takes away 
                 // minus 50 is a tolerance
@@ -470,7 +423,7 @@ int main(void)
             distanceSensor(FRONT_LEFT); // Use front_right instead? 
             CyDelay(DELAY);
             
-            block_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
+            block_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
             
  
             //straightAdjust();                   // Ensure we are straight to take measurements
@@ -492,7 +445,7 @@ int main(void)
             distanceSensor(SIDE_LEFT); 
             CyDelay(60); 
             
-            block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+            block_location[SOUTH] = sensor_distances[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + sensor_distances[SIDE_RIGHT];
             
             // Check that the value makes sense: 
             if (block_location[SOUTH] > block_check) {
@@ -503,7 +456,7 @@ int main(void)
                 distanceSensor(SIDE_LEFT); 
                 CyDelay(60); 
             
-            block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT]; 
+            block_location[SOUTH] = sensor_distances[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + sensor_distances[SIDE_RIGHT]; 
             }
             
             // Stopping at the East side of the block: 
@@ -512,7 +465,7 @@ int main(void)
             blinkLED(GREEN,1000);      // To show it ended at the correct spot
             
             // Updating the East Clearance:
-            block_location[EAST] = ultrasonic_distances_mm[BACK] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+            block_location[EAST] = sensor_distances[BACK] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
                                                         // double check the distance back sensor to side sensor value
                 
             // Updating the North Clearance: 
@@ -531,30 +484,30 @@ int main(void)
                 // as it will be easy to circumvent the block
                 // This orientation will be unlikely 
             
-            if (ultrasonic_distances_mm[BACK] < SAFETY_MARGIN + 50) {
+            if (sensor_distances[BACK] < SAFETY_MARGIN + 50) {
                 // block is " | " this orientation, and close to the side wall
                 
                 // Fill out all the details: 
-                block_location[NORTH] = ARENA_WIDTH - ultrasonic_distances_mm[SIDE_LEFT] - ultrasonic_distances_mm[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
+                block_location[NORTH] = ARENA_WIDTH - sensor_distances[SIDE_LEFT] - sensor_distances[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
                 block_location[EAST] = 0;
-                block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+                block_location[SOUTH] = sensor_distances[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + sensor_distances[SIDE_RIGHT];
                 block_location[WEST] = ARENA_WIDTH - BLOCK_WIDTH; 
                 
             }
-            if (ultrasonic_distances_mm[BACK] < BLOCK_LENGTH + 50) {
+            if (sensor_distances[BACK] < BLOCK_LENGTH + 50) {
                 // block is " -- " this orientation, and close to the side wall 
                 
                 // Fill out all the details: 
-                block_location[NORTH] = ARENA_WIDTH - ultrasonic_distances_mm[SIDE_LEFT] - ultrasonic_distances_mm[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
+                block_location[NORTH] = ARENA_WIDTH - sensor_distances[SIDE_LEFT] - sensor_distances[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR - BLOCK_LENGTH;
                 block_location[EAST] = 0;
-                block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
+                block_location[SOUTH] = sensor_distances[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + sensor_distances[SIDE_RIGHT];
                 block_location[WEST] = ARENA_WIDTH - BLOCK_LENGTH; 
             }
             
 
             // Block location values:
-            block_location[SOUTH] = ultrasonic_distances_mm[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + ultrasonic_distances_mm[SIDE_RIGHT];
-            block_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR; 
+            block_location[SOUTH] = sensor_distances[SIDE_LEFT] + WIDTH_SENSOR_TO_SENSOR + sensor_distances[SIDE_RIGHT];
+            block_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR; 
             CyDelay(1000);         
             
             */
@@ -580,10 +533,10 @@ int main(void)
             distanceSensor(SIDE_RIGHT);
             CyDelay(50);
             
-            sprintf(output, "%d \t", ultrasonic_distances_mm[SIDE_RIGHT]);
+            sprintf(output, "%d \t", sensor_distances[SIDE_RIGHT]);
             UART_1_PutString(output);
             
-            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - ultrasonic_distances_mm[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR + 100;       
+            int puck_check = ARENA_LENGTH - PUCK_GRID_FROM_NORTH - sensor_distances[SIDE_RIGHT] - WIDTH_SENSOR_TO_SENSOR + 100;       
             //puck_check = 700;
             
             sprintf(output, "puck check: %d, \n", puck_check);       
@@ -603,15 +556,15 @@ int main(void)
             // checking if accidentally detected block:
             // if the distance we are at is less than the block, we can say we didnt detect the block
                 // or the distance measured hittin the puck is greater than the puck threshold 
-            if (ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR < block_location[EAST]
-                    || ultrasonic_distances_mm[SIDE_LEFT] > block_check)
+            if (sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR < block_location[EAST]
+                    || sensor_distances[SIDE_LEFT] > block_check)
             {
                 
-                int offset = ultrasonic_distances_mm[SIDE_LEFT]*sin(18*M_PI/180);
-                if (ultrasonic_distances_mm[FRONT_LEFT] < 200) { offset = 0; }      // set the offset to 0 if it reasonable that we hit the pucks close to the corner
+                int offset = sensor_distances[SIDE_LEFT]*sin(18*M_PI/180);
+                if (sensor_distances[FRONT_LEFT] < 200) { offset = 0; }      // set the offset to 0 if it reasonable that we hit the pucks close to the corner
                 // puck detected
                 // puck detectedDISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR
-                puck_location[EAST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
+                puck_location[EAST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
                 puck_location[WEST] = ARENA_WIDTH - puck_location[EAST] - PUCK_GRID_WIDTH;
                 
                 blinkLED(GREEN,1000);   // puck location was succesfully found
@@ -633,12 +586,12 @@ int main(void)
                 distanceSensor(BACK);
                 CyDelay(DELAY);
                 
-                int offset = ultrasonic_distances_mm[SIDE_RIGHT]*sin(18*M_PI/180);
+                int offset = sensor_distances[SIDE_RIGHT]*sin(18*M_PI/180);
                 
-                puck_location[WEST] = ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
+                puck_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
                 puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] - PUCK_GRID_WIDTH;
                 
-                if (ultrasonic_distances_mm[BACK] < 100 ) {
+                if (sensor_distances[BACK] < 100 ) {
                     // we stop without detecting any pucks
                     // Assume that pucks are in NorthEast corner
                     puck_location[EAST] = 100; 
@@ -675,19 +628,19 @@ int main(void)
             
             if (block_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
                 // the east clearance of block check
-              blockEastClearance = 1;  
+              block_east_clearance = 1;  
             }
             if (block_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
                 // the east clearance of block check
-              blockWestClearance = 1;  
+              block_west_clearance = 1;  
             }
             if (puck_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
                 // the east clearance of block check
-              puckEastClearance = 1;  
+              puck_east_clearance = 1;  
             }
             if (puck_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
                 // the east clearance of block check
-              puckWestClearance = 1;  
+              puck_west_clearance = 1;  
             }
             
             
@@ -724,13 +677,13 @@ int main(void)
 
             // The different route finding Algorithms for the different combinations: 
             
-            if (blockEastClearance && puckEastClearance){
+            if (block_east_clearance && puck_east_clearance){
                 
                 moveUntil(WALL_CLEARANCE_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(NORTH, SPEED);
                 //straightAdjust();
-                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(WEST, SPEED);
 
@@ -738,14 +691,14 @@ int main(void)
                 
             }
             
-            else if (blockWestClearance && puckWestClearance){
+            else if (block_west_clearance && puck_west_clearance){
             
                 //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS); //? Remove if it fucks things up
                 changeOrientation(NORTH, SPEED);
                 straightAdjust(FRONT_SENSORS); //? Remove if it fucks things up
-                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 //translateMoveDynamic(CLEARANCE_RADIUS_CENTER_TO_BACK, 10, SPEED, FALSE); // Change safety to TRUE when implemented
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(EAST, SPEED);
@@ -754,26 +707,26 @@ int main(void)
             }
             
             
-            else if (blockEastClearance && puckWestClearance){
+            else if (block_east_clearance && puck_west_clearance){
 
                 //moveUntil(block_and_puck_edge_midpoint - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
                 moveUntil(block_location[EAST] - DISTANCE_FRONT_SENSOR_FROM_CENTER - WIDTH_WHEEL_TO_WHEEL / 2 - 10 , BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(NORTH, SPEED);
                 //straightAdjust();
-                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(EAST, SPEED);
                 
                 moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
             }
             
-            else if (blockWestClearance && puckEastClearance){
+            else if (block_west_clearance && puck_east_clearance){
                 
                 moveUntil(block_location[WEST] - DISTANCE_FRONT_SENSOR_FROM_CENTER + WIDTH_WHEEL_TO_WHEEL / 2 + 10 , BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(NORTH, SPEED);
-                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(WEST, SPEED);
                 
@@ -811,7 +764,7 @@ int main(void)
             puck_scan = colourSensingOutput();  // colour sensor takes a scan
             changeHeightToPuck(ABOVE_3_PUCK, NEITHER);  // arm returns to high position
             moveDynamic(-50, SPEED, TRUE);   // robot moves backwards
-            if (puck_scan == puckConstructionPlan[current_stage-1]) {puck_correct = TRUE;}                
+            if (puck_scan == puck_construction_plan[current_stage-1]) {puck_correct = TRUE;}                
             else 
             {
                 /*
@@ -847,7 +800,7 @@ int main(void)
         // Assume that we are currently in the north side of the arena facing the pucks.
         // This state will return us to the south side of the block and face east at the east wall.
         if (state == STATE_RETURN_TO_SOUTH){
-            if (blockEastClearance && puckEastClearance){
+            if (block_east_clearance && puck_east_clearance){
                 
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 190, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
                 // straightAdjust() using back sensor?
@@ -862,7 +815,7 @@ int main(void)
                 
             }
             
-            else if (blockWestClearance && puckWestClearance){
+            else if (block_west_clearance && puck_west_clearance){
             
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
                 // straightAdjust() using back sensor?
@@ -878,7 +831,7 @@ int main(void)
             }
             
             
-            else if (blockEastClearance && puckWestClearance){
+            else if (block_east_clearance && puck_west_clearance){
 
                 moveUntil(ARENA_WIDTH - (block_location[EAST] - DISTANCE_FRONT_SENSOR_FROM_CENTER - WIDTH_WHEEL_TO_WHEEL / 2 - 10) , BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
                 //straightAdjust();
@@ -894,7 +847,7 @@ int main(void)
                 
             }
             
-            else if (blockWestClearance && puckEastClearance){
+            else if (block_west_clearance && puck_east_clearance){
                 
                 moveUntil(ARENA_WIDTH - (block_location[WEST] - DISTANCE_FRONT_SENSOR_FROM_CENTER + WIDTH_WHEEL_TO_WHEEL / 2 + 10 ), BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 changeOrientation(NORTH, SPEED);
@@ -944,7 +897,7 @@ int main(void)
             //armClose();
             
             
-            if (heldColour == puckConstructionPlan[currentPuckStackSize] ) { // The currently held puck should go on the construction pile now
+            if (heldColour == puck_construction_plan[current_puck_stack_size] ) { // The currently held puck should go on the construction pile now
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 changeOrientation(NORTH,SPEED);
                 changeOrientation(WEST,SPEED);
@@ -958,7 +911,7 @@ int main(void)
                 
             }
             /*
-            else if ( heldColour == puckConstructionPlan[1] || heldColour == puckConstructionPlan[2]){ // Then put this puck in the home base for grabbing later
+            else if ( heldColour == puck_construction_plan[1] || heldColour == puck_construction_plan[2]){ // Then put this puck in the home base for grabbing later
                 moveUntil(ARENA_WIDTH - FIRST_TEMP_DROPOFF + DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE); // Check if already droppd off, go to second_temp_dropoff
                 straightAdjust();
             }
@@ -972,7 +925,7 @@ int main(void)
             changeOrientation(SOUTH,SPEED);    
             changeHeightToPuck(ABOVE_3_PUCK, CLOSE); // Lift claw above stack to avoid hitting the stack  
             
-            if (currentPuckStackSize == 0){
+            if (current_puck_stack_size == 0){
                 straightAdjust(FRONT_SENSORS);
                 moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
                
@@ -984,13 +937,13 @@ int main(void)
             
             //moveDynamic(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK - CONSTRUCTION_DISTANCE_FROM_WALL,SPEED);
             
-            changeHeightToPuck(currentPuckStackSize, CLOSE);
+            changeHeightToPuck(current_puck_stack_size, CLOSE);
             armOpen();
             changeHeightToPuck(ABOVE_3_PUCK, OPEN); // Move higher than stack to avoid hitting it.
             
 
             if (current_stage >= 3){state = STATE_PARK_HOME;}        // Returns to home 
-            else {current_stage++; currentPuckStackSize++;
+            else {current_stage++; current_puck_stack_size++;
             // Need to go back to the east wall facing east.
                 //moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
                 moveDynamic(-130,SPEED,TRUE);
@@ -1007,11 +960,11 @@ int main(void)
                 //Usually we will check if the next colour we need is in home base already
                 //
                 // If in east edge of home base
-                if ( puckConstructionPlan[currentPuckStackSize] == puckColoursTempPile[0]){
+                if ( puck_construction_plan[current_puck_stack_size] == puck_temp_pile[0]){
                     
                 }
                 //If in west edge of home base
-                else if(puckConstructionPlan[currentPuckStackSize] == puckColoursTempPile[1]){
+                else if(puck_construction_plan[current_puck_stack_size] == puck_temp_pile[1]){
                          
                 }
                 

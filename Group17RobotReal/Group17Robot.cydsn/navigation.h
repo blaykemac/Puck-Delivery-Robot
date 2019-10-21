@@ -28,7 +28,7 @@ void blockAndPuckZoneFinding(void);
 void straightAdjustSensor(int sensor);
 void failsafeSideSensors(int side_sensing, int initial_value);
 
-extern int puckConstructionPlan[3];
+extern int puck_construction_plan[3];
 extern int current_stage;
 extern int colour_sensing_algorithm;
 extern int internal_orientation;
