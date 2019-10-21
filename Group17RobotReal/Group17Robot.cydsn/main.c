@@ -223,68 +223,24 @@ int main(void)
             sprintf(output, "%d \t", sensor_distances[SIDE_LEFT]);
             UART_1_PutString(output);
         }
-<<<<<<< HEAD
-        
-=======
-      
-        //changeHeightToPuck(GROUND,NEITHER);
-        //moveUntilPuck(CLAW_BLACK_PUCK_ALGORITHM);
-        //translateUntil(150, LEFT, LESS_THAN, SIDE_LEFT, SPEED);
-       
-        
-        /*
-        for (int i = 0; i < 6; i++) {
-            translateMoveDynamic(10, -15, 100, FALSE);      // This will translate to the right by one puck
-        }
-        
-        for (int i = 0; i < 6; i++) {
-            translateMoveDynamic(-10, 15, 100, FALSE);      // This will translate to the left by one puck
-        }
-        */
-                
-        /*
-        while (begin_navigation == 0) {
-            distanceCheck();           
-            UART_1_PutString("\n");
-            CyDelay(1000); // Check distance once a second.
-                
-        }
-        */
-        
-        
-        // Enter picking up puck state for the moment FOR TESTING
-        //colour_sensing_algorithm = 1;
-        //control_photodiode_Write(1);
-        
 
-        //state = STATE_DEPOSIT_PUCK;
-        //current_puck_stack_size = 2;
-        //current_stage = 3;
-         
->>>>>>> ac60bb3bf43094db73614c580e4b481b32e708df
-//
 // *** 1. STATE SCAN PLAN: *** // 
 //
         
       
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
-<<<<<<< HEAD
+
 
             // Debugging: 
-        
-=======
-                   
->>>>>>> ac60bb3bf43094db73614c580e4b481b32e708df
+
             ultimateDebugging();        // If any of the debugging flags are activated, this will be called over the main code
             
-<<<<<<< HEAD
+
             straightAdjust(FRONT_SENSORS);
             moveUntil(-100, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
-=======
             moveUntil(400, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             moveDynamic(-450, SPEED, TRUE);
             CyDelay(500);   
->>>>>>> ac60bb3bf43094db73614c580e4b481b32e708df
             colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
             CyDelay(500);
             moveDynamic(170, SPEED, TRUE);
