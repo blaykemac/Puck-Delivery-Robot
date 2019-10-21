@@ -119,7 +119,7 @@ void changeHeightToPuck(int puckHeightIndex, int open_close){
     
     if(open_close == CLOSE) { 
         Gripper_Servo_PWM_Wakeup();                     // Brings the servo back from sleep
-        Gripper_Servo_PWM_WriteCompare(GRIPPER_CLOSED);   //1170 turns out to be vibrationless open val    
+        Gripper_Servo_PWM_WriteCompare(GRIPPER_CLOSED);   //1250 turns out to be vibrationless open val    
     }
     if(open_close == OPEN) { 
         Gripper_Servo_PWM_Wakeup();                    // Brings the servo back from sleep

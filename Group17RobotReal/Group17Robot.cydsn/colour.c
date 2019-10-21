@@ -254,6 +254,15 @@ int colourSensingOutput(void)
                 value = BLANK;
             }
             break;
+        case 5:    
+            if (test_white > 2000 && test_red < 20000 && test_green < 20000 && test_blue < 14000) {
+                value = BLANK;
+            }
+            else {
+                value = RED;
+            }
+            break;    
+       
         default:
             UART_1_PutString("INVALID COLOUR SENSING ALGORITHM \n");
             CyDelay(3000);
