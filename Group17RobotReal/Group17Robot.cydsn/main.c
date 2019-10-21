@@ -740,6 +740,7 @@ int main(void)
             changeOrientation(EAST, SPEED);
             straightAdjust();
             moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+            translateUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - SAFETY_MARGIN, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
             straightAdjust();
             
             
@@ -761,12 +762,13 @@ int main(void)
             if (blockEastClearance && puckEastClearance){
                 
                 //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(WALL_CLEARANCE_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
                 changeOrientation(NORTH, SPEED);
                 //straightAdjust();
-                moveUntil(PUCK_GRID_FROM_NORTH, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                translateUntil(PUCK_GRID_FROM_NORTH - WIDTH_SENSOR_TO_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, RIGHT, LESS_THAN, SIDE_RIGHT, SPEED);
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                straightAdjust();
+                //translateUntil(PUCK_GRID_FROM_NORTH - WIDTH_SENSOR_TO_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * currentPuckStackSize, RIGHT, LESS_THAN, SIDE_RIGHT, SPEED);
                 //translateMoveDynamic(-100, 30, SPEED, FALSE); // Change safety to TRUE when implemented and use translateUntil
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
@@ -906,7 +908,7 @@ int main(void)
                 //straightAdjust();
                 changeOrientation(EAST,SPEED);
                 straightAdjust();
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                moveUntil(WALL_CLEARANCE_FRONT, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust();
                 
             }
@@ -1009,9 +1011,7 @@ int main(void)
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
                 changeOrientation(NORTH,SPEED);
                 changeOrientation(WEST,SPEED);
-                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-                straightAdjust();
-                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); // Move to a point where we can face towards stack but able to get a distance check
+                moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); //Change 30 to constant
                 straightAdjust();
                 /*
                 changeOrientation(SOUTH, SPEED);
@@ -1037,7 +1037,8 @@ int main(void)
                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL, FORWARD, LESS_THAN, FRONT_LEFT, SPEED,TRUE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping) 
             }
             else {
-                moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL - 60, FORWARD, LESS_THAN, FRONT_RIGHT, SPEED, FALSE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping)
+                //moveUntil(CONSTRUCTION_DISTANCE_FROM_WALL - 60, FORWARD, LESS_THAN, FRONT_RIGHT, SPEED, FALSE); // This function is being triggered by the stack. Only use this for non stacking part (ie. home base dropping)
+                moveDynamic(140, SPEED, FALSE);            
             }
             
             //moveDynamic(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK - CONSTRUCTION_DISTANCE_FROM_WALL,SPEED);
@@ -1052,7 +1053,7 @@ int main(void)
             else {current_stage++; currentPuckStackSize++;
             // Need to go back to the east wall facing east.
                 //moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
-                moveDynamic(-150,SPEED,FALSE);
+                moveDynamic(-150,SPEED,TRUE);
                 changeOrientation(WEST,SPEED);
                 straightAdjust();
                 moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);  
@@ -1094,8 +1095,8 @@ int main(void)
             moveUntil(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, FALSE);
             changeOrientation(WEST,SPEED);
             straightAdjust();
-            moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30 , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED, TRUE); // Absorb the 50 into some constant later
-            moveSwivel(90, SPEED, TRUE);
+            moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 45 , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED, TRUE); // Absorb the 50 into some constant later
+            changeOrientation(NORTH,SPEED);
             moveUntil(HOME_PARKING_DISTANCE , BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
 
             // END Congratulations:

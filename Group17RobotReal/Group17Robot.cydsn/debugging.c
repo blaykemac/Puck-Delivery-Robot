@@ -116,6 +116,8 @@ void ultimateDebugging(void){
                     if (lock == FALSE) 
                     {
                         UART_1_PutString("Motor Testing: \n");
+                        translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
+                        
 
                         //moveDynamic(-300);
                         
@@ -154,20 +156,10 @@ void ultimateDebugging(void){
                         sprintf(output, "measure: %d\n", ultrasonic_distances_mm[BACK]);      
                             UART_1_PutString(output); 
         
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
+
                         */
                         
-                        
-                        
-                        
-                        
+  
                         lock = TRUE;    
                     }
             } while (lock == TRUE);    

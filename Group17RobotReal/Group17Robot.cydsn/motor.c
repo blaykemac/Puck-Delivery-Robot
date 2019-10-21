@@ -110,7 +110,7 @@ void moveDynamic(int distance, int speed, int activate_safety){
         Motor_Right_Driver_WriteCompare(speed_right);
         
         // FAILSAFE:
-        if (abs(count_left) > (old_count + SAFETY_MARGIN*ENCODER_MULTIPLIER - 100) && activate_safety == TRUE){
+        if (abs(count_left) > (old_count + SAFETY_MARGIN*0.75*ENCODER_MULTIPLIER - 100) && activate_safety == TRUE){
             emergency_exit = failsafe(direction);
             old_count = count_left; 
                 
@@ -118,9 +118,7 @@ void moveDynamic(int distance, int speed, int activate_safety){
             //UART_1_PutString(output);
             //sprintf(output, "right motor: %d \n", count_right);      
             //UART_1_PutString(output);
-            
-            
-            
+
         }
         
     }
