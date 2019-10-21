@@ -203,13 +203,6 @@ int main(void)
         
         }
 
-        while(0) {
-                UART_1_PutString("turning left\n");
-                moveSwivel(-25,20,FALSE);
-                UART_1_PutString("turning right \n");
-                moveSwivel(25,20,FALSE);
-        }
-        
         while(0){
             distanceSensor(SIDE_LEFT);
             CyDelay(60);
@@ -217,89 +210,13 @@ int main(void)
             UART_1_PutString(output);
         }
         
-        
-        
-        
-        
-        //changeHeightToPuck(GROUND,NEITHER);
-        //moveUntilPuck(CLAW_BLACK_PUCK_ALGORITHM);
-        //translateUntil(150, LEFT, LESS_THAN, SIDE_LEFT, SPEED);
-        
-        //while(1);
-        
-       
-        
-        /*
-        for (int i = 0; i < 6; i++) {
-            translateMoveDynamic(10, -15, 100, FALSE);      // This will translate to the right by one puck
-        }
-        
-        for (int i = 0; i < 6; i++) {
-            translateMoveDynamic(-10, 15, 100, FALSE);      // This will translate to the left by one puck
-        }
-        */
-        
-        
-        // checks the distance measured by the ultrasonic
-        //moveDynamic(move,SPEED,TRUE);
-        //moveDynamic(-move,SPEED,TRUE);
-        
-        // wasnt moving for some of the tests 
-            
-        
-    
-        // Start button is pressed so quit sensing
-
-        
-        /*
-        while (begin_navigation == 0) {
-            distanceCheck();           
-            UART_1_PutString("\n");
-            CyDelay(1000); // Check distance once a second.
-                
-        }
-        */
-        
-        
-        
-        
-        
-        // Enter picking up puck state for the moment FOR TESTING
-        //colour_sensing_algorithm = 1;
-        //control_photodiode_Write(1);
-        //state = STATE_FIND_REQUIRED_PUCK;
-        
-        
-     
-        
-        //state = STATE_FIND_REQUIRED_PUCK;
-        
-        //moveUntil(100,FORWARD,GREATER_THAN,SIDE_LEFT,SPEED);
-        
-        //while(1) {};
-        
-        
-        // state = STATE_LOCATE_BLOCK_AND_PUCKS;
-        
-        
-        //UART_1_PutString("hI");
-        
-        //changeOrientation(NORTH, SPEED);
-        //changeOrientation(WEST, SPEED);
-                
-        //state = STATE_DEPOSIT_PUCK;
-        //current_puck_stack_size = 2;
-        //current_stage = 3;
-         
 //
 // *** 1. STATE SCAN PLAN: *** // 
 //
         
       
         if (state == STATE_SCAN_PLAN) {              // colour sensing, while switch has not been pushed. change to if eventually
-            
-            
-            
+
             // Debugging: 
         
             ultimateDebugging();        // If any of the debugging flags are activated, this will be called over the main code
@@ -328,7 +245,7 @@ int main(void)
 
             
             straightAdjust(FRONT_SENSORS);
-            moveUntil(-100, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+            moveUntil(-100, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
             colourSensingInitialise();      // Initialises wall colour sensor against the black wall 
                         
             
@@ -465,7 +382,7 @@ int main(void)
             blinkLED(GREEN,1000);      // To show it ended at the correct spot
             
             // Updating the East Clearance:
-            block_location[EAST] = sensor_distances[BACK] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+            block_location[EAST] = sensor_distances[BACK_RIGHT] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
                                                         // double check the distance back sensor to side sensor value
                 
             // Updating the North Clearance: 
@@ -548,7 +465,7 @@ int main(void)
             
             distanceSensor(FRONT_LEFT);
             CyDelay(DELAY);
-            distanceSensor(BACK);
+            distanceSensor(BACK_RIGHT);
             CyDelay(DELAY);
             
             
@@ -574,7 +491,7 @@ int main(void)
                 
                 blinkLED(RED,1000); // indicates we hit the block instead 
                 
-                moveUntil(200, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);   // This should take us to the other side of the wall
+                moveUntil(200, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);   // This should take us to the other side of the wall
                 changeOrientation(WEST, SPEED);
                 moveUntil(130, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);   // adjusts against the wall
@@ -583,7 +500,7 @@ int main(void)
                                 
                 distanceSensor(FRONT_LEFT);
                 CyDelay(DELAY);
-                distanceSensor(BACK);
+                distanceSensor(BACK_RIGHT);
                 CyDelay(DELAY);
                 
                 int offset = sensor_distances[SIDE_RIGHT]*sin(18*M_PI/180);
@@ -591,7 +508,7 @@ int main(void)
                 puck_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
                 puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] - PUCK_GRID_WIDTH;
                 
-                if (sensor_distances[BACK] < 100 ) {
+                if (sensor_distances[BACK_RIGHT] < 100 ) {
                     // we stop without detecting any pucks
                     // Assume that pucks are in NorthEast corner
                     puck_location[EAST] = 100; 
@@ -694,7 +611,7 @@ int main(void)
             else if (block_west_clearance && puck_west_clearance){
             
                 //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS); //? Remove if it fucks things up
                 changeOrientation(NORTH, SPEED);
                 straightAdjust(FRONT_SENSORS); //? Remove if it fucks things up
@@ -802,11 +719,11 @@ int main(void)
         if (state == STATE_RETURN_TO_SOUTH){
             if (block_east_clearance && puck_east_clearance){
                 
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 190, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 190, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
                 // straightAdjust() using back sensor?
                 changeOrientation(NORTH,SPEED);
                 straightAdjust(FRONT_SENSORS);
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
                 //straightAdjust();
                 changeOrientation(EAST,SPEED);
                 straightAdjust(FRONT_SENSORS);
@@ -817,11 +734,11 @@ int main(void)
             
             else if (block_west_clearance && puck_west_clearance){
             
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
                 // straightAdjust() using back sensor?
                 changeOrientation(NORTH,SPEED);
                 straightAdjust(FRONT_SENSORS);
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
                 //straightAdjust();
                 changeOrientation(EAST,SPEED);
                 straightAdjust(FRONT_SENSORS);
@@ -833,11 +750,11 @@ int main(void)
             
             else if (block_east_clearance && puck_west_clearance){
 
-                moveUntil(ARENA_WIDTH - (block_location[EAST] - DISTANCE_FRONT_SENSOR_FROM_CENTER - WIDTH_WHEEL_TO_WHEEL / 2 - 10) , BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+                moveUntil(ARENA_WIDTH - (block_location[EAST] - DISTANCE_FRONT_SENSOR_FROM_CENTER - WIDTH_WHEEL_TO_WHEEL / 2 - 10) , BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
                 //straightAdjust();
                 changeOrientation(NORTH, SPEED);
                 straightAdjust(FRONT_SENSORS);
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 changeOrientation(EAST, SPEED);
@@ -852,7 +769,7 @@ int main(void)
                 moveUntil(ARENA_WIDTH - (block_location[WEST] - DISTANCE_FRONT_SENSOR_FROM_CENTER + WIDTH_WHEEL_TO_WHEEL / 2 + 10 ), BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
                 changeOrientation(NORTH, SPEED);
                 straightAdjust(FRONT_SENSORS);
-                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 140, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE); // May need to stop sooner so as to avoid the potential pucks on back wall
                 //displaceLeft(); Repeatedly call this if below function not implemented
                 //displaceLeftUntil(CLEARANCE_RADIUS_CENTER_TO_BACK,RIGHT);
                 changeOrientation(EAST, SPEED);
@@ -990,7 +907,7 @@ int main(void)
             straightAdjust(FRONT_SENSORS);
             moveUntil(HOME_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 45 , BACKWARD, GREATER_THAN, FRONT_RIGHT, SPEED, TRUE); // Absorb the 50 into some constant later
             changeOrientation(NORTH,SPEED);
-            moveUntil(HOME_PARKING_DISTANCE , BACKWARD, LESS_THAN, BACK, SPEED, TRUE);
+            moveUntil(HOME_PARKING_DISTANCE , BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
 
             // END Congratulations:
             changeHeightToPuck(GROUND, NEITHER);

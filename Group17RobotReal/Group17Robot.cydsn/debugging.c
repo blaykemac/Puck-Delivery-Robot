@@ -32,8 +32,8 @@
 // Set which debugging you want to do:
 int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
 int servo_testing = FALSE;                  // Do the servos need to be tested?      
-int motor_testing = TRUE;
-int ultrasonic_testing = FALSE;  
+int motor_testing = FALSE;
+int ultrasonic_testing = TRUE;  
 
 
 void ultimateDebugging(void){
@@ -121,7 +121,10 @@ void ultimateDebugging(void){
                        //straightAdjustSensor(FRONT_MIDDLE);
                         //straightAdjustBack();
                         
-                        while(1) {
+                        //straightAdjust(BACK_SENSORS);
+                        straightAdjust(FRONT_SENSORS);
+                        
+                        while(0) {
                         straightAdjust(FRONT_SENSORS);
                         blinkLED(GREEN, 1000);
                         }
@@ -200,7 +203,7 @@ void ultimateDebugging(void){
                         
                         int dick = 2;
                         while(0) {
-                            distanceSensor(dick);
+                            distanceSensor(BACK_LEFT);
                             CyDelay(500);
                             sprintf(output, "%d \t %d \t %d \t %d \t %d \n", sensor_distances[0], 
                                                      sensor_distances[1],
@@ -216,7 +219,7 @@ void ultimateDebugging(void){
                         // 4 gave back sensor   // back sensor
                         
                         while(1) {
-                            for (int i = 0; i < 5; i++)
+                            for (int i = 0; i < 7; i++)
                             {
                                 distanceSensor(i);
                                 CyDelay(100);

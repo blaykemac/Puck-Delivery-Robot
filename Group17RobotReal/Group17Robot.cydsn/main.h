@@ -115,11 +115,13 @@ int internal_orientation;
 #define FRONT_LEFT 0         //1
 #define FRONT_RIGHT 1        //2
 #define SIDE_RIGHT 3         //3
-#define BACK 4               //4
-#define FRONT_MIDDLE 5       //5
-#define FRONT_SENSORS 7      
+#define BACK_LEFT 4          //4
+#define BACK_RIGHT 5         //5
+#define FRONT_MIDDLE 6       //6
+#define FRONT_SENSORS 7      //7
+#define BACK_SENSORS 8       //8
 
-#define TOTAL_SONIC_SENSORS 6
+#define TOTAL_SONIC_SENSORS 7
 
 // Distance offsets on bot body (eg. side sensor to center)
 

@@ -33,7 +33,7 @@
 int i = 0; //what is i and count used for? We might need to name them more descriptively
 int count = 0;      
 int distance_measured = 0; 
-int sensor_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0,0};
+int sensor_distances[TOTAL_SONIC_SENSORS] = {0,0,0,0,0,0,0};
 int ultrasonic_mux_control;       // THIS is a global variable that will be taken 
 int block_start = 0;
 int puck_start = 0;
@@ -132,6 +132,17 @@ void distanceSensor(int current_sensor_index) {
             }
         
         break;   
+            
+        case 6:
+        
+            //while (Echo_5_Read() == 0)
+            {
+                Trigger_7_Write(1);
+                CyDelayUs(10);          // 10microsecond pulse
+                Trigger_7_Write(0);
+            }
+        
+        break; 
 
         default:
             UART_1_PutString("sensor is faulty");

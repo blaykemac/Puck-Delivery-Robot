@@ -2,7 +2,7 @@
 --	Conversion of Group17Robot.v to vh2:
 --
 --	Cypress Semiconductor - WARP Version 6.3 IR 41
---	Tue Oct 22 01:53:05 2019
+--	Tue Oct 22 03:17:33 2019
 --
 
 USE cypress.cypress.all;
@@ -735,7 +735,11 @@ SIGNAL tmpIO_0__Echo_6_net_0 : bit;
 TERMINAL tmpSIOVREF__Echo_6_net_0 : bit;
 SIGNAL tmpINTERRUPT_0__Echo_6_net_0 : bit;
 SIGNAL Net_154 : bit;
-SIGNAL Net_153 : bit;
+SIGNAL tmpOE__Trigger_7_net_0 : bit;
+SIGNAL Net_157 : bit;
+SIGNAL tmpIO_0__Trigger_7_net_0 : bit;
+TERMINAL tmpSIOVREF__Trigger_7_net_0 : bit;
+SIGNAL tmpINTERRUPT_0__Trigger_7_net_0 : bit;
 SIGNAL tmpOE__Trigger_2_net_0 : bit;
 SIGNAL Net_144 : bit;
 SIGNAL tmpIO_0__Trigger_2_net_0 : bit;
@@ -780,9 +784,9 @@ SIGNAL \mux_1:tmp__mux_1_reg\ : bit;
 SIGNAL Net_155_2 : bit;
 SIGNAL Net_155_1 : bit;
 SIGNAL Net_155_0 : bit;
+SIGNAL Net_153 : bit;
 SIGNAL \mux_2:tmp__mux_2_reg\ : bit;
 SIGNAL Net_156 : bit;
-SIGNAL Net_157 : bit;
 SIGNAL Net_158 : bit;
 SIGNAL \Ultrasonic_Mux_Control:clk\ : bit;
 SIGNAL \Ultrasonic_Mux_Control:rst\ : bit;
@@ -816,6 +820,10 @@ SIGNAL tmpOE__Trigger_6_net_0 : bit;
 SIGNAL tmpIO_0__Trigger_6_net_0 : bit;
 TERMINAL tmpSIOVREF__Trigger_6_net_0 : bit;
 SIGNAL tmpINTERRUPT_0__Trigger_6_net_0 : bit;
+SIGNAL tmpOE__Echo_7_net_0 : bit;
+SIGNAL tmpIO_0__Echo_7_net_0 : bit;
+TERMINAL tmpSIOVREF__Echo_7_net_0 : bit;
+SIGNAL tmpINTERRUPT_0__Echo_7_net_0 : bit;
 SIGNAL Net_1916 : bit;
 SIGNAL Net_1983 : bit;
 SIGNAL Net_3852 : bit;
@@ -2497,21 +2505,23 @@ AMuxHw_1_Decoder_one_hot_0D <= ((not AMuxHw_1_Decoder_old_id_0 and not Net_608))
 AMuxHw_1_Decoder_one_hot_1D <= ((AMuxHw_1_Decoder_old_id_0 and Net_608));
 
 \Timer_1:TimerUDB:capt_fifo_load\ <= ((not Net_130 and not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\)
+	OR (not Net_151 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_2)
+	OR (not Net_149 and not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_1)
 	OR (not Net_148 and not Net_155_2 and not Net_155_1 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_0)
-	OR (not Net_149 and not Net_155_0 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_1)
-	OR (not Net_151 and not Net_155_0 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_2)
+	OR (not Net_153 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_2 and Net_155_1)
 	OR (not Net_150 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_1 and Net_155_0)
 	OR (not Net_152 and \Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_2 and Net_155_0)
-	OR (\Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_2 and Net_155_1));
+	OR (\Timer_1:TimerUDB:capture_last\ and \Timer_1:TimerUDB:timer_enable\ and Net_155_2 and Net_155_1 and Net_155_0));
 
 \Timer_1:TimerUDB:status_tc\ <= ((\Timer_1:TimerUDB:run_mode\ and \Timer_1:TimerUDB:per_zero\));
 
-\Timer_1:TimerUDB:hwEnable\ <= ((not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
-	OR (not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
+\Timer_1:TimerUDB:hwEnable\ <= ((not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_155_2 and Net_155_1 and Net_153)
 	OR (not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_152 and Net_155_2 and Net_155_0)
 	OR (not Net_155_2 and \Timer_1:TimerUDB:control_7\ and Net_150 and Net_155_1 and Net_155_0)
-	OR (not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130)
-	OR (not Net_155_2 and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_148 and Net_155_0));
+	OR (not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
+	OR (not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
+	OR (not Net_155_2 and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_148 and Net_155_0)
+	OR (not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130));
 
 \Timer_1:TimerUDB:int_capt_count_1\\D\ <= ((not \Timer_1:TimerUDB:control_0\ and not \Timer_1:TimerUDB:int_capt_count_1\ and not Net_124 and \Timer_1:TimerUDB:capt_fifo_load\ and \Timer_1:TimerUDB:int_capt_count_0\)
 	OR (not \Timer_1:TimerUDB:int_capt_count_1\ and not Net_124 and \Timer_1:TimerUDB:control_1\ and \Timer_1:TimerUDB:capt_fifo_load\ and \Timer_1:TimerUDB:int_capt_count_0\)
@@ -2529,41 +2539,46 @@ AMuxHw_1_Decoder_one_hot_1D <= ((AMuxHw_1_Decoder_old_id_0 and Net_608));
 	OR (not \Timer_1:TimerUDB:control_1\ and not \Timer_1:TimerUDB:int_capt_count_1\ and not Net_124 and \Timer_1:TimerUDB:control_0\ and \Timer_1:TimerUDB:capt_fifo_load\ and \Timer_1:TimerUDB:int_capt_count_0\)
 	OR (not Net_124 and \Timer_1:TimerUDB:control_1\ and \Timer_1:TimerUDB:control_0\ and \Timer_1:TimerUDB:capt_fifo_load\ and \Timer_1:TimerUDB:int_capt_count_1\ and \Timer_1:TimerUDB:int_capt_count_0\));
 
-\Timer_1:TimerUDB:runmode_enable\\D\ <= ((not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
-	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
-	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
-	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
-	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
-	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
+\Timer_1:TimerUDB:runmode_enable\\D\ <= ((not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_155_2 and Net_155_1 and Net_153)
+	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_155_2 and Net_155_1 and Net_153)
+	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_155_2 and Net_155_1 and Net_153)
 	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_152 and Net_155_2 and Net_155_0)
 	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_152 and Net_155_2 and Net_155_0)
 	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_152 and Net_155_2 and Net_155_0)
 	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and \Timer_1:TimerUDB:control_7\ and Net_150 and Net_155_1 and Net_155_0)
 	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and \Timer_1:TimerUDB:control_7\ and Net_150 and Net_155_1 and Net_155_0)
 	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and \Timer_1:TimerUDB:control_7\ and Net_150 and Net_155_1 and Net_155_0)
-	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130)
-	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130)
-	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130)
+	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
+	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
+	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_151 and Net_155_2)
+	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
+	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
+	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_149 and Net_155_1)
 	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_148 and Net_155_0)
 	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_148 and Net_155_0)
-	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_148 and Net_155_0));
+	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and \Timer_1:TimerUDB:control_7\ and Net_148 and Net_155_0)
+	OR (not \Timer_1:TimerUDB:per_zero\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130)
+	OR (not \Timer_1:TimerUDB:run_mode\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130)
+	OR (not \Timer_1:TimerUDB:timer_enable\ and not Net_124 and not \Timer_1:TimerUDB:trig_disable\ and not Net_155_2 and not Net_155_1 and not Net_155_0 and \Timer_1:TimerUDB:control_7\ and Net_130));
 
 \Timer_1:TimerUDB:trig_disable\\D\ <= ((not Net_124 and \Timer_1:TimerUDB:timer_enable\ and \Timer_1:TimerUDB:run_mode\ and \Timer_1:TimerUDB:per_zero\)
 	OR (not Net_124 and \Timer_1:TimerUDB:trig_disable\));
 
-Net_126 <= ((not Net_155_1 and not Net_155_0 and Net_151 and Net_155_2)
-	OR (not Net_155_2 and not Net_155_0 and Net_149 and Net_155_1)
+Net_126 <= ((not Net_155_0 and Net_155_2 and Net_155_1 and Net_153)
 	OR (not Net_155_1 and Net_152 and Net_155_2 and Net_155_0)
 	OR (not Net_155_2 and Net_150 and Net_155_1 and Net_155_0)
-	OR (not Net_155_2 and not Net_155_1 and not Net_155_0 and Net_130)
-	OR (not Net_155_2 and not Net_155_1 and Net_148 and Net_155_0));
+	OR (not Net_155_1 and not Net_155_0 and Net_151 and Net_155_2)
+	OR (not Net_155_2 and not Net_155_0 and Net_149 and Net_155_1)
+	OR (not Net_155_2 and not Net_155_1 and Net_148 and Net_155_0)
+	OR (not Net_155_2 and not Net_155_1 and not Net_155_0 and Net_130));
 
 Net_124 <= ((not Net_155_1 and Net_155_2 and Net_155_0 and Net_156)
+	OR (not Net_155_0 and Net_157 and Net_155_2 and Net_155_1)
+	OR (not Net_155_2 and Net_146 and Net_155_1 and Net_155_0)
 	OR (not Net_155_1 and not Net_155_0 and Net_147 and Net_155_2)
 	OR (not Net_155_2 and not Net_155_0 and Net_145 and Net_155_1)
-	OR (not Net_155_2 and Net_146 and Net_155_1 and Net_155_0)
-	OR (not Net_155_2 and not Net_155_1 and not Net_155_0 and Net_129)
-	OR (not Net_155_2 and not Net_155_1 and Net_144 and Net_155_0));
+	OR (not Net_155_2 and not Net_155_1 and Net_144 and Net_155_0)
+	OR (not Net_155_2 and not Net_155_1 and not Net_155_0 and Net_129));
 
 Net_1916 <= (not Net_1983);
 
@@ -4111,6 +4126,76 @@ Echo_6:cy_psoc3_pins_v1_10
 		out_clock_en=>Net_2035,
 		out_reset=>zero,
 		interrupt=>tmpINTERRUPT_0__Echo_6_net_0);
+Trigger_7:cy_psoc3_pins_v1_10
+	GENERIC MAP(id=>"888eba2b-da48-4e13-9135-d5e13d391208",
+		drive_mode=>"110",
+		ibuf_enabled=>"1",
+		init_dr_st=>"0",
+		input_sync=>"0",
+		input_clk_en=>'0',
+		input_sync_mode=>"0",
+		intr_mode=>"00",
+		invert_in_clock=>'0',
+		invert_in_clock_en=>'0',
+		invert_in_reset=>'0',
+		invert_out_clock=>'0',
+		invert_out_clock_en=>'0',
+		invert_out_reset=>'0',
+		io_voltage=>"",
+		layout_mode=>"CONTIGUOUS",
+		output_conn=>"0",
+		output_sync=>"0",
+		output_clk_en=>'0',
+		output_mode=>"0",
+		output_reset=>'0',
+		output_clock_mode=>"0",
+		oe_sync=>"0",
+		oe_conn=>"0",
+		oe_reset=>'0',
+		pin_aliases=>"",
+		pin_mode=>"I",
+		por_state=>4,
+		sio_group_cnt=>0,
+		sio_hifreq=>"00000000",
+		sio_hyst=>"1",
+		sio_ibuf=>"00000000",
+		sio_info=>"00",
+		sio_obuf=>"00000000",
+		sio_refsel=>"00000000",
+		sio_vtrip=>"00000000",
+		sio_vohsel=>"00000000",
+		slew_rate=>"0",
+		spanning=>'0',
+		sw_only=>'0',
+		vtrip=>"00",
+		width=>1,
+		port_alias_required=>'0',
+		port_alias_group=>"",
+		use_annotation=>"0",
+		pa_in_clock=>-1,
+		pa_in_clock_en=>-1,
+		pa_in_reset=>-1,
+		pa_out_clock=>-1,
+		pa_out_clock_en=>-1,
+		pa_out_reset=>-1,
+		ovt_needed=>"0",
+		ovt_slew_control=>"00",
+		ovt_hyst_trim=>"0",
+		input_buffer_sel=>"00")
+	PORT MAP(oe=>(Net_2035),
+		y=>(zero),
+		fb=>Net_157,
+		analog=>(open),
+		io=>(tmpIO_0__Trigger_7_net_0),
+		siovref=>(tmpSIOVREF__Trigger_7_net_0),
+		annotation=>(open),
+		in_clock=>zero,
+		in_clock_en=>Net_2035,
+		in_reset=>zero,
+		out_clock=>zero,
+		out_clock_en=>Net_2035,
+		out_reset=>zero,
+		interrupt=>tmpINTERRUPT_0__Trigger_7_net_0);
 Trigger_2:cy_psoc3_pins_v1_10
 	GENERIC MAP(id=>"3f1aae99-b8cb-4aba-a1e9-c5d2ed9b6480",
 		drive_mode=>"110",
@@ -4751,6 +4836,76 @@ Trigger_6:cy_psoc3_pins_v1_10
 		out_clock_en=>Net_2035,
 		out_reset=>zero,
 		interrupt=>tmpINTERRUPT_0__Trigger_6_net_0);
+Echo_7:cy_psoc3_pins_v1_10
+	GENERIC MAP(id=>"18312211-e8df-4aac-a40a-4ccb62215978",
+		drive_mode=>"001",
+		ibuf_enabled=>"1",
+		init_dr_st=>"0",
+		input_sync=>"0",
+		input_clk_en=>'0',
+		input_sync_mode=>"0",
+		intr_mode=>"00",
+		invert_in_clock=>'0',
+		invert_in_clock_en=>'0',
+		invert_in_reset=>'0',
+		invert_out_clock=>'0',
+		invert_out_clock_en=>'0',
+		invert_out_reset=>'0',
+		io_voltage=>"",
+		layout_mode=>"CONTIGUOUS",
+		output_conn=>"0",
+		output_sync=>"0",
+		output_clk_en=>'0',
+		output_mode=>"0",
+		output_reset=>'0',
+		output_clock_mode=>"0",
+		oe_sync=>"0",
+		oe_conn=>"0",
+		oe_reset=>'0',
+		pin_aliases=>"",
+		pin_mode=>"I",
+		por_state=>4,
+		sio_group_cnt=>0,
+		sio_hifreq=>"00000000",
+		sio_hyst=>"1",
+		sio_ibuf=>"00000000",
+		sio_info=>"00",
+		sio_obuf=>"00000000",
+		sio_refsel=>"00000000",
+		sio_vtrip=>"00000000",
+		sio_vohsel=>"00000000",
+		slew_rate=>"0",
+		spanning=>'0',
+		sw_only=>'0',
+		vtrip=>"00",
+		width=>1,
+		port_alias_required=>'0',
+		port_alias_group=>"",
+		use_annotation=>"0",
+		pa_in_clock=>-1,
+		pa_in_clock_en=>-1,
+		pa_in_reset=>-1,
+		pa_out_clock=>-1,
+		pa_out_clock_en=>-1,
+		pa_out_reset=>-1,
+		ovt_needed=>"0",
+		ovt_slew_control=>"00",
+		ovt_hyst_trim=>"0",
+		input_buffer_sel=>"00")
+	PORT MAP(oe=>(Net_2035),
+		y=>(zero),
+		fb=>Net_153,
+		analog=>(open),
+		io=>(tmpIO_0__Echo_7_net_0),
+		siovref=>(tmpSIOVREF__Echo_7_net_0),
+		annotation=>(open),
+		in_clock=>zero,
+		in_clock_en=>Net_2035,
+		in_reset=>zero,
+		out_clock=>zero,
+		out_clock_en=>Net_2035,
+		out_reset=>zero,
+		interrupt=>tmpINTERRUPT_0__Echo_7_net_0);
 Start:cy_isr_v1_0
 	GENERIC MAP(int_type=>"00",
 		is_nmi=>'0')
@@ -6579,7 +6734,7 @@ Clock_2:cy_clock_v1_0
 		id=>"831fd4b5-261c-4ef6-8665-d01cc85d4248",
 		source_clock_id=>"",
 		divisor=>0,
-		period=>"166666666666.667",
+		period=>"333333333333.333",
 		is_direct=>'0',
 		is_digital=>'1')
 	PORT MAP(clock_out=>Net_4640,

@@ -491,10 +491,10 @@ int failsafe(int direction) {
     
     // detecting direction:    
     if (direction == BACKWARD) {
-        distanceSensor(BACK);
+        distanceSensor(BACK_RIGHT);
         CyDelay(50);
         
-        check_distance = sensor_distances[BACK];   // checks the distance measured by the ultrasonic
+        check_distance = sensor_distances[BACK_RIGHT];   // checks the distance measured by the ultrasonic
         if (check_distance < SAFETY_MARGIN && check_distance > 0) { 
             sprintf(output, "SAFETY MARGIN ACTIVATED @ %d\n", check_distance);      
             UART_1_PutString(output); 
@@ -571,8 +571,8 @@ void straightAdjust(int front_back) {
         sensor_right = FRONT_RIGHT;
     }
     else {
-        //sensor_left = BACK_LEFT;
-        //sensor_right = BACK_RIGHT;
+        sensor_left = BACK_LEFT;
+        sensor_right = BACK_RIGHT;
     }
     
     
@@ -746,7 +746,7 @@ void straightAdjustBack(void) {
     int direction = LEFT;       // start off turning left first 
     int minimum_distance;                           
         
-    distanceSensor(BACK);
+    distanceSensor(BACK_RIGHT);
     CyDelay(DELAY);
     
     Motor_Left_Driver_Wakeup();
@@ -754,7 +754,7 @@ void straightAdjustBack(void) {
     Motor_Left_Driver_WriteCompare(25);
     Motor_Right_Driver_WriteCompare(25);
     
-    distance_check = sensor_distances[BACK];
+    distance_check = sensor_distances[BACK_RIGHT];
     minimum_distance = distance_check;
     
     while(1) {
@@ -767,9 +767,9 @@ void straightAdjustBack(void) {
             
             // Updating the distance values: 
             distance_previous = distance_check;
-            distanceSensor(BACK);
+            distanceSensor(BACK_RIGHT);
             CyDelay(DELAY);
-            distance_check = sensor_distances[BACK];
+            distance_check = sensor_distances[BACK_RIGHT];
         }
         if (direction == LEFT) {direction = RIGHT; }        // This changes the directions
         else {direction = LEFT; }
@@ -793,15 +793,15 @@ void toleranceCheck(void) {
     CyDelay(60);
     distanceSensor(FRONT_LEFT);
     CyDelay(60);
-    distanceSensor(BACK);
+    distanceSensor(BACK_RIGHT);
     CyDelay(60);
     
-    while (sensor_distances[FRONT_LEFT] + sensor_distances[BACK] + tolerance < ARENA_WIDTH 
+    while (sensor_distances[FRONT_LEFT] + sensor_distances[BACK_RIGHT] + tolerance < ARENA_WIDTH 
             
     
     
     
-    || sensor_distances[FRONT_LEFT] + sensor_distances[BACK] + tolerance < ARENA_WIDTH) { 
+    || sensor_distances[FRONT_LEFT] + sensor_distances[BACK_RIGHT] + tolerance < ARENA_WIDTH) { 
             // this checks if the ultrasonic distances being recorded are accurate
             // if it is not within this threshold, there must be something up.  
                 
@@ -809,7 +809,7 @@ void toleranceCheck(void) {
     CyDelay(60);
     distanceSensor(FRONT_LEFT);
     CyDelay(60);
-    distanceSensor(BACK);
+    distanceSensor(BACK_RIGHT);
     CyDelay(60);
         
     }
