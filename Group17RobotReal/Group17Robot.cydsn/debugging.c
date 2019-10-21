@@ -31,7 +31,7 @@
 
 // Set which debugging you want to do:
 int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
-int servo_testing = FALSE;                  // Do the servos need to be tested?      
+int servo_testing = TRUE;                  // Do the servos need to be tested?      
 int motor_testing = FALSE;
 int ultrasonic_testing = FALSE;  
 
@@ -78,15 +78,30 @@ void ultimateDebugging(void){
                     {
                         UART_1_PutString("Servo Testing: ");
                         
-                        armMoving();
+                        //armMoving();
                         
+                        /*
+                        changeHeightToPuck(GROUND, NEITHER);
+                        CyDelay(1000);
+                        changeHeightToPuck(ABOVE_1_PUCK, NEITHER);
+                        CyDelay(1000);
+                        changeHeightToPuck(ABOVE_2_PUCK, NEITHER);
+                        CyDelay(1000);
+                        changeHeightToPuck(ABOVE_3_PUCK, NEITHER);
+                        CyDelay(1000);
+                        */
+                        //for(int i = 0; i < 4; i++)
+                        //{
+                        //    changeHeightToPuck(i, NEITHER);
+                        //    CyDelay(1000);
+                        //}
                         
-                        for(int i = 0; i < 4; i++)
-                        {
-                            changeHeightToPuck(i, NEITHER);
-                            CyDelay(1000);
-                        }
-
+                  
+                        armClose();
+                        CyDelay(2000);
+                        //armOpen();
+                        //CyDelay(2000);
+                        
                         lock = TRUE;    
                     }
             } while (lock == TRUE);    

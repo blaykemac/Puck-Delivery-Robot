@@ -246,12 +246,20 @@ int colourSensingOutput(void)
                 value = BLUE;      // Blue puck detected
             }
             break;
-        case 4:    
+        case 4:                     // BLACK PUCK ALGORITHM
             if (test_red < 5000 && test_blue < 5000 && test_green < 5000 && test_white < 5000) {
                 value = RED;
             }
             else {
                 value = BLANK;
+            }
+            break;
+        case 5:                     // new ground sensing algorithm
+            if (test_white > 2000 && test_red < 20000 && test_green < 20000 && test_blue < 14000) {
+                value = BLANK;
+            }
+            else {
+                value = RED;
             }
             break;
         default:

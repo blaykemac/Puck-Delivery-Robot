@@ -22,6 +22,7 @@ void changeOrientation(int orientation_change, int speed);
 int failsafe(int direction);
 void toleranceCheck(void);
 void blockAndPuckZoneFinding(void);
+void failsafeSideSensors(int side_sensing, int initial_value);
 
 extern int puckConstructionPlan[3];
 extern int current_stage;

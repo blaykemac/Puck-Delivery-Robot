@@ -643,9 +643,13 @@ int main(void)
             distanceSensor(BACK);
             CyDelay(DELAY);
             
+            
+            
             // checking if accidentally detected block:
             // if the distance we are at is less than the block, we can say we didnt detect the block
-            if (ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR < block_location[EAST])
+                // or the distance measured hittin the puck is greater than the puck threshold 
+            if (ultrasonic_distances_mm[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR < block_location[EAST]
+                    || ultrasonic_distances_mm[SIDE_LEFT] > block_check)
             {
                 
                 int offset = ultrasonic_distances_mm[SIDE_LEFT]*sin(18*M_PI/180);
@@ -871,7 +875,7 @@ int main(void)
         changeHeightToPuck(GROUND, NEITHER);      // arm lowers to ground
         //armClose();
         //changeHeightToPuck(1);
-        moveUntilPuck(CLAW_BLACK_PUCK_ALGORITHM);
+        moveUntilPuck(CLAW_GROUND_ALGORITHM);
         //moveDynamic(60);       // robot moves forward
         armClose();                 // claw closes on puck
         changeHeightToPuck(ABOVE_3_PUCK, CLOSE);      // arm lifts up to highest position
