@@ -19,7 +19,7 @@ void rampUpDown(int speed, int ramp_up_down);
 // set speeds: 
 
 #define SPEED_LOW 70                
-#define SPEED 120                   // DO NOT PUT ABOVE 229.5
+#define SPEED 200                   // DO NOT PUT ABOVE 229.5
 #define SPEED_MAX 225
 #define SPEED_LOW_ROTATE 25
 

@@ -32,7 +32,7 @@
 // Set which debugging you want to do:
 int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
 int servo_testing = FALSE;                  // Do the servos need to be tested?      
-int motor_testing = FALSE;
+int motor_testing = TRUE;
 int ultrasonic_testing = FALSE;  
 
 
@@ -116,7 +116,8 @@ void ultimateDebugging(void){
                     if (lock == FALSE) 
                     {
                         UART_1_PutString("Motor Testing: \n");
-                        moveForwardThenBackward(200, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                        
+                        //moveForwardThenBackward(200, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
                         //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
                         
                        //straightAdjustSensor(FRONT_MIDDLE);
