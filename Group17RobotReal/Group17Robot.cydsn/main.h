@@ -157,7 +157,7 @@ int internal_orientation;
 #define ABOVE_MINIMUM_COUNT_THRESHOLD 3 
 
 // Miscellaneous:
-#define ADJUST 4        // 4 was test to be best
+#define ADJUST 3        // 4 was test to be best
 
 #define BACKWARD 0
 #define FORWARD 1

@@ -371,7 +371,7 @@ int main(void)
  
                 
             // brings us to the east side WITH SAFETY margins: 
-            moveDynamic(100,SPEED,TRUE);
+            moveDynamic(-100,SPEED,TRUE);
             changeOrientation(EAST,SPEED);
             moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             changeOrientation(SOUTH, SPEED);
@@ -381,11 +381,11 @@ int main(void)
             
             
             // DETERMINES THE CLEARANCES AVAILABLE FOR OUR ROBOT
-            if (block_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
+            if (block_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE + 100) {
                 // the east clearance of block check
               block_east_clearance = 1;  
             }
-            if (block_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
+            if (block_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE + 100) {
                 // the east clearance of block check
               block_west_clearance = 1;  
             }
