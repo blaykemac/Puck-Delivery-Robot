@@ -159,6 +159,16 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     int old_count = -(SAFETY_MARGIN)*ENCODER_MULTIPLIER*0.75 - 1000;  // used in the old failsafe to check how much distance has passed 
                                                         // will enter the failsafe check straight away due to this
     int emergency_exit = FALSE;
+    int adjust = 3;
+    
+    if (speed > 190) {
+        adjust = 4;
+    }
+    if (speed < 100) {
+        adjust = 1;
+    }
+    
+    
     
     // Check if we are closer to or further away from the side wall: 
     /*
@@ -213,12 +223,12 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             
             // DRIFT CORRECTION:
             if (abs(count_left) > abs(count_right)) {
-                speed_left = speed - ADJUST;
-                speed_right = speed + ADJUST;
+                speed_left = speed - adjust;
+                speed_right = speed + adjust;
             }        
             if (abs(count_right) > abs(count_left)) {
-                speed_right = speed - ADJUST;              
-                speed_left = speed + ADJUST;
+                speed_right = speed - adjust;              
+                speed_left = speed + adjust;
             }
             // end of drift correction 
             
@@ -283,13 +293,13 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
             
             // DRIFT CORRECTION:
             if (abs(count_left) > abs(count_right)) {
-                speed_left = speed - ADJUST;
-                speed_right = speed + ADJUST;
+                speed_left = speed - adjust;
+                speed_right = speed + adjust;
             }        
             if (abs(count_right) > abs(count_left)) {
-                    speed_right = speed - ADJUST;              // If the speeds are equal, we decrememnt within the specific 
+                    speed_right = speed - adjust;              // If the speeds are equal, we decrememnt within the specific 
                                                         // adjust tolerance 
-                    speed_left = speed + ADJUST;
+                    speed_left = speed + adjust;
             }
             // end of drift correction 
             

@@ -116,8 +116,10 @@ void ultimateDebugging(void){
                     if (lock == FALSE) 
                     {
                         //UART_1_PutString("Motor Testing: \n");
-                        //moveSwivel(360, SPEED, TRUE);
-                      
+                        moveSwivel(360, SPEED, TRUE);
+                        CyDelay(1000);
+                        moveSwivel(-360,SPEED,TRUE);
+                        
                         //moveForwardThenBackward(200, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
                         //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
                         
@@ -127,18 +129,67 @@ void ultimateDebugging(void){
                         //straightAdjust(BACK_SENSORS);
                         //straightAdjust(FRONT_SENSORS);
                         
+                        /*
+                        int current_puck_stack_size = 0;
+                        while (current_puck_stack_size < 4){
+                            moveForwardThenBackward(255 - 52* current_puck_stack_size, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                            straightAdjust(FRONT_SENSORS);
+                            moveSwivel(90,SPEED,FALSE);
+                            CyDelay(1000);
+                            moveSwivel(-90,SPEED,FALSE);
+                            current_puck_stack_size++;
+                            CyDelay(1000);
+                        }
+                        */
+                        
+                        
+                        //This is for testing how much we need to moveFor/Back before placing the puck
+                        //170 was too close at home
+                        /*
+                        //This is the distance we want from the west wall for stacking
+                        moveForwardThenBackward(190, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                        */
+                        //When there are no pucks in the construction zone, use this.
+                        //moveForwardThenBackward(150, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                        
+                        
+                        /*
+                        //When we drive to the pucks, we want to stop a little earlier, because the wheels are close to treading on the pucks
+                        //Before the northAlign i think
+                        moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                        CyDelay(500);
+                        moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK + 500, BACKWARD, GREATER_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                        CyDelay(500);
+                        
+                        moveUntil(300, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                        CyDelay(500);
+                        moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK + 500, BACKWARD, GREATER_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                        CyDelay(500);
+                        
+                        moveUntil(400, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                        CyDelay(500);
+                        moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK + 500, BACKWARD, GREATER_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                        CyDelay(500);
+                        */
+                        
+                        while (1){
+                        
+                        }
+                        
+                        
                         while(0) {
                             straightAdjust(FRONT_SENSORS);
                             blinkLED(GREEN, 1000);
                         }
                         
+                        /*
                         while(1) {
                             armOpen();
                             CyDelay(500);
                             armClose();
                             CyDelay(500);
                         }
-                        
+                        */
                         
                         while(0){
                         moveUntil(120, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);

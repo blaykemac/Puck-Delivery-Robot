@@ -116,6 +116,7 @@
 #include "ADC_theACLK.h"
 #include "Motor_Left_Decoder_Cnt16.h"
 #include "Motor_Right_Decoder_Cnt16.h"
+#include "cy_em_eeprom.h"
 #include "core_cm3_psoc5.h"
 #include "CyDmac.h"
 #include "CyFlash.h"
@@ -124,7 +125,6 @@
 #include "cyPm.h"
 #include "CySpc.h"
 #include "cytypes.h"
-#include "cy_em_eeprom.h"
 
 /*[]*/
 

@@ -43,6 +43,16 @@ void moveDynamic(int distance, int speed, int activate_safety){
     int old_count = -SAFETY_MARGIN*0.75*ENCODER_MULTIPLIER - 1000;   // used in the old failsafe to check how much distance has passed 
                                                          // will enter the failsafe straight away due to this
     int emergency_exit = FALSE;
+    int adjust = 3;
+    
+    if (speed > 190) {
+        adjust = 4;
+    }
+    if (speed < 100) {
+        adjust = 1;
+    }
+    
+    
     
     // FAILSAFE if you give a speed greater than it can handle 
     int speed_left = speed;
@@ -76,12 +86,12 @@ void moveDynamic(int distance, int speed, int activate_safety){
             // the other count starts being higher again
         
         if (abs(count_left) > abs(count_right)) {
-                speed_left = speed - ADJUST;
-                speed_right = speed + ADJUST;
+                speed_left = speed - adjust;
+                speed_right = speed + adjsut;
             }        
         if (abs(count_right) > abs(count_left)) {
-                speed_right = speed - ADJUST;             
-                speed_left = speed + ADJUST;
+                speed_right = speed - adjust;             
+                speed_left = speed + adjust;
         }
         
         // The following code could be used if we require a certain tolerance: 
