@@ -313,142 +313,47 @@ int main(void)
                 } 
             
             int block_threshold = BLOCK_ZONE_NORTH - sensor_distances[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR + (BLOCK_WIDTH/2);  
-            int puck_threshold = ARENA_LENGTH - (PUCK_GRID_FROM_NORTH/2) - sensor_distances[SIDE_LEFT] - WIDTH_SENSOR_TO_SENSOR;       
             
-            // SCAN FOR BLOCKS OR PUCKS:
             
-            sprintf(output, "block threshold: %d \n", block_threshold);
-            UART_1_PutString(output);
+            // Check if we FIND the block: 
             
-            sprintf(output, "puck threshold: %d \n", puck_threshold);
-            UART_1_PutString(output);
-            
-            // Check if we hit the puck or the blocks: 
-            moveUntil(puck_threshold, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED, TRUE);   
-            
-    // HIT THE BLOCK FIRST
-            if (sensor_distances[SIDE_RIGHT] < block_threshold) {
+            moveUntil(block_threshold, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED, TRUE);  
                 // We have hit the west side of the block
                 //UART_1_PutString("BLOCK FIRST");
                 
                 blinkLED(GREEN,1000);   
                 
-                // Find the WEST clearance of the block: 
-                distanceSensor(FRONT_LEFT); // Use front_right instead? 
+                // Find the WEST clearance of the block with ultrasonics: 
+                distanceSensor(FRONT_LEFT); 
                 CyDelay(DELAY);
                 block_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
                 sprintf(output, "west block front sensor: %d, \n", sensor_distances[FRONT_LEFT] );       
                 UART_1_PutString(output);
                 
+                // OR find the west clearance of the block with encoders: 
+                block_location[WEST] = 130 + global_distance + DISTANCE_WHEEL_TO_SENSOR;    //130 was initial starting position 
+                
                 // Stopping at the East side of the block:
                 moveDynamic(-BLOCK_WIDTH/2,SPEED,TRUE);
-                moveUntil(block_threshold, BACKWARD, GREATER_THAN, SIDE_RIGHT, SPEED, TRUE);  
-                                    // this will move backwards until no longer hitting the block, or the wall
-                blinkLED(GREEN,1000);      // To show it ended at the correct spot
-                
-                // Updating the East Clearance:
-                //distanceSensor(FRONT_LEFT);     // checks how far we have travelled
-                //CyDelay(50);
-                
-                //block_location[EAST] = ARENA_WIDTH - sensor_distances[FRONT_LEFT] - DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
-                                                            // double check the distance back sensor to side sensor value
-                 
+                moveUntil(block_threshold, BACKWARD, GREATER_THAN, SIDE_RIGHT, SPEED, TRUE);    // this will move backwards until no longer hitting the block, or the wall
+                blinkLED(GREEN,1000);                                                           // To show it ended at the correct spot
                 
                 distanceSensor(BACK_RIGHT);
                 CyDelay(50);
                 block_location[EAST] = sensor_distances[BACK_RIGHT] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
                 
-                
-                
-                
-                
-                sprintf(output, "east block front sensor: %d, \n", sensor_distances[FRONT_LEFT] );       
-                UART_1_PutString(output);
-                
-                // Find where the pucks are: 
-                moveDynamic(-BLOCK_WIDTH/2,SPEED,TRUE);
-                moveUntil(puck_threshold, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED, TRUE);  
-                
-                distanceSensor(FRONT_LEFT);
-                CyDelay(50);
-                
-                int offset = sensor_distances[SIDE_RIGHT]*sin(18*M_PI/180);
-                if (sensor_distances[FRONT_LEFT] < 300) { offset = 0; }      // set the offset to 0 if it reasonable that we hit the pucks close to the corner
-                // puck detected
-                // puck detectedDISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR\\\\
-                
-                sprintf(output, "offset: %d, \n", offset);       
-                UART_1_PutString(output);
-                
-                puck_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
-                puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] - PUCK_GRID_WIDTH;
-                
-                sprintf(output, "west puck front sensor: %d, \n", sensor_distances[FRONT_LEFT] );       
-                UART_1_PutString(output);
-                
-                blinkLED(BLUE,1000);   // puck location was succesfully found                    
-                    
-                // if we reach the end of the wall without tripping the pucks, 
-                // assume pucks are located relatively above block
-                if (BACK_LEFT < 150) { 
-                    puck_location[EAST] = block_location[EAST];
-                    puck_location[WEST] = ARENA_WIDTH - puck_location[EAST] - PUCK_GRID_WIDTH;
+                // determining if the block is facing east or west and then offsetting that value: 
+                if (global_distance < (BLOCK_LENGTH/2)) {
+                    // block is facing this way "|"
+                    block_location[EAST] = ARENA_WIDTH - block_location[WEST] - BLOCK_WIDTH;
                 }
-                
-                
-            }
-    // HIT THE PUCK FIRST  
-            else{ 
-                
-                // puck location was succesfully found   
-                //UART_1_PutString("BLOCK FIRST");
-                
-                blinkLED(BLUE,1000); 
-                
-                distanceSensor(FRONT_LEFT);
-                CyDelay(50);
-                
-                int offset = sensor_distances[SIDE_RIGHT]*sin(18*M_PI/180);
-                if (sensor_distances[FRONT_LEFT] < 300) { offset = 0; }      // set the offset to 0 if it reasonable that we hit the pucks close to the corner
-                
-                sprintf(output, "offset: %d, \n", offset);       
-                UART_1_PutString(output);
-                
-                puck_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
-                puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] - PUCK_GRID_WIDTH;
-                
-                
-                // Finding the block location:
-                moveUntil(block_threshold, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED, TRUE);  
-                blinkLED(GREEN,1000);   
-                
-                // Find the WEST clearance of the block: 
-                distanceSensor(FRONT_LEFT); // Use front_right instead? 
-                CyDelay(DELAY);
-                
-                block_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
-                
-                // Stopping at the East side of the block: 
-                moveDynamic(-BLOCK_WIDTH/2,SPEED,TRUE);
-                moveUntil(block_threshold, BACKWARD, GREATER_THAN, SIDE_RIGHT, SPEED, TRUE);  
-                                    // this will move backwards until no longer hitting the block, or the wall
-                blinkLED(GREEN,1000);      // To show it ended at the correct spot
-                
-                // Updating the East Clearance:
-                //distanceSensor(FRONT_LEFT);     // checks how far we have travelled
-                //CyDelay(50);
-                
-                //block_location[EAST] = ARENA_WIDTH - sensor_distances[FRONT_LEFT] - DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
-                                                            // double check the distance back sensor to side sensor value
-            
-                distanceSensor(BACK_RIGHT);
-                CyDelay(50);
-                block_location[EAST] = sensor_distances[BACK_RIGHT] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+                else {
+                    // block is facing this way "---"
+                    block_location[EAST] = ARENA_WIDTH - block_location[WEST] - BLOCK_LENGTH;
+                    
+                }
             
             
-            }
-                        
-                
             sprintf(output, "west puck: %d, \n", puck_location[WEST]);       
             UART_1_PutString(output);
             sprintf(output, "east puck: %d, \n\n", puck_location[EAST]);       
@@ -464,7 +369,7 @@ int main(void)
             
             changeOrientation(EAST,SPEED);
             moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-            translateUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - SAFETY_MARGIN, 200, LEFT, GREATER_THAN);
+            translateUntil(CLEARANCE_RADIUS_CENTER_TO_BACK + SAFETY_MARGIN, 200, LEFT, GREATER_THAN);                   // nidhin changed this so its far enough away from wall
             straightAdjust(FRONT_MIDDLE);
             
             
@@ -483,6 +388,8 @@ int main(void)
                     // check if between the edge of the block and the puck zone gives enough clearance 
                     
             
+            
+            // DETERMINES THE CLEARANCES AVAILABLE FOR OUR ROBOT
             if (block_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
                 // the east clearance of block check
               block_east_clearance = 1;  
@@ -491,14 +398,21 @@ int main(void)
                 // the east clearance of block check
               block_west_clearance = 1;  
             }
-            if (puck_location[EAST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
-                // the east clearance of block check
-              puck_east_clearance = 1;  
+
+            
+            // DETERMINES WHICH PATH TO TAKE: 
+            if (block_location[EAST] > block_location[WEST]) {
+                preferential_route = EAST;
             }
-            if (puck_location[WEST] > WIDTH_WHEEL_TO_WHEEL + BLOCK_TOLERANCE) {
-                // the east clearance of block check
-              puck_west_clearance = 1;  
+            else {
+                preferential_route = WEST;
             }
+            // Middle route:
+                // preferential_route = centre; 
+            
+            
+            
+            
             
             //while(1) {} // just want to do the block and puck finding
             
@@ -539,17 +453,182 @@ int main(void)
 
             // The different route finding Algorithms for the different combinations: 
             
+    // EAST ROUTE: 
+            while (preferential_route == EAST) {
+                moveUntil(WALL_CLEARANCE_FRONT, BACKWARD, GREATER_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                straightAdjust(FRONT_SENSORS);
+                changeOrientation(NORTH, SPEED);    // gets it ready for going aslong the wall 
+                
+                distanceSensor(BACK_LEFT);          // checking initial distance from the wall
+                CyDelay(50);
+                initial_tolerance = sensor_distances[BACK_LEFT];
+                
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                        // move until corner wall
+                
+                if (global_distance < ARENA_WIDTH - PUCK_GRID_FROM_NORTH - initial_tolerance - 100) {
+                    // Has hit the pucks and must try the west route
+                    // move until backwards to original starting position 
+                    
+                    moveUntil(initial_tolerance, BACKWARD, LESS_THAN, BACK_LEFT, SPEED, TRUE);  // moveuntil backwards to original position 
+                    changeOrientation(EAST, SPEED);
+                    if (block_west_clearance == 1) { preferential_route = WEST; } else {preferential_route = MIDDLE;}   // checks which route to swap  to 
+                    break;  // breaks out of the route to change routes 
+                }
+                else {
+                    // have moved into the corner, checking if enough tolerance in corner 
+                    distanceSensor(SIDE_LEFT); 
+                    CyDelay(50);
+                    
+                    if (sensor_distances[SIDE_LEFT] > CLEARANCE_RADIUS_CENTER_TO_BACK - (SIDE_SENSORS_WIDTH/2)) {
+    // continue with the route MAIN CODE FOR ROUTE
+                        straightAdjust(FRONT_SENSORS);
+                        changeOrientation(WEST, SPEED);
+                        straightAdjust(BACK_SENSORS);
+        
+                                        
+                        moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                        changeOrientation(NORTH, SPEED_LOW);
+                        moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                        straightAdjust(FRONT_SENSORS);
+                        changeOrientation(WEST, SPEED_LOW);
+                        
+                        state = STATE_FIND_REQUIRED_PUCK;       // CHANGE STATE
+                        
+                        break;
+                    }   
+                    else {
+                        // Not enough distance to continue this route
+                        moveUntil(initial_tolerance, BACKWARD, LESS_THAN, BACK_LEFT, SPEED, TRUE);  // moveuntil backwards to original position 
+                        changeOrientation(EAST, SPEED);
+                        if (block_west_clearance == 1) { preferential_route = WEST; } else {preferential_route = MIDDLE;}   // checks which route to swap  to 
+                        break;  
+                    }
+                }
+            }
+            
+    // WEST ROUTE: 
+            while (preferential_route == WEST) {
+                moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
+                straightAdjust(BACK_SENSORS); //? Remove if it fucks things up
+                changeOrientation(NORTH, SPEED);
+                
+                distanceSensor(BACK_LEFT);          // checking initial distance from the wall
+                CyDelay(50);
+                initial_tolerance = sensor_distances[BACK_LEFT];
+                
+                straightAdjust(BACK_SENSORS); //? Remove if it fucks things up
+                moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                
+                // move until corner wall
+                if (global_distance < ARENA_WIDTH - PUCK_GRID_FROM_NORTH - initial_tolerance - 100) {
+                    // Has hit the pucks and must try the west route
+                    moveUntil(initial_tolerance, BACKWARD, LESS_THAN, BACK_LEFT, SPEED, TRUE);  // moveuntil backwards to original position 
+                    changeOrientation(EAST, SPEED);
+                    moveUntil(150,FORWARD,LESS_THAN,FRONT_MIDDLE,SPEED,TRUE);   // bring us back to original place
+                    if (block_east_clearance == 1) { preferential_route = EAST; } else {preferential_route = MIDDLE;}   // checks which route to swap  to 
+                    break;  // breaks out of the route to change routes 
+                }
+                else {
+                    // have moved into the corner, checking if enough tolerance in corner 
+                    distanceSensor(SIDE_RIGHT); 
+                    CyDelay(50);
+                    if (sensor_distances[SIDE_RIGHT] > CLEARANCE_RADIUS_CENTER_TO_BACK - (SIDE_SENSORS_WIDTH/2))  {
+    // continue with the route MAIN CODE FOR ROUTE
+                        straightAdjust(FRONT_SENSORS);
+                        changeOrientation(EAST, SPEED);
+                        straightAdjust(BACK_SENSORS);
+
+                        moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);   
+                        changeOrientation(NORTH, SPEED_LOW);
+                        moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                        straightAdjust(FRONT_SENSORS);
+                        changeOrientation(EAST, SPEED_LOW);    
+                        
+                        state = STATE_FIND_REQUIRED_PUCK;       // CHANGE STATE
+                        
+                        break;
+                    }   
+                    else {
+                        // Not enough distance to continue this route
+                        
+                        moveUntil(initial_tolerance, BACKWARD, LESS_THAN, BACK_LEFT, SPEED, TRUE);  // moveuntil backwards to original position 
+                        changeOrientation(EAST, SPEED);
+                        moveUntil(150,FORWARD,LESS_THAN,FRONT_MIDDLE,SPEED,TRUE);   // bring us back to original place
+
+                        if (block_east_clearance == 1) { preferential_route = EAST; } else {preferential_route = MIDDLE;}   // checks which route to swap  to 
+                        break;
+                    }
+                }
+                
+                
+            }
+            
+            
+    // MIDDLE ROUTE:         
+            if (preferential_route == MIDDLE) {
+                // check whether east or west clearence is clear, if thats the case, hug the side of that block
+                    // if EAST clearance is clear, we hug east side of block, and move towards east for the pucks
+                    // if WEST clearance is clear, we hug the west side of the block, and move towards east for the pucks 
+                if (block_east_clearance == 1) {
+                    moveUntil(ARENA_LENGTH - block_location[EAST] - 100, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
+                    straightAdjust(BACK_SENSORS); //? Remove if it fucks things up
+                    changeOrientation(NORTH, SPEED);
+                    straightAdjust(BACK_SENSORS); //? Remove if it fucks things up
+                    moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                    //translateMoveDynamic(CLEARANCE_RADIUS_CENTER_TO_BACK, 10, SPEED, FALSE); // Change safety to TRUE when implemented
+                    straightAdjust(FRONT_SENSORS);
+                    changeOrientation(EAST, SPEED);
+                    straightAdjust(BACK_SENSORS);
+
+                    moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);   
+                    changeOrientation(NORTH, SPEED_LOW);
+                    moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                    straightAdjust(FRONT_SENSORS);
+                    changeOrientation(EAST, SPEED_LOW);
+                    
+                }
+                
+                
+                else {
+                    moveUntil(ARENA_WIDTH - block_location[WEST] - 100, BACKWARD, GREATER_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                    straightAdjust(FRONT_SENSORS);
+                    changeOrientation(NORTH, SPEED);    // gets it ready for going aslong the wall 
+                    //straightAdjust();
+                    moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                    straightAdjust(FRONT_SENSORS);
+                    changeOrientation(WEST, SPEED);
+                    straightAdjust(BACK_SENSORS);
+
+                    
+                    moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                    changeOrientation(NORTH, SPEED_LOW);
+                    moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                    straightAdjust(FRONT_SENSORS);
+                    changeOrientation(WEST, SPEED_LOW);
+
+                }
+                
+                state = STATE_FIND_REQUIRED_PUCK;       // CHANGE STATE
+                
+            }
+            
+            
+            
+    // OLD CODE: 
+            /*
             if (block_east_clearance && puck_east_clearance){
                 
                 moveUntil(WALL_CLEARANCE_FRONT, BACKWARD, GREATER_THAN, FRONT_MIDDLE, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
-                changeOrientation(NORTH, SPEED);
+                changeOrientation(NORTH, SPEED);    // gets it ready for going aslong the wall 
                 //straightAdjust();
                 moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(WEST, SPEED);
                 straightAdjust(BACK_SENSORS);
 
+                
                 moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
                 changeOrientation(NORTH, SPEED_LOW);
                 moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
@@ -562,9 +641,9 @@ int main(void)
             
                 //moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED); // Remove when displaceLeft is working
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
-                straightAdjust(FRONT_MIDDLE); //? Remove if it fucks things up
+                straightAdjust(BACK_SENSORS); //? Remove if it fucks things up
                 changeOrientation(NORTH, SPEED);
-                straightAdjust(FRONT_SENSORS); //? Remove if it fucks things up
+                straightAdjust(BACK_SENSORS); //? Remove if it fucks things up
                 moveUntil(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
                 //translateMoveDynamic(CLEARANCE_RADIUS_CENTER_TO_BACK, 10, SPEED, FALSE); // Change safety to TRUE when implemented
                 straightAdjust(FRONT_SENSORS);
@@ -614,8 +693,9 @@ int main(void)
                 straightAdjust(FRONT_SENSORS);
                 changeOrientation(WEST, SPEED_LOW);
             }
+            */
             
-            state = STATE_FIND_REQUIRED_PUCK;
+            
 
         }
  
@@ -682,7 +762,7 @@ int main(void)
         // Assume that we are currently in the north side of the arena facing the pucks.
         // This state will return us to the south side of the block and face east at the east wall.
         if (state == STATE_RETURN_TO_SOUTH){
-            if (block_east_clearance && puck_east_clearance){
+            if (preferential_route == EAST){
                 
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - 190, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
                 // straightAdjust() using back sensor?
@@ -697,7 +777,7 @@ int main(void)
                 
             }
             
-            else if (block_west_clearance && puck_west_clearance){
+            else if (preferential_route == WEST){
             
                 moveUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - DISTANCE_BACK_SENSOR_FROM_CENTER, BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);
                 // straightAdjust() using back sensor?
@@ -712,7 +792,13 @@ int main(void)
               
             }
             
+            else if (preferential_route == MIDDLE) {
+                
+            }
             
+            
+            
+    // Old code         
             else if (block_east_clearance && puck_west_clearance){
 
                 moveUntil(ARENA_WIDTH - (block_location[EAST] - DISTANCE_FRONT_SENSOR_FROM_CENTER - WIDTH_WHEEL_TO_WHEEL / 2 - 10) , BACKWARD, LESS_THAN, BACK_RIGHT, SPEED, TRUE);

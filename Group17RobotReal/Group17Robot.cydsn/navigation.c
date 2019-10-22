@@ -127,6 +127,8 @@ void moveUntilPuck(int algorithm) {
         Motor_Right_Driver_WriteCompare(speed_right);        
     }
     
+    
+    
     Motor_Left_Decoder_SetCounter(0);
     Motor_Right_Decoder_SetCounter(0);
     
@@ -343,6 +345,9 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
     sprintf(output, "\n fin: %d \n", distance_sensor);    
     UART_1_PutString(output);
+    
+    global_encoder = count_left;                            
+    global_distance = count_left/ENCODER_MULTIPLIER;        // tells us how far we travelled in this moveuntil block 
     
     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
     Motor_Right_Decoder_SetCounter(0);   

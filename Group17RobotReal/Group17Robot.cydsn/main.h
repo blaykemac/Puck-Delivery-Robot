@@ -202,3 +202,12 @@ extern char output[32];
 
 extern int sensor_distances[TOTAL_SONIC_SENSORS];
 
+int global_encoder; 
+int global_distance;
+#define DISTANCE_WHEEL_TO_SENSOR 40
+
+int preferential_route; 
+int initial_tolerance;
+int set_path; 
+#define MIDDLE 2
+
