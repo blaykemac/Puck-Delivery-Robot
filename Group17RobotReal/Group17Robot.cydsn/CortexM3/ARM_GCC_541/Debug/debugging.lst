@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 1
 
 
    1              		.syntax unified
@@ -35,7 +35,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
    5:debugging.c   ****  * All Rights Reserved
    6:debugging.c   ****  * UNPUBLISHED, LICENSED SOFTWARE.
    7:debugging.c   ****  *
-   8:debugging.c   ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:debugging.c   ****  * CONFIDENTIAL AND PROPRIETAR INFORMATION
    9:debugging.c   ****  * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
   10:debugging.c   ****  *
   11:debugging.c   ****  * ========================================
@@ -58,15 +58,15 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   28:debugging.c   **** #include "customMath.h"
   29:debugging.c   **** #include "navigation.h"
   30:debugging.c   **** #include "debugging.h"
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 2
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 2
 
 
   31:debugging.c   **** 
   32:debugging.c   **** // Set which debugging you want to do:
   33:debugging.c   **** int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
   34:debugging.c   **** int servo_testing = FALSE;                  // Do the servos need to be tested?      
-  35:debugging.c   **** int motor_testing = FALSE;
-  36:debugging.c   **** int ultrasonic_testing = TRUE;  
+  35:debugging.c   **** int motor_testing = TRUE;
+  36:debugging.c   **** int ultrasonic_testing = FALSE;  
   37:debugging.c   **** 
   38:debugging.c   **** 
   39:debugging.c   **** void ultimateDebugging(void){
@@ -83,7 +83,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   40:debugging.c   ****     // Colour Calibration: 
   41:debugging.c   ****         if (colour_calibration)
   38              		.loc 1 41 0
-  39 0002 364B     		ldr	r3, .L20
+  39 0002 364B     		ldr	r3, .L17
   40 0004 1B68     		ldr	r3, [r3]
   41 0006 6BB3     		cbz	r3, .L2
   42 0008 0023     		movs	r3, #0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   60 001c 07E0     		b	.L4
   61              	.LVL3:
   62              	.L5:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 3
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 3
 
 
   53:debugging.c   ****                         {
@@ -146,7 +146,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   57:debugging.c   **** 
   58:debugging.c   ****                         UART_1_PutString("Count \t BLANK \t RED \t GREEN \t BLUE \t \n");
   79              		.loc 1 58 0 is_stmt 1
-  80 0032 2B48     		ldr	r0, .L20+4
+  80 0032 2B48     		ldr	r0, .L17+4
   81 0034 FFF7FEFF 		bl	UART_1_PutString
   82              	.LVL7:
   83              	.LBB4:
@@ -160,9 +160,9 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   60:debugging.c   ****                         {
   61:debugging.c   ****                         sprintf(output, "%d \t", i);
   90              		.loc 1 61 0 discriminator 3
-  91 003c 294D     		ldr	r5, .L20+8
+  91 003c 294D     		ldr	r5, .L17+8
   92 003e 2246     		mov	r2, r4
-  93 0040 2949     		ldr	r1, .L20+12
+  93 0040 2949     		ldr	r1, .L17+12
   94 0042 2846     		mov	r0, r5
   95 0044 FFF7FEFF 		bl	sprintf
   96              	.LVL10:
@@ -177,8 +177,8 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
  103              	.LVL12:
   64:debugging.c   ****                         UART_1_PutString("\n");
  104              		.loc 1 64 0 discriminator 3
- 105 0052 2648     		ldr	r0, .L20+16
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 4
+ 105 0052 2648     		ldr	r0, .L17+16
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 4
 
 
  106 0054 FFF7FEFF 		bl	UART_1_PutString
@@ -212,7 +212,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   71:debugging.c   ****         // Servo Testing:
   72:debugging.c   ****         if (servo_testing) 
  126              		.loc 1 72 0
- 127 0064 1D4B     		ldr	r3, .L20
+ 127 0064 1D4B     		ldr	r3, .L17
  128 0066 5B68     		ldr	r3, [r3, #4]
  129 0068 3BB1     		cbz	r3, .L9
  130 006a 0023     		movs	r3, #0
@@ -229,7 +229,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   78:debugging.c   ****                     {
   79:debugging.c   ****                         UART_1_PutString("Servo Testing: ");
  136              		.loc 1 79 0
- 137 006e 2048     		ldr	r0, .L20+20
+ 137 006e 2048     		ldr	r0, .L17+20
  138 0070 FFF7FEFF 		bl	UART_1_PutString
  139              	.LVL18:
   80:debugging.c   ****                         
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
   83:debugging.c   ****                         /*
   84:debugging.c   ****                         changeHeightToPuck(GROUND, NEITHER);
   85:debugging.c   ****                         CyDelay(1000);
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 5
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 5
 
 
   86:debugging.c   ****                         changeHeightToPuck(ABOVE_1_PUCK, NEITHER);
@@ -278,1596 +278,1601 @@ ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 1
  110:debugging.c   ****         // Motor Testing: 
  111:debugging.c   ****         if (motor_testing)
  150              		.loc 1 111 0
- 151 007a 184B     		ldr	r3, .L20
- 152 007c 9B68     		ldr	r3, [r3, #8]
- 153 007e 63B1     		cbz	r3, .L12
- 154 0080 0023     		movs	r3, #0
- 155              	.L14:
- 156              	.LVL21:
- 157              	.LBB6:
+ 151 007a 1E4B     		ldr	r3, .L17+24
+ 152 007c 1B68     		ldr	r3, [r3]
+ 153 007e 5BB1     		cbz	r3, .L12
+ 154              	.LBB6:
+ 155              	.LBB7:
  112:debugging.c   ****         {
  113:debugging.c   ****             int lock = FALSE;
  114:debugging.c   ****             do 
  115:debugging.c   ****                 {   
  116:debugging.c   ****                     if (lock == FALSE) 
- 158              		.loc 1 116 0
- 159 0082 43B9     		cbnz	r3, .L13
- 160              	.LBB7:
  117:debugging.c   ****                     {
  118:debugging.c   ****                         UART_1_PutString("Motor Testing: \n");
- 161              		.loc 1 118 0
- 162 0084 1B48     		ldr	r0, .L20+24
- 163 0086 FFF7FEFF 		bl	UART_1_PutString
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 6
-
-
- 164              	.LVL22:
+ 156              		.loc 1 118 0
+ 157 0080 1D48     		ldr	r0, .L17+28
+ 158 0082 FFF7FEFF 		bl	UART_1_PutString
+ 159              	.LVL21:
+ 160              	.L13:
  119:debugging.c   ****                         //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
  120:debugging.c   ****                         
  121:debugging.c   ****                        //straightAdjustSensor(FRONT_MIDDLE);
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 6
+
+
  122:debugging.c   ****                         //straightAdjustBack();
  123:debugging.c   ****                         
  124:debugging.c   ****                         //straightAdjust(BACK_SENSORS);
- 125:debugging.c   ****                         straightAdjust(FRONT_SENSORS);
- 165              		.loc 1 125 0
- 166 008a 0720     		movs	r0, #7
- 167 008c FFF7FEFF 		bl	straightAdjust
- 168              	.LVL23:
+ 125:debugging.c   ****                         //straightAdjust(FRONT_SENSORS);
  126:debugging.c   ****                         
- 127:debugging.c   ****                         while(0) {
- 128:debugging.c   ****                         straightAdjust(FRONT_SENSORS);
- 129:debugging.c   ****                         blinkLED(GREEN, 1000);
+ 127:debugging.c   ****                         while(1) {
+ 128:debugging.c   ****                             straightAdjust(FRONT_SENSORS);
+ 161              		.loc 1 128 0 discriminator 1
+ 162 0086 0720     		movs	r0, #7
+ 163 0088 FFF7FEFF 		bl	straightAdjust
+ 164              	.LVL22:
+ 129:debugging.c   ****                             blinkLED(GREEN, 1000);
+ 165              		.loc 1 129 0 discriminator 1
+ 166 008c 4FF47A71 		mov	r1, #1000
+ 167 0090 0220     		movs	r0, #2
+ 168 0092 FFF7FEFF 		bl	blinkLED
+ 169              	.LVL23:
+ 170 0096 F6E7     		b	.L13
+ 171              	.L12:
+ 172              	.LBE7:
+ 173              	.LBE6:
  130:debugging.c   ****                         }
  131:debugging.c   ****                         
- 132:debugging.c   ****                         int timer;
+ 132:debugging.c   ****                         
  133:debugging.c   ****                         
- 134:debugging.c   ****                         Timer_straight_adjust_Start();
- 169              		.loc 1 134 0
- 170 0090 FFF7FEFF 		bl	Timer_straight_adjust_Start
- 171              	.LVL24:
- 135:debugging.c   ****                         
- 136:debugging.c   ****                         while(0) {
- 137:debugging.c   ****                         timer = Timer_straight_adjust_ReadCounter();
- 138:debugging.c   ****                         sprintf(output, "%d \t", timer);      
- 139:debugging.c   ****                         UART_1_PutString(output); 
- 140:debugging.c   ****                         CyDelay(100);
- 141:debugging.c   ****         
+ 134:debugging.c   ****                         while(0){
+ 135:debugging.c   ****                         moveUntil(120, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+ 136:debugging.c   ****                         CyDelay(2000);
+ 137:debugging.c   ****                         }
+ 138:debugging.c   ****                         
+ 139:debugging.c   ****                         while(1) {
+ 140:debugging.c   ****                         straightAdjust(BACK_SENSORS);
+ 141:debugging.c   ****                         blinkLED(GREEN, 1000);
  142:debugging.c   ****                         }
  143:debugging.c   ****                         
- 144:debugging.c   ****                         //moveDynamic(-300);
+ 144:debugging.c   ****                         int timer;
  145:debugging.c   ****                         
- 146:debugging.c   ****                         //moveSwivel(360, SPEED, TRUE);
+ 146:debugging.c   ****                         Timer_straight_adjust_Start();
  147:debugging.c   ****                         
- 148:debugging.c   ****                         
- 149:debugging.c   ****                         
- 150:debugging.c   ****                         //moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
- 151:debugging.c   ****                         
- 152:debugging.c   ****                         /*
- 153:debugging.c   ****                         changeOrientation(WEST, SPEED);
- 154:debugging.c   ****                         CyDelay(1000);
- 155:debugging.c   ****                         changeOrientation(SOUTH, SPEED);
- 156:debugging.c   ****                         CyDelay(1000);
- 157:debugging.c   ****                         changeOrientation(WEST, SPEED);
- 158:debugging.c   ****                         CyDelay(1000);
- 159:debugging.c   ****                         changeOrientation(NORTH, SPEED);
- 160:debugging.c   ****                         CyDelay(1000);
+ 148:debugging.c   ****                         while(0) {
+ 149:debugging.c   ****                         timer = Timer_straight_adjust_ReadCounter();
+ 150:debugging.c   ****                         sprintf(output, "%d \t", timer);      
+ 151:debugging.c   ****                         UART_1_PutString(output); 
+ 152:debugging.c   ****                         CyDelay(100);
+ 153:debugging.c   ****         
+ 154:debugging.c   ****                         }
+ 155:debugging.c   ****                         
+ 156:debugging.c   ****                         //moveDynamic(-300);
+ 157:debugging.c   ****                         
+ 158:debugging.c   ****                         //moveSwivel(360, SPEED, TRUE);
+ 159:debugging.c   ****                         
+ 160:debugging.c   ****                         
  161:debugging.c   ****                         
- 162:debugging.c   ****                         
+ 162:debugging.c   ****                         //moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
  163:debugging.c   ****                         
- 164:debugging.c   ****                         
- 165:debugging.c   ****                         moveUntil(150,FORWARD,LESS_THAN,FRONT_LEFT,SPEED,TRUE);
- 166:debugging.c   ****                         straightAdjust();
- 167:debugging.c   ****                         
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 7
+ 164:debugging.c   ****                         /*
+ 165:debugging.c   ****                         changeOrientation(WEST, SPEED);
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 7
 
 
- 168:debugging.c   ****                         
- 169:debugging.c   ****                         
- 170:debugging.c   ****                         
- 171:debugging.c   ****                         
- 172:debugging.c   ****                         int move = 400;
- 173:debugging.c   ****                         moveDynamic(move,SPEED,TRUE);
- 174:debugging.c   ****                         moveDynamic(-move,SPEED,TRUE);
- 175:debugging.c   ****                         distanceSensor(BACK);
- 176:debugging.c   ****                         CyDelay(50);
- 177:debugging.c   ****                         
- 178:debugging.c   ****                         sprintf(output, "measure: %d\n", sensor_distances[BACK]);      
- 179:debugging.c   ****                             UART_1_PutString(output); 
- 180:debugging.c   ****         
- 181:debugging.c   **** 
- 182:debugging.c   ****                         */
+ 166:debugging.c   ****                         CyDelay(1000);
+ 167:debugging.c   ****                         changeOrientation(SOUTH, SPEED);
+ 168:debugging.c   ****                         CyDelay(1000);
+ 169:debugging.c   ****                         changeOrientation(WEST, SPEED);
+ 170:debugging.c   ****                         CyDelay(1000);
+ 171:debugging.c   ****                         changeOrientation(NORTH, SPEED);
+ 172:debugging.c   ****                         CyDelay(1000);
+ 173:debugging.c   ****                         
+ 174:debugging.c   ****                         
+ 175:debugging.c   ****                         
+ 176:debugging.c   ****                         
+ 177:debugging.c   ****                         moveUntil(150,FORWARD,LESS_THAN,FRONT_LEFT,SPEED,TRUE);
+ 178:debugging.c   ****                         straightAdjust();
+ 179:debugging.c   ****                         
+ 180:debugging.c   ****                         
+ 181:debugging.c   ****                         
+ 182:debugging.c   ****                         
  183:debugging.c   ****                         
- 184:debugging.c   ****   
- 185:debugging.c   ****                         lock = TRUE;    
- 172              		.loc 1 185 0
- 173 0094 0123     		movs	r3, #1
- 174              	.LVL25:
- 175              	.L13:
- 176              	.LBE7:
- 186:debugging.c   ****                     }
- 187:debugging.c   ****             } while (lock == TRUE);    
- 177              		.loc 1 187 0
- 178 0096 002B     		cmp	r3, #0
- 179 0098 F3D1     		bne	.L14
- 180              	.LVL26:
- 181              	.L12:
- 182              	.LBE6:
- 188:debugging.c   ****         }    
- 189:debugging.c   ****         
- 190:debugging.c   ****         // Ultrasonic Testing:
- 191:debugging.c   ****         
- 192:debugging.c   ****         if (ultrasonic_testing) 
- 183              		.loc 1 192 0
- 184 009a 174B     		ldr	r3, .L20+28
- 185 009c 1B68     		ldr	r3, [r3]
- 186 009e E3B1     		cbz	r3, .L1
- 187              	.LBB8:
- 188              	.LBB9:
- 193:debugging.c   ****         {
- 194:debugging.c   ****             int lock = FALSE;
- 195:debugging.c   ****             do 
- 196:debugging.c   ****                 {   
- 197:debugging.c   ****                     if (lock == FALSE) 
- 198:debugging.c   ****                     {
- 199:debugging.c   ****                         UART_1_PutString("Ultrasonic Testing: \n");
- 189              		.loc 1 199 0
- 190 00a0 1648     		ldr	r0, .L20+32
- 191 00a2 FFF7FEFF 		bl	UART_1_PutString
- 192              	.LVL27:
- 193              	.L18:
- 194              	.LBB10:
- 200:debugging.c   ****                         
- 201:debugging.c   ****                         //armMoving();
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 8
+ 184:debugging.c   ****                         int move = 400;
+ 185:debugging.c   ****                         moveDynamic(move,SPEED,TRUE);
+ 186:debugging.c   ****                         moveDynamic(-move,SPEED,TRUE);
+ 187:debugging.c   ****                         distanceSensor(BACK);
+ 188:debugging.c   ****                         CyDelay(50);
+ 189:debugging.c   ****                         
+ 190:debugging.c   ****                         sprintf(output, "measure: %d\n", sensor_distances[BACK]);      
+ 191:debugging.c   ****                             UART_1_PutString(output); 
+ 192:debugging.c   ****         
+ 193:debugging.c   **** 
+ 194:debugging.c   ****                         */
+ 195:debugging.c   ****                         
+ 196:debugging.c   ****   
+ 197:debugging.c   ****                         lock = TRUE;    
+ 198:debugging.c   ****                     }
+ 199:debugging.c   ****             } while (lock == TRUE);    
+ 200:debugging.c   ****         }    
+ 201:debugging.c   ****         
+ 202:debugging.c   ****         // Ultrasonic Testing:
+ 203:debugging.c   ****         
+ 204:debugging.c   ****         if (ultrasonic_testing) 
+ 174              		.loc 1 204 0
+ 175 0098 104B     		ldr	r3, .L17
+ 176 009a 9B68     		ldr	r3, [r3, #8]
+ 177 009c EBB1     		cbz	r3, .L1
+ 178              	.LBB8:
+ 179              	.LBB9:
+ 205:debugging.c   ****         {
+ 206:debugging.c   ****             int lock = FALSE;
+ 207:debugging.c   ****             do 
+ 208:debugging.c   ****                 {   
+ 209:debugging.c   ****                     if (lock == FALSE) 
+ 210:debugging.c   ****                     {
+ 211:debugging.c   ****                         UART_1_PutString("Ultrasonic Testing: \n");
+ 180              		.loc 1 211 0
+ 181 009e 1748     		ldr	r0, .L17+32
+ 182 00a0 FFF7FEFF 		bl	UART_1_PutString
+ 183              	.LVL24:
+ 184              	.L15:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 8
 
 
- 202:debugging.c   ****                         //straightAdjust();
- 203:debugging.c   ****                         
- 204:debugging.c   ****                         int dick = 2;
- 205:debugging.c   ****                         while(0) {
- 206:debugging.c   ****                             distanceSensor(BACK_LEFT);
- 207:debugging.c   ****                             CyDelay(500);
- 208:debugging.c   ****                             sprintf(output, "%d \t %d \t %d \t %d \t %d \n", sensor_distances[0], 
- 209:debugging.c   ****                                                      sensor_distances[1],
- 210:debugging.c   ****                                                      sensor_distances[2],
- 211:debugging.c   ****                                                         sensor_distances[3],
- 212:debugging.c   ****                                                         sensor_distances[4]);
- 213:debugging.c   ****                             UART_1_PutString(output);
- 214:debugging.c   ****                         }
- 215:debugging.c   ****                         // 0 gave front left    // front left
- 216:debugging.c   ****                         // 1 gave front right   // front right 
- 217:debugging.c   ****                         // 2 gave back sensor   // side left now??? 
- 218:debugging.c   ****                         // 3 gave side right    // side right 
- 219:debugging.c   ****                         // 4 gave back sensor   // back sensor
- 220:debugging.c   ****                         
- 221:debugging.c   ****                         while(1) {
- 222:debugging.c   ****                             for (int i = 0; i < 7; i++)
- 195              		.loc 1 222 0
- 196 00a6 0024     		movs	r4, #0
- 197 00a8 11E0     		b	.L16
- 198              	.LVL28:
- 199              	.L17:
- 223:debugging.c   ****                             {
- 224:debugging.c   ****                                 distanceSensor(i);
- 200              		.loc 1 224 0 discriminator 3
- 201 00aa 2046     		mov	r0, r4
- 202 00ac FFF7FEFF 		bl	distanceSensor
- 203              	.LVL29:
- 225:debugging.c   ****                                 CyDelay(100);
- 204              		.loc 1 225 0 discriminator 3
- 205 00b0 6420     		movs	r0, #100
- 206 00b2 FFF7FEFF 		bl	CyDelay
- 207              	.LVL30:
- 226:debugging.c   ****                                 sprintf(output, "%d \t", sensor_distances[i]);
- 208              		.loc 1 226 0 discriminator 3
- 209 00b6 0B4D     		ldr	r5, .L20+8
- 210 00b8 114B     		ldr	r3, .L20+36
- 211 00ba 53F82420 		ldr	r2, [r3, r4, lsl #2]
- 212 00be 0A49     		ldr	r1, .L20+12
- 213 00c0 2846     		mov	r0, r5
- 214 00c2 FFF7FEFF 		bl	sprintf
- 215              	.LVL31:
- 227:debugging.c   ****                                 UART_1_PutString(output);
- 216              		.loc 1 227 0 discriminator 3
- 217 00c6 2846     		mov	r0, r5
- 218 00c8 FFF7FEFF 		bl	UART_1_PutString
+ 212:debugging.c   ****                         
+ 213:debugging.c   ****                         //armMoving();
+ 214:debugging.c   ****                         //straightAdjust();
+ 215:debugging.c   ****                         
+ 216:debugging.c   ****                         int dick = 2;
+ 217:debugging.c   ****                         while(0) {
+ 218:debugging.c   ****                             distanceSensor(BACK_LEFT);
+ 219:debugging.c   ****                             CyDelay(500);
+ 220:debugging.c   ****                             sprintf(output, "%d \t %d \t %d \t %d \t %d \n", sensor_distances[0], 
+ 221:debugging.c   ****                                                      sensor_distances[1],
+ 222:debugging.c   ****                                                      sensor_distances[2],
+ 223:debugging.c   ****                                                         sensor_distances[3],
+ 224:debugging.c   ****                                                         sensor_distances[4]);
+ 225:debugging.c   ****                             UART_1_PutString(output);
+ 226:debugging.c   ****                         }
+ 227:debugging.c   ****                         // 0 gave front left    // front left
+ 228:debugging.c   ****                         // 1 gave front right   // front right 
+ 229:debugging.c   ****                         // 2 gave back sensor   // side left now??? 
+ 230:debugging.c   ****                         // 3 gave side right    // side right 
+ 231:debugging.c   ****                         // 4 gave back sensor   // back sensor
+ 232:debugging.c   ****                         
+ 233:debugging.c   ****                         while(0) {
+ 234:debugging.c   ****                             for (int i = 0; i < 7; i++)
+ 235:debugging.c   ****                             {
+ 236:debugging.c   ****                                 distanceSensor(i);
+ 237:debugging.c   ****                                 CyDelay(100);
+ 238:debugging.c   ****                                 sprintf(output, "%d \t", sensor_distances[i]);
+ 239:debugging.c   ****                                 UART_1_PutString(output);
+ 240:debugging.c   ****                             }
+ 241:debugging.c   ****                             UART_1_PutString("\n");
+ 242:debugging.c   ****                         }
+ 243:debugging.c   ****                         
+ 244:debugging.c   ****                         // FRONT_LEFT   0
+ 245:debugging.c   ****                         // FRONT_ RIGHT 1
+ 246:debugging.c   ****                         // SIDE_LEFT 2
+ 247:debugging.c   ****                         // SIDE_RIGHT 3
+ 248:debugging.c   ****                         // BACK_LEFT 4
+ 249:debugging.c   ****                         // BACK_RIGHT 6
+ 250:debugging.c   ****                         
+ 251:debugging.c   ****                         while(1) {
+ 252:debugging.c   ****                             distanceSensor(BACK_LEFT);
+ 185              		.loc 1 252 0 discriminator 1
+ 186 00a4 0620     		movs	r0, #6
+ 187 00a6 FFF7FEFF 		bl	distanceSensor
+ 188              	.LVL25:
+ 253:debugging.c   ****                             CyDelay(50);
+ 189              		.loc 1 253 0 discriminator 1
+ 190 00aa 3220     		movs	r0, #50
+ 191 00ac FFF7FEFF 		bl	CyDelay
+ 192              	.LVL26:
+ 254:debugging.c   ****                             distanceSensor(BACK_RIGHT);
+ 193              		.loc 1 254 0 discriminator 1
+ 194 00b0 0420     		movs	r0, #4
+ 195 00b2 FFF7FEFF 		bl	distanceSensor
+ 196              	.LVL27:
+ 255:debugging.c   ****                             CyDelay(50);
+ 197              		.loc 1 255 0 discriminator 1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 9
+
+
+ 198 00b6 3220     		movs	r0, #50
+ 199 00b8 FFF7FEFF 		bl	CyDelay
+ 200              	.LVL28:
+ 256:debugging.c   ****                             sprintf(output, "%d , %d \n", sensor_distances[BACK_LEFT], sensor_dista
+ 201              		.loc 1 256 0 discriminator 1
+ 202 00bc 104A     		ldr	r2, .L17+36
+ 203 00be 094C     		ldr	r4, .L17+8
+ 204 00c0 1369     		ldr	r3, [r2, #16]
+ 205 00c2 9269     		ldr	r2, [r2, #24]
+ 206 00c4 0F49     		ldr	r1, .L17+40
+ 207 00c6 2046     		mov	r0, r4
+ 208 00c8 FFF7FEFF 		bl	sprintf
+ 209              	.LVL29:
+ 257:debugging.c   ****                             UART_1_PutString(output);
+ 210              		.loc 1 257 0 discriminator 1
+ 211 00cc 2046     		mov	r0, r4
+ 212 00ce FFF7FEFF 		bl	UART_1_PutString
+ 213              	.LVL30:
+ 258:debugging.c   ****                             CyDelay(100);
+ 214              		.loc 1 258 0 discriminator 1
+ 215 00d2 6420     		movs	r0, #100
+ 216 00d4 FFF7FEFF 		bl	CyDelay
+ 217              	.LVL31:
+ 218 00d8 E4E7     		b	.L15
  219              	.LVL32:
- 222:debugging.c   ****                             {
- 220              		.loc 1 222 0 discriminator 3
- 221 00cc 0134     		adds	r4, r4, #1
- 222              	.LVL33:
- 223              	.L16:
- 222:debugging.c   ****                             {
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 9
+ 220              	.L1:
+ 221 00da 38BD     		pop	{r3, r4, r5, pc}
+ 222              	.L18:
+ 223              		.align	2
+ 224              	.L17:
+ 225 00dc 00000000 		.word	.LANCHOR0
+ 226 00e0 00000000 		.word	.LC0
+ 227 00e4 00000000 		.word	output
+ 228 00e8 28000000 		.word	.LC1
+ 229 00ec 30000000 		.word	.LC2
+ 230 00f0 34000000 		.word	.LC3
+ 231 00f4 00000000 		.word	.LANCHOR1
+ 232 00f8 44000000 		.word	.LC4
+ 233 00fc 58000000 		.word	.LC5
+ 234 0100 00000000 		.word	sensor_distances
+ 235 0104 70000000 		.word	.LC6
+ 236              	.LBE9:
+ 237              	.LBE8:
+ 238              		.cfi_endproc
+ 239              	.LFE64:
+ 240              		.size	ultimateDebugging, .-ultimateDebugging
+ 241              		.global	ultrasonic_testing
+ 242              		.global	motor_testing
+ 243              		.global	servo_testing
+ 244              		.global	colour_calibration
+ 245              		.comm	ultrasonic_flag,4,4
+ 246              		.comm	initialisation,4,4
+ 247              		.comm	output,32,4
+ 248              		.comm	block_edge_location,16,4
+ 249              		.comm	puck_rack_west_offsets,20,4
+ 250              		.comm	puck_rack_scans,20,4
+ 251              		.comm	internal_orientation,4,4
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 10
 
 
- 224              		.loc 1 222 0 is_stmt 0 discriminator 1
- 225 00ce 062C     		cmp	r4, #6
- 226 00d0 EBDD     		ble	.L17
- 227              	.LBE10:
- 228:debugging.c   ****                             }
- 229:debugging.c   ****                             UART_1_PutString("\n");
- 228              		.loc 1 229 0 is_stmt 1
- 229 00d2 0648     		ldr	r0, .L20+16
- 230 00d4 FFF7FEFF 		bl	UART_1_PutString
- 231              	.LVL34:
- 230:debugging.c   ****                         }
- 232              		.loc 1 230 0
- 233 00d8 E5E7     		b	.L18
- 234              	.LVL35:
- 235              	.L1:
- 236 00da 38BD     		pop	{r3, r4, r5, pc}
- 237              	.L21:
- 238              		.align	2
- 239              	.L20:
- 240 00dc 00000000 		.word	.LANCHOR0
- 241 00e0 00000000 		.word	.LC0
- 242 00e4 00000000 		.word	output
- 243 00e8 28000000 		.word	.LC1
- 244 00ec 30000000 		.word	.LC2
- 245 00f0 34000000 		.word	.LC3
- 246 00f4 44000000 		.word	.LC4
- 247 00f8 00000000 		.word	.LANCHOR1
- 248 00fc 58000000 		.word	.LC5
- 249 0100 00000000 		.word	sensor_distances
- 250              	.LBE9:
- 251              	.LBE8:
- 252              		.cfi_endproc
- 253              	.LFE64:
- 254              		.size	ultimateDebugging, .-ultimateDebugging
- 255              		.global	ultrasonic_testing
- 256              		.global	motor_testing
- 257              		.global	servo_testing
- 258              		.global	colour_calibration
- 259              		.comm	ultrasonic_flag,4,4
- 260              		.comm	initialisation,4,4
- 261              		.comm	output,32,4
- 262              		.comm	block_edge_location,16,4
- 263              		.comm	puck_rack_west_offsets,20,4
- 264              		.comm	puck_rack_scans,20,4
- 265              		.comm	internal_orientation,4,4
- 266              		.data
- 267              		.align	2
- 268              		.set	.LANCHOR1,. + 0
- 269              		.type	ultrasonic_testing, %object
- 270              		.size	ultrasonic_testing, 4
- 271              	ultrasonic_testing:
- 272 0000 01000000 		.word	1
- 273              		.section	.rodata.str1.4,"aMS",%progbits,1
- 274              		.align	2
- 275              	.LC0:
- 276 0000 436F756E 		.ascii	"Count \011 BLANK \011 RED \011 GREEN \011 BLUE \011"
- 276      74200920 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 10
+ 252              		.data
+ 253              		.align	2
+ 254              		.set	.LANCHOR1,. + 0
+ 255              		.type	motor_testing, %object
+ 256              		.size	motor_testing, 4
+ 257              	motor_testing:
+ 258 0000 01000000 		.word	1
+ 259              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 260              		.align	2
+ 261              	.LC0:
+ 262 0000 436F756E 		.ascii	"Count \011 BLANK \011 RED \011 GREEN \011 BLUE \011"
+ 262      74200920 
+ 262      424C414E 
+ 262      4B200920 
+ 262      52454420 
+ 263 0024 200A00   		.ascii	" \012\000"
+ 264 0027 00       		.space	1
+ 265              	.LC1:
+ 266 0028 25642009 		.ascii	"%d \011\000"
+ 266      00
+ 267 002d 000000   		.space	3
+ 268              	.LC2:
+ 269 0030 0A00     		.ascii	"\012\000"
+ 270 0032 0000     		.space	2
+ 271              	.LC3:
+ 272 0034 53657276 		.ascii	"Servo Testing: \000"
+ 272      6F205465 
+ 272      7374696E 
+ 272      673A2000 
+ 273              	.LC4:
+ 274 0044 4D6F746F 		.ascii	"Motor Testing: \012\000"
+ 274      72205465 
+ 274      7374696E 
+ 274      673A200A 
+ 274      00
+ 275 0055 000000   		.space	3
+ 276              	.LC5:
+ 277 0058 556C7472 		.ascii	"Ultrasonic Testing: \012\000"
+ 277      61736F6E 
+ 277      69632054 
+ 277      65737469 
+ 277      6E673A20 
+ 278 006e 0000     		.space	2
+ 279              	.LC6:
+ 280 0070 2564202C 		.ascii	"%d , %d \012\000"
+ 280      20256420 
+ 280      0A00
+ 281              		.bss
+ 282              		.align	2
+ 283              		.set	.LANCHOR0,. + 0
+ 284              		.type	colour_calibration, %object
+ 285              		.size	colour_calibration, 4
+ 286              	colour_calibration:
+ 287 0000 00000000 		.space	4
+ 288              		.type	servo_testing, %object
+ 289              		.size	servo_testing, 4
+ 290              	servo_testing:
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 11
 
 
- 276      424C414E 
- 276      4B200920 
- 276      52454420 
- 277 0024 200A00   		.ascii	" \012\000"
- 278 0027 00       		.space	1
- 279              	.LC1:
- 280 0028 25642009 		.ascii	"%d \011\000"
- 280      00
- 281 002d 000000   		.space	3
- 282              	.LC2:
- 283 0030 0A00     		.ascii	"\012\000"
- 284 0032 0000     		.space	2
- 285              	.LC3:
- 286 0034 53657276 		.ascii	"Servo Testing: \000"
- 286      6F205465 
- 286      7374696E 
- 286      673A2000 
- 287              	.LC4:
- 288 0044 4D6F746F 		.ascii	"Motor Testing: \012\000"
- 288      72205465 
- 288      7374696E 
- 288      673A200A 
- 288      00
- 289 0055 000000   		.space	3
- 290              	.LC5:
- 291 0058 556C7472 		.ascii	"Ultrasonic Testing: \012\000"
- 291      61736F6E 
- 291      69632054 
- 291      65737469 
- 291      6E673A20 
- 292              		.bss
- 293              		.align	2
- 294              		.set	.LANCHOR0,. + 0
- 295              		.type	colour_calibration, %object
- 296              		.size	colour_calibration, 4
- 297              	colour_calibration:
- 298 0000 00000000 		.space	4
- 299              		.type	servo_testing, %object
- 300              		.size	servo_testing, 4
- 301              	servo_testing:
- 302 0004 00000000 		.space	4
- 303              		.type	motor_testing, %object
- 304              		.size	motor_testing, 4
- 305              	motor_testing:
- 306 0008 00000000 		.space	4
- 307              		.text
- 308              	.Letext0:
- 309              		.file 2 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
- 310              		.file 3 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.1
- 311              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
- 312              		.file 5 "navigation.h"
- 313              		.file 6 "ultrasonic.h"
- 314              		.file 7 "main.h"
- 315              		.file 8 "Generated_Source\\PSoC5/control_led.h"
- 316              		.file 9 "Generated_Source\\PSoC5/CyLib.h"
- 317              		.file 10 "d:\\program files (x86)\\cyprus\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
- 318              		.file 11 "Generated_Source\\PSoC5/UART_1.h"
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 11
+ 291 0004 00000000 		.space	4
+ 292              		.type	ultrasonic_testing, %object
+ 293              		.size	ultrasonic_testing, 4
+ 294              	ultrasonic_testing:
+ 295 0008 00000000 		.space	4
+ 296              		.text
+ 297              	.Letext0:
+ 298              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 299              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 300              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+ 301              		.file 5 "navigation.h"
+ 302              		.file 6 "ultrasonic.h"
+ 303              		.file 7 "main.h"
+ 304              		.file 8 "Generated_Source\\PSoC5/control_led.h"
+ 305              		.file 9 "Generated_Source\\PSoC5/CyLib.h"
+ 306              		.file 10 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4
+ 307              		.file 11 "Generated_Source\\PSoC5/UART_1.h"
+ 308              		.file 12 "colour.h"
+ 309              		.file 13 "Generated_Source\\PSoC5/control_photodiode.h"
+ 310              		.file 14 "servo.h"
+ 311              		.section	.debug_info,"",%progbits
+ 312              	.Ldebug_info0:
+ 313 0000 B7040000 		.4byte	0x4b7
+ 314 0004 0400     		.2byte	0x4
+ 315 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 316 000a 04       		.byte	0x4
+ 317 000b 01       		.uleb128 0x1
+ 318 000c 7B000000 		.4byte	.LASF42
+ 319 0010 0C       		.byte	0xc
+ 320 0011 57020000 		.4byte	.LASF43
+ 321 0015 9D010000 		.4byte	.LASF44
+ 322 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 323 001d 00000000 		.4byte	0
+ 324 0021 00000000 		.4byte	.Ldebug_line0
+ 325 0025 02       		.uleb128 0x2
+ 326 0026 01       		.byte	0x1
+ 327 0027 06       		.byte	0x6
+ 328 0028 F9020000 		.4byte	.LASF0
+ 329 002c 02       		.uleb128 0x2
+ 330 002d 01       		.byte	0x1
+ 331 002e 08       		.byte	0x8
+ 332 002f 6D000000 		.4byte	.LASF1
+ 333 0033 02       		.uleb128 0x2
+ 334 0034 02       		.byte	0x2
+ 335 0035 05       		.byte	0x5
+ 336 0036 95020000 		.4byte	.LASF2
+ 337 003a 02       		.uleb128 0x2
+ 338 003b 02       		.byte	0x2
+ 339 003c 07       		.byte	0x7
+ 340 003d 21010000 		.4byte	.LASF3
+ 341 0041 03       		.uleb128 0x3
+ 342 0042 12000000 		.4byte	.LASF9
+ 343 0046 02       		.byte	0x2
+ 344 0047 3F       		.byte	0x3f
+ 345 0048 4C000000 		.4byte	0x4c
+ 346 004c 02       		.uleb128 0x2
+ 347 004d 04       		.byte	0x4
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 12
 
 
- 319              		.file 12 "colour.h"
- 320              		.file 13 "Generated_Source\\PSoC5/control_photodiode.h"
- 321              		.file 14 "servo.h"
- 322              		.file 15 "Generated_Source\\PSoC5/Timer_straight_adjust.h"
- 323              		.section	.debug_info,"",%progbits
- 324              	.Ldebug_info0:
- 325 0000 A2040000 		.4byte	0x4a2
- 326 0004 0400     		.2byte	0x4
- 327 0006 00000000 		.4byte	.Ldebug_abbrev0
- 328 000a 04       		.byte	0x4
- 329 000b 01       		.uleb128 0x1
- 330 000c 7B000000 		.4byte	.LASF42
- 331 0010 0C       		.byte	0xc
- 332 0011 10020000 		.4byte	.LASF43
- 333 0015 A6020000 		.4byte	.LASF44
- 334 0019 00000000 		.4byte	.Ldebug_ranges0+0
- 335 001d 00000000 		.4byte	0
- 336 0021 00000000 		.4byte	.Ldebug_line0
- 337 0025 02       		.uleb128 0x2
- 338 0026 01       		.byte	0x1
- 339 0027 06       		.byte	0x6
- 340 0028 17030000 		.4byte	.LASF0
- 341 002c 02       		.uleb128 0x2
- 342 002d 01       		.byte	0x1
- 343 002e 08       		.byte	0x8
- 344 002f 6D000000 		.4byte	.LASF1
- 345 0033 02       		.uleb128 0x2
- 346 0034 02       		.byte	0x2
- 347 0035 05       		.byte	0x5
- 348 0036 4E020000 		.4byte	.LASF2
- 349 003a 02       		.uleb128 0x2
- 350 003b 02       		.byte	0x2
- 351 003c 07       		.byte	0x7
- 352 003d 21010000 		.4byte	.LASF3
- 353 0041 03       		.uleb128 0x3
- 354 0042 12000000 		.4byte	.LASF9
- 355 0046 02       		.byte	0x2
- 356 0047 3F       		.byte	0x3f
- 357 0048 4C000000 		.4byte	0x4c
- 358 004c 02       		.uleb128 0x2
- 359 004d 04       		.byte	0x4
- 360 004e 05       		.byte	0x5
- 361 004f 9D020000 		.4byte	.LASF4
- 362 0053 02       		.uleb128 0x2
- 363 0054 04       		.byte	0x4
- 364 0055 07       		.byte	0x7
- 365 0056 0F010000 		.4byte	.LASF5
- 366 005a 02       		.uleb128 0x2
- 367 005b 08       		.byte	0x8
- 368 005c 05       		.byte	0x5
- 369 005d 2D020000 		.4byte	.LASF6
- 370 0061 02       		.uleb128 0x2
- 371 0062 08       		.byte	0x8
- 372 0063 07       		.byte	0x7
- 373 0064 E2010000 		.4byte	.LASF7
- 374 0068 04       		.uleb128 0x4
- 375 0069 04       		.byte	0x4
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 12
+ 348 004e 05       		.byte	0x5
+ 349 004f E4020000 		.4byte	.LASF4
+ 350 0053 02       		.uleb128 0x2
+ 351 0054 04       		.byte	0x4
+ 352 0055 07       		.byte	0x7
+ 353 0056 0F010000 		.4byte	.LASF5
+ 354 005a 02       		.uleb128 0x2
+ 355 005b 08       		.byte	0x8
+ 356 005c 05       		.byte	0x5
+ 357 005d 74020000 		.4byte	.LASF6
+ 358 0061 02       		.uleb128 0x2
+ 359 0062 08       		.byte	0x8
+ 360 0063 07       		.byte	0x7
+ 361 0064 29020000 		.4byte	.LASF7
+ 362 0068 04       		.uleb128 0x4
+ 363 0069 04       		.byte	0x4
+ 364 006a 05       		.byte	0x5
+ 365 006b 696E7400 		.ascii	"int\000"
+ 366 006f 02       		.uleb128 0x2
+ 367 0070 04       		.byte	0x4
+ 368 0071 07       		.byte	0x7
+ 369 0072 1C020000 		.4byte	.LASF8
+ 370 0076 03       		.uleb128 0x3
+ 371 0077 63020000 		.4byte	.LASF10
+ 372 007b 03       		.byte	0x3
+ 373 007c 2C       		.byte	0x2c
+ 374 007d 41000000 		.4byte	0x41
+ 375 0081 02       		.uleb128 0x2
+ 376 0082 04       		.byte	0x4
+ 377 0083 04       		.byte	0x4
+ 378 0084 56000000 		.4byte	.LASF11
+ 379 0088 02       		.uleb128 0x2
+ 380 0089 08       		.byte	0x8
+ 381 008a 04       		.byte	0x4
+ 382 008b 69010000 		.4byte	.LASF12
+ 383 008f 02       		.uleb128 0x2
+ 384 0090 01       		.byte	0x1
+ 385 0091 08       		.byte	0x8
+ 386 0092 82020000 		.4byte	.LASF13
+ 387 0096 02       		.uleb128 0x2
+ 388 0097 08       		.byte	0x8
+ 389 0098 04       		.byte	0x4
+ 390 0099 ED020000 		.4byte	.LASF14
+ 391 009d 02       		.uleb128 0x2
+ 392 009e 04       		.byte	0x4
+ 393 009f 07       		.byte	0x7
+ 394 00a0 6B020000 		.4byte	.LASF15
+ 395 00a4 05       		.uleb128 0x5
+ 396 00a5 00000000 		.4byte	.LASF45
+ 397 00a9 01       		.byte	0x1
+ 398 00aa 27       		.byte	0x27
+ 399 00ab 00000000 		.4byte	.LFB64
+ 400 00af 08010000 		.4byte	.LFE64-.LFB64
+ 401 00b3 01       		.uleb128 0x1
+ 402 00b4 9C       		.byte	0x9c
+ 403 00b5 35030000 		.4byte	0x335
+ 404 00b9 06       		.uleb128 0x6
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 13
 
 
- 376 006a 05       		.byte	0x5
- 377 006b 696E7400 		.ascii	"int\000"
- 378 006f 02       		.uleb128 0x2
- 379 0070 04       		.byte	0x4
- 380 0071 07       		.byte	0x7
- 381 0072 D5010000 		.4byte	.LASF8
- 382 0076 03       		.uleb128 0x3
- 383 0077 1C020000 		.4byte	.LASF10
- 384 007b 03       		.byte	0x3
- 385 007c 2C       		.byte	0x2c
- 386 007d 41000000 		.4byte	0x41
- 387 0081 02       		.uleb128 0x2
- 388 0082 04       		.byte	0x4
- 389 0083 04       		.byte	0x4
- 390 0084 56000000 		.4byte	.LASF11
- 391 0088 02       		.uleb128 0x2
- 392 0089 08       		.byte	0x8
- 393 008a 04       		.byte	0x4
- 394 008b 69010000 		.4byte	.LASF12
- 395 008f 02       		.uleb128 0x2
- 396 0090 01       		.byte	0x1
- 397 0091 08       		.byte	0x8
- 398 0092 3B020000 		.4byte	.LASF13
- 399 0096 02       		.uleb128 0x2
- 400 0097 08       		.byte	0x8
- 401 0098 04       		.byte	0x4
- 402 0099 0B030000 		.4byte	.LASF14
- 403 009d 02       		.uleb128 0x2
- 404 009e 04       		.byte	0x4
- 405 009f 07       		.byte	0x7
- 406 00a0 24020000 		.4byte	.LASF15
- 407 00a4 05       		.uleb128 0x5
- 408 00a5 00000000 		.4byte	.LASF45
- 409 00a9 01       		.byte	0x1
- 410 00aa 27       		.byte	0x27
- 411 00ab 00000000 		.4byte	.LFB64
- 412 00af 04010000 		.4byte	.LFE64-.LFB64
- 413 00b3 01       		.uleb128 0x1
- 414 00b4 9C       		.byte	0x9c
- 415 00b5 20030000 		.4byte	0x320
- 416 00b9 06       		.uleb128 0x6
- 417 00ba 0A000000 		.4byte	.LBB2
- 418 00be 5A000000 		.4byte	.LBE2-.LBB2
- 419 00c2 C2010000 		.4byte	0x1c2
- 420 00c6 07       		.uleb128 0x7
- 421 00c7 43010000 		.4byte	.LASF16
- 422 00cb 01       		.byte	0x1
- 423 00cc 2B       		.byte	0x2b
- 424 00cd 68000000 		.4byte	0x68
- 425 00d1 00000000 		.4byte	.LLST0
- 426 00d5 06       		.uleb128 0x6
- 427 00d6 1A000000 		.4byte	.LBB3
- 428 00da 18000000 		.4byte	.LBE3-.LBB3
- 429 00de 15010000 		.4byte	0x115
- 430 00e2 08       		.uleb128 0x8
- 431 00e3 6900     		.ascii	"i\000"
- 432 00e5 01       		.byte	0x1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 13
+ 405 00ba 0A000000 		.4byte	.LBB2
+ 406 00be 5A000000 		.4byte	.LBE2-.LBB2
+ 407 00c2 C2010000 		.4byte	0x1c2
+ 408 00c6 07       		.uleb128 0x7
+ 409 00c7 43010000 		.4byte	.LASF16
+ 410 00cb 01       		.byte	0x1
+ 411 00cc 2B       		.byte	0x2b
+ 412 00cd 68000000 		.4byte	0x68
+ 413 00d1 00000000 		.4byte	.LLST0
+ 414 00d5 06       		.uleb128 0x6
+ 415 00d6 1A000000 		.4byte	.LBB3
+ 416 00da 18000000 		.4byte	.LBE3-.LBB3
+ 417 00de 15010000 		.4byte	0x115
+ 418 00e2 08       		.uleb128 0x8
+ 419 00e3 6900     		.ascii	"i\000"
+ 420 00e5 01       		.byte	0x1
+ 421 00e6 34       		.byte	0x34
+ 422 00e7 68000000 		.4byte	0x68
+ 423 00eb 1E000000 		.4byte	.LLST1
+ 424 00ef 09       		.uleb128 0x9
+ 425 00f0 24000000 		.4byte	.LVL4
+ 426 00f4 4C040000 		.4byte	0x44c
+ 427 00f8 03010000 		.4byte	0x103
+ 428 00fc 0A       		.uleb128 0xa
+ 429 00fd 01       		.uleb128 0x1
+ 430 00fe 50       		.byte	0x50
+ 431 00ff 02       		.uleb128 0x2
+ 432 0100 74       		.byte	0x74
+ 433 0101 00       		.sleb128 0
+ 434 0102 00       		.byte	0
+ 435 0103 0B       		.uleb128 0xb
+ 436 0104 2C000000 		.4byte	.LVL5
+ 437 0108 57040000 		.4byte	0x457
+ 438 010c 0A       		.uleb128 0xa
+ 439 010d 01       		.uleb128 0x1
+ 440 010e 50       		.byte	0x50
+ 441 010f 03       		.uleb128 0x3
+ 442 0110 0A       		.byte	0xa
+ 443 0111 F401     		.2byte	0x1f4
+ 444 0113 00       		.byte	0
+ 445 0114 00       		.byte	0
+ 446 0115 06       		.uleb128 0x6
+ 447 0116 38000000 		.4byte	.LBB4
+ 448 011a 26000000 		.4byte	.LBE4-.LBB4
+ 449 011e 83010000 		.4byte	0x183
+ 450 0122 08       		.uleb128 0x8
+ 451 0123 6900     		.ascii	"i\000"
+ 452 0125 01       		.byte	0x1
+ 453 0126 3B       		.byte	0x3b
+ 454 0127 68000000 		.4byte	0x68
+ 455 012b 3D000000 		.4byte	.LLST2
+ 456 012f 09       		.uleb128 0x9
+ 457 0130 48000000 		.4byte	.LVL10
+ 458 0134 62040000 		.4byte	0x462
+ 459 0138 52010000 		.4byte	0x152
+ 460 013c 0A       		.uleb128 0xa
+ 461 013d 01       		.uleb128 0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 14
 
 
- 433 00e6 34       		.byte	0x34
- 434 00e7 68000000 		.4byte	0x68
- 435 00eb 1E000000 		.4byte	.LLST1
- 436 00ef 09       		.uleb128 0x9
- 437 00f0 24000000 		.4byte	.LVL4
- 438 00f4 37040000 		.4byte	0x437
- 439 00f8 03010000 		.4byte	0x103
- 440 00fc 0A       		.uleb128 0xa
- 441 00fd 01       		.uleb128 0x1
- 442 00fe 50       		.byte	0x50
- 443 00ff 02       		.uleb128 0x2
- 444 0100 74       		.byte	0x74
- 445 0101 00       		.sleb128 0
- 446 0102 00       		.byte	0
- 447 0103 0B       		.uleb128 0xb
- 448 0104 2C000000 		.4byte	.LVL5
- 449 0108 42040000 		.4byte	0x442
- 450 010c 0A       		.uleb128 0xa
- 451 010d 01       		.uleb128 0x1
- 452 010e 50       		.byte	0x50
- 453 010f 03       		.uleb128 0x3
- 454 0110 0A       		.byte	0xa
- 455 0111 F401     		.2byte	0x1f4
- 456 0113 00       		.byte	0
- 457 0114 00       		.byte	0
- 458 0115 06       		.uleb128 0x6
- 459 0116 38000000 		.4byte	.LBB4
- 460 011a 26000000 		.4byte	.LBE4-.LBB4
- 461 011e 83010000 		.4byte	0x183
- 462 0122 08       		.uleb128 0x8
- 463 0123 6900     		.ascii	"i\000"
- 464 0125 01       		.byte	0x1
- 465 0126 3B       		.byte	0x3b
- 466 0127 68000000 		.4byte	0x68
- 467 012b 3D000000 		.4byte	.LLST2
- 468 012f 09       		.uleb128 0x9
- 469 0130 48000000 		.4byte	.LVL10
- 470 0134 4D040000 		.4byte	0x44d
- 471 0138 52010000 		.4byte	0x152
- 472 013c 0A       		.uleb128 0xa
- 473 013d 01       		.uleb128 0x1
- 474 013e 50       		.byte	0x50
- 475 013f 02       		.uleb128 0x2
- 476 0140 75       		.byte	0x75
- 477 0141 00       		.sleb128 0
- 478 0142 0A       		.uleb128 0xa
- 479 0143 01       		.uleb128 0x1
- 480 0144 51       		.byte	0x51
- 481 0145 05       		.uleb128 0x5
- 482 0146 03       		.byte	0x3
- 483 0147 28000000 		.4byte	.LC1
- 484 014b 0A       		.uleb128 0xa
- 485 014c 01       		.uleb128 0x1
- 486 014d 52       		.byte	0x52
- 487 014e 02       		.uleb128 0x2
- 488 014f 74       		.byte	0x74
- 489 0150 00       		.sleb128 0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 14
+ 462 013e 50       		.byte	0x50
+ 463 013f 02       		.uleb128 0x2
+ 464 0140 75       		.byte	0x75
+ 465 0141 00       		.sleb128 0
+ 466 0142 0A       		.uleb128 0xa
+ 467 0143 01       		.uleb128 0x1
+ 468 0144 51       		.byte	0x51
+ 469 0145 05       		.uleb128 0x5
+ 470 0146 03       		.byte	0x3
+ 471 0147 28000000 		.4byte	.LC1
+ 472 014b 0A       		.uleb128 0xa
+ 473 014c 01       		.uleb128 0x1
+ 474 014d 52       		.byte	0x52
+ 475 014e 02       		.uleb128 0x2
+ 476 014f 74       		.byte	0x74
+ 477 0150 00       		.sleb128 0
+ 478 0151 00       		.byte	0
+ 479 0152 09       		.uleb128 0x9
+ 480 0153 4E000000 		.4byte	.LVL11
+ 481 0157 6D040000 		.4byte	0x46d
+ 482 015b 66010000 		.4byte	0x166
+ 483 015f 0A       		.uleb128 0xa
+ 484 0160 01       		.uleb128 0x1
+ 485 0161 50       		.byte	0x50
+ 486 0162 02       		.uleb128 0x2
+ 487 0163 75       		.byte	0x75
+ 488 0164 00       		.sleb128 0
+ 489 0165 00       		.byte	0
+ 490 0166 0C       		.uleb128 0xc
+ 491 0167 52000000 		.4byte	.LVL12
+ 492 016b 78040000 		.4byte	0x478
+ 493 016f 0B       		.uleb128 0xb
+ 494 0170 58000000 		.4byte	.LVL13
+ 495 0174 6D040000 		.4byte	0x46d
+ 496 0178 0A       		.uleb128 0xa
+ 497 0179 01       		.uleb128 0x1
+ 498 017a 50       		.byte	0x50
+ 499 017b 05       		.uleb128 0x5
+ 500 017c 03       		.byte	0x3
+ 501 017d 30000000 		.4byte	.LC2
+ 502 0181 00       		.byte	0
+ 503 0182 00       		.byte	0
+ 504 0183 09       		.uleb128 0x9
+ 505 0184 12000000 		.4byte	.LVL1
+ 506 0188 83040000 		.4byte	0x483
+ 507 018c 96010000 		.4byte	0x196
+ 508 0190 0A       		.uleb128 0xa
+ 509 0191 01       		.uleb128 0x1
+ 510 0192 50       		.byte	0x50
+ 511 0193 01       		.uleb128 0x1
+ 512 0194 31       		.byte	0x31
+ 513 0195 00       		.byte	0
+ 514 0196 09       		.uleb128 0x9
+ 515 0197 1A000000 		.4byte	.LVL2
+ 516 019b 8E040000 		.4byte	0x48e
+ 517 019f AE010000 		.4byte	0x1ae
+ 518 01a3 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 15
 
 
- 490 0151 00       		.byte	0
- 491 0152 09       		.uleb128 0x9
- 492 0153 4E000000 		.4byte	.LVL11
- 493 0157 58040000 		.4byte	0x458
- 494 015b 66010000 		.4byte	0x166
- 495 015f 0A       		.uleb128 0xa
- 496 0160 01       		.uleb128 0x1
- 497 0161 50       		.byte	0x50
- 498 0162 02       		.uleb128 0x2
- 499 0163 75       		.byte	0x75
- 500 0164 00       		.sleb128 0
- 501 0165 00       		.byte	0
- 502 0166 0C       		.uleb128 0xc
- 503 0167 52000000 		.4byte	.LVL12
- 504 016b 63040000 		.4byte	0x463
- 505 016f 0B       		.uleb128 0xb
- 506 0170 58000000 		.4byte	.LVL13
- 507 0174 58040000 		.4byte	0x458
- 508 0178 0A       		.uleb128 0xa
- 509 0179 01       		.uleb128 0x1
- 510 017a 50       		.byte	0x50
- 511 017b 05       		.uleb128 0x5
- 512 017c 03       		.byte	0x3
- 513 017d 30000000 		.4byte	.LC2
- 514 0181 00       		.byte	0
- 515 0182 00       		.byte	0
- 516 0183 09       		.uleb128 0x9
- 517 0184 12000000 		.4byte	.LVL1
- 518 0188 6E040000 		.4byte	0x46e
- 519 018c 96010000 		.4byte	0x196
- 520 0190 0A       		.uleb128 0xa
- 521 0191 01       		.uleb128 0x1
- 522 0192 50       		.byte	0x50
- 523 0193 01       		.uleb128 0x1
- 524 0194 31       		.byte	0x31
- 525 0195 00       		.byte	0
- 526 0196 09       		.uleb128 0x9
- 527 0197 1A000000 		.4byte	.LVL2
- 528 019b 79040000 		.4byte	0x479
- 529 019f AE010000 		.4byte	0x1ae
- 530 01a3 0A       		.uleb128 0xa
- 531 01a4 01       		.uleb128 0x1
- 532 01a5 50       		.byte	0x50
- 533 01a6 01       		.uleb128 0x1
- 534 01a7 30       		.byte	0x30
- 535 01a8 0A       		.uleb128 0xa
- 536 01a9 01       		.uleb128 0x1
- 537 01aa 51       		.byte	0x51
- 538 01ab 01       		.uleb128 0x1
- 539 01ac 32       		.byte	0x32
- 540 01ad 00       		.byte	0
- 541 01ae 0B       		.uleb128 0xb
- 542 01af 38000000 		.4byte	.LVL7
- 543 01b3 58040000 		.4byte	0x458
- 544 01b7 0A       		.uleb128 0xa
- 545 01b8 01       		.uleb128 0x1
- 546 01b9 50       		.byte	0x50
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 15
+ 519 01a4 01       		.uleb128 0x1
+ 520 01a5 50       		.byte	0x50
+ 521 01a6 01       		.uleb128 0x1
+ 522 01a7 30       		.byte	0x30
+ 523 01a8 0A       		.uleb128 0xa
+ 524 01a9 01       		.uleb128 0x1
+ 525 01aa 51       		.byte	0x51
+ 526 01ab 01       		.uleb128 0x1
+ 527 01ac 32       		.byte	0x32
+ 528 01ad 00       		.byte	0
+ 529 01ae 0B       		.uleb128 0xb
+ 530 01af 38000000 		.4byte	.LVL7
+ 531 01b3 6D040000 		.4byte	0x46d
+ 532 01b7 0A       		.uleb128 0xa
+ 533 01b8 01       		.uleb128 0x1
+ 534 01b9 50       		.byte	0x50
+ 535 01ba 05       		.uleb128 0x5
+ 536 01bb 03       		.byte	0x3
+ 537 01bc 00000000 		.4byte	.LC0
+ 538 01c0 00       		.byte	0
+ 539 01c1 00       		.byte	0
+ 540 01c2 06       		.uleb128 0x6
+ 541 01c3 6C000000 		.4byte	.LBB5
+ 542 01c7 0E000000 		.4byte	.LBE5-.LBB5
+ 543 01cb F2010000 		.4byte	0x1f2
+ 544 01cf 07       		.uleb128 0x7
+ 545 01d0 43010000 		.4byte	.LASF16
+ 546 01d4 01       		.byte	0x1
+ 547 01d5 4A       		.byte	0x4a
+ 548 01d6 68000000 		.4byte	0x68
+ 549 01da 5C000000 		.4byte	.LLST3
+ 550 01de 0B       		.uleb128 0xb
+ 551 01df 74000000 		.4byte	.LVL18
+ 552 01e3 6D040000 		.4byte	0x46d
+ 553 01e7 0A       		.uleb128 0xa
+ 554 01e8 01       		.uleb128 0x1
+ 555 01e9 50       		.byte	0x50
+ 556 01ea 05       		.uleb128 0x5
+ 557 01eb 03       		.byte	0x3
+ 558 01ec 34000000 		.4byte	.LC3
+ 559 01f0 00       		.byte	0
+ 560 01f1 00       		.byte	0
+ 561 01f2 06       		.uleb128 0x6
+ 562 01f3 80000000 		.4byte	.LBB6
+ 563 01f7 18000000 		.4byte	.LBE6-.LBB6
+ 564 01fb 60020000 		.4byte	0x260
+ 565 01ff 0D       		.uleb128 0xd
+ 566 0200 43010000 		.4byte	.LASF16
+ 567 0204 01       		.byte	0x1
+ 568 0205 71       		.byte	0x71
+ 569 0206 68000000 		.4byte	0x68
+ 570 020a 0E       		.uleb128 0xe
+ 571 020b 80000000 		.4byte	.LBB7
+ 572 020f 18000000 		.4byte	.LBE7-.LBB7
+ 573 0213 0D       		.uleb128 0xd
+ 574 0214 09010000 		.4byte	.LASF17
+ 575 0218 01       		.byte	0x1
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 16
 
 
- 547 01ba 05       		.uleb128 0x5
- 548 01bb 03       		.byte	0x3
- 549 01bc 00000000 		.4byte	.LC0
- 550 01c0 00       		.byte	0
- 551 01c1 00       		.byte	0
- 552 01c2 06       		.uleb128 0x6
- 553 01c3 6C000000 		.4byte	.LBB5
- 554 01c7 0E000000 		.4byte	.LBE5-.LBB5
- 555 01cb F2010000 		.4byte	0x1f2
- 556 01cf 07       		.uleb128 0x7
- 557 01d0 43010000 		.4byte	.LASF16
- 558 01d4 01       		.byte	0x1
- 559 01d5 4A       		.byte	0x4a
- 560 01d6 68000000 		.4byte	0x68
- 561 01da 5C000000 		.4byte	.LLST3
- 562 01de 0B       		.uleb128 0xb
- 563 01df 74000000 		.4byte	.LVL18
- 564 01e3 58040000 		.4byte	0x458
- 565 01e7 0A       		.uleb128 0xa
- 566 01e8 01       		.uleb128 0x1
- 567 01e9 50       		.byte	0x50
- 568 01ea 05       		.uleb128 0x5
- 569 01eb 03       		.byte	0x3
- 570 01ec 34000000 		.4byte	.LC3
- 571 01f0 00       		.byte	0
- 572 01f1 00       		.byte	0
- 573 01f2 06       		.uleb128 0x6
- 574 01f3 82000000 		.4byte	.LBB6
- 575 01f7 18000000 		.4byte	.LBE6-.LBB6
- 576 01fb 57020000 		.4byte	0x257
- 577 01ff 07       		.uleb128 0x7
- 578 0200 43010000 		.4byte	.LASF16
- 579 0204 01       		.byte	0x1
- 580 0205 71       		.byte	0x71
- 581 0206 68000000 		.4byte	0x68
- 582 020a 86000000 		.4byte	.LLST4
- 583 020e 0D       		.uleb128 0xd
- 584 020f 84000000 		.4byte	.LBB7
- 585 0213 12000000 		.4byte	.LBE7-.LBB7
- 586 0217 0E       		.uleb128 0xe
- 587 0218 09010000 		.4byte	.LASF17
- 588 021c 01       		.byte	0x1
- 589 021d 84       		.byte	0x84
- 590 021e 68000000 		.4byte	0x68
- 591 0222 09       		.uleb128 0x9
- 592 0223 8A000000 		.4byte	.LVL22
- 593 0227 58040000 		.4byte	0x458
- 594 022b 39020000 		.4byte	0x239
- 595 022f 0A       		.uleb128 0xa
- 596 0230 01       		.uleb128 0x1
- 597 0231 50       		.byte	0x50
- 598 0232 05       		.uleb128 0x5
- 599 0233 03       		.byte	0x3
- 600 0234 44000000 		.4byte	.LC4
- 601 0238 00       		.byte	0
- 602 0239 09       		.uleb128 0x9
- 603 023a 90000000 		.4byte	.LVL23
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 16
+ 576 0219 90       		.byte	0x90
+ 577 021a 68000000 		.4byte	0x68
+ 578 021e 09       		.uleb128 0x9
+ 579 021f 86000000 		.4byte	.LVL21
+ 580 0223 6D040000 		.4byte	0x46d
+ 581 0227 35020000 		.4byte	0x235
+ 582 022b 0A       		.uleb128 0xa
+ 583 022c 01       		.uleb128 0x1
+ 584 022d 50       		.byte	0x50
+ 585 022e 05       		.uleb128 0x5
+ 586 022f 03       		.byte	0x3
+ 587 0230 44000000 		.4byte	.LC4
+ 588 0234 00       		.byte	0
+ 589 0235 09       		.uleb128 0x9
+ 590 0236 8C000000 		.4byte	.LVL22
+ 591 023a 99040000 		.4byte	0x499
+ 592 023e 48020000 		.4byte	0x248
+ 593 0242 0A       		.uleb128 0xa
+ 594 0243 01       		.uleb128 0x1
+ 595 0244 50       		.byte	0x50
+ 596 0245 01       		.uleb128 0x1
+ 597 0246 37       		.byte	0x37
+ 598 0247 00       		.byte	0
+ 599 0248 0B       		.uleb128 0xb
+ 600 0249 96000000 		.4byte	.LVL23
+ 601 024d A4040000 		.4byte	0x4a4
+ 602 0251 0A       		.uleb128 0xa
+ 603 0252 01       		.uleb128 0x1
+ 604 0253 50       		.byte	0x50
+ 605 0254 01       		.uleb128 0x1
+ 606 0255 32       		.byte	0x32
+ 607 0256 0A       		.uleb128 0xa
+ 608 0257 01       		.uleb128 0x1
+ 609 0258 51       		.byte	0x51
+ 610 0259 03       		.uleb128 0x3
+ 611 025a 0A       		.byte	0xa
+ 612 025b E803     		.2byte	0x3e8
+ 613 025d 00       		.byte	0
+ 614 025e 00       		.byte	0
+ 615 025f 00       		.byte	0
+ 616 0260 0E       		.uleb128 0xe
+ 617 0261 9E000000 		.4byte	.LBB8
+ 618 0265 6A000000 		.4byte	.LBE8-.LBB8
+ 619 0269 0D       		.uleb128 0xd
+ 620 026a 43010000 		.4byte	.LASF16
+ 621 026e 01       		.byte	0x1
+ 622 026f CE       		.byte	0xce
+ 623 0270 68000000 		.4byte	0x68
+ 624 0274 0E       		.uleb128 0xe
+ 625 0275 9E000000 		.4byte	.LBB9
+ 626 0279 6A000000 		.4byte	.LBE9-.LBB9
+ 627 027d 07       		.uleb128 0x7
+ 628 027e 2C000000 		.4byte	.LASF18
+ 629 0282 01       		.byte	0x1
+ 630 0283 D8       		.byte	0xd8
+ 631 0284 68000000 		.4byte	0x68
+ 632 0288 86000000 		.4byte	.LLST4
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 17
 
 
- 604 023e 84040000 		.4byte	0x484
- 605 0242 4C020000 		.4byte	0x24c
- 606 0246 0A       		.uleb128 0xa
- 607 0247 01       		.uleb128 0x1
- 608 0248 50       		.byte	0x50
- 609 0249 01       		.uleb128 0x1
- 610 024a 37       		.byte	0x37
- 611 024b 00       		.byte	0
- 612 024c 0C       		.uleb128 0xc
- 613 024d 94000000 		.4byte	.LVL24
- 614 0251 8F040000 		.4byte	0x48f
- 615 0255 00       		.byte	0
- 616 0256 00       		.byte	0
- 617 0257 0D       		.uleb128 0xd
- 618 0258 A0000000 		.4byte	.LBB8
- 619 025c 64000000 		.4byte	.LBE8-.LBB8
- 620 0260 0E       		.uleb128 0xe
- 621 0261 43010000 		.4byte	.LASF16
- 622 0265 01       		.byte	0x1
- 623 0266 C2       		.byte	0xc2
- 624 0267 68000000 		.4byte	0x68
- 625 026b 0D       		.uleb128 0xd
- 626 026c A0000000 		.4byte	.LBB9
- 627 0270 64000000 		.4byte	.LBE9-.LBB9
- 628 0274 07       		.uleb128 0x7
- 629 0275 2C000000 		.4byte	.LASF18
- 630 0279 01       		.byte	0x1
- 631 027a CC       		.byte	0xcc
- 632 027b 68000000 		.4byte	0x68
- 633 027f B0000000 		.4byte	.LLST5
- 634 0283 06       		.uleb128 0x6
- 635 0284 A6000000 		.4byte	.LBB10
- 636 0288 2C000000 		.4byte	.LBE10-.LBB10
- 637 028c F3020000 		.4byte	0x2f3
- 638 0290 08       		.uleb128 0x8
- 639 0291 6900     		.ascii	"i\000"
- 640 0293 01       		.byte	0x1
- 641 0294 DE       		.byte	0xde
- 642 0295 68000000 		.4byte	0x68
- 643 0299 C4000000 		.4byte	.LLST6
- 644 029d 09       		.uleb128 0x9
- 645 029e B0000000 		.4byte	.LVL29
- 646 02a2 9A040000 		.4byte	0x49a
- 647 02a6 B1020000 		.4byte	0x2b1
- 648 02aa 0A       		.uleb128 0xa
- 649 02ab 01       		.uleb128 0x1
- 650 02ac 50       		.byte	0x50
- 651 02ad 02       		.uleb128 0x2
- 652 02ae 74       		.byte	0x74
- 653 02af 00       		.sleb128 0
- 654 02b0 00       		.byte	0
- 655 02b1 09       		.uleb128 0x9
- 656 02b2 B6000000 		.4byte	.LVL30
- 657 02b6 42040000 		.4byte	0x442
- 658 02ba C5020000 		.4byte	0x2c5
- 659 02be 0A       		.uleb128 0xa
- 660 02bf 01       		.uleb128 0x1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 17
+ 633 028c 09       		.uleb128 0x9
+ 634 028d A4000000 		.4byte	.LVL24
+ 635 0291 6D040000 		.4byte	0x46d
+ 636 0295 A3020000 		.4byte	0x2a3
+ 637 0299 0A       		.uleb128 0xa
+ 638 029a 01       		.uleb128 0x1
+ 639 029b 50       		.byte	0x50
+ 640 029c 05       		.uleb128 0x5
+ 641 029d 03       		.byte	0x3
+ 642 029e 58000000 		.4byte	.LC5
+ 643 02a2 00       		.byte	0
+ 644 02a3 09       		.uleb128 0x9
+ 645 02a4 AA000000 		.4byte	.LVL25
+ 646 02a8 AF040000 		.4byte	0x4af
+ 647 02ac B6020000 		.4byte	0x2b6
+ 648 02b0 0A       		.uleb128 0xa
+ 649 02b1 01       		.uleb128 0x1
+ 650 02b2 50       		.byte	0x50
+ 651 02b3 01       		.uleb128 0x1
+ 652 02b4 36       		.byte	0x36
+ 653 02b5 00       		.byte	0
+ 654 02b6 09       		.uleb128 0x9
+ 655 02b7 B0000000 		.4byte	.LVL26
+ 656 02bb 57040000 		.4byte	0x457
+ 657 02bf CA020000 		.4byte	0x2ca
+ 658 02c3 0A       		.uleb128 0xa
+ 659 02c4 01       		.uleb128 0x1
+ 660 02c5 50       		.byte	0x50
+ 661 02c6 02       		.uleb128 0x2
+ 662 02c7 08       		.byte	0x8
+ 663 02c8 32       		.byte	0x32
+ 664 02c9 00       		.byte	0
+ 665 02ca 09       		.uleb128 0x9
+ 666 02cb B6000000 		.4byte	.LVL27
+ 667 02cf AF040000 		.4byte	0x4af
+ 668 02d3 DD020000 		.4byte	0x2dd
+ 669 02d7 0A       		.uleb128 0xa
+ 670 02d8 01       		.uleb128 0x1
+ 671 02d9 50       		.byte	0x50
+ 672 02da 01       		.uleb128 0x1
+ 673 02db 34       		.byte	0x34
+ 674 02dc 00       		.byte	0
+ 675 02dd 09       		.uleb128 0x9
+ 676 02de BC000000 		.4byte	.LVL28
+ 677 02e2 57040000 		.4byte	0x457
+ 678 02e6 F1020000 		.4byte	0x2f1
+ 679 02ea 0A       		.uleb128 0xa
+ 680 02eb 01       		.uleb128 0x1
+ 681 02ec 50       		.byte	0x50
+ 682 02ed 02       		.uleb128 0x2
+ 683 02ee 08       		.byte	0x8
+ 684 02ef 32       		.byte	0x32
+ 685 02f0 00       		.byte	0
+ 686 02f1 09       		.uleb128 0x9
+ 687 02f2 CC000000 		.4byte	.LVL29
+ 688 02f6 62040000 		.4byte	0x462
+ 689 02fa 0E030000 		.4byte	0x30e
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 18
 
 
- 661 02c0 50       		.byte	0x50
- 662 02c1 02       		.uleb128 0x2
- 663 02c2 08       		.byte	0x8
- 664 02c3 64       		.byte	0x64
- 665 02c4 00       		.byte	0
- 666 02c5 09       		.uleb128 0x9
- 667 02c6 C6000000 		.4byte	.LVL31
- 668 02ca 4D040000 		.4byte	0x44d
- 669 02ce E2020000 		.4byte	0x2e2
- 670 02d2 0A       		.uleb128 0xa
- 671 02d3 01       		.uleb128 0x1
- 672 02d4 50       		.byte	0x50
- 673 02d5 02       		.uleb128 0x2
- 674 02d6 75       		.byte	0x75
- 675 02d7 00       		.sleb128 0
- 676 02d8 0A       		.uleb128 0xa
- 677 02d9 01       		.uleb128 0x1
- 678 02da 51       		.byte	0x51
- 679 02db 05       		.uleb128 0x5
- 680 02dc 03       		.byte	0x3
- 681 02dd 28000000 		.4byte	.LC1
- 682 02e1 00       		.byte	0
- 683 02e2 0B       		.uleb128 0xb
- 684 02e3 CC000000 		.4byte	.LVL32
- 685 02e7 58040000 		.4byte	0x458
- 686 02eb 0A       		.uleb128 0xa
- 687 02ec 01       		.uleb128 0x1
- 688 02ed 50       		.byte	0x50
- 689 02ee 02       		.uleb128 0x2
- 690 02ef 75       		.byte	0x75
- 691 02f0 00       		.sleb128 0
- 692 02f1 00       		.byte	0
- 693 02f2 00       		.byte	0
- 694 02f3 09       		.uleb128 0x9
- 695 02f4 A6000000 		.4byte	.LVL27
- 696 02f8 58040000 		.4byte	0x458
- 697 02fc 0A030000 		.4byte	0x30a
- 698 0300 0A       		.uleb128 0xa
- 699 0301 01       		.uleb128 0x1
- 700 0302 50       		.byte	0x50
- 701 0303 05       		.uleb128 0x5
- 702 0304 03       		.byte	0x3
- 703 0305 58000000 		.4byte	.LC5
- 704 0309 00       		.byte	0
- 705 030a 0B       		.uleb128 0xb
- 706 030b D8000000 		.4byte	.LVL34
- 707 030f 58040000 		.4byte	0x458
- 708 0313 0A       		.uleb128 0xa
- 709 0314 01       		.uleb128 0x1
- 710 0315 50       		.byte	0x50
- 711 0316 05       		.uleb128 0x5
- 712 0317 03       		.byte	0x3
- 713 0318 30000000 		.4byte	.LC2
- 714 031c 00       		.byte	0
- 715 031d 00       		.byte	0
- 716 031e 00       		.byte	0
- 717 031f 00       		.byte	0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 18
+ 690 02fe 0A       		.uleb128 0xa
+ 691 02ff 01       		.uleb128 0x1
+ 692 0300 50       		.byte	0x50
+ 693 0301 02       		.uleb128 0x2
+ 694 0302 74       		.byte	0x74
+ 695 0303 00       		.sleb128 0
+ 696 0304 0A       		.uleb128 0xa
+ 697 0305 01       		.uleb128 0x1
+ 698 0306 51       		.byte	0x51
+ 699 0307 05       		.uleb128 0x5
+ 700 0308 03       		.byte	0x3
+ 701 0309 70000000 		.4byte	.LC6
+ 702 030d 00       		.byte	0
+ 703 030e 09       		.uleb128 0x9
+ 704 030f D2000000 		.4byte	.LVL30
+ 705 0313 6D040000 		.4byte	0x46d
+ 706 0317 22030000 		.4byte	0x322
+ 707 031b 0A       		.uleb128 0xa
+ 708 031c 01       		.uleb128 0x1
+ 709 031d 50       		.byte	0x50
+ 710 031e 02       		.uleb128 0x2
+ 711 031f 74       		.byte	0x74
+ 712 0320 00       		.sleb128 0
+ 713 0321 00       		.byte	0
+ 714 0322 0B       		.uleb128 0xb
+ 715 0323 D8000000 		.4byte	.LVL31
+ 716 0327 57040000 		.4byte	0x457
+ 717 032b 0A       		.uleb128 0xa
+ 718 032c 01       		.uleb128 0x1
+ 719 032d 50       		.byte	0x50
+ 720 032e 02       		.uleb128 0x2
+ 721 032f 08       		.byte	0x8
+ 722 0330 64       		.byte	0x64
+ 723 0331 00       		.byte	0
+ 724 0332 00       		.byte	0
+ 725 0333 00       		.byte	0
+ 726 0334 00       		.byte	0
+ 727 0335 0F       		.uleb128 0xf
+ 728 0336 00020000 		.4byte	.LASF19
+ 729 033a 04       		.byte	0x4
+ 730 033b 1207     		.2byte	0x712
+ 731 033d 41030000 		.4byte	0x341
+ 732 0341 10       		.uleb128 0x10
+ 733 0342 76000000 		.4byte	0x76
+ 734 0346 11       		.uleb128 0x11
+ 735 0347 41000000 		.4byte	.LASF20
+ 736 034b 05       		.byte	0x5
+ 737 034c 22       		.byte	0x22
+ 738 034d 68000000 		.4byte	0x68
+ 739 0351 05       		.uleb128 0x5
+ 740 0352 03       		.byte	0x3
+ 741 0353 00000000 		.4byte	internal_orientation
+ 742 0357 12       		.uleb128 0x12
+ 743 0358 68000000 		.4byte	0x68
+ 744 035c 67030000 		.4byte	0x367
+ 745 0360 13       		.uleb128 0x13
+ 746 0361 9D000000 		.4byte	0x9d
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 19
 
 
- 718 0320 0F       		.uleb128 0xf
- 719 0321 9D010000 		.4byte	.LASF19
- 720 0325 04       		.byte	0x4
- 721 0326 1207     		.2byte	0x712
- 722 0328 2C030000 		.4byte	0x32c
- 723 032c 10       		.uleb128 0x10
- 724 032d 76000000 		.4byte	0x76
- 725 0331 11       		.uleb128 0x11
- 726 0332 41000000 		.4byte	.LASF20
- 727 0336 05       		.byte	0x5
- 728 0337 22       		.byte	0x22
- 729 0338 68000000 		.4byte	0x68
- 730 033c 05       		.uleb128 0x5
- 731 033d 03       		.byte	0x3
- 732 033e 00000000 		.4byte	internal_orientation
- 733 0342 12       		.uleb128 0x12
- 734 0343 68000000 		.4byte	0x68
- 735 0347 52030000 		.4byte	0x352
- 736 034b 13       		.uleb128 0x13
- 737 034c 9D000000 		.4byte	0x9d
- 738 0350 04       		.byte	0x4
- 739 0351 00       		.byte	0
- 740 0352 11       		.uleb128 0x11
- 741 0353 1C000000 		.4byte	.LASF21
- 742 0357 06       		.byte	0x6
- 743 0358 1C       		.byte	0x1c
- 744 0359 42030000 		.4byte	0x342
- 745 035d 05       		.uleb128 0x5
- 746 035e 03       		.byte	0x3
- 747 035f 00000000 		.4byte	puck_rack_scans
- 748 0363 11       		.uleb128 0x11
- 749 0364 F9010000 		.4byte	.LASF22
- 750 0368 06       		.byte	0x6
- 751 0369 1D       		.byte	0x1d
- 752 036a 42030000 		.4byte	0x342
- 753 036e 05       		.uleb128 0x5
- 754 036f 03       		.byte	0x3
- 755 0370 00000000 		.4byte	puck_rack_west_offsets
- 756 0374 12       		.uleb128 0x12
- 757 0375 81000000 		.4byte	0x81
- 758 0379 84030000 		.4byte	0x384
- 759 037d 13       		.uleb128 0x13
- 760 037e 9D000000 		.4byte	0x9d
- 761 0382 03       		.byte	0x3
- 762 0383 00       		.byte	0
- 763 0384 11       		.uleb128 0x11
- 764 0385 89010000 		.4byte	.LASF23
- 765 0389 06       		.byte	0x6
- 766 038a 1F       		.byte	0x1f
- 767 038b 74030000 		.4byte	0x374
- 768 038f 05       		.uleb128 0x5
- 769 0390 03       		.byte	0x3
- 770 0391 00000000 		.4byte	block_edge_location
- 771 0395 11       		.uleb128 0x11
- 772 0396 AA010000 		.4byte	.LASF24
- 773 039a 06       		.byte	0x6
- 774 039b 23       		.byte	0x23
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 19
+ 747 0365 04       		.byte	0x4
+ 748 0366 00       		.byte	0
+ 749 0367 11       		.uleb128 0x11
+ 750 0368 1C000000 		.4byte	.LASF21
+ 751 036c 06       		.byte	0x6
+ 752 036d 1C       		.byte	0x1c
+ 753 036e 57030000 		.4byte	0x357
+ 754 0372 05       		.uleb128 0x5
+ 755 0373 03       		.byte	0x3
+ 756 0374 00000000 		.4byte	puck_rack_scans
+ 757 0378 11       		.uleb128 0x11
+ 758 0379 40020000 		.4byte	.LASF22
+ 759 037d 06       		.byte	0x6
+ 760 037e 1D       		.byte	0x1d
+ 761 037f 57030000 		.4byte	0x357
+ 762 0383 05       		.uleb128 0x5
+ 763 0384 03       		.byte	0x3
+ 764 0385 00000000 		.4byte	puck_rack_west_offsets
+ 765 0389 12       		.uleb128 0x12
+ 766 038a 81000000 		.4byte	0x81
+ 767 038e 99030000 		.4byte	0x399
+ 768 0392 13       		.uleb128 0x13
+ 769 0393 9D000000 		.4byte	0x9d
+ 770 0397 03       		.byte	0x3
+ 771 0398 00       		.byte	0
+ 772 0399 11       		.uleb128 0x11
+ 773 039a 89010000 		.4byte	.LASF23
+ 774 039e 06       		.byte	0x6
+ 775 039f 1F       		.byte	0x1f
+ 776 03a0 89030000 		.4byte	0x389
+ 777 03a4 05       		.uleb128 0x5
+ 778 03a5 03       		.byte	0x3
+ 779 03a6 00000000 		.4byte	block_edge_location
+ 780 03aa 11       		.uleb128 0x11
+ 781 03ab 0D020000 		.4byte	.LASF24
+ 782 03af 06       		.byte	0x6
+ 783 03b0 23       		.byte	0x23
+ 784 03b1 68000000 		.4byte	0x68
+ 785 03b5 05       		.uleb128 0x5
+ 786 03b6 03       		.byte	0x3
+ 787 03b7 00000000 		.4byte	initialisation
+ 788 03bb 12       		.uleb128 0x12
+ 789 03bc 8F000000 		.4byte	0x8f
+ 790 03c0 CB030000 		.4byte	0x3cb
+ 791 03c4 13       		.uleb128 0x13
+ 792 03c5 9D000000 		.4byte	0x9d
+ 793 03c9 1F       		.byte	0x1f
+ 794 03ca 00       		.byte	0
+ 795 03cb 11       		.uleb128 0x11
+ 796 03cc B8020000 		.4byte	.LASF25
+ 797 03d0 06       		.byte	0x6
+ 798 03d1 21       		.byte	0x21
+ 799 03d2 BB030000 		.4byte	0x3bb
+ 800 03d6 05       		.uleb128 0x5
+ 801 03d7 03       		.byte	0x3
+ 802 03d8 00000000 		.4byte	output
+ 803 03dc 12       		.uleb128 0x12
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 20
 
 
- 775 039c 68000000 		.4byte	0x68
- 776 03a0 05       		.uleb128 0x5
- 777 03a1 03       		.byte	0x3
- 778 03a2 00000000 		.4byte	initialisation
- 779 03a6 12       		.uleb128 0x12
- 780 03a7 8F000000 		.4byte	0x8f
- 781 03ab B6030000 		.4byte	0x3b6
- 782 03af 13       		.uleb128 0x13
- 783 03b0 9D000000 		.4byte	0x9d
- 784 03b4 1F       		.byte	0x1f
- 785 03b5 00       		.byte	0
- 786 03b6 11       		.uleb128 0x11
- 787 03b7 71020000 		.4byte	.LASF25
- 788 03bb 06       		.byte	0x6
- 789 03bc 21       		.byte	0x21
- 790 03bd A6030000 		.4byte	0x3a6
- 791 03c1 05       		.uleb128 0x5
- 792 03c2 03       		.byte	0x3
- 793 03c3 00000000 		.4byte	output
- 794 03c7 12       		.uleb128 0x12
- 795 03c8 68000000 		.4byte	0x68
- 796 03cc D7030000 		.4byte	0x3d7
- 797 03d0 13       		.uleb128 0x13
- 798 03d1 9D000000 		.4byte	0x9d
- 799 03d5 06       		.byte	0x6
- 800 03d6 00       		.byte	0
- 801 03d7 14       		.uleb128 0x14
- 802 03d8 5C000000 		.4byte	.LASF26
- 803 03dc 07       		.byte	0x7
- 804 03dd C6       		.byte	0xc6
- 805 03de C7030000 		.4byte	0x3c7
- 806 03e2 11       		.uleb128 0x11
- 807 03e3 31000000 		.4byte	.LASF27
- 808 03e7 06       		.byte	0x6
- 809 03e8 25       		.byte	0x25
- 810 03e9 68000000 		.4byte	0x68
- 811 03ed 05       		.uleb128 0x5
- 812 03ee 03       		.byte	0x3
- 813 03ef 00000000 		.4byte	ultrasonic_flag
- 814 03f3 11       		.uleb128 0x11
- 815 03f4 56010000 		.4byte	.LASF28
- 816 03f8 01       		.byte	0x1
- 817 03f9 21       		.byte	0x21
- 818 03fa 68000000 		.4byte	0x68
- 819 03fe 05       		.uleb128 0x5
- 820 03ff 03       		.byte	0x3
- 821 0400 00000000 		.4byte	colour_calibration
- 822 0404 11       		.uleb128 0x11
- 823 0405 48010000 		.4byte	.LASF29
- 824 0409 01       		.byte	0x1
- 825 040a 22       		.byte	0x22
- 826 040b 68000000 		.4byte	0x68
- 827 040f 05       		.uleb128 0x5
- 828 0410 03       		.byte	0x3
- 829 0411 00000000 		.4byte	servo_testing
- 830 0415 11       		.uleb128 0x11
- 831 0416 40020000 		.4byte	.LASF30
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 20
+ 804 03dd 68000000 		.4byte	0x68
+ 805 03e1 EC030000 		.4byte	0x3ec
+ 806 03e5 13       		.uleb128 0x13
+ 807 03e6 9D000000 		.4byte	0x9d
+ 808 03ea 06       		.byte	0x6
+ 809 03eb 00       		.byte	0
+ 810 03ec 14       		.uleb128 0x14
+ 811 03ed 5C000000 		.4byte	.LASF26
+ 812 03f1 07       		.byte	0x7
+ 813 03f2 CA       		.byte	0xca
+ 814 03f3 DC030000 		.4byte	0x3dc
+ 815 03f7 11       		.uleb128 0x11
+ 816 03f8 31000000 		.4byte	.LASF27
+ 817 03fc 06       		.byte	0x6
+ 818 03fd 25       		.byte	0x25
+ 819 03fe 68000000 		.4byte	0x68
+ 820 0402 05       		.uleb128 0x5
+ 821 0403 03       		.byte	0x3
+ 822 0404 00000000 		.4byte	ultrasonic_flag
+ 823 0408 11       		.uleb128 0x11
+ 824 0409 56010000 		.4byte	.LASF28
+ 825 040d 01       		.byte	0x1
+ 826 040e 21       		.byte	0x21
+ 827 040f 68000000 		.4byte	0x68
+ 828 0413 05       		.uleb128 0x5
+ 829 0414 03       		.byte	0x3
+ 830 0415 00000000 		.4byte	colour_calibration
+ 831 0419 11       		.uleb128 0x11
+ 832 041a 48010000 		.4byte	.LASF29
+ 833 041e 01       		.byte	0x1
+ 834 041f 22       		.byte	0x22
+ 835 0420 68000000 		.4byte	0x68
+ 836 0424 05       		.uleb128 0x5
+ 837 0425 03       		.byte	0x3
+ 838 0426 00000000 		.4byte	servo_testing
+ 839 042a 11       		.uleb128 0x11
+ 840 042b 87020000 		.4byte	.LASF30
+ 841 042f 01       		.byte	0x1
+ 842 0430 23       		.byte	0x23
+ 843 0431 68000000 		.4byte	0x68
+ 844 0435 05       		.uleb128 0x5
+ 845 0436 03       		.byte	0x3
+ 846 0437 00000000 		.4byte	motor_testing
+ 847 043b 11       		.uleb128 0x11
+ 848 043c 05030000 		.4byte	.LASF31
+ 849 0440 01       		.byte	0x1
+ 850 0441 24       		.byte	0x24
+ 851 0442 68000000 		.4byte	0x68
+ 852 0446 05       		.uleb128 0x5
+ 853 0447 03       		.byte	0x3
+ 854 0448 00000000 		.4byte	ultrasonic_testing
+ 855 044c 15       		.uleb128 0x15
+ 856 044d D2020000 		.4byte	.LASF32
+ 857 0451 D2020000 		.4byte	.LASF32
+ 858 0455 08       		.byte	0x8
+ 859 0456 2F       		.byte	0x2f
+ 860 0457 15       		.uleb128 0x15
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 21
 
 
- 832 041a 01       		.byte	0x1
- 833 041b 23       		.byte	0x23
- 834 041c 68000000 		.4byte	0x68
- 835 0420 05       		.uleb128 0x5
- 836 0421 03       		.byte	0x3
- 837 0422 00000000 		.4byte	motor_testing
- 838 0426 11       		.uleb128 0x11
- 839 0427 23030000 		.4byte	.LASF31
- 840 042b 01       		.byte	0x1
- 841 042c 24       		.byte	0x24
- 842 042d 68000000 		.4byte	0x68
- 843 0431 05       		.uleb128 0x5
- 844 0432 03       		.byte	0x3
- 845 0433 00000000 		.4byte	ultrasonic_testing
- 846 0437 15       		.uleb128 0x15
- 847 0438 8B020000 		.4byte	.LASF32
- 848 043c 8B020000 		.4byte	.LASF32
- 849 0440 08       		.byte	0x8
- 850 0441 2F       		.byte	0x2f
- 851 0442 15       		.uleb128 0x15
- 852 0443 5E030000 		.4byte	.LASF33
- 853 0447 5E030000 		.4byte	.LASF33
- 854 044b 09       		.byte	0x9
- 855 044c 76       		.byte	0x76
- 856 044d 15       		.uleb128 0x15
- 857 044e 56030000 		.4byte	.LASF34
- 858 0452 56030000 		.4byte	.LASF34
- 859 0456 0A       		.byte	0xa
- 860 0457 E7       		.byte	0xe7
- 861 0458 15       		.uleb128 0x15
- 862 0459 36030000 		.4byte	.LASF35
- 863 045d 36030000 		.4byte	.LASF35
- 864 0461 0B       		.byte	0xb
- 865 0462 8B       		.byte	0x8b
- 866 0463 15       		.uleb128 0x15
- 867 0464 70010000 		.4byte	.LASF36
- 868 0468 70010000 		.4byte	.LASF36
- 869 046c 0C       		.byte	0xc
- 870 046d 1A       		.byte	0x1a
- 871 046e 15       		.uleb128 0x15
- 872 046f 58020000 		.4byte	.LASF37
- 873 0473 58020000 		.4byte	.LASF37
- 874 0477 0D       		.byte	0xd
- 875 0478 2F       		.byte	0x2f
- 876 0479 15       		.uleb128 0x15
- 877 047a 78020000 		.4byte	.LASF38
- 878 047e 78020000 		.4byte	.LASF38
- 879 0482 0E       		.byte	0xe
- 880 0483 0F       		.byte	0xf
- 881 0484 15       		.uleb128 0x15
- 882 0485 34010000 		.4byte	.LASF39
- 883 0489 34010000 		.4byte	.LASF39
- 884 048d 05       		.byte	0x5
- 885 048e 13       		.byte	0x13
- 886 048f 15       		.uleb128 0x15
- 887 0490 B9010000 		.4byte	.LASF40
- 888 0494 B9010000 		.4byte	.LASF40
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 21
-
-
+ 861 0458 40030000 		.4byte	.LASF33
+ 862 045c 40030000 		.4byte	.LASF33
+ 863 0460 09       		.byte	0x9
+ 864 0461 76       		.byte	0x76
+ 865 0462 15       		.uleb128 0x15
+ 866 0463 38030000 		.4byte	.LASF34
+ 867 0467 38030000 		.4byte	.LASF34
+ 868 046b 0A       		.byte	0xa
+ 869 046c E7       		.byte	0xe7
+ 870 046d 15       		.uleb128 0x15
+ 871 046e 18030000 		.4byte	.LASF35
+ 872 0472 18030000 		.4byte	.LASF35
+ 873 0476 0B       		.byte	0xb
+ 874 0477 8B       		.byte	0x8b
+ 875 0478 15       		.uleb128 0x15
+ 876 0479 70010000 		.4byte	.LASF36
+ 877 047d 70010000 		.4byte	.LASF36
+ 878 0481 0C       		.byte	0xc
+ 879 0482 1A       		.byte	0x1a
+ 880 0483 15       		.uleb128 0x15
+ 881 0484 9F020000 		.4byte	.LASF37
+ 882 0488 9F020000 		.4byte	.LASF37
+ 883 048c 0D       		.byte	0xd
+ 884 048d 2F       		.byte	0x2f
+ 885 048e 15       		.uleb128 0x15
+ 886 048f BF020000 		.4byte	.LASF38
+ 887 0493 BF020000 		.4byte	.LASF38
+ 888 0497 0E       		.byte	0xe
  889 0498 0F       		.byte	0xf
- 890 0499 5A       		.byte	0x5a
- 891 049a 15       		.uleb128 0x15
- 892 049b 47030000 		.4byte	.LASF41
- 893 049f 47030000 		.4byte	.LASF41
- 894 04a3 06       		.byte	0x6
- 895 04a4 16       		.byte	0x16
- 896 04a5 00       		.byte	0
- 897              		.section	.debug_abbrev,"",%progbits
- 898              	.Ldebug_abbrev0:
- 899 0000 01       		.uleb128 0x1
- 900 0001 11       		.uleb128 0x11
- 901 0002 01       		.byte	0x1
- 902 0003 25       		.uleb128 0x25
- 903 0004 0E       		.uleb128 0xe
- 904 0005 13       		.uleb128 0x13
- 905 0006 0B       		.uleb128 0xb
- 906 0007 03       		.uleb128 0x3
- 907 0008 0E       		.uleb128 0xe
- 908 0009 1B       		.uleb128 0x1b
- 909 000a 0E       		.uleb128 0xe
- 910 000b 55       		.uleb128 0x55
- 911 000c 17       		.uleb128 0x17
- 912 000d 11       		.uleb128 0x11
- 913 000e 01       		.uleb128 0x1
- 914 000f 10       		.uleb128 0x10
- 915 0010 17       		.uleb128 0x17
- 916 0011 00       		.byte	0
- 917 0012 00       		.byte	0
- 918 0013 02       		.uleb128 0x2
- 919 0014 24       		.uleb128 0x24
- 920 0015 00       		.byte	0
- 921 0016 0B       		.uleb128 0xb
- 922 0017 0B       		.uleb128 0xb
- 923 0018 3E       		.uleb128 0x3e
- 924 0019 0B       		.uleb128 0xb
- 925 001a 03       		.uleb128 0x3
- 926 001b 0E       		.uleb128 0xe
- 927 001c 00       		.byte	0
- 928 001d 00       		.byte	0
- 929 001e 03       		.uleb128 0x3
- 930 001f 16       		.uleb128 0x16
- 931 0020 00       		.byte	0
- 932 0021 03       		.uleb128 0x3
- 933 0022 0E       		.uleb128 0xe
- 934 0023 3A       		.uleb128 0x3a
- 935 0024 0B       		.uleb128 0xb
- 936 0025 3B       		.uleb128 0x3b
- 937 0026 0B       		.uleb128 0xb
- 938 0027 49       		.uleb128 0x49
- 939 0028 13       		.uleb128 0x13
- 940 0029 00       		.byte	0
- 941 002a 00       		.byte	0
- 942 002b 04       		.uleb128 0x4
- 943 002c 24       		.uleb128 0x24
- 944 002d 00       		.byte	0
- 945 002e 0B       		.uleb128 0xb
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 22
+ 890 0499 15       		.uleb128 0x15
+ 891 049a 34010000 		.4byte	.LASF39
+ 892 049e 34010000 		.4byte	.LASF39
+ 893 04a2 05       		.byte	0x5
+ 894 04a3 13       		.byte	0x13
+ 895 04a4 15       		.uleb128 0x15
+ 896 04a5 F7010000 		.4byte	.LASF40
+ 897 04a9 F7010000 		.4byte	.LASF40
+ 898 04ad 0C       		.byte	0xc
+ 899 04ae 1C       		.byte	0x1c
+ 900 04af 15       		.uleb128 0x15
+ 901 04b0 29030000 		.4byte	.LASF41
+ 902 04b4 29030000 		.4byte	.LASF41
+ 903 04b8 06       		.byte	0x6
+ 904 04b9 16       		.byte	0x16
+ 905 04ba 00       		.byte	0
+ 906              		.section	.debug_abbrev,"",%progbits
+ 907              	.Ldebug_abbrev0:
+ 908 0000 01       		.uleb128 0x1
+ 909 0001 11       		.uleb128 0x11
+ 910 0002 01       		.byte	0x1
+ 911 0003 25       		.uleb128 0x25
+ 912 0004 0E       		.uleb128 0xe
+ 913 0005 13       		.uleb128 0x13
+ 914 0006 0B       		.uleb128 0xb
+ 915 0007 03       		.uleb128 0x3
+ 916 0008 0E       		.uleb128 0xe
+ 917 0009 1B       		.uleb128 0x1b
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 22
 
 
- 946 002f 0B       		.uleb128 0xb
- 947 0030 3E       		.uleb128 0x3e
- 948 0031 0B       		.uleb128 0xb
- 949 0032 03       		.uleb128 0x3
- 950 0033 08       		.uleb128 0x8
- 951 0034 00       		.byte	0
- 952 0035 00       		.byte	0
- 953 0036 05       		.uleb128 0x5
- 954 0037 2E       		.uleb128 0x2e
- 955 0038 01       		.byte	0x1
- 956 0039 3F       		.uleb128 0x3f
- 957 003a 19       		.uleb128 0x19
- 958 003b 03       		.uleb128 0x3
- 959 003c 0E       		.uleb128 0xe
- 960 003d 3A       		.uleb128 0x3a
- 961 003e 0B       		.uleb128 0xb
- 962 003f 3B       		.uleb128 0x3b
- 963 0040 0B       		.uleb128 0xb
- 964 0041 27       		.uleb128 0x27
- 965 0042 19       		.uleb128 0x19
- 966 0043 11       		.uleb128 0x11
- 967 0044 01       		.uleb128 0x1
- 968 0045 12       		.uleb128 0x12
- 969 0046 06       		.uleb128 0x6
- 970 0047 40       		.uleb128 0x40
- 971 0048 18       		.uleb128 0x18
- 972 0049 9742     		.uleb128 0x2117
- 973 004b 19       		.uleb128 0x19
- 974 004c 01       		.uleb128 0x1
- 975 004d 13       		.uleb128 0x13
- 976 004e 00       		.byte	0
- 977 004f 00       		.byte	0
- 978 0050 06       		.uleb128 0x6
- 979 0051 0B       		.uleb128 0xb
- 980 0052 01       		.byte	0x1
- 981 0053 11       		.uleb128 0x11
- 982 0054 01       		.uleb128 0x1
- 983 0055 12       		.uleb128 0x12
- 984 0056 06       		.uleb128 0x6
- 985 0057 01       		.uleb128 0x1
- 986 0058 13       		.uleb128 0x13
- 987 0059 00       		.byte	0
- 988 005a 00       		.byte	0
- 989 005b 07       		.uleb128 0x7
- 990 005c 34       		.uleb128 0x34
- 991 005d 00       		.byte	0
- 992 005e 03       		.uleb128 0x3
- 993 005f 0E       		.uleb128 0xe
- 994 0060 3A       		.uleb128 0x3a
- 995 0061 0B       		.uleb128 0xb
- 996 0062 3B       		.uleb128 0x3b
- 997 0063 0B       		.uleb128 0xb
- 998 0064 49       		.uleb128 0x49
- 999 0065 13       		.uleb128 0x13
- 1000 0066 02       		.uleb128 0x2
- 1001 0067 17       		.uleb128 0x17
- 1002 0068 00       		.byte	0
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 23
+ 918 000a 0E       		.uleb128 0xe
+ 919 000b 55       		.uleb128 0x55
+ 920 000c 17       		.uleb128 0x17
+ 921 000d 11       		.uleb128 0x11
+ 922 000e 01       		.uleb128 0x1
+ 923 000f 10       		.uleb128 0x10
+ 924 0010 17       		.uleb128 0x17
+ 925 0011 00       		.byte	0
+ 926 0012 00       		.byte	0
+ 927 0013 02       		.uleb128 0x2
+ 928 0014 24       		.uleb128 0x24
+ 929 0015 00       		.byte	0
+ 930 0016 0B       		.uleb128 0xb
+ 931 0017 0B       		.uleb128 0xb
+ 932 0018 3E       		.uleb128 0x3e
+ 933 0019 0B       		.uleb128 0xb
+ 934 001a 03       		.uleb128 0x3
+ 935 001b 0E       		.uleb128 0xe
+ 936 001c 00       		.byte	0
+ 937 001d 00       		.byte	0
+ 938 001e 03       		.uleb128 0x3
+ 939 001f 16       		.uleb128 0x16
+ 940 0020 00       		.byte	0
+ 941 0021 03       		.uleb128 0x3
+ 942 0022 0E       		.uleb128 0xe
+ 943 0023 3A       		.uleb128 0x3a
+ 944 0024 0B       		.uleb128 0xb
+ 945 0025 3B       		.uleb128 0x3b
+ 946 0026 0B       		.uleb128 0xb
+ 947 0027 49       		.uleb128 0x49
+ 948 0028 13       		.uleb128 0x13
+ 949 0029 00       		.byte	0
+ 950 002a 00       		.byte	0
+ 951 002b 04       		.uleb128 0x4
+ 952 002c 24       		.uleb128 0x24
+ 953 002d 00       		.byte	0
+ 954 002e 0B       		.uleb128 0xb
+ 955 002f 0B       		.uleb128 0xb
+ 956 0030 3E       		.uleb128 0x3e
+ 957 0031 0B       		.uleb128 0xb
+ 958 0032 03       		.uleb128 0x3
+ 959 0033 08       		.uleb128 0x8
+ 960 0034 00       		.byte	0
+ 961 0035 00       		.byte	0
+ 962 0036 05       		.uleb128 0x5
+ 963 0037 2E       		.uleb128 0x2e
+ 964 0038 01       		.byte	0x1
+ 965 0039 3F       		.uleb128 0x3f
+ 966 003a 19       		.uleb128 0x19
+ 967 003b 03       		.uleb128 0x3
+ 968 003c 0E       		.uleb128 0xe
+ 969 003d 3A       		.uleb128 0x3a
+ 970 003e 0B       		.uleb128 0xb
+ 971 003f 3B       		.uleb128 0x3b
+ 972 0040 0B       		.uleb128 0xb
+ 973 0041 27       		.uleb128 0x27
+ 974 0042 19       		.uleb128 0x19
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 23
 
 
- 1003 0069 00       		.byte	0
- 1004 006a 08       		.uleb128 0x8
- 1005 006b 34       		.uleb128 0x34
- 1006 006c 00       		.byte	0
- 1007 006d 03       		.uleb128 0x3
- 1008 006e 08       		.uleb128 0x8
- 1009 006f 3A       		.uleb128 0x3a
- 1010 0070 0B       		.uleb128 0xb
- 1011 0071 3B       		.uleb128 0x3b
- 1012 0072 0B       		.uleb128 0xb
- 1013 0073 49       		.uleb128 0x49
- 1014 0074 13       		.uleb128 0x13
- 1015 0075 02       		.uleb128 0x2
- 1016 0076 17       		.uleb128 0x17
- 1017 0077 00       		.byte	0
- 1018 0078 00       		.byte	0
- 1019 0079 09       		.uleb128 0x9
- 1020 007a 898201   		.uleb128 0x4109
- 1021 007d 01       		.byte	0x1
- 1022 007e 11       		.uleb128 0x11
- 1023 007f 01       		.uleb128 0x1
- 1024 0080 31       		.uleb128 0x31
- 1025 0081 13       		.uleb128 0x13
- 1026 0082 01       		.uleb128 0x1
- 1027 0083 13       		.uleb128 0x13
- 1028 0084 00       		.byte	0
- 1029 0085 00       		.byte	0
- 1030 0086 0A       		.uleb128 0xa
- 1031 0087 8A8201   		.uleb128 0x410a
- 1032 008a 00       		.byte	0
- 1033 008b 02       		.uleb128 0x2
- 1034 008c 18       		.uleb128 0x18
- 1035 008d 9142     		.uleb128 0x2111
- 1036 008f 18       		.uleb128 0x18
- 1037 0090 00       		.byte	0
- 1038 0091 00       		.byte	0
- 1039 0092 0B       		.uleb128 0xb
- 1040 0093 898201   		.uleb128 0x4109
- 1041 0096 01       		.byte	0x1
- 1042 0097 11       		.uleb128 0x11
- 1043 0098 01       		.uleb128 0x1
- 1044 0099 31       		.uleb128 0x31
- 1045 009a 13       		.uleb128 0x13
- 1046 009b 00       		.byte	0
- 1047 009c 00       		.byte	0
- 1048 009d 0C       		.uleb128 0xc
- 1049 009e 898201   		.uleb128 0x4109
- 1050 00a1 00       		.byte	0
- 1051 00a2 11       		.uleb128 0x11
- 1052 00a3 01       		.uleb128 0x1
- 1053 00a4 31       		.uleb128 0x31
- 1054 00a5 13       		.uleb128 0x13
- 1055 00a6 00       		.byte	0
- 1056 00a7 00       		.byte	0
- 1057 00a8 0D       		.uleb128 0xd
- 1058 00a9 0B       		.uleb128 0xb
- 1059 00aa 01       		.byte	0x1
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 24
+ 975 0043 11       		.uleb128 0x11
+ 976 0044 01       		.uleb128 0x1
+ 977 0045 12       		.uleb128 0x12
+ 978 0046 06       		.uleb128 0x6
+ 979 0047 40       		.uleb128 0x40
+ 980 0048 18       		.uleb128 0x18
+ 981 0049 9742     		.uleb128 0x2117
+ 982 004b 19       		.uleb128 0x19
+ 983 004c 01       		.uleb128 0x1
+ 984 004d 13       		.uleb128 0x13
+ 985 004e 00       		.byte	0
+ 986 004f 00       		.byte	0
+ 987 0050 06       		.uleb128 0x6
+ 988 0051 0B       		.uleb128 0xb
+ 989 0052 01       		.byte	0x1
+ 990 0053 11       		.uleb128 0x11
+ 991 0054 01       		.uleb128 0x1
+ 992 0055 12       		.uleb128 0x12
+ 993 0056 06       		.uleb128 0x6
+ 994 0057 01       		.uleb128 0x1
+ 995 0058 13       		.uleb128 0x13
+ 996 0059 00       		.byte	0
+ 997 005a 00       		.byte	0
+ 998 005b 07       		.uleb128 0x7
+ 999 005c 34       		.uleb128 0x34
+ 1000 005d 00       		.byte	0
+ 1001 005e 03       		.uleb128 0x3
+ 1002 005f 0E       		.uleb128 0xe
+ 1003 0060 3A       		.uleb128 0x3a
+ 1004 0061 0B       		.uleb128 0xb
+ 1005 0062 3B       		.uleb128 0x3b
+ 1006 0063 0B       		.uleb128 0xb
+ 1007 0064 49       		.uleb128 0x49
+ 1008 0065 13       		.uleb128 0x13
+ 1009 0066 02       		.uleb128 0x2
+ 1010 0067 17       		.uleb128 0x17
+ 1011 0068 00       		.byte	0
+ 1012 0069 00       		.byte	0
+ 1013 006a 08       		.uleb128 0x8
+ 1014 006b 34       		.uleb128 0x34
+ 1015 006c 00       		.byte	0
+ 1016 006d 03       		.uleb128 0x3
+ 1017 006e 08       		.uleb128 0x8
+ 1018 006f 3A       		.uleb128 0x3a
+ 1019 0070 0B       		.uleb128 0xb
+ 1020 0071 3B       		.uleb128 0x3b
+ 1021 0072 0B       		.uleb128 0xb
+ 1022 0073 49       		.uleb128 0x49
+ 1023 0074 13       		.uleb128 0x13
+ 1024 0075 02       		.uleb128 0x2
+ 1025 0076 17       		.uleb128 0x17
+ 1026 0077 00       		.byte	0
+ 1027 0078 00       		.byte	0
+ 1028 0079 09       		.uleb128 0x9
+ 1029 007a 898201   		.uleb128 0x4109
+ 1030 007d 01       		.byte	0x1
+ 1031 007e 11       		.uleb128 0x11
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 24
 
 
- 1060 00ab 11       		.uleb128 0x11
- 1061 00ac 01       		.uleb128 0x1
- 1062 00ad 12       		.uleb128 0x12
- 1063 00ae 06       		.uleb128 0x6
- 1064 00af 00       		.byte	0
- 1065 00b0 00       		.byte	0
- 1066 00b1 0E       		.uleb128 0xe
- 1067 00b2 34       		.uleb128 0x34
- 1068 00b3 00       		.byte	0
- 1069 00b4 03       		.uleb128 0x3
- 1070 00b5 0E       		.uleb128 0xe
- 1071 00b6 3A       		.uleb128 0x3a
- 1072 00b7 0B       		.uleb128 0xb
- 1073 00b8 3B       		.uleb128 0x3b
- 1074 00b9 0B       		.uleb128 0xb
- 1075 00ba 49       		.uleb128 0x49
- 1076 00bb 13       		.uleb128 0x13
- 1077 00bc 00       		.byte	0
- 1078 00bd 00       		.byte	0
- 1079 00be 0F       		.uleb128 0xf
- 1080 00bf 34       		.uleb128 0x34
- 1081 00c0 00       		.byte	0
- 1082 00c1 03       		.uleb128 0x3
- 1083 00c2 0E       		.uleb128 0xe
- 1084 00c3 3A       		.uleb128 0x3a
- 1085 00c4 0B       		.uleb128 0xb
- 1086 00c5 3B       		.uleb128 0x3b
- 1087 00c6 05       		.uleb128 0x5
- 1088 00c7 49       		.uleb128 0x49
- 1089 00c8 13       		.uleb128 0x13
- 1090 00c9 3F       		.uleb128 0x3f
- 1091 00ca 19       		.uleb128 0x19
- 1092 00cb 3C       		.uleb128 0x3c
- 1093 00cc 19       		.uleb128 0x19
- 1094 00cd 00       		.byte	0
- 1095 00ce 00       		.byte	0
- 1096 00cf 10       		.uleb128 0x10
- 1097 00d0 35       		.uleb128 0x35
- 1098 00d1 00       		.byte	0
- 1099 00d2 49       		.uleb128 0x49
- 1100 00d3 13       		.uleb128 0x13
- 1101 00d4 00       		.byte	0
- 1102 00d5 00       		.byte	0
- 1103 00d6 11       		.uleb128 0x11
- 1104 00d7 34       		.uleb128 0x34
- 1105 00d8 00       		.byte	0
- 1106 00d9 03       		.uleb128 0x3
- 1107 00da 0E       		.uleb128 0xe
- 1108 00db 3A       		.uleb128 0x3a
- 1109 00dc 0B       		.uleb128 0xb
- 1110 00dd 3B       		.uleb128 0x3b
- 1111 00de 0B       		.uleb128 0xb
- 1112 00df 49       		.uleb128 0x49
- 1113 00e0 13       		.uleb128 0x13
- 1114 00e1 3F       		.uleb128 0x3f
- 1115 00e2 19       		.uleb128 0x19
- 1116 00e3 02       		.uleb128 0x2
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 25
+ 1032 007f 01       		.uleb128 0x1
+ 1033 0080 31       		.uleb128 0x31
+ 1034 0081 13       		.uleb128 0x13
+ 1035 0082 01       		.uleb128 0x1
+ 1036 0083 13       		.uleb128 0x13
+ 1037 0084 00       		.byte	0
+ 1038 0085 00       		.byte	0
+ 1039 0086 0A       		.uleb128 0xa
+ 1040 0087 8A8201   		.uleb128 0x410a
+ 1041 008a 00       		.byte	0
+ 1042 008b 02       		.uleb128 0x2
+ 1043 008c 18       		.uleb128 0x18
+ 1044 008d 9142     		.uleb128 0x2111
+ 1045 008f 18       		.uleb128 0x18
+ 1046 0090 00       		.byte	0
+ 1047 0091 00       		.byte	0
+ 1048 0092 0B       		.uleb128 0xb
+ 1049 0093 898201   		.uleb128 0x4109
+ 1050 0096 01       		.byte	0x1
+ 1051 0097 11       		.uleb128 0x11
+ 1052 0098 01       		.uleb128 0x1
+ 1053 0099 31       		.uleb128 0x31
+ 1054 009a 13       		.uleb128 0x13
+ 1055 009b 00       		.byte	0
+ 1056 009c 00       		.byte	0
+ 1057 009d 0C       		.uleb128 0xc
+ 1058 009e 898201   		.uleb128 0x4109
+ 1059 00a1 00       		.byte	0
+ 1060 00a2 11       		.uleb128 0x11
+ 1061 00a3 01       		.uleb128 0x1
+ 1062 00a4 31       		.uleb128 0x31
+ 1063 00a5 13       		.uleb128 0x13
+ 1064 00a6 00       		.byte	0
+ 1065 00a7 00       		.byte	0
+ 1066 00a8 0D       		.uleb128 0xd
+ 1067 00a9 34       		.uleb128 0x34
+ 1068 00aa 00       		.byte	0
+ 1069 00ab 03       		.uleb128 0x3
+ 1070 00ac 0E       		.uleb128 0xe
+ 1071 00ad 3A       		.uleb128 0x3a
+ 1072 00ae 0B       		.uleb128 0xb
+ 1073 00af 3B       		.uleb128 0x3b
+ 1074 00b0 0B       		.uleb128 0xb
+ 1075 00b1 49       		.uleb128 0x49
+ 1076 00b2 13       		.uleb128 0x13
+ 1077 00b3 00       		.byte	0
+ 1078 00b4 00       		.byte	0
+ 1079 00b5 0E       		.uleb128 0xe
+ 1080 00b6 0B       		.uleb128 0xb
+ 1081 00b7 01       		.byte	0x1
+ 1082 00b8 11       		.uleb128 0x11
+ 1083 00b9 01       		.uleb128 0x1
+ 1084 00ba 12       		.uleb128 0x12
+ 1085 00bb 06       		.uleb128 0x6
+ 1086 00bc 00       		.byte	0
+ 1087 00bd 00       		.byte	0
+ 1088 00be 0F       		.uleb128 0xf
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 25
 
 
- 1117 00e4 18       		.uleb128 0x18
- 1118 00e5 00       		.byte	0
- 1119 00e6 00       		.byte	0
- 1120 00e7 12       		.uleb128 0x12
- 1121 00e8 01       		.uleb128 0x1
- 1122 00e9 01       		.byte	0x1
- 1123 00ea 49       		.uleb128 0x49
- 1124 00eb 13       		.uleb128 0x13
- 1125 00ec 01       		.uleb128 0x1
- 1126 00ed 13       		.uleb128 0x13
- 1127 00ee 00       		.byte	0
- 1128 00ef 00       		.byte	0
- 1129 00f0 13       		.uleb128 0x13
- 1130 00f1 21       		.uleb128 0x21
- 1131 00f2 00       		.byte	0
- 1132 00f3 49       		.uleb128 0x49
- 1133 00f4 13       		.uleb128 0x13
- 1134 00f5 2F       		.uleb128 0x2f
- 1135 00f6 0B       		.uleb128 0xb
- 1136 00f7 00       		.byte	0
- 1137 00f8 00       		.byte	0
- 1138 00f9 14       		.uleb128 0x14
- 1139 00fa 34       		.uleb128 0x34
- 1140 00fb 00       		.byte	0
- 1141 00fc 03       		.uleb128 0x3
- 1142 00fd 0E       		.uleb128 0xe
- 1143 00fe 3A       		.uleb128 0x3a
- 1144 00ff 0B       		.uleb128 0xb
- 1145 0100 3B       		.uleb128 0x3b
- 1146 0101 0B       		.uleb128 0xb
- 1147 0102 49       		.uleb128 0x49
- 1148 0103 13       		.uleb128 0x13
- 1149 0104 3F       		.uleb128 0x3f
- 1150 0105 19       		.uleb128 0x19
- 1151 0106 3C       		.uleb128 0x3c
- 1152 0107 19       		.uleb128 0x19
- 1153 0108 00       		.byte	0
- 1154 0109 00       		.byte	0
- 1155 010a 15       		.uleb128 0x15
- 1156 010b 2E       		.uleb128 0x2e
- 1157 010c 00       		.byte	0
- 1158 010d 3F       		.uleb128 0x3f
- 1159 010e 19       		.uleb128 0x19
- 1160 010f 3C       		.uleb128 0x3c
- 1161 0110 19       		.uleb128 0x19
- 1162 0111 6E       		.uleb128 0x6e
- 1163 0112 0E       		.uleb128 0xe
- 1164 0113 03       		.uleb128 0x3
- 1165 0114 0E       		.uleb128 0xe
- 1166 0115 3A       		.uleb128 0x3a
- 1167 0116 0B       		.uleb128 0xb
- 1168 0117 3B       		.uleb128 0x3b
- 1169 0118 0B       		.uleb128 0xb
- 1170 0119 00       		.byte	0
- 1171 011a 00       		.byte	0
- 1172 011b 00       		.byte	0
- 1173              		.section	.debug_loc,"",%progbits
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 26
+ 1089 00bf 34       		.uleb128 0x34
+ 1090 00c0 00       		.byte	0
+ 1091 00c1 03       		.uleb128 0x3
+ 1092 00c2 0E       		.uleb128 0xe
+ 1093 00c3 3A       		.uleb128 0x3a
+ 1094 00c4 0B       		.uleb128 0xb
+ 1095 00c5 3B       		.uleb128 0x3b
+ 1096 00c6 05       		.uleb128 0x5
+ 1097 00c7 49       		.uleb128 0x49
+ 1098 00c8 13       		.uleb128 0x13
+ 1099 00c9 3F       		.uleb128 0x3f
+ 1100 00ca 19       		.uleb128 0x19
+ 1101 00cb 3C       		.uleb128 0x3c
+ 1102 00cc 19       		.uleb128 0x19
+ 1103 00cd 00       		.byte	0
+ 1104 00ce 00       		.byte	0
+ 1105 00cf 10       		.uleb128 0x10
+ 1106 00d0 35       		.uleb128 0x35
+ 1107 00d1 00       		.byte	0
+ 1108 00d2 49       		.uleb128 0x49
+ 1109 00d3 13       		.uleb128 0x13
+ 1110 00d4 00       		.byte	0
+ 1111 00d5 00       		.byte	0
+ 1112 00d6 11       		.uleb128 0x11
+ 1113 00d7 34       		.uleb128 0x34
+ 1114 00d8 00       		.byte	0
+ 1115 00d9 03       		.uleb128 0x3
+ 1116 00da 0E       		.uleb128 0xe
+ 1117 00db 3A       		.uleb128 0x3a
+ 1118 00dc 0B       		.uleb128 0xb
+ 1119 00dd 3B       		.uleb128 0x3b
+ 1120 00de 0B       		.uleb128 0xb
+ 1121 00df 49       		.uleb128 0x49
+ 1122 00e0 13       		.uleb128 0x13
+ 1123 00e1 3F       		.uleb128 0x3f
+ 1124 00e2 19       		.uleb128 0x19
+ 1125 00e3 02       		.uleb128 0x2
+ 1126 00e4 18       		.uleb128 0x18
+ 1127 00e5 00       		.byte	0
+ 1128 00e6 00       		.byte	0
+ 1129 00e7 12       		.uleb128 0x12
+ 1130 00e8 01       		.uleb128 0x1
+ 1131 00e9 01       		.byte	0x1
+ 1132 00ea 49       		.uleb128 0x49
+ 1133 00eb 13       		.uleb128 0x13
+ 1134 00ec 01       		.uleb128 0x1
+ 1135 00ed 13       		.uleb128 0x13
+ 1136 00ee 00       		.byte	0
+ 1137 00ef 00       		.byte	0
+ 1138 00f0 13       		.uleb128 0x13
+ 1139 00f1 21       		.uleb128 0x21
+ 1140 00f2 00       		.byte	0
+ 1141 00f3 49       		.uleb128 0x49
+ 1142 00f4 13       		.uleb128 0x13
+ 1143 00f5 2F       		.uleb128 0x2f
+ 1144 00f6 0B       		.uleb128 0xb
+ 1145 00f7 00       		.byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 26
 
 
- 1174              	.Ldebug_loc0:
- 1175              	.LLST0:
- 1176 0000 0A000000 		.4byte	.LVL0
- 1177 0004 11000000 		.4byte	.LVL1-1
- 1178 0008 0100     		.2byte	0x1
- 1179 000a 53       		.byte	0x53
- 1180 000b 60000000 		.4byte	.LVL15
- 1181 000f 64000000 		.4byte	.LVL16
- 1182 0013 0100     		.2byte	0x1
- 1183 0015 53       		.byte	0x53
- 1184 0016 00000000 		.4byte	0
- 1185 001a 00000000 		.4byte	0
- 1186              	.LLST1:
- 1187 001e 1A000000 		.4byte	.LVL2
- 1188 0022 1E000000 		.4byte	.LVL3
- 1189 0026 0200     		.2byte	0x2
- 1190 0028 30       		.byte	0x30
- 1191 0029 9F       		.byte	0x9f
- 1192 002a 1E000000 		.4byte	.LVL3
- 1193 002e 3A000000 		.4byte	.LVL8
- 1194 0032 0100     		.2byte	0x1
- 1195 0034 54       		.byte	0x54
- 1196 0035 00000000 		.4byte	0
- 1197 0039 00000000 		.4byte	0
- 1198              	.LLST2:
- 1199 003d 38000000 		.4byte	.LVL7
- 1200 0041 3C000000 		.4byte	.LVL9
- 1201 0045 0200     		.2byte	0x2
- 1202 0047 30       		.byte	0x30
- 1203 0048 9F       		.byte	0x9f
- 1204 0049 3C000000 		.4byte	.LVL9
- 1205 004d 60000000 		.4byte	.LVL15
- 1206 0051 0100     		.2byte	0x1
- 1207 0053 54       		.byte	0x54
- 1208 0054 00000000 		.4byte	0
- 1209 0058 00000000 		.4byte	0
- 1210              	.LLST3:
- 1211 005c 6C000000 		.4byte	.LVL17
- 1212 0060 73000000 		.4byte	.LVL18-1
- 1213 0064 0100     		.2byte	0x1
- 1214 0066 53       		.byte	0x53
- 1215 0067 74000000 		.4byte	.LVL18
- 1216 006b 76000000 		.4byte	.LVL19
- 1217 006f 0200     		.2byte	0x2
- 1218 0071 31       		.byte	0x31
- 1219 0072 9F       		.byte	0x9f
- 1220 0073 76000000 		.4byte	.LVL19
- 1221 0077 7A000000 		.4byte	.LVL20
- 1222 007b 0100     		.2byte	0x1
- 1223 007d 53       		.byte	0x53
- 1224 007e 00000000 		.4byte	0
- 1225 0082 00000000 		.4byte	0
- 1226              	.LLST4:
- 1227 0086 82000000 		.4byte	.LVL21
- 1228 008a 89000000 		.4byte	.LVL22-1
- 1229 008e 0100     		.2byte	0x1
- 1230 0090 53       		.byte	0x53
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 27
+ 1146 00f8 00       		.byte	0
+ 1147 00f9 14       		.uleb128 0x14
+ 1148 00fa 34       		.uleb128 0x34
+ 1149 00fb 00       		.byte	0
+ 1150 00fc 03       		.uleb128 0x3
+ 1151 00fd 0E       		.uleb128 0xe
+ 1152 00fe 3A       		.uleb128 0x3a
+ 1153 00ff 0B       		.uleb128 0xb
+ 1154 0100 3B       		.uleb128 0x3b
+ 1155 0101 0B       		.uleb128 0xb
+ 1156 0102 49       		.uleb128 0x49
+ 1157 0103 13       		.uleb128 0x13
+ 1158 0104 3F       		.uleb128 0x3f
+ 1159 0105 19       		.uleb128 0x19
+ 1160 0106 3C       		.uleb128 0x3c
+ 1161 0107 19       		.uleb128 0x19
+ 1162 0108 00       		.byte	0
+ 1163 0109 00       		.byte	0
+ 1164 010a 15       		.uleb128 0x15
+ 1165 010b 2E       		.uleb128 0x2e
+ 1166 010c 00       		.byte	0
+ 1167 010d 3F       		.uleb128 0x3f
+ 1168 010e 19       		.uleb128 0x19
+ 1169 010f 3C       		.uleb128 0x3c
+ 1170 0110 19       		.uleb128 0x19
+ 1171 0111 6E       		.uleb128 0x6e
+ 1172 0112 0E       		.uleb128 0xe
+ 1173 0113 03       		.uleb128 0x3
+ 1174 0114 0E       		.uleb128 0xe
+ 1175 0115 3A       		.uleb128 0x3a
+ 1176 0116 0B       		.uleb128 0xb
+ 1177 0117 3B       		.uleb128 0x3b
+ 1178 0118 0B       		.uleb128 0xb
+ 1179 0119 00       		.byte	0
+ 1180 011a 00       		.byte	0
+ 1181 011b 00       		.byte	0
+ 1182              		.section	.debug_loc,"",%progbits
+ 1183              	.Ldebug_loc0:
+ 1184              	.LLST0:
+ 1185 0000 0A000000 		.4byte	.LVL0
+ 1186 0004 11000000 		.4byte	.LVL1-1
+ 1187 0008 0100     		.2byte	0x1
+ 1188 000a 53       		.byte	0x53
+ 1189 000b 60000000 		.4byte	.LVL15
+ 1190 000f 64000000 		.4byte	.LVL16
+ 1191 0013 0100     		.2byte	0x1
+ 1192 0015 53       		.byte	0x53
+ 1193 0016 00000000 		.4byte	0
+ 1194 001a 00000000 		.4byte	0
+ 1195              	.LLST1:
+ 1196 001e 1A000000 		.4byte	.LVL2
+ 1197 0022 1E000000 		.4byte	.LVL3
+ 1198 0026 0200     		.2byte	0x2
+ 1199 0028 30       		.byte	0x30
+ 1200 0029 9F       		.byte	0x9f
+ 1201 002a 1E000000 		.4byte	.LVL3
+ 1202 002e 3A000000 		.4byte	.LVL8
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 27
 
 
- 1231 0091 94000000 		.4byte	.LVL24
- 1232 0095 96000000 		.4byte	.LVL25
- 1233 0099 0200     		.2byte	0x2
- 1234 009b 31       		.byte	0x31
- 1235 009c 9F       		.byte	0x9f
- 1236 009d 96000000 		.4byte	.LVL25
- 1237 00a1 9A000000 		.4byte	.LVL26
- 1238 00a5 0100     		.2byte	0x1
- 1239 00a7 53       		.byte	0x53
- 1240 00a8 00000000 		.4byte	0
- 1241 00ac 00000000 		.4byte	0
- 1242              	.LLST5:
- 1243 00b0 A6000000 		.4byte	.LVL27
- 1244 00b4 DA000000 		.4byte	.LVL35
- 1245 00b8 0200     		.2byte	0x2
- 1246 00ba 32       		.byte	0x32
- 1247 00bb 9F       		.byte	0x9f
- 1248 00bc 00000000 		.4byte	0
- 1249 00c0 00000000 		.4byte	0
- 1250              	.LLST6:
- 1251 00c4 A6000000 		.4byte	.LVL27
- 1252 00c8 AA000000 		.4byte	.LVL28
- 1253 00cc 0200     		.2byte	0x2
- 1254 00ce 30       		.byte	0x30
- 1255 00cf 9F       		.byte	0x9f
- 1256 00d0 AA000000 		.4byte	.LVL28
- 1257 00d4 DA000000 		.4byte	.LVL35
- 1258 00d8 0100     		.2byte	0x1
- 1259 00da 54       		.byte	0x54
- 1260 00db 00000000 		.4byte	0
- 1261 00df 00000000 		.4byte	0
- 1262              		.section	.debug_aranges,"",%progbits
- 1263 0000 1C000000 		.4byte	0x1c
- 1264 0004 0200     		.2byte	0x2
- 1265 0006 00000000 		.4byte	.Ldebug_info0
- 1266 000a 04       		.byte	0x4
- 1267 000b 00       		.byte	0
- 1268 000c 0000     		.2byte	0
- 1269 000e 0000     		.2byte	0
- 1270 0010 00000000 		.4byte	.LFB64
- 1271 0014 04010000 		.4byte	.LFE64-.LFB64
- 1272 0018 00000000 		.4byte	0
- 1273 001c 00000000 		.4byte	0
- 1274              		.section	.debug_ranges,"",%progbits
- 1275              	.Ldebug_ranges0:
- 1276 0000 00000000 		.4byte	.LFB64
- 1277 0004 04010000 		.4byte	.LFE64
- 1278 0008 00000000 		.4byte	0
- 1279 000c 00000000 		.4byte	0
- 1280              		.section	.debug_line,"",%progbits
- 1281              	.Ldebug_line0:
- 1282 0000 DD020000 		.section	.debug_str,"MS",%progbits,1
- 1282      02005002 
- 1282      00000201 
- 1282      FB0E0D00 
- 1282      01010101 
- 1283              	.LASF45:
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 28
+ 1203 0032 0100     		.2byte	0x1
+ 1204 0034 54       		.byte	0x54
+ 1205 0035 00000000 		.4byte	0
+ 1206 0039 00000000 		.4byte	0
+ 1207              	.LLST2:
+ 1208 003d 38000000 		.4byte	.LVL7
+ 1209 0041 3C000000 		.4byte	.LVL9
+ 1210 0045 0200     		.2byte	0x2
+ 1211 0047 30       		.byte	0x30
+ 1212 0048 9F       		.byte	0x9f
+ 1213 0049 3C000000 		.4byte	.LVL9
+ 1214 004d 60000000 		.4byte	.LVL15
+ 1215 0051 0100     		.2byte	0x1
+ 1216 0053 54       		.byte	0x54
+ 1217 0054 00000000 		.4byte	0
+ 1218 0058 00000000 		.4byte	0
+ 1219              	.LLST3:
+ 1220 005c 6C000000 		.4byte	.LVL17
+ 1221 0060 73000000 		.4byte	.LVL18-1
+ 1222 0064 0100     		.2byte	0x1
+ 1223 0066 53       		.byte	0x53
+ 1224 0067 74000000 		.4byte	.LVL18
+ 1225 006b 76000000 		.4byte	.LVL19
+ 1226 006f 0200     		.2byte	0x2
+ 1227 0071 31       		.byte	0x31
+ 1228 0072 9F       		.byte	0x9f
+ 1229 0073 76000000 		.4byte	.LVL19
+ 1230 0077 7A000000 		.4byte	.LVL20
+ 1231 007b 0100     		.2byte	0x1
+ 1232 007d 53       		.byte	0x53
+ 1233 007e 00000000 		.4byte	0
+ 1234 0082 00000000 		.4byte	0
+ 1235              	.LLST4:
+ 1236 0086 A4000000 		.4byte	.LVL24
+ 1237 008a DA000000 		.4byte	.LVL32
+ 1238 008e 0200     		.2byte	0x2
+ 1239 0090 32       		.byte	0x32
+ 1240 0091 9F       		.byte	0x9f
+ 1241 0092 00000000 		.4byte	0
+ 1242 0096 00000000 		.4byte	0
+ 1243              		.section	.debug_aranges,"",%progbits
+ 1244 0000 1C000000 		.4byte	0x1c
+ 1245 0004 0200     		.2byte	0x2
+ 1246 0006 00000000 		.4byte	.Ldebug_info0
+ 1247 000a 04       		.byte	0x4
+ 1248 000b 00       		.byte	0
+ 1249 000c 0000     		.2byte	0
+ 1250 000e 0000     		.2byte	0
+ 1251 0010 00000000 		.4byte	.LFB64
+ 1252 0014 08010000 		.4byte	.LFE64-.LFB64
+ 1253 0018 00000000 		.4byte	0
+ 1254 001c 00000000 		.4byte	0
+ 1255              		.section	.debug_ranges,"",%progbits
+ 1256              	.Ldebug_ranges0:
+ 1257 0000 00000000 		.4byte	.LFB64
+ 1258 0004 08010000 		.4byte	.LFE64
+ 1259 0008 00000000 		.4byte	0
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 28
 
 
- 1284 0000 756C7469 		.ascii	"ultimateDebugging\000"
- 1284      6D617465 
- 1284      44656275 
- 1284      6767696E 
- 1284      6700
- 1285              	.LASF9:
- 1286 0012 5F5F696E 		.ascii	"__int32_t\000"
- 1286      7433325F 
- 1286      7400
- 1287              	.LASF21:
- 1288 001c 7075636B 		.ascii	"puck_rack_scans\000"
- 1288      5F726163 
- 1288      6B5F7363 
- 1288      616E7300 
- 1289              	.LASF18:
- 1290 002c 6469636B 		.ascii	"dick\000"
- 1290      00
- 1291              	.LASF27:
- 1292 0031 756C7472 		.ascii	"ultrasonic_flag\000"
- 1292      61736F6E 
- 1292      69635F66 
- 1292      6C616700 
- 1293              	.LASF20:
- 1294 0041 696E7465 		.ascii	"internal_orientation\000"
- 1294      726E616C 
- 1294      5F6F7269 
- 1294      656E7461 
- 1294      74696F6E 
- 1295              	.LASF11:
- 1296 0056 666C6F61 		.ascii	"float\000"
- 1296      7400
- 1297              	.LASF26:
- 1298 005c 73656E73 		.ascii	"sensor_distances\000"
- 1298      6F725F64 
- 1298      69737461 
- 1298      6E636573 
- 1298      00
- 1299              	.LASF1:
- 1300 006d 756E7369 		.ascii	"unsigned char\000"
- 1300      676E6564 
- 1300      20636861 
- 1300      7200
- 1301              	.LASF42:
- 1302 007b 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 1302      43313120 
- 1302      352E342E 
- 1302      31203230 
- 1302      31363036 
- 1303 00ae 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
- 1303      20726576 
- 1303      6973696F 
- 1303      6E203233 
- 1303      37373135 
- 1304 00e1 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 1304      66756E63 
- 1304      74696F6E 
- 1304      2D736563 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 29
+ 1260 000c 00000000 		.4byte	0
+ 1261              		.section	.debug_line,"",%progbits
+ 1262              	.Ldebug_line0:
+ 1263 0000 CB020000 		.section	.debug_str,"MS",%progbits,1
+ 1263      02003802 
+ 1263      00000201 
+ 1263      FB0E0D00 
+ 1263      01010101 
+ 1264              	.LASF45:
+ 1265 0000 756C7469 		.ascii	"ultimateDebugging\000"
+ 1265      6D617465 
+ 1265      44656275 
+ 1265      6767696E 
+ 1265      6700
+ 1266              	.LASF9:
+ 1267 0012 5F5F696E 		.ascii	"__int32_t\000"
+ 1267      7433325F 
+ 1267      7400
+ 1268              	.LASF21:
+ 1269 001c 7075636B 		.ascii	"puck_rack_scans\000"
+ 1269      5F726163 
+ 1269      6B5F7363 
+ 1269      616E7300 
+ 1270              	.LASF18:
+ 1271 002c 6469636B 		.ascii	"dick\000"
+ 1271      00
+ 1272              	.LASF27:
+ 1273 0031 756C7472 		.ascii	"ultrasonic_flag\000"
+ 1273      61736F6E 
+ 1273      69635F66 
+ 1273      6C616700 
+ 1274              	.LASF20:
+ 1275 0041 696E7465 		.ascii	"internal_orientation\000"
+ 1275      726E616C 
+ 1275      5F6F7269 
+ 1275      656E7461 
+ 1275      74696F6E 
+ 1276              	.LASF11:
+ 1277 0056 666C6F61 		.ascii	"float\000"
+ 1277      7400
+ 1278              	.LASF26:
+ 1279 005c 73656E73 		.ascii	"sensor_distances\000"
+ 1279      6F725F64 
+ 1279      69737461 
+ 1279      6E636573 
+ 1279      00
+ 1280              	.LASF1:
+ 1281 006d 756E7369 		.ascii	"unsigned char\000"
+ 1281      676E6564 
+ 1281      20636861 
+ 1281      7200
+ 1282              	.LASF42:
+ 1283 007b 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1283      43313120 
+ 1283      352E342E 
+ 1283      31203230 
+ 1283      31363036 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 29
 
 
- 1304      74696F6E 
- 1305              	.LASF17:
- 1306 0109 74696D65 		.ascii	"timer\000"
- 1306      7200
- 1307              	.LASF5:
- 1308 010f 6C6F6E67 		.ascii	"long unsigned int\000"
- 1308      20756E73 
- 1308      69676E65 
- 1308      6420696E 
- 1308      7400
- 1309              	.LASF3:
- 1310 0121 73686F72 		.ascii	"short unsigned int\000"
- 1310      7420756E 
- 1310      7369676E 
- 1310      65642069 
- 1310      6E7400
- 1311              	.LASF39:
- 1312 0134 73747261 		.ascii	"straightAdjust\000"
- 1312      69676874 
- 1312      41646A75 
- 1312      737400
- 1313              	.LASF16:
- 1314 0143 6C6F636B 		.ascii	"lock\000"
- 1314      00
- 1315              	.LASF29:
- 1316 0148 73657276 		.ascii	"servo_testing\000"
- 1316      6F5F7465 
- 1316      7374696E 
- 1316      6700
- 1317              	.LASF28:
- 1318 0156 636F6C6F 		.ascii	"colour_calibration\000"
- 1318      75725F63 
- 1318      616C6962 
- 1318      72617469 
- 1318      6F6E00
- 1319              	.LASF12:
- 1320 0169 646F7562 		.ascii	"double\000"
- 1320      6C6500
- 1321              	.LASF36:
- 1322 0170 636F6C6F 		.ascii	"colourSensingCalibration\000"
- 1322      75725365 
- 1322      6E73696E 
- 1322      6743616C 
- 1322      69627261 
- 1323              	.LASF23:
- 1324 0189 626C6F63 		.ascii	"block_edge_location\000"
- 1324      6B5F6564 
- 1324      67655F6C 
- 1324      6F636174 
- 1324      696F6E00 
- 1325              	.LASF19:
- 1326 019d 49544D5F 		.ascii	"ITM_RxBuffer\000"
- 1326      52784275 
- 1326      66666572 
+ 1284 00ae 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1284      20726576 
+ 1284      6973696F 
+ 1284      6E203233 
+ 1284      37373135 
+ 1285 00e1 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1285      66756E63 
+ 1285      74696F6E 
+ 1285      2D736563 
+ 1285      74696F6E 
+ 1286              	.LASF17:
+ 1287 0109 74696D65 		.ascii	"timer\000"
+ 1287      7200
+ 1288              	.LASF5:
+ 1289 010f 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1289      20756E73 
+ 1289      69676E65 
+ 1289      6420696E 
+ 1289      7400
+ 1290              	.LASF3:
+ 1291 0121 73686F72 		.ascii	"short unsigned int\000"
+ 1291      7420756E 
+ 1291      7369676E 
+ 1291      65642069 
+ 1291      6E7400
+ 1292              	.LASF39:
+ 1293 0134 73747261 		.ascii	"straightAdjust\000"
+ 1293      69676874 
+ 1293      41646A75 
+ 1293      737400
+ 1294              	.LASF16:
+ 1295 0143 6C6F636B 		.ascii	"lock\000"
+ 1295      00
+ 1296              	.LASF29:
+ 1297 0148 73657276 		.ascii	"servo_testing\000"
+ 1297      6F5F7465 
+ 1297      7374696E 
+ 1297      6700
+ 1298              	.LASF28:
+ 1299 0156 636F6C6F 		.ascii	"colour_calibration\000"
+ 1299      75725F63 
+ 1299      616C6962 
+ 1299      72617469 
+ 1299      6F6E00
+ 1300              	.LASF12:
+ 1301 0169 646F7562 		.ascii	"double\000"
+ 1301      6C6500
+ 1302              	.LASF36:
+ 1303 0170 636F6C6F 		.ascii	"colourSensingCalibration\000"
+ 1303      75725365 
+ 1303      6E73696E 
+ 1303      6743616C 
+ 1303      69627261 
+ 1304              	.LASF23:
+ 1305 0189 626C6F63 		.ascii	"block_edge_location\000"
+ 1305      6B5F6564 
+ 1305      67655F6C 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 30
+
+
+ 1305      6F636174 
+ 1305      696F6E00 
+ 1306              	.LASF44:
+ 1307 019d 433A5C55 		.ascii	"C:\\Users\\Misha\\Documents\\PSoC Creator\\ECE3091_"
+ 1307      73657273 
+ 1307      5C4D6973 
+ 1307      68615C44 
+ 1307      6F63756D 
+ 1308 01cb 47726F75 		.ascii	"Group17\\Group17RobotReal\\Group17Robot.cydsn\000"
+ 1308      7031375C 
+ 1308      47726F75 
+ 1308      70313752 
+ 1308      6F626F74 
+ 1309              	.LASF40:
+ 1310 01f7 626C696E 		.ascii	"blinkLED\000"
+ 1310      6B4C4544 
+ 1310      00
+ 1311              	.LASF19:
+ 1312 0200 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1312      52784275 
+ 1312      66666572 
+ 1312      00
+ 1313              	.LASF24:
+ 1314 020d 696E6974 		.ascii	"initialisation\000"
+ 1314      69616C69 
+ 1314      73617469 
+ 1314      6F6E00
+ 1315              	.LASF8:
+ 1316 021c 756E7369 		.ascii	"unsigned int\000"
+ 1316      676E6564 
+ 1316      20696E74 
+ 1316      00
+ 1317              	.LASF7:
+ 1318 0229 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1318      206C6F6E 
+ 1318      6720756E 
+ 1318      7369676E 
+ 1318      65642069 
+ 1319              	.LASF22:
+ 1320 0240 7075636B 		.ascii	"puck_rack_west_offsets\000"
+ 1320      5F726163 
+ 1320      6B5F7765 
+ 1320      73745F6F 
+ 1320      66667365 
+ 1321              	.LASF43:
+ 1322 0257 64656275 		.ascii	"debugging.c\000"
+ 1322      6767696E 
+ 1322      672E6300 
+ 1323              	.LASF10:
+ 1324 0263 696E7433 		.ascii	"int32_t\000"
+ 1324      325F7400 
+ 1325              	.LASF15:
+ 1326 026b 73697A65 		.ascii	"sizetype\000"
+ 1326      74797065 
  1326      00
- 1327              	.LASF24:
- 1328 01aa 696E6974 		.ascii	"initialisation\000"
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 30
+ 1327              	.LASF6:
+ 1328 0274 6C6F6E67 		.ascii	"long long int\000"
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 31
 
 
- 1328      69616C69 
- 1328      73617469 
- 1328      6F6E00
- 1329              	.LASF40:
- 1330 01b9 54696D65 		.ascii	"Timer_straight_adjust_Start\000"
- 1330      725F7374 
- 1330      72616967 
- 1330      68745F61 
- 1330      646A7573 
- 1331              	.LASF8:
- 1332 01d5 756E7369 		.ascii	"unsigned int\000"
- 1332      676E6564 
- 1332      20696E74 
- 1332      00
- 1333              	.LASF7:
- 1334 01e2 6C6F6E67 		.ascii	"long long unsigned int\000"
- 1334      206C6F6E 
- 1334      6720756E 
- 1334      7369676E 
- 1334      65642069 
- 1335              	.LASF22:
- 1336 01f9 7075636B 		.ascii	"puck_rack_west_offsets\000"
- 1336      5F726163 
- 1336      6B5F7765 
- 1336      73745F6F 
- 1336      66667365 
- 1337              	.LASF43:
- 1338 0210 64656275 		.ascii	"debugging.c\000"
- 1338      6767696E 
- 1338      672E6300 
- 1339              	.LASF10:
- 1340 021c 696E7433 		.ascii	"int32_t\000"
- 1340      325F7400 
- 1341              	.LASF15:
- 1342 0224 73697A65 		.ascii	"sizetype\000"
- 1342      74797065 
- 1342      00
- 1343              	.LASF6:
- 1344 022d 6C6F6E67 		.ascii	"long long int\000"
- 1344      206C6F6E 
- 1344      6720696E 
- 1344      7400
- 1345              	.LASF13:
- 1346 023b 63686172 		.ascii	"char\000"
- 1346      00
- 1347              	.LASF30:
- 1348 0240 6D6F746F 		.ascii	"motor_testing\000"
- 1348      725F7465 
- 1348      7374696E 
- 1348      6700
- 1349              	.LASF2:
- 1350 024e 73686F72 		.ascii	"short int\000"
- 1350      7420696E 
- 1350      7400
- 1351              	.LASF37:
- 1352 0258 636F6E74 		.ascii	"control_photodiode_Write\000"
- 1352      726F6C5F 
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 31
+ 1328      206C6F6E 
+ 1328      6720696E 
+ 1328      7400
+ 1329              	.LASF13:
+ 1330 0282 63686172 		.ascii	"char\000"
+ 1330      00
+ 1331              	.LASF30:
+ 1332 0287 6D6F746F 		.ascii	"motor_testing\000"
+ 1332      725F7465 
+ 1332      7374696E 
+ 1332      6700
+ 1333              	.LASF2:
+ 1334 0295 73686F72 		.ascii	"short int\000"
+ 1334      7420696E 
+ 1334      7400
+ 1335              	.LASF37:
+ 1336 029f 636F6E74 		.ascii	"control_photodiode_Write\000"
+ 1336      726F6C5F 
+ 1336      70686F74 
+ 1336      6F64696F 
+ 1336      64655F57 
+ 1337              	.LASF25:
+ 1338 02b8 6F757470 		.ascii	"output\000"
+ 1338      757400
+ 1339              	.LASF38:
+ 1340 02bf 6368616E 		.ascii	"changeHeightToPuck\000"
+ 1340      67654865 
+ 1340      69676874 
+ 1340      546F5075 
+ 1340      636B00
+ 1341              	.LASF32:
+ 1342 02d2 636F6E74 		.ascii	"control_led_Write\000"
+ 1342      726F6C5F 
+ 1342      6C65645F 
+ 1342      57726974 
+ 1342      6500
+ 1343              	.LASF4:
+ 1344 02e4 6C6F6E67 		.ascii	"long int\000"
+ 1344      20696E74 
+ 1344      00
+ 1345              	.LASF14:
+ 1346 02ed 6C6F6E67 		.ascii	"long double\000"
+ 1346      20646F75 
+ 1346      626C6500 
+ 1347              	.LASF0:
+ 1348 02f9 7369676E 		.ascii	"signed char\000"
+ 1348      65642063 
+ 1348      68617200 
+ 1349              	.LASF31:
+ 1350 0305 756C7472 		.ascii	"ultrasonic_testing\000"
+ 1350      61736F6E 
+ 1350      69635F74 
+ 1350      65737469 
+ 1350      6E6700
+ 1351              	.LASF35:
+ 1352 0318 55415254 		.ascii	"UART_1_PutString\000"
+ 1352      5F315F50 
+ARM GAS  C:\Users\Misha\AppData\Local\Temp\ccx9DRB9.s 			page 32
 
 
- 1352      70686F74 
- 1352      6F64696F 
- 1352      64655F57 
- 1353              	.LASF25:
- 1354 0271 6F757470 		.ascii	"output\000"
- 1354      757400
- 1355              	.LASF38:
- 1356 0278 6368616E 		.ascii	"changeHeightToPuck\000"
- 1356      67654865 
- 1356      69676874 
- 1356      546F5075 
- 1356      636B00
- 1357              	.LASF32:
- 1358 028b 636F6E74 		.ascii	"control_led_Write\000"
- 1358      726F6C5F 
- 1358      6C65645F 
- 1358      57726974 
- 1358      6500
- 1359              	.LASF4:
- 1360 029d 6C6F6E67 		.ascii	"long int\000"
- 1360      20696E74 
- 1360      00
- 1361              	.LASF44:
- 1362 02a6 453A5C44 		.ascii	"E:\\Documents\\Uni S12019 Notes\\ECE3091\\Temp Clon"
- 1362      6F63756D 
- 1362      656E7473 
- 1362      5C556E69 
- 1362      20533132 
- 1363 02d5 655C4543 		.ascii	"e\\ECE3091_Group17\\Group17RobotReal\\Group17Robot."
- 1363      45333039 
- 1363      315F4772 
- 1363      6F757031 
- 1363      375C4772 
- 1364 0305 63796473 		.ascii	"cydsn\000"
- 1364      6E00
- 1365              	.LASF14:
- 1366 030b 6C6F6E67 		.ascii	"long double\000"
- 1366      20646F75 
- 1366      626C6500 
- 1367              	.LASF0:
- 1368 0317 7369676E 		.ascii	"signed char\000"
- 1368      65642063 
- 1368      68617200 
- 1369              	.LASF31:
- 1370 0323 756C7472 		.ascii	"ultrasonic_testing\000"
- 1370      61736F6E 
- 1370      69635F74 
- 1370      65737469 
- 1370      6E6700
- 1371              	.LASF35:
- 1372 0336 55415254 		.ascii	"UART_1_PutString\000"
- 1372      5F315F50 
- 1372      75745374 
- 1372      72696E67 
- 1372      00
- 1373              	.LASF41:
- 1374 0347 64697374 		.ascii	"distanceSensor\000"
-ARM GAS  C:\Users\Blayke\AppData\Local\Temp\ccqGCt7S.s 			page 32
-
-
- 1374      616E6365 
- 1374      53656E73 
- 1374      6F7200
- 1375              	.LASF34:
- 1376 0356 73707269 		.ascii	"sprintf\000"
- 1376      6E746600 
- 1377              	.LASF33:
- 1378 035e 43794465 		.ascii	"CyDelay\000"
- 1378      6C617900 
- 1379              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ 1352      75745374 
+ 1352      72696E67 
+ 1352      00
+ 1353              	.LASF41:
+ 1354 0329 64697374 		.ascii	"distanceSensor\000"
+ 1354      616E6365 
+ 1354      53656E73 
+ 1354      6F7200
+ 1355              	.LASF34:
+ 1356 0338 73707269 		.ascii	"sprintf\000"
+ 1356      6E746600 
+ 1357              	.LASF33:
+ 1358 0340 43794465 		.ascii	"CyDelay\000"
+ 1358      6C617900 
+ 1359              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

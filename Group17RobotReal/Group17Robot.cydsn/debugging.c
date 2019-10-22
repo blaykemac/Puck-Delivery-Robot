@@ -5,7 +5,7 @@
  * All Rights Reserved
  * UNPUBLISHED, LICENSED SOFTWARE.
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
+ * CONFIDENTIAL AND PROPRIETAR INFORMATION
  * WHICH IS THE PROPERTY OF Blayke, Misha, Nidhin.
  *
  * ========================================
@@ -32,8 +32,8 @@
 // Set which debugging you want to do:
 int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
 int servo_testing = FALSE;                  // Do the servos need to be tested?      
-int motor_testing = FALSE;
-int ultrasonic_testing = TRUE;  
+int motor_testing = TRUE;
+int ultrasonic_testing = FALSE;  
 
 
 void ultimateDebugging(void){
@@ -122,10 +122,22 @@ void ultimateDebugging(void){
                         //straightAdjustBack();
                         
                         //straightAdjust(BACK_SENSORS);
-                        straightAdjust(FRONT_SENSORS);
+                        //straightAdjust(FRONT_SENSORS);
                         
-                        while(0) {
-                        straightAdjust(FRONT_SENSORS);
+                        while(1) {
+                            straightAdjust(FRONT_SENSORS);
+                            blinkLED(GREEN, 1000);
+                        }
+                        
+                        
+                        
+                        while(0){
+                        moveUntil(120, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
+                        CyDelay(2000);
+                        }
+                        
+                        while(1) {
+                        straightAdjust(BACK_SENSORS);
                         blinkLED(GREEN, 1000);
                         }
                         
@@ -218,7 +230,7 @@ void ultimateDebugging(void){
                         // 3 gave side right    // side right 
                         // 4 gave back sensor   // back sensor
                         
-                        while(1) {
+                        while(0) {
                             for (int i = 0; i < 7; i++)
                             {
                                 distanceSensor(i);
@@ -229,7 +241,22 @@ void ultimateDebugging(void){
                             UART_1_PutString("\n");
                         }
                         
+                        // FRONT_LEFT   0
+                        // FRONT_ RIGHT 1
+                        // SIDE_LEFT 2
+                        // SIDE_RIGHT 3
+                        // BACK_LEFT 4
+                        // BACK_RIGHT 6
                         
+                        while(1) {
+                            distanceSensor(BACK_LEFT);
+                            CyDelay(50);
+                            distanceSensor(BACK_RIGHT);
+                            CyDelay(50);
+                            sprintf(output, "%d , %d \n", sensor_distances[BACK_LEFT], sensor_distances[BACK_RIGHT]);
+                            UART_1_PutString(output);
+                            CyDelay(100);
+                        }
                         
                         
                         // TEST FIRING

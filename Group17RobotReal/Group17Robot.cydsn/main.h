@@ -111,13 +111,17 @@ int internal_orientation;
 
 // Indices of ultrasonic sensors
 
-#define SIDE_LEFT 2          //0     
 #define FRONT_LEFT 0         //1
 #define FRONT_RIGHT 1        //2
+
+#define SIDE_LEFT 2          //0     
 #define SIDE_RIGHT 3         //3
-#define BACK_LEFT 4          //4
-#define BACK_RIGHT 5         //5
-#define FRONT_MIDDLE 6       //6
+
+#define BACK_LEFT 6          //4
+#define BACK_RIGHT  4        //5
+
+#define FRONT_MIDDLE 5       //6
+
 #define FRONT_SENSORS 7      //7
 #define BACK_SENSORS 8       //8
 

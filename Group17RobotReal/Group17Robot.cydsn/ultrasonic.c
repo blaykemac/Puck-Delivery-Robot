@@ -165,7 +165,7 @@ void distanceCheck()
 
 void safetyDistanceCheck() {
     UART_1_PutString("Ultrasonic safety check: \n");
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 7; i++)
         {
             distanceSensor(i);
             CyDelay(60);

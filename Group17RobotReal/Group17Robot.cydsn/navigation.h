@@ -24,7 +24,7 @@ void locatePucks(void);
 void changeOrientation(int orientation_change, int speed);
 int failsafe(int direction);
 void toleranceCheck(void);
-void blockAndPuckZoneFinding(void);
+//void blockAndPuckZoneFinding(void);
 void straightAdjustSensor(int sensor);
 void failsafeSideSensors(int side_sensing, int initial_value);
 
@@ -34,3 +34,5 @@ extern int colour_sensing_algorithm;
 extern int internal_orientation;
 extern int safety_override;
 
+extern int block_location[4];
+extern int puck_location[4];
