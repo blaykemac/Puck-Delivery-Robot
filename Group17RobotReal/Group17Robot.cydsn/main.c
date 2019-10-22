@@ -203,7 +203,6 @@ int main(void)
     puck_construction_plan[0] = RED;
     puck_construction_plan[1] = GREEN;
     puck_construction_plan[2] = BLUE;
-    int block_and_puck_edge_midpoint = 0;
     
 
     // Main Loop for States
@@ -919,6 +918,7 @@ int main(void)
         //moveDynamic(60);       // robot moves forward
         armClose();                 // claw closes on puck
         changeHeightToPuck(ABOVE_3_PUCK, CLOSE);      // arm lifts up to highest position
+        armCloseIndefinitely(TRUE);
         moveDynamic(-60, SPEED, TRUE);       // robot moves back away from puck area 
         
         
@@ -1084,6 +1084,7 @@ int main(void)
             
             //moveDynamic(CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK - CONSTRUCTION_DISTANCE_FROM_WALL,SPEED);
             
+            armCloseIndefinitely(FALSE);
             changeHeightToPuck(current_puck_stack_size, CLOSE);
             armOpen();
             changeHeightToPuck(ABOVE_3_PUCK, OPEN); // Move higher than stack to avoid hitting it.

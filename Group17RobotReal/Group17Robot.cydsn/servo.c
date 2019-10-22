@@ -72,7 +72,7 @@ void armClose(){
     CyDelay(500);
     Gripper_Servo_PWM_Sleep();                    // Puts Servo back to sleep
 }
-void armCloseIndefintely(int activate){
+void armCloseIndefinitely(int activate){
     if (activate == TRUE) {
         Gripper_Servo_PWM_Wakeup();                    // Brings the servo back from sleep
         Gripper_Servo_PWM_WriteCompare(GRIPPER_CLOSED); //1250 turns out to be a decent closed val

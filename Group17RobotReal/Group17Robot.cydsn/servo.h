@@ -21,6 +21,8 @@ void armMoveUpDown(int desired_position);
 void closeAndRaise(int nothing);
 void lowerAndOpen(int nothing);
 
+void armCloseIndefinitely(int activate);
+
 //These are the values that correspond to open, closed, up and down positions of the 
 //arm. These were found by experiment, so if need to recalibrate, you know where to go
 #define LOW_POS_ARM_CMP 2400 

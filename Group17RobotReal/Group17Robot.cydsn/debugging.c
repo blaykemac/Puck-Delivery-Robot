@@ -32,7 +32,7 @@
 // Set which debugging you want to do:
 int colour_calibration = FALSE;             // Do we want to calibrate the sensor? 
 int servo_testing = FALSE;                  // Do the servos need to be tested?      
-int motor_testing = TRUE;
+int motor_testing = FALSE;
 int ultrasonic_testing = FALSE;  
 
 

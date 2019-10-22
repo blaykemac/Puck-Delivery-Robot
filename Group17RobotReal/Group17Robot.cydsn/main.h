@@ -91,7 +91,8 @@ int internal_orientation;
 #define CONSTRUCTION_DISTANCE_CLEAR_FROM_STACK 210 // How far we should reverse from constructio stack before attempting to turn.
 #define DISTANCE_BEFORE_STACK_MIDDLE_SENSOR 95 // Distance the middle bottom sensor requires to get to before stopping at the stack.
 
-#define PUCK_GRID_FROM_NORTH 275 // Where the southmost part of the pucks can extend to from the north wall
+//#define PUCK_GRID_FROM_NORTH 275 // Where the southmost part of the pucks can extend to from the north wall
+#define PUCK_GRID_FROM_NORTH 275
 #define PUCK_GRID_WIDTH 270 // Width from east to west of the 5x5 grid.
 #define PUCK_RACK_0_WEST_DISTANCE 720
 #define PUCK_RACK_1_WEST_DISTANCE 660

@@ -1,6 +1,6 @@
 // ======================================================================
 // Group17Robot.v generated from TopDesign.cysch
-// 10/22/2019 at 18:39
+// 10/23/2019 at 01:58
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -5177,7 +5177,7 @@ module top ;
 		#(.id("831fd4b5-261c-4ef6-8665-d01cc85d4248"),
 		  .source_clock_id(""),
 		  .divisor(0),
-		  .period("333333333333.333"),
+		  .period("142857142857.143"),
 		  .is_direct(0),
 		  .is_digital(1))
 		Clock_2
