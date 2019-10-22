@@ -505,7 +505,7 @@ void failsafeSideSensors(int side_sensing, int initial_value) {
     }
 }
 
-/*
+
 void straightAdjust(int front_back) {
        
     int sensor_left; 
@@ -573,7 +573,7 @@ void straightAdjust(int front_back) {
             CyDelay(ultra_delay);
                       
             difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
-            
+            }
            
         }
         else if (difference < 0 ){      // HERE we are turning left
@@ -654,11 +654,14 @@ void straightAdjust(int front_back) {
         
         
         
-    }         // This ensures that the turning worked correctly
+             // This ensures that the turning worked correctly
                                             // changed it from 10 to 2, this might change the way it works
-    */
+    }
+}
+        
+        
 
-void straightAdjust(int front_back){
+void straightAdjustBlayke(int front_back){
     int sensor_left; 
     int sensor_right;
     int difference = 300;
@@ -741,7 +744,7 @@ void straightAdjust(int front_back){
         UART_1_PutString(output);
         sprintf(output, "dif: %d, \n", difference);       
         UART_1_PutString(output);
-    
+    }
 }
 
 
@@ -792,6 +795,7 @@ void straightAdjustBack(void) {
 }
 
 
+
 void toleranceCheck(void) {
     
     // This function needs work
@@ -806,11 +810,7 @@ void toleranceCheck(void) {
     CyDelay(60);
     
     while (sensor_distances[FRONT_LEFT] + sensor_distances[BACK_RIGHT] + tolerance < ARENA_WIDTH 
-            
-    
-    
-    
-    || sensor_distances[FRONT_LEFT] + sensor_distances[BACK_RIGHT] + tolerance < ARENA_WIDTH) { 
+           || sensor_distances[FRONT_LEFT] + sensor_distances[BACK_RIGHT] + tolerance < ARENA_WIDTH) { 
             // this checks if the ultrasonic distances being recorded are accurate
             // if it is not within this threshold, there must be something up.  
                 
@@ -831,4 +831,9 @@ void locatePucks(void)
     
     
     
+}
+
+void moveForwardThenBackward(int distance, int less_great, int sensor, int speed, int activate_safety){
+   moveUntil(distance, FORWARD, less_great, sensor, speed ,activate_safety); 
+   moveUntil(distance, BACKWARD, -1*less_great, sensor, speed ,activate_safety);     
 }

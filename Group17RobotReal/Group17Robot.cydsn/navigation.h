@@ -37,3 +37,6 @@ extern int safety_override;
 
 extern int block_location[4];
 extern int puck_location[4];
+
+void straightAdjustBlayke(int front_back);
+void moveForwardThenBackward(int distance, int less_great, int sensor, int speed, int activate_safety);

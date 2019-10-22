@@ -329,12 +329,16 @@ int main(void)
     // HIT THE BLOCK FIRST
             if (sensor_distances[SIDE_RIGHT] < block_threshold) {
                 // We have hit the west side of the block
+                //UART_1_PutString("BLOCK FIRST");
+                
                 blinkLED(GREEN,1000);   
                 
                 // Find the WEST clearance of the block: 
                 distanceSensor(FRONT_LEFT); // Use front_right instead? 
                 CyDelay(DELAY);
                 block_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
+                sprintf(output, "west block front sensor: %d, \n", sensor_distances[FRONT_LEFT] );       
+                UART_1_PutString(output);
                 
                 // Stopping at the East side of the block:
                 moveDynamic(-BLOCK_WIDTH/2,SPEED,TRUE);
@@ -343,14 +347,30 @@ int main(void)
                 blinkLED(GREEN,1000);      // To show it ended at the correct spot
                 
                 // Updating the East Clearance:
-                distanceSensor(FRONT_LEFT);     // checks how far we have travelled
-                CyDelay(50);
-                block_location[EAST] = sensor_distances[FRONT_LEFT] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+                //distanceSensor(FRONT_LEFT);     // checks how far we have travelled
+                //CyDelay(50);
+                
+                //block_location[EAST] = ARENA_WIDTH - sensor_distances[FRONT_LEFT] - DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
                                                             // double check the distance back sensor to side sensor value
                  
+                
+                distanceSensor(BACK_RIGHT);
+                CyDelay(50);
+                block_location[EAST] = sensor_distances[BACK_RIGHT] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+                
+                
+                
+                
+                
+                sprintf(output, "east block front sensor: %d, \n", sensor_distances[FRONT_LEFT] );       
+                UART_1_PutString(output);
+                
                 // Find where the pucks are: 
                 moveDynamic(-BLOCK_WIDTH/2,SPEED,TRUE);
                 moveUntil(puck_threshold, BACKWARD, LESS_THAN, SIDE_RIGHT, SPEED, TRUE);  
+                
+                distanceSensor(FRONT_LEFT);
+                CyDelay(50);
                 
                 int offset = sensor_distances[SIDE_RIGHT]*sin(18*M_PI/180);
                 if (sensor_distances[FRONT_LEFT] < 300) { offset = 0; }      // set the offset to 0 if it reasonable that we hit the pucks close to the corner
@@ -360,8 +380,11 @@ int main(void)
                 sprintf(output, "offset: %d, \n", offset);       
                 UART_1_PutString(output);
                 
-                puck_location[EAST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
-                puck_location[WEST] = ARENA_WIDTH - puck_location[EAST] - PUCK_GRID_WIDTH;
+                puck_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
+                puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] - PUCK_GRID_WIDTH;
+                
+                sprintf(output, "west puck front sensor: %d, \n", sensor_distances[FRONT_LEFT] );       
+                UART_1_PutString(output);
                 
                 blinkLED(BLUE,1000);   // puck location was succesfully found                    
                     
@@ -378,8 +401,10 @@ int main(void)
             else{ 
                 
                 // puck location was succesfully found   
-            
-                blinkLED(BLUE,1000);     
+                //UART_1_PutString("BLOCK FIRST");
+                
+                blinkLED(BLUE,1000); 
+                
                 distanceSensor(FRONT_LEFT);
                 CyDelay(50);
                 
@@ -389,8 +414,8 @@ int main(void)
                 sprintf(output, "offset: %d, \n", offset);       
                 UART_1_PutString(output);
                 
-                puck_location[EAST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
-                puck_location[WEST] = ARENA_WIDTH - puck_location[EAST] - PUCK_GRID_WIDTH;
+                puck_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR + offset;
+                puck_location[EAST] = ARENA_WIDTH - puck_location[WEST] - PUCK_GRID_WIDTH;
                 
                 
                 // Finding the block location:
@@ -400,6 +425,7 @@ int main(void)
                 // Find the WEST clearance of the block: 
                 distanceSensor(FRONT_LEFT); // Use front_right instead? 
                 CyDelay(DELAY);
+                
                 block_location[WEST] = sensor_distances[FRONT_LEFT] + DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
                 
                 // Stopping at the East side of the block: 
@@ -409,43 +435,40 @@ int main(void)
                 blinkLED(GREEN,1000);      // To show it ended at the correct spot
                 
                 // Updating the East Clearance:
-                distanceSensor(FRONT_LEFT);     // checks how far we have travelled
-                CyDelay(50);
-                block_location[EAST] = ARENA_WIDTH - sensor_distances[FRONT_LEFT] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+                //distanceSensor(FRONT_LEFT);     // checks how far we have travelled
+                //CyDelay(50);
+                
+                //block_location[EAST] = ARENA_WIDTH - sensor_distances[FRONT_LEFT] - DISTANCE_FRONT_SENSOR_TO_SIDE_SENSOR;
                                                             // double check the distance back sensor to side sensor value
+            
+                distanceSensor(BACK_RIGHT);
+                CyDelay(50);
+                block_location[EAST] = sensor_distances[BACK_RIGHT] + DISTANCE_BACK_SENSOR_TO_SIDE_SENSOR;
+            
+            
             }
-            
-            
                         
-            sprintf(output, "east puck: %d, \n", puck_location[EAST]);       
-            UART_1_PutString(output);
+                
             sprintf(output, "west puck: %d, \n", puck_location[WEST]);       
+            UART_1_PutString(output);
+            sprintf(output, "east puck: %d, \n\n", puck_location[EAST]);       
+            UART_1_PutString(output);
+            
+            sprintf(output, "west block: %d, \n", block_location[WEST]);       
             UART_1_PutString(output);
             sprintf(output, "east block: %d, \n", block_location[EAST]);       
             UART_1_PutString(output);
-            sprintf(output, "west block: %d, \n", block_location[WEST]);       
-            UART_1_PutString(output);
-            
-            
-            
-            
-            
-            
-            
+
             
             // END OF CODE FOR BLOCK AND PUCK CHECKING 
-            while(1) {}
+            
+            changeOrientation(EAST,SPEED);
+            moveUntil(170, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             
             
-            sprintf(output, "east puck: %d, \n", puck_location[EAST]);       
-            UART_1_PutString(output);
-            sprintf(output, "west puck: %d, \n", puck_location[WEST]);       
-            UART_1_PutString(output);
-            sprintf(output, "east block: %d, \n", block_location[EAST]);       
-            UART_1_PutString(output);
-            sprintf(output, "west block: %d, \n", block_location[WEST]);       
-            UART_1_PutString(output);
+            //while(1) {}
             
+
             
             // Finding the different block & puck clearances: 
             
@@ -487,6 +510,9 @@ int main(void)
             //changeOrientation(EAST, SPEED);
             ///oveDynamic(1200, SPEED, TRUE);
             
+
+            
+            /*
             moveUntil(200, BACKWARD, GREATER_THAN, FRONT_LEFT, SPEED, TRUE);
             changeOrientation(SOUTH,SPEED);
             changeOrientation(EAST, SPEED);
@@ -494,6 +520,7 @@ int main(void)
             moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             translateUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - SAFETY_MARGIN, 200, LEFT, GREATER_THAN);
             straightAdjust(FRONT_SENSORS);
+            */
             
             // PUCK has now been found, enter the IF statements to locate and pick up pucks 
             state = STATE_GO_TO_PUCKS;
