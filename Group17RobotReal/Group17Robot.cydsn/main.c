@@ -371,6 +371,7 @@ int main(void)
  
                 
             // brings us to the east side WITH SAFETY margins: 
+            moveDynamic(100,SPEED,TRUE);
             changeOrientation(EAST,SPEED);
             moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
             changeOrientation(SOUTH, SPEED);
