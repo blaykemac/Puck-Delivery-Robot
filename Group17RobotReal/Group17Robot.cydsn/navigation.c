@@ -375,110 +375,63 @@ void changeOrientation(int orientation_change, int speed) {
     internal_orientation = orientation_change;  
 }
 
-void translateUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed){
-    // distance_set is in millimeteres
-    // will check the front two ultrasonics 
-    // will move until distance specified in function 
-    
-    // direction can be left or right
-    
-    int count_left;                 // counts the encoder values
-    int count_right;
-    int old_count = -SAFETY_MARGIN*ENCODER_MULTIPLIER;   // used in the old failsafe to check how much distance has passed 
-                                                        // will enter the failsafe straight away due to this
-    int speed_left = speed;         // the set speed of the motors
-    int speed_right = speed;
-    //int emergency_exit = FALSE;     // BREAKS out of the code in an emergency 
-                                  // the ultrasonic sensor we will be using 
-    int distance_sensor;            // the measured distance of the sensor
-
-    
-    sensor_distances[ultrasonic_sensor] = ARENA_WIDTH + 100;             // So it will enter the while loop
-    while (sensor_distances[ultrasonic_sensor] > ARENA_WIDTH) {          // protects against dodgy initial values
-        distanceSensor(ultrasonic_sensor);
-        CyDelay(50);
-        distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the   
-        sprintf(output, "%d \t", distance_sensor);       
-        UART_1_PutString(output);
-    }
-    
-    //Motor_Left_Driver_Wakeup();
-    //Motor_Left_Driver_WriteCompare(speed_left);
-    //Motor_Right_Driver_Wakeup();
-    //Motor_Right_Driver_WriteCompare(speed_right);
-        
-    if (less_or_great == LESS_THAN) {                                         // if distance_set is positive, it will move until the sensors are greater than set value 
-        while (distance_sensor > abs(distance_set)) {                // This adjusts for drift 
-            
-            UART_1_PutString("entering greater than\n");
-            
-            count_left = Motor_Left_Decoder_GetCounter();
-            count_right = Motor_Right_Decoder_GetCounter();
-            
-            if (direction == LEFT) {
-                translateMoveDynamic(-5, 7, speed, FALSE);      // This will translate to the left by one puck
+void translateUntil(int distance, float max_back, int left_or_right, int less_or_great){
+    int current_distance;
+    float angle_to_turn_at = 20; 
+    int maxBack1 = round(max_back/cos((M_PI/180)*angle_to_turn_at))- 1;
+    if (left_or_right == RIGHT){ 
+        if (less_or_great == LESS_THAN) {
+            distanceSensor(SIDE_RIGHT);
+            current_distance = sensor_distances[SIDE_RIGHT];
+            while (current_distance > distance){
+                if ((current_distance - distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
+                }else{
+                    translateMoveDynamic((current_distance - distance),angle_to_turn_at,SPEED_LOW,FALSE);
+                }
+                distanceSensor(SIDE_RIGHT);
+                current_distance = sensor_distances[SIDE_RIGHT];
             }
-            
-            if (direction == RIGHT) {
-                translateMoveDynamic(5, -7, speed, FALSE);      // This will translate to the right by one puck
+        }else if (less_or_great == GREATER_THAN){
+            distanceSensor(SIDE_LEFT);
+            current_distance = sensor_distances[SIDE_LEFT];
+            while (current_distance < distance){
+                if ((distance - current_distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
+                }else{
+                    translateMoveDynamic((distance - current_distance),angle_to_turn_at,SPEED_LOW,FALSE);
+                }
+                distanceSensor(SIDE_LEFT);
+                current_distance = sensor_distances[SIDE_LEFT];
             }
-                        
-            //Motor_Left_Driver_WriteCompare(speed_left);     // update the drivers
-            //Motor_Right_Driver_WriteCompare(speed_right);
-            
-            distanceSensor(ultrasonic_sensor);
-            CyDelay(50);
-            //distanceCheckOne(ultrasonic_sensor);                            // checks the distance
-            distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
-            sprintf(output, "%d \t", distance_sensor);       
-            UART_1_PutString(output);
-            
-           
-            
+        }
+    }else if (left_or_right == LEFT){ 
+        if (less_or_great == LESS_THAN) {
+            distanceSensor(SIDE_LEFT); 
+            current_distance = sensor_distances[SIDE_LEFT];
+            while (current_distance > distance){
+                if ((current_distance - distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(-maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
+                }else{
+                    translateMoveDynamic(-(current_distance - distance),angle_to_turn_at,SPEED_LOW,FALSE);
+                }
+                distanceSensor(SIDE_LEFT);
+                current_distance = sensor_distances[SIDE_LEFT];
+            }
+        }else if (less_or_great == GREATER_THAN){
+            distanceSensor(SIDE_RIGHT);
+            current_distance = sensor_distances[SIDE_RIGHT];
+            while (current_distance < distance){
+                if ((distance - current_distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(-maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
+                }else{
+                    translateMoveDynamic(-(current_distance - distance),angle_to_turn_at,SPEED_LOW,FALSE);
+                }
+                distanceSensor(SIDE_RIGHT);
+                current_distance = sensor_distances[SIDE_RIGHT];
+            }
         }
     }
-    
-    if (less_or_great == GREATER_THAN){                                         // if distance_set is negatve, it will move until the sensors are less than set value
-        while (distance_sensor < abs(distance_set)) {                // This adjusts for drift 
-            count_left = Motor_Left_Decoder_GetCounter();
-            count_right = Motor_Right_Decoder_GetCounter();
-            
-            UART_1_PutString("entering less than\n");
-
-            if (direction == LEFT) {
-                translateMoveDynamic(-5, 7, speed, FALSE);      // This will translate to the left by one puck
-            }
-            
-            if (direction == RIGHT) {
-                translateMoveDynamic(5, -7, speed, FALSE);      // This will translate to the right by one puck
-            }
-            
-            //Motor_Left_Driver_WriteCompare(speed_left);         // update the drivers
-            //Motor_Right_Driver_WriteCompare(speed_right);
-            
-            distanceSensor(ultrasonic_sensor);
-            CyDelay(50);
-            
-            distance_sensor = sensor_distances[ultrasonic_sensor];   // checks the distance measured by the ultrasonic
-            sprintf(output, "%d \t", distance_sensor);       
-            UART_1_PutString(output);
-            
-        }
-    }
-    
-    //sprintf(output, "left motor: %d \n", count_left);       
-    //UART_1_PutString(output);
-    //sprintf(output, "right motor: %d \n", count_right);      
-    //UART_1_PutString(output);
-        
-    UART_1_PutString("exited loop");
-    
-    Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
-    Motor_Right_Decoder_SetCounter(0);   
-    
-    //Motor_Left_Driver_Sleep();              // Puts motors to sleep 
-    //Motor_Right_Driver_Sleep();
-    
 }
 
 int failsafe(int direction) {
@@ -552,7 +505,7 @@ void failsafeSideSensors(int side_sensing, int initial_value) {
     }
 }
 
-
+/*
 void straightAdjust(int front_back) {
        
     int sensor_left; 
@@ -621,31 +574,7 @@ void straightAdjust(int front_back) {
                       
             difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
             
-            //sprintf(output, " %d , %d \t dif: %d, \n", sensor_distances[FRONT_LEFT], 
-            //                                            sensor_distances[FRONT_RIGHT],
-            //                                                                        difference);       
-            //UART_1_PutString(output);
-            
-            
-            }
-            
-            /* I DON'T KNOW WHY THIS IS DUPLICATED, JUST COMMENTING OUT FOR NOW
-            while (abs(difference) > tolerance                  
-                        && difference > 0
-                        && abs(difference) < max_difference) {    // ensures working correctly
-                distanceSensor(FRONT_LEFT);
-                CyDelay(ultra_delay);
-                distanceSensor(FRONT_RIGHT);
-                CyDelay(ultra_delay);
-                          
-                difference = sensor_distances[FRONT_LEFT] - sensor_distances[FRONT_RIGHT];
-                
-                sprintf(output, " %d , %d \t dif: %d, \n", sensor_distances[FRONT_LEFT], 
-                                                            sensor_distances[FRONT_RIGHT],
-                                                                                        difference);       
-                UART_1_PutString(output);
-            } 
-            */
+           
         }
         else if (difference < 0 ){      // HERE we are turning left
             Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
@@ -701,37 +630,118 @@ void straightAdjust(int front_back) {
         
         // Timer out failsafe: 
         
-        /*
-        timer = Timer_straight_adjust_ReadCounter();
+
+//        timer = Timer_straight_adjust_ReadCounter();
+//        
+//        if (timer < 35000) {
+//            Motor_Left_Driver_Sleep();                  // puts it back to sleep
+//            Motor_Right_Driver_Sleep();
+//            moveDynamic(-30,SPEED,TRUE);                // calls movedynamic
+//            moveDynamic(30, SPEED,TRUE);      
+//            Motor_Left_Driver_Wakeup();
+//            Motor_Left_Driver_WriteCompare(speed_left); // brings it back to continue the while loop
+//            Motor_Right_Driver_Wakeup();
+//            Motor_Right_Driver_WriteCompare(speed_right);
+//            Control_Reset_Straight_Write(1);            // Resets the timer (I think)
+//            CyDelay(10); 
+//            Control_Reset_Straight_Write(0);
+//            
+//            sprintf(output, "timer count: %d", timer);
+//            UART_1_PutString(output);
+//        }
         
-        if (timer < 35000) {
-            Motor_Left_Driver_Sleep();                  // puts it back to sleep
-            Motor_Right_Driver_Sleep();
-            moveDynamic(-30,SPEED,TRUE);                // calls movedynamic
-            moveDynamic(30, SPEED,TRUE);      
-            Motor_Left_Driver_Wakeup();
-            Motor_Left_Driver_WriteCompare(speed_left); // brings it back to continue the while loop
-            Motor_Right_Driver_Wakeup();
-            Motor_Right_Driver_WriteCompare(speed_right);
-            Control_Reset_Straight_Write(1);            // Resets the timer (I think)
-            CyDelay(10); 
-            Control_Reset_Straight_Write(0);
-            
-            sprintf(output, "timer count: %d", timer);
-            UART_1_PutString(output);
-        }
-        
-        */
+       
         
         
         
     }         // This ensures that the turning worked correctly
                                             // changed it from 10 to 2, this might change the way it works
+    */
+
+void straightAdjust(int front_back){
+    int sensor_left; 
+    int sensor_right;
+    int difference = 300;
+    int tolerance = 2;
+    int max_difference = 800;
+    int ultra_delay = 50;
+    int speed = 25;
+    
+    // Are we adjusting with the back or front sensors: 
+    if (front_back == FRONT_SENSORS) {
+        sensor_left = FRONT_LEFT;
+        sensor_right = FRONT_RIGHT;
+    }
+    else {
+        sensor_left = BACK_RIGHT; // Mirrored from perspective of on the middle of robot looking outwards
+        sensor_right = BACK_LEFT;
+    }
+    
+    // Initialise
+    distanceSensor(sensor_left);
+    distanceSensor(sensor_right);
+    difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
+
+    
+    // Adjust against the wall: 
+    int speed_left = speed;        // slow speed
+    int speed_right = speed;
     
     
-    Motor_Left_Driver_Sleep();
-    Motor_Right_Driver_Sleep();
-    Timer_straight_adjust_Stop();       // stops the timer 
+    Motor_Left_Driver_Wakeup();
+    Motor_Left_Driver_WriteCompare(speed_left);
+    Motor_Right_Driver_Wakeup();
+    Motor_Right_Driver_WriteCompare(speed_right);
+        
+    while(abs(difference) > tolerance ) {
+        
+        if (difference > 0)             // This means we need to move it right
+        {
+            Motor_Left_Control_Write(0); Motor_Right_Control_Write(1); 
+             
+            while (abs(difference) > tolerance 
+                && difference > 0)     // ensures working correctly
+            {
+
+            distanceSensor(sensor_left);
+            CyDelay(ultra_delay);
+            distanceSensor(sensor_right);
+            CyDelay(ultra_delay);
+                      
+            difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
+            }
+           
+        }
+        else if (difference < 0 ){      // HERE we are turning left
+            Motor_Left_Control_Write(1); Motor_Right_Control_Write(0);
+            
+            distanceSensor(sensor_left);
+            CyDelay(ultra_delay);
+            distanceSensor(sensor_right);
+            CyDelay(ultra_delay);
+                      
+            difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
+
+        }
+        
+        // Comes out of the while loop if the max_difference is exceeded, but then the values might be wrong
+        // if max_difference is exceeded, it should probably be forced to swivel the other way to 
+        // that it was swivelling        
+        
+        
+        // CHECKS one more time to ensure the difference is accurate: 
+            // consider putting in a for loop to get new readings
+        distanceSensor(sensor_left);
+        CyDelay(ultra_delay);
+        distanceSensor(sensor_right);
+        CyDelay(ultra_delay);
+                      
+        difference = sensor_distances[sensor_left] - sensor_distances[sensor_right];
+        sprintf(output, "%d, %d, ", sensor_distances[sensor_left], sensor_distances[sensor_right]);       
+        UART_1_PutString(output);
+        sprintf(output, "dif: %d, \n", difference);       
+        UART_1_PutString(output);
+    
 }
 
 

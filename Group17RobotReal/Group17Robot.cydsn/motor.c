@@ -217,15 +217,22 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
     Motor_Right_Driver_Sleep();
 }
 
-void translateMoveDynamic(int distance, int degree, int speed, int activate_safety) {
+void translateMoveDynamic(float distance, int degree, int speed, int activate_safety) {
     // The distance selectected can be positive or negative
-    // The degree selected can be positive or negative 
-    int new_dist = distance/sin((M_PI/180)*degree); 
-    
-    moveSwivel(degree, speed, activate_safety);
-    moveDynamic(new_dist, speed, activate_safety);
-    moveSwivel(-degree, speed, activate_safety);
-    moveDynamic(-new_dist, speed, activate_safety);
+    // The degree selected can be positive or negative
+    int new_degree = abs(degree);
+    float new_dist = fabs(distance)/sin((M_PI/180)*new_degree);
+    if (distance < 0){ //Need to move left
+        moveSwivel(new_degree, speed, activate_safety);
+        moveDynamic(-new_dist, speed, activate_safety);
+        moveSwivel(-new_degree, speed, activate_safety);
+        moveDynamic(new_dist, speed, activate_safety);
+    }else {
+        moveSwivel(-new_degree, speed, activate_safety);
+        moveDynamic(-new_dist, speed, activate_safety);
+        moveSwivel(new_degree, speed, activate_safety);
+        moveDynamic(new_dist, speed, activate_safety);
+    }
 }
 
 void rampUpDown(int speed, int ramp_up_down) {

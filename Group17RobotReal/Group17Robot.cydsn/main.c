@@ -492,7 +492,7 @@ int main(void)
             changeOrientation(EAST, SPEED);
             straightAdjust(FRONT_SENSORS);
             moveUntil(CLEARANCE_RADIUS_CENTER_TO_FRONT + SAFETY_MARGIN/2, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE);
-            translateUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - SAFETY_MARGIN, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
+            translateUntil(CLEARANCE_RADIUS_CENTER_TO_BACK - SAFETY_MARGIN, 200, LEFT, GREATER_THAN);
             straightAdjust(FRONT_SENSORS);
             
             // PUCK has now been found, enter the IF statements to locate and pick up pucks 
@@ -522,6 +522,10 @@ int main(void)
                 straightAdjust(BACK_SENSORS);
 
                 moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                changeOrientation(NORTH, SPEED_LOW);
+                moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_SENSORS, SPEED_LOW, TRUE);
+                straightAdjust(FRONT_SENSORS);
+                changeOrientation(WEST, SPEED_LOW);
                 
             }
             
@@ -538,7 +542,11 @@ int main(void)
                 changeOrientation(EAST, SPEED);
                 straightAdjust(BACK_SENSORS);
 
-                moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);          
+                moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);   
+                changeOrientation(NORTH, SPEED_LOW);
+                moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_SENSORS, SPEED_LOW, TRUE);
+                straightAdjust(FRONT_SENSORS);
+                changeOrientation(EAST, SPEED_LOW);
             }
             
             
@@ -555,6 +563,10 @@ int main(void)
                 straightAdjust(BACK_SENSORS);
                 
                 moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                changeOrientation(NORTH, SPEED_LOW);
+                moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_SENSORS, SPEED_LOW, TRUE);
+                straightAdjust(FRONT_SENSORS);
+                changeOrientation(EAST, SPEED_LOW);
             }
             
             else if (block_west_clearance && puck_east_clearance){
@@ -568,6 +580,10 @@ int main(void)
                 straightAdjust(BACK_SENSORS);
                 
                 moveUntil(DISTANCE_MIDDLE_STOPPED_FROM_PUCK, FORWARD, LESS_THAN, FRONT_MIDDLE, SPEED, TRUE);
+                changeOrientation(NORTH, SPEED_LOW);
+                moveForwardThenBackward(PUCK_GRID_FROM_NORTH - DISTANCE_FRONT_SENSOR_FROM_CENTER - PUCK_GRID_DISTANCE_BETWEEN_PUCK_CENTERS * current_puck_stack_size, LESS_THAN, FRONT_SENSORS, SPEED_LOW, TRUE);
+                straightAdjust(FRONT_SENSORS);
+                changeOrientation(WEST, SPEED_LOW);
             }
             
             state = STATE_FIND_REQUIRED_PUCK;
@@ -739,6 +755,7 @@ int main(void)
                 changeOrientation(NORTH,SPEED);
                 changeOrientation(WEST,SPEED);
                 moveUntil(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30, FORWARD, LESS_THAN, FRONT_LEFT, SPEED, TRUE); //Change 30 to constant
+                moveForwardThenBackward(CONSTRUCTION_MIDPOINT - DISTANCE_FRONT_SENSOR_FROM_CENTER - 30, LESS_THAN, FRONT_SENSORS, SPEED_LOW, TRUE);
                 straightAdjust(FRONT_SENSORS);
                 
                 //changeOrientation(SOUTH, SPEED);
