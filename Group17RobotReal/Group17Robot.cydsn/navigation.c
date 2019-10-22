@@ -346,8 +346,12 @@ void moveUntil(int distance_set, int direction, int less_or_great, int ultrasoni
     sprintf(output, "\n fin: %d \n", distance_sensor);    
     UART_1_PutString(output);
     
-    global_encoder = count_left;                            
-    global_distance = count_left/ENCODER_MULTIPLIER;        // tells us how far we travelled in this moveuntil block 
+    global_encoder = Motor_Left_Decoder_GetCounter();;                            
+    global_distance = global_encoder/ENCODER_MULTIPLIER;        // tells us how far we travelled in this moveuntil block 
+    
+    sprintf(output, "count value: %d \n", global_encoder);
+    UART_1_PutString(output);
+    
     
     Motor_Left_Decoder_SetCounter(0);                       // RESET the decoders to 0
     Motor_Right_Decoder_SetCounter(0);   
