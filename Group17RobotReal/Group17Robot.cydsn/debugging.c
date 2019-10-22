@@ -116,7 +116,9 @@ void ultimateDebugging(void){
                     if (lock == FALSE) 
                     {
                         UART_1_PutString("Motor Testing: \n");
-                        moveForwardThenBackward(200, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
+                        moveSwivel(360, SPEED, TRUE);
+                      
+                        //moveForwardThenBackward(200, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
                         //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
                         
                        //straightAdjustSensor(FRONT_MIDDLE);
