@@ -211,4 +211,4 @@ int preferential_route;
 int initial_tolerance;
 int set_path; 
 #define MIDDLE 2
-
+int puck_grid_initial;

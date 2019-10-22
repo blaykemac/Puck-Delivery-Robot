@@ -138,8 +138,6 @@ void moveUntilPuck(int algorithm) {
     moveDynamic(37, 100, FALSE);
 }
 
-
-
 void moveUntil(int distance_set, int direction, int less_or_great, int ultrasonic_sensor, int speed, int activate_safety) {
     // This function will move until given a set distance (in mm)
     // Can indicate the direction (FORWARD or BACKWARD)
@@ -514,13 +512,12 @@ void failsafeSideSensors(int side_sensing, int initial_value) {
     }
 }
 
-
 void straightAdjust(int front_back) {
        
     int sensor_left; 
     int sensor_right;
     int difference = 300;
-    int tolerance = 1;
+    int tolerance = 2;
     int max_difference = 800;
     int ultra_delay = 50;
     int speed = 25;

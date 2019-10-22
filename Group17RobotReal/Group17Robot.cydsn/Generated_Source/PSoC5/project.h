@@ -106,6 +106,7 @@
 #include "Clock_6.h"
 #include "Motor_Left_Control.h"
 #include "Motor_Right_Control.h"
+#include "Control_Reset_Straight.h"
 #include "Clock_2.h"
 #include "Timer_straight_adjust.h"
 #include "Straight.h"

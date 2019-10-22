@@ -1,6 +1,6 @@
 // ======================================================================
 // Group17Robot.v generated from TopDesign.cysch
-// 10/23/2019 at 01:58
+// 10/23/2019 at 02:33
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -1836,7 +1836,7 @@ module top ;
           wire  Net_622;
           wire  Net_621;
           wire  Net_620;
-          wire  Net_12;
+          wire  Net_4645;
           wire  Net_4640;
           wire  Net_4644;
           wire  Net_4590;
@@ -5172,6 +5172,30 @@ module top ;
     defparam Motor_Right_Control.ExtrReset = 0;
     defparam Motor_Right_Control.NumOutputs = 1;
 
+    CyControlReg_v1_80 Control_Reset_Straight (
+        .control_1(Net_4630),
+        .control_2(Net_4631),
+        .control_3(Net_4632),
+        .control_0(Net_4644),
+        .control_4(Net_4634),
+        .control_5(Net_4635),
+        .control_6(Net_4636),
+        .control_7(Net_4637),
+        .clock(1'b0),
+        .reset(1'b0));
+    defparam Control_Reset_Straight.Bit0Mode = 0;
+    defparam Control_Reset_Straight.Bit1Mode = 0;
+    defparam Control_Reset_Straight.Bit2Mode = 0;
+    defparam Control_Reset_Straight.Bit3Mode = 0;
+    defparam Control_Reset_Straight.Bit4Mode = 0;
+    defparam Control_Reset_Straight.Bit5Mode = 0;
+    defparam Control_Reset_Straight.Bit6Mode = 0;
+    defparam Control_Reset_Straight.Bit7Mode = 0;
+    defparam Control_Reset_Straight.BitValue = 0;
+    defparam Control_Reset_Straight.BusDisplay = 0;
+    defparam Control_Reset_Straight.ExtrReset = 0;
+    defparam Control_Reset_Straight.NumOutputs = 1;
+
 
 	cy_clock_v1_0
 		#(.id("831fd4b5-261c-4ef6-8665-d01cc85d4248"),
@@ -5185,8 +5209,8 @@ module top ;
 
 
     Timer_v2_80_13 Timer_straight_adjust (
-        .reset(Net_12),
-        .interrupt(Net_12),
+        .reset(Net_4644),
+        .interrupt(Net_4645),
         .enable(1'b1),
         .trigger(1'b1),
         .capture(1'b0),
@@ -5205,7 +5229,7 @@ module top ;
 	cy_isr_v1_0
 		#(.int_type(2'b10))
 		Straight
-		 (.int_signal(Net_12));
+		 (.int_signal(Net_4645));
 
 
 

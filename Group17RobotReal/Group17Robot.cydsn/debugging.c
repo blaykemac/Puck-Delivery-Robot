@@ -115,8 +115,8 @@ void ultimateDebugging(void){
                 {   
                     if (lock == FALSE) 
                     {
-                        UART_1_PutString("Motor Testing: \n");
-                        moveSwivel(360, SPEED, TRUE);
+                        //UART_1_PutString("Motor Testing: \n");
+                        //moveSwivel(360, SPEED, TRUE);
                       
                         //moveForwardThenBackward(200, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
                         //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
@@ -132,6 +132,12 @@ void ultimateDebugging(void){
                             blinkLED(GREEN, 1000);
                         }
                         
+                        while(1) {
+                            armOpen();
+                            CyDelay(500);
+                            armClose();
+                            CyDelay(500);
+                        }
                         
                         
                         while(0){
@@ -144,13 +150,13 @@ void ultimateDebugging(void){
                         blinkLED(GREEN, 1000);
                         }
                         
-                        int timer;
+                        //int timer;
                         
-                        Timer_straight_adjust_Start();
+                        //Timer_straight_adjust_Start();
                         
                         while(0) {
-                        timer = Timer_straight_adjust_ReadCounter();
-                        sprintf(output, "%d \t", timer);      
+                        //timer = Timer_straight_adjust_ReadCounter();
+                        //sprintf(output, "%d \t", timer);      
                         UART_1_PutString(output); 
                         CyDelay(100);
         
