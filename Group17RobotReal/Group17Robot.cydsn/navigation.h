@@ -20,7 +20,7 @@ void straightAdjust(int front_back);    // takes paramaters FRONT_SENSORS
 void straightAdjustBack(void);          // adjust using the back sensor
 void moveForwardThenBackward(int distance, int less_or_great,int ultrasonic_sensor, int speed, int activate_safety);
 
-void translateUntil(int distance, float maxBack, int leftOrRight, int lessOrGreat);
+void translateUntil(int distance, float max_back, int left_or_right, int less_or_great);
 void locatePucks(void);
 void changeOrientation(int orientation_change, int speed);
 int failsafe(int direction);

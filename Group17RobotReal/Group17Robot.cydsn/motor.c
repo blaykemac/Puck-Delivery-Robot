@@ -220,17 +220,17 @@ void moveSwivel(int degrees, int speed, int activate_safety) {
 void translateMoveDynamic(float distance, int degree, int speed, int activate_safety) {
     // The distance selectected can be positive or negative
     // The degree selected can be positive or negative
-    int newDegree = abs(degree);
-    float new_dist = fabs(distance)/sin((M_PI/180)*newDegree);
+    int new_degree = abs(degree);
+    float new_dist = fabs(distance)/sin((M_PI/180)*new_degree);
     if (distance < 0){ //Need to move left
-        moveSwivel(newDegree, speed, activate_safety);
+        moveSwivel(new_degree, speed, activate_safety);
         moveDynamic(-new_dist, speed, activate_safety);
-        moveSwivel(-newDegree, speed, activate_safety);
+        moveSwivel(-new_degree, speed, activate_safety);
         moveDynamic(new_dist, speed, activate_safety);
     }else {
-        moveSwivel(-newDegree, speed, activate_safety);
+        moveSwivel(-new_degree, speed, activate_safety);
         moveDynamic(-new_dist, speed, activate_safety);
-        moveSwivel(newDegree, speed, activate_safety);
+        moveSwivel(new_degree, speed, activate_safety);
         moveDynamic(new_dist, speed, activate_safety);
     }
 }

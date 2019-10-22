@@ -375,77 +375,60 @@ void changeOrientation(int orientation_change, int speed) {
     internal_orientation = orientation_change;  
 }
 
-void translateUntil(int distance, float maxBack, int leftOrRight, int lessOrGreat){
-    int currentDistance;
-    float angleToTurnAt = 20; //We're gonna turn at a 20 degree angle always when doing this
-    int maxBack1 = round(maxBack/cos((M_PI/180)*angleToTurnAt))- 1;
-    if (leftOrRight == RIGHT){ //1 is Right, 0 is left
-        if (lessOrGreat == LESS_THAN) {//Closer is 1, further is 0
-            //Translate Right by little bits, check sensor number 3 is less than
+void translateUntil(int distance, float max_back, int left_or_right, int less_or_great){
+    int current_distance;
+    float angle_to_turn_at = 20; 
+    int maxBack1 = round(max_back/cos((M_PI/180)*angle_to_turn_at))- 1;
+    if (left_or_right == RIGHT){ 
+        if (less_or_great == LESS_THAN) {
             distanceSensor(SIDE_RIGHT);
-            currentDistance = sensor_distances[SIDE_RIGHT];
-            while (currentDistance > distance){
-                if ((currentDistance - distance) > maxBack1*sin((M_PI/180)*angleToTurnAt)){
-                    translateMoveDynamic(maxBack1*sin((M_PI/180)*angleToTurnAt),angleToTurnAt,SPEED_LOW,FALSE);
+            current_distance = sensor_distances[SIDE_RIGHT];
+            while (current_distance > distance){
+                if ((current_distance - distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
                 }else{
-                    translateMoveDynamic((currentDistance - distance),angleToTurnAt,SPEED_LOW,FALSE);
+                    translateMoveDynamic((current_distance - distance),angle_to_turn_at,SPEED_LOW,FALSE);
                 }
                 distanceSensor(SIDE_RIGHT);
-                currentDistance = sensor_distances[SIDE_RIGHT];
+                current_distance = sensor_distances[SIDE_RIGHT];
             }
-        }else if (lessOrGreat == GREATER_THAN){
-            //Translate Right by little bits, check sensor 0 is greater than
+        }else if (less_or_great == GREATER_THAN){
             distanceSensor(SIDE_LEFT);
-            currentDistance = sensor_distances[SIDE_LEFT];
-            while (currentDistance < distance){
-                //TranslateRight
-                //Read ultrasonic again
-                //update currentDistance
-                if ((distance - currentDistance) > maxBack1*sin((M_PI/180)*angleToTurnAt)){
-                    translateMoveDynamic(maxBack1*sin((M_PI/180)*angleToTurnAt),angleToTurnAt,SPEED_LOW,FALSE);
+            current_distance = sensor_distances[SIDE_LEFT];
+            while (current_distance < distance){
+                if ((distance - current_distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
                 }else{
-                    translateMoveDynamic((distance - currentDistance),angleToTurnAt,SPEED_LOW,FALSE);
+                    translateMoveDynamic((distance - current_distance),angle_to_turn_at,SPEED_LOW,FALSE);
                 }
                 distanceSensor(SIDE_LEFT);
-                currentDistance = sensor_distances[SIDE_LEFT];
+                current_distance = sensor_distances[SIDE_LEFT];
             }
         }
-    }else if (leftOrRight == LEFT){ //1 is right, 0 is left 
-        if (lessOrGreat == LESS_THAN) {//Closer is 1, further is 0
-            //Translate Left by little bits, check sensor number 0 is less than
+    }else if (left_or_right == LEFT){ 
+        if (less_or_great == LESS_THAN) {
             distanceSensor(SIDE_LEFT); 
-            currentDistance = sensor_distances[SIDE_LEFT];
-            while (currentDistance > distance){
-                //Translate left
-                //Read ultrasonic again
-                //update currentDistance
-                if ((currentDistance - distance) > maxBack1*sin((M_PI/180)*angleToTurnAt)){
-                    translateMoveDynamic(-maxBack1*sin((M_PI/180)*angleToTurnAt),angleToTurnAt,SPEED_LOW,FALSE);
+            current_distance = sensor_distances[SIDE_LEFT];
+            while (current_distance > distance){
+                if ((current_distance - distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(-maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
                 }else{
-                    translateMoveDynamic(-(currentDistance - distance),angleToTurnAt,SPEED_LOW,FALSE);
+                    translateMoveDynamic(-(current_distance - distance),angle_to_turn_at,SPEED_LOW,FALSE);
                 }
                 distanceSensor(SIDE_LEFT);
-                currentDistance = sensor_distances[SIDE_LEFT];
+                current_distance = sensor_distances[SIDE_LEFT];
             }
-        }else if (lessOrGreat == GREATER_THAN){
-            //Translate Left by little bits, check sensor 3 is greater than
+        }else if (less_or_great == GREATER_THAN){
             distanceSensor(SIDE_RIGHT);
-            currentDistance = sensor_distances[SIDE_RIGHT];
-            while (currentDistance < distance){
-                //Translate left 
-                //Read ultrasonic again
-                //update currentDistance
-                sprintf(output,"%f",maxBack1*sin((M_PI/180)*angleToTurnAt));
-                UART_1_PutString("The distance to move backward is: ");
-                UART_1_PutString(output);
-                UART_1_PutString("\n");
-                if ((distance - currentDistance) > maxBack1*sin((M_PI/180)*angleToTurnAt)){
-                    translateMoveDynamic(-maxBack1*sin((M_PI/180)*angleToTurnAt),angleToTurnAt,SPEED_LOW,FALSE);
+            current_distance = sensor_distances[SIDE_RIGHT];
+            while (current_distance < distance){
+                if ((distance - current_distance) > maxBack1*sin((M_PI/180)*angle_to_turn_at)){
+                    translateMoveDynamic(-maxBack1*sin((M_PI/180)*angle_to_turn_at),angle_to_turn_at,SPEED_LOW,FALSE);
                 }else{
-                    translateMoveDynamic(-(currentDistance - distance),angleToTurnAt,SPEED_LOW,FALSE);
+                    translateMoveDynamic(-(current_distance - distance),angle_to_turn_at,SPEED_LOW,FALSE);
                 }
                 distanceSensor(SIDE_RIGHT);
-                currentDistance = sensor_distances[SIDE_RIGHT];
+                current_distance = sensor_distances[SIDE_RIGHT];
             }
         }
     }
