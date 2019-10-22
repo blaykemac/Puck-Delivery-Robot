@@ -157,8 +157,8 @@ int internal_orientation;
 #define FORWARD 1
 #define LEFT 2
 #define RIGHT 3
-#define LESS_THAN 4
-#define GREATER_THAN 5
+#define LESS_THAN 1
+#define GREATER_THAN -1
 #define EQUAL_TO 6
 
 #define TRUE 1
