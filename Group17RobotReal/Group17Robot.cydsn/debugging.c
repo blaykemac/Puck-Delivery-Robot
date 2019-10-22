@@ -116,6 +116,7 @@ void ultimateDebugging(void){
                     if (lock == FALSE) 
                     {
                         UART_1_PutString("Motor Testing: \n");
+                        moveForwardThenBackward(200, LESS_THAN, FRONT_MIDDLE, SPEED_LOW, TRUE);
                         //translateUntil(150, LEFT, GREATER_THAN, SIDE_RIGHT, SPEED);
                         
                        //straightAdjustSensor(FRONT_MIDDLE);
@@ -124,7 +125,7 @@ void ultimateDebugging(void){
                         //straightAdjust(BACK_SENSORS);
                         //straightAdjust(FRONT_SENSORS);
                         
-                        while(1) {
+                        while(0) {
                             straightAdjust(FRONT_SENSORS);
                             blinkLED(GREEN, 1000);
                         }
@@ -136,7 +137,7 @@ void ultimateDebugging(void){
                         CyDelay(2000);
                         }
                         
-                        while(1) {
+                        while(0) {
                         straightAdjust(BACK_SENSORS);
                         blinkLED(GREEN, 1000);
                         }

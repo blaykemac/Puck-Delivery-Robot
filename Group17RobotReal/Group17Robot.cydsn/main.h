@@ -148,7 +148,7 @@ int internal_orientation;
 #define SAFETY_MARGIN 85 // The margin we will enforce be kept around us clear at all times.
 #define BLOCK_TOLERANCE 50 // Used for sweeping block location. This affects sensitivity in detecting block.
 #define PUCK_TOLERANCE 150 // Used for initially sweeping puck location. This affects sensitivity in detecting pucks.
-#define DISTANCE_MIDDLE_STOPPED_FROM_PUCK 150 // How far moveUntil() should go when going to pucks. Usingthe middle front sensor.
+#define DISTANCE_MIDDLE_STOPPED_FROM_PUCK 200 // How far moveUntil() should go when going to pucks. Usingthe middle front sensor.
 #define SENSOR_DELAY_MIN 60
 #define WALL_CLEARANCE_FRONT 175 // Distance to stop from east wall 
 #define OVER_ROTATION_ANGLE 20 // We over-rotate when scanning for puck and stack so we can then counter-rotate and hone in on minimum.
