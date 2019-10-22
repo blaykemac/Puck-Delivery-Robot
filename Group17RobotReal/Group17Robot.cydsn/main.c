@@ -594,12 +594,6 @@ int main(void)
         
         if (state == STATE_GO_TO_PUCKS){
             
-            //Remove after testing
-            
-            puck_east_clearance = 1;
-            puck_west_clearance = 0;
-            
-
             // The different route finding Algorithms for the different combinations: 
             
             if (block_east_clearance && puck_east_clearance){
